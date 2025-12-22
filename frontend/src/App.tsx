@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 
-import { ThemeToggle } from "./components/ui/ThemeToggle";
+import { ThemeToggle } from "./components/common/ThemeToggle";
 
 const App = () => {
   return (

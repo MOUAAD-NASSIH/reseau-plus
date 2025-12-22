@@ -1,18 +1,8 @@
-import { useEffect } from "react";
-import { useAppSelector } from "@/features/helpers";
+"use client";
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const mode = useAppSelector((state) => state.theme.mode);
+import { ThemeProvider as NextThemesProvider } from "next-themes";
+import type { ThemeProviderProps } from "next-themes";
 
-  useEffect(() => {
-    const root = document.documentElement;
-
-    if (mode === "dark") {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
-  }, [mode]);
-
-  return <>{children}</>;
+export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
+  return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
 }
