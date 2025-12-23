@@ -13,16 +13,62 @@ datasource db {
   provider = "postgresql"
 }
 
-enum UserStatus {
+// ============================================
+// ENUMS
+// ============================================
+
+enum WorkerStatus {
   PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum DocumentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum UserStatus {
   ACTIVE
   SUSPENDED
+  BANNED
 }
+
+enum MissionStatus {
+  OPEN
+  ONGOING
+  CLOSED
+  CANCELLED
+}
+
+enum ApplicationStatus {
+  SUBMITTED
+  REJECTED
+  ACCEPTED
+}
+
+enum AssignmentStatus {
+  ACTIVE
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+// ============================================
+// AUTHENTICATION & ROLES
+// ============================================
 
 model Role {
   id          Int     @id @default(autoincrement())
-  name        String  @unique
-  description String?
+  name        String  @unique @db.VarChar(50)
+  description String? @db.Text
 
   users User[]
 
@@ -31,45 +77,366 @@ model Role {
 
 model User {
   id        Int        @id @default(autoincrement())
-  email     String     @unique
-  password  String
-  status    UserStatus @default(PENDING)
-  createdAt DateTime   @default(now())
+  email     String     @unique @db.VarChar(255)
+  password  String     @db.VarChar(255)
+  roleId    Int        @map("role_id")
+  status    UserStatus @default(ACTIVE)
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamptz
 
-  roleId Int
-  role   Role @relation(fields: [roleId], references: [id])
+  // Relations
+  role              Role           @relation(fields: [roleId], references: [id], onDelete: Restrict)
+  worker            Worker?
+  institution       Institution?
+  notifications     Notification[]
+  adminLogs         AdminLog[]     @relation("AdminLog_Admin")
+  adminLogsAsTarget AdminLog[]     @relation("AdminLog_TargetUser")
 
-  worker      Worker?
-  institution Institution?
-
+  @@index([email])
+  @@index([roleId])
+  @@index([status])
   @@map("users")
 }
 
+// ============================================
+// CATEGORIES & TAGS
+// ============================================
+
+model Speciality {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique @db.VarChar(100)
+  description String? @db.Text
+
+  workers  Worker[]
+  missions Mission[]
+
+  @@map("specialities")
+}
+
+model Domain {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique @db.VarChar(100)
+  description String? @db.Text
+
+  workerDomains  WorkerDomain[]
+  missionDomains MissionDomain[]
+
+  @@map("domains")
+}
+
+// ============================================
+// WORKER PROFILE & DETAILS
+// ============================================
+
 model Worker {
-  id              Int      @id @default(autoincrement())
-  userId          Int      @unique
-  firstName       String
-  lastName        String
-  speciality      String
-  experienceYears Int
-  bio             String?
-  location        String?
-  isApproved      Boolean  @default(false)
-  createdAt       DateTime @default(now())
+  id              Int          @id @default(autoincrement())
+  userId          Int          @unique @map("user_id")
+  firstName       String       @map("first_name") @db.VarChar(100)
+  lastName        String       @map("last_name") @db.VarChar(100)
+  specialityId    Int?         @map("speciality_id")
+  experienceYears Int?         @map("experience_years")
+  bio             String?      @db.Text
+  city            String?      @db.VarChar(100)
+  zipCode         String?      @map("zip_code") @db.VarChar(20)
+  latitude        Float?       @db.DoublePrecision
+  longitude       Float?       @db.DoublePrecision
+  status          WorkerStatus @default(PENDING)
+  rejectionReason String?      @map("rejection_reason") @db.Text
+  birthDate       DateTime?    @map("birth_date") @db.Date
+  gender          String?      @db.VarChar(20)
+  createdAt       DateTime     @default(now()) @map("created_at") @db.Timestamptz
 
-  user User @relation(fields: [userId], references: [id])
+  // Relations
+  user           User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  speciality     Speciality?          @relation(fields: [specialityId], references: [id], onDelete: SetNull)
+  documents      WorkerDocument[]
+  experiences    WorkerExperience[]
+  availabilities WorkerAvailability[]
+  domains        WorkerDomain[]
+  applications   MissionApplication[]
+  assignments    MissionAssignment[]
 
+  @@index([userId])
+  @@index([specialityId])
+  @@index([status])
+  @@index([city])
   @@map("workers")
 }
 
+model WorkerDocument {
+  id           Int            @id @default(autoincrement())
+  workerId     Int            @map("worker_id")
+  type         String         @db.VarChar(50) // DIPLOMA, CV, ID, OTHER
+  fileUrl      String         @map("file_url") @db.VarChar(500)
+  status       DocumentStatus @default(PENDING)
+  adminComment String?        @map("admin_comment") @db.Text
+  uploadedAt   DateTime       @default(now()) @map("uploaded_at") @db.Timestamptz
+  reviewedAt   DateTime?      @map("reviewed_at") @db.Timestamptz
+
+  // Relations
+  worker    Worker     @relation(fields: [workerId], references: [id], onDelete: Cascade)
+  adminLogs AdminLog[] @relation("AdminLog_TargetDocument")
+
+  @@index([workerId])
+  @@index([status])
+  @@map("worker_documents")
+}
+
+model WorkerExperience {
+  id           Int       @id @default(autoincrement())
+  workerId     Int       @map("worker_id")
+  jobTitle     String    @map("job_title") @db.VarChar(255)
+  organization String    @db.VarChar(255)
+  startDate    DateTime  @map("start_date") @db.Date
+  endDate      DateTime? @map("end_date") @db.Date
+  description  String?   @db.Text
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  // Relations
+  worker Worker @relation(fields: [workerId], references: [id], onDelete: Cascade)
+
+  @@index([workerId])
+  @@map("worker_experiences")
+}
+
+model WorkerAvailability {
+  id          Int      @id @default(autoincrement())
+  workerId    Int      @map("worker_id")
+  startDate   DateTime @map("start_date") @db.Date
+  endDate     DateTime @map("end_date") @db.Date
+  isRecurring Boolean  @default(false) @map("is_recurring")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  // Relations
+  worker Worker @relation(fields: [workerId], references: [id], onDelete: Cascade)
+
+  @@index([workerId])
+  @@index([startDate, endDate])
+  @@map("worker_availabilities")
+}
+
+model WorkerDomain {
+  id        Int      @id @default(autoincrement())
+  workerId  Int      @map("worker_id")
+  domainId  Int      @map("domain_id")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  // Relations
+  worker Worker @relation(fields: [workerId], references: [id], onDelete: Cascade)
+  domain Domain @relation(fields: [domainId], references: [id], onDelete: Cascade)
+
+  @@unique([workerId, domainId])
+  @@index([workerId])
+  @@index([domainId])
+  @@map("worker_domains")
+}
+
+// ============================================
+// INSTITUTION PROFILE
+// ============================================
+
 model Institution {
   id              Int      @id @default(autoincrement())
-  userId          Int      @unique
-  institutionName String
-  address         String
-  createdAt       DateTime @default(now())
+  userId          Int      @unique @map("user_id")
+  institutionName String   @map("institution_name") @db.VarChar(255)
+  address         String?  @db.Text
+  city            String?  @db.VarChar(100)
+  latitude        Float?   @db.DoublePrecision
+  longitude       Float?   @db.DoublePrecision
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
 
-  user User @relation(fields: [userId], references: [id])
+  // Relations
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  missions    Mission[]
+  assignments MissionAssignment[]
+  payments    Payment[]
 
+  @@index([userId])
+  @@index([city])
   @@map("institutions")
+}
+
+// ============================================
+// MISSIONS & APPLICATIONS
+// ============================================
+
+model Mission {
+  id                   Int           @id @default(autoincrement())
+  institutionId        Int           @map("institution_id")
+  title                String        @db.VarChar(255)
+  description          String?       @db.Text
+  startDate            DateTime      @map("start_date") @db.Timestamptz
+  endDate              DateTime      @map("end_date") @db.Timestamptz
+  requiredSpecialityId Int?          @map("required_speciality_id")
+  status               MissionStatus @default(OPEN)
+  createdAt            DateTime      @default(now()) @map("created_at") @db.Timestamptz
+
+  // Relations
+  institution        Institution          @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  requiredSpeciality Speciality?          @relation(fields: [requiredSpecialityId], references: [id], onDelete: SetNull)
+  domains            MissionDomain[]
+  applications       MissionApplication[]
+  assignments        MissionAssignment[]
+  adminLogs          AdminLog[]           @relation("AdminLog_TargetMission")
+
+  @@index([institutionId])
+  @@index([status])
+  @@index([requiredSpecialityId])
+  @@index([startDate, endDate])
+  @@map("missions")
+}
+
+model MissionDomain {
+  id         Int      @id @default(autoincrement())
+  missionId  Int      @map("mission_id")
+  domainId   Int      @map("domain_id")
+  isRequired Boolean  @default(true) @map("is_required")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  // Relations
+  mission Mission @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  domain  Domain  @relation(fields: [domainId], references: [id], onDelete: Cascade)
+
+  @@unique([missionId, domainId])
+  @@index([missionId])
+  @@index([domainId])
+  @@map("mission_domains")
+}
+
+model MissionApplication {
+  id        Int               @id @default(autoincrement())
+  missionId Int               @map("mission_id")
+  workerId  Int               @map("worker_id")
+  status    ApplicationStatus @default(SUBMITTED)
+  appliedAt DateTime          @default(now()) @map("applied_at") @db.Timestamptz
+
+  // Relations
+  mission Mission @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  worker  Worker  @relation(fields: [workerId], references: [id], onDelete: Cascade)
+
+  @@unique([missionId, workerId])
+  @@index([missionId])
+  @@index([workerId])
+  @@index([status])
+  @@map("mission_applications")
+}
+
+model MissionAssignment {
+  id            Int              @id @default(autoincrement())
+  missionId     Int              @map("mission_id")
+  workerId      Int              @map("worker_id")
+  institutionId Int              @map("institution_id")
+  status        AssignmentStatus @default(ACTIVE)
+  assignedAt    DateTime         @default(now()) @map("assigned_at") @db.Timestamptz
+
+  // Relations
+  mission     Mission     @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  worker      Worker      @relation(fields: [workerId], references: [id], onDelete: Cascade)
+  institution Institution @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  review      Review?
+  payments    Payment[]
+
+  @@index([missionId])
+  @@index([workerId])
+  @@index([institutionId])
+  @@index([status])
+  @@map("mission_assignments")
+}
+
+// ============================================
+// REVIEWS & FEEDBACK
+// ============================================
+
+model Review {
+  id                  Int      @id @default(autoincrement())
+  missionAssignmentId Int      @unique @map("mission_assignment_id")
+  rating              Int
+  comment             String?  @db.Text
+  createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  // Relations
+  missionAssignment MissionAssignment @relation(fields: [missionAssignmentId], references: [id], onDelete: Cascade)
+  adminLogs         AdminLog[]        @relation("AdminLog_TargetReview")
+
+  @@index([missionAssignmentId])
+  @@index([rating])
+  @@map("reviews")
+}
+
+// ============================================
+// PAYMENTS
+// ============================================
+
+model Payment {
+  id                  Int           @id @default(autoincrement())
+  missionAssignmentId Int           @map("mission_assignment_id")
+  institutionId       Int           @map("institution_id")
+  workerId            Int           @map("worker_id")
+  amountTotal         Float         @map("amount_total") @db.DoublePrecision
+  platformFee         Float         @map("platform_fee") @db.DoublePrecision
+  workerAmount        Float         @map("worker_amount") @db.DoublePrecision
+  status              PaymentStatus @default(PENDING)
+  paidAt              DateTime?     @map("paid_at") @db.Timestamptz
+  createdAt           DateTime      @default(now()) @map("created_at") @db.Timestamptz
+
+  // Relations
+  missionAssignment MissionAssignment @relation(fields: [missionAssignmentId], references: [id], onDelete: Cascade)
+  institution       Institution       @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+
+  @@index([missionAssignmentId])
+  @@index([institutionId])
+  @@index([status])
+  @@map("payments")
+}
+
+// ============================================
+// NOTIFICATIONS
+// ============================================
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  type      String   @db.VarChar(100)
+  message   String   @db.Text
+  isRead    Boolean  @default(false) @map("is_read")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+  @@index([createdAt])
+  @@map("notifications")
+}
+
+// ============================================
+// ADMIN LOGS
+// ============================================
+
+model AdminLog {
+  id               Int      @id @default(autoincrement())
+  adminId          Int      @map("admin_id")
+  targetUserId     Int?     @map("target_user_id")
+  targetDocumentId Int?     @map("target_document_id")
+  targetReviewId   Int?     @map("target_review_id")
+  targetMissionId  Int?     @map("target_mission_id")
+  actionType       String   @map("action_type") @db.VarChar(100)
+  reason           String?  @db.Text
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  // Relations
+  admin          User            @relation("AdminLog_Admin", fields: [adminId], references: [id], onDelete: Cascade)
+  targetUser     User?           @relation("AdminLog_TargetUser", fields: [targetUserId], references: [id], onDelete: SetNull)
+  targetDocument WorkerDocument? @relation("AdminLog_TargetDocument", fields: [targetDocumentId], references: [id], onDelete: SetNull)
+  targetReview   Review?         @relation("AdminLog_TargetReview", fields: [targetReviewId], references: [id], onDelete: SetNull)
+  targetMission  Mission?        @relation("AdminLog_TargetMission", fields: [targetMissionId], references: [id], onDelete: SetNull)
+
+  @@index([adminId])
+  @@index([targetUserId])
+  @@index([targetDocumentId])
+  @@index([targetReviewId])
+  @@index([targetMissionId])
+  @@index([actionType])
+  @@index([createdAt])
+  @@map("admin_logs")
 }
