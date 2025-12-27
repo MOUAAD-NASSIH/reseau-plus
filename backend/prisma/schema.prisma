@@ -76,12 +76,15 @@ model Role {
 }
 
 model User {
-  id        Int        @id @default(autoincrement())
-  email     String     @unique @db.VarChar(255)
-  password  String     @db.VarChar(255)
-  roleId    Int        @map("role_id")
-  status    UserStatus @default(ACTIVE)
-  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamptz
+  id                   Int        @id @default(autoincrement())
+  email                String     @unique @db.VarChar(255)
+  password             String     @db.VarChar(255)
+  roleId               Int        @map("role_id")
+  status               UserStatus @default(ACTIVE)
+  verificationToken    String?    @map("verification_token")
+  passwordResetToken   String?    @map("password_reset_token")
+  passwordResetExpires DateTime?  @map("password_reset_expires") @db.Timestamptz
+  createdAt            DateTime   @default(now()) @map("created_at") @db.Timestamptz
 
   // Relations
   role              Role           @relation(fields: [roleId], references: [id], onDelete: Restrict)
