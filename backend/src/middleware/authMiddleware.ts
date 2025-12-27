@@ -19,35 +19,40 @@ export const protect = asyncHandler(async (req: Request, res: Response, next: Ne
         throw new Error("Not authorized, no token");
     }
 
-    // Verify token
-    const decoded = verifyToken(token);
-    if (!decoded || !decoded.id || !decoded.role) {
+    try {
+        // Verify token
+        const decoded = verifyToken(token);
+        if (!decoded || !decoded.id || !decoded.role) {
+            res.status(401);
+            throw new Error("Invalid or expired token");
+        }
+
+        // fetch user and attach profile
+        const user = await getUserById(Number(decoded.id));
+        if (!user) {
+            res.status(401);
+            throw new Error("User not found");
+        }
+
+        // attach more detailed profile based on role
+        let fullProfile: any = user;
+        const roleName = (decoded.role || user.role?.name)?.toString();
+
+        if (roleName === "worker") {
+            const worker = await getWorkerByUserId(user.id);
+            fullProfile = worker || user;
+        } else if (roleName === "institution") {
+            const institution = await getInstitutionByUserId(user.id);
+            fullProfile = institution || user;
+        }
+
+        // attach to req
+        (req as AuthenticatedRequest).user = fullProfile;
+        next();
+    } catch (error) {
         res.status(401);
-        throw new Error("Invalid or expired token");
+        throw new Error("Not authorized, token failed");
     }
-
-    // fetch user and attach profile
-    const user = await getUserById(Number(decoded.id));
-    if (!user) {
-        res.status(401);
-        throw new Error("User not found");
-    }
-
-    // attach more detailed profile based on role
-    let fullProfile: any = user;
-    const roleName = (decoded.role || user.role?.name)?.toString();
-
-    if (roleName === "worker") {
-        const worker = await getWorkerByUserId(user.id);
-        fullProfile = worker || user;
-    } else if (roleName === "institution") {
-        const institution = await getInstitutionByUserId(user.id);
-        fullProfile = institution || user;
-    }
-
-    // attach to req
-    (req as AuthenticatedRequest).user = fullProfile;
-    next();
 });
 
 // role-based authorization

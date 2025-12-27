@@ -6,6 +6,7 @@ import type {
     RegisterWorkerRequest,
     RegisterInstitutionRequest,
     AuthResponse,
+    MeResponse,
 } from "@/types/authTypes";
 
 // -------------------- INITIAL STATE --------------------
@@ -27,11 +28,11 @@ const initialState: AuthState = {
 // Worker Register
 export const registerWorker = createAsyncThunk<
     AuthResponse,
-    RegisterWorkerRequest,
+    { data: RegisterWorkerRequest; files?: File[] },
     { rejectValue: string }
->("auth/registerWorker", async (data, thunkAPI) => {
+>("auth/registerWorker", async ({ data, files }, thunkAPI) => {
     try {
-        return await authService.registerWorker(data);
+        return await authService.registerWorker(data, files);
     } catch (error) {
         return thunkAPI.rejectWithValue((error as Error).message);
     }
@@ -65,7 +66,7 @@ export const login = createAsyncThunk<
 
 // Get Current User
 export const getMe = createAsyncThunk<
-    AuthResponse,
+    MeResponse,
     void,
     { rejectValue: string }
 >("auth/getMe", async (_, thunkAPI) => {
@@ -95,9 +96,8 @@ export const authSlice = createSlice({
                 state.isLoading = true;
                 state.error = null;
             })
-            .addCase(registerWorker.fulfilled, (state, action) => {
+            .addCase(registerWorker.fulfilled, (state) => {
                 state.isLoading = false;
-                state.user = action.payload.user;
             })
             .addCase(registerWorker.rejected, (state, action) => {
                 state.isLoading = false;
@@ -109,9 +109,8 @@ export const authSlice = createSlice({
                 state.isLoading = true;
                 state.error = null;
             })
-            .addCase(registerInstitution.fulfilled, (state, action) => {
+            .addCase(registerInstitution.fulfilled, (state) => {
                 state.isLoading = false;
-                state.user = action.payload.user;
             })
             .addCase(registerInstitution.rejected, (state, action) => {
                 state.isLoading = false;
@@ -125,7 +124,6 @@ export const authSlice = createSlice({
             })
             .addCase(login.fulfilled, (state, action) => {
                 state.isLoading = false;
-                state.user = action.payload.user;
                 state.isAuthenticated = true;
                 localStorage.setItem("auth_token", action.payload.token);
             })

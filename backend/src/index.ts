@@ -17,8 +17,8 @@ app.use(express.urlencoded({ extended: true }));
 // routes
 app.use("/api/auth", authRoutes)
 
-app.get('/api', (req: Request, res: Response) => {
-    res.send('Hello from Express with TypeScript!');
+app.get('/api/health', (req: Request, res: Response) => {
+    res.send('Server is running');
 });
 
 app.use(errorHandler);

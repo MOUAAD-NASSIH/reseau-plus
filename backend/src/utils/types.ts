@@ -5,27 +5,37 @@ export interface User {
     email: string;
     password: string;
     role: roleType;
+    status?: 'ACTIVE' | 'SUSPENDED' | 'BANNED';
     createdAt?: Date;
 }
 
-export interface Worker extends User {
+export interface Worker {
     id?: number;
     userId: number;
     firstName: string;
     lastName: string;
-    speciality: string;
-    experienceYears: number;
-    bio?: string;
-    location?: string;
-    isApproved?: boolean;
+    specialityId?: number | null;
+    experienceYears?: number | null;
+    bio?: string | null;
+    city?: string | null;
+    zipCode?: string | null;
+    latitude?: number | null;
+    longitude?: number | null;
+    status?: 'PENDING' | 'VERIFIED' | 'REJECTED';
+    rejectionReason?: string | null;
+    birthDate?: Date | null;
+    gender?: string | null;
     createdAt?: Date;
 }
 
-export interface Institution extends User {
+export interface Institution {
     id?: number;
     userId: number;
     institutionName: string;
-    address: string;
+    address?: string | null;
+    city?: string | null;
+    latitude?: number | null;
+    longitude?: number | null;
     createdAt?: Date;
 }
 

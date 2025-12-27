@@ -1,43 +1,124 @@
-export type UserRole = "ADMIN" | "WORKER" | "INSTITUTION";
+// ============================================
+// ENUMS
+// ============================================
+
+export type UserRole = 'admin' | 'worker' | 'institution';
+export type UserStatus = 'ACTIVE' | 'SUSPENDED' | 'BANNED';
+export type WorkerStatus = 'PENDING' | 'VERIFIED' | 'REJECTED';
+export type DocumentStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+
+// ============================================
+// BASE MODELS
+// ============================================
 
 export interface Role {
-  id: number;
-  name: UserRole;
-  description?: string;
+    id: number;
+    name: UserRole;
+    description?: string | null;
 }
 
-// base user
+// Base User
 export interface User {
-  id: number;
-  email: string;
-  role: Role;
-  status: "PENDING" | "ACTIVE" | "SUSPENDED";
-  created_at: string;
+    id: number;
+    email: string;
+    role: Role;
+    status: UserStatus;
+    createdAt: string;
 }
 
 // Worker Profile
-export interface Worker extends User {
-  first_name: string;
-  last_name: string;
-  speciality: string;
-  experience_years?: number;
-  bio?: string;
-  location?: string;
-  is_approved: boolean;
+export interface Worker {
+    id: number;
+    userId: number;
+    firstName: string;
+    lastName: string;
+    specialityId?: number | null;
+    experienceYears?: number | null;
+    bio?: string | null;
+    city?: string | null;
+    zipCode?: string | null;
+    latitude?: number | null;
+    longitude?: number | null;
+    status: WorkerStatus;
+    rejectionReason?: string | null;
+    birthDate?: string | null;
+    gender?: string | null;
+    createdAt: string;
+    // Relations
+    user?: User;
+    speciality?: Speciality | null;
+    documents?: WorkerDocument[];
+    experiences?: WorkerExperience[];
+    domains?: WorkerDomain[];
 }
 
 // Institution Profile
-export interface Institution extends User {
-  institution_name: string;
-  address: string;
+export interface Institution {
+    id: number;
+    userId: number;
+    institutionName: string;
+    address?: string | null;
+    city?: string | null;
+    latitude?: number | null;
+    longitude?: number | null;
+    createdAt: string;
+    // Relations
+    user?: User;
 }
 
 // Admin Profile
-export interface Admin extends User {}
+export type Admin = User;
 
-// --------------------
-// API REQUEST TYPES
-// --------------------
+// ============================================
+// RELATED MODELS
+// ============================================
+
+export interface Speciality {
+    id: number;
+    name: string;
+    description?: string | null;
+}
+
+export interface Domain {
+    id: number;
+    name: string;
+    description?: string | null;
+}
+
+export interface WorkerDocument {
+    id: number;
+    workerId: number;
+    type: string; // DIPLOMA, CV, ID, OTHER
+    fileUrl: string;
+    status: DocumentStatus;
+    adminComment?: string | null;
+    uploadedAt: string;
+    reviewedAt?: string | null;
+}
+
+export interface WorkerExperience {
+    id: number;
+    workerId: number;
+    jobTitle: string;
+    organization: string;
+    startDate: string;
+    endDate?: string | null;
+    description?: string | null;
+    createdAt: string;
+}
+
+export interface WorkerDomain {
+    id: number;
+    workerId: number;
+    domainId: number;
+    createdAt: string;
+    // Relations
+    domain?: Domain;
+}
+
+// ============================================
+// API REQUEST DTOs
+// ============================================
 
 export interface LoginRequest {
   email: string;
@@ -45,32 +126,81 @@ export interface LoginRequest {
 }
 
 export interface RegisterWorkerRequest {
-  email: string;
-  password: string;
-  first_name: string;
-  last_name: string;
-  bio?: string;
-  speciality: string;
-  experience_years: number;
-  location: string;
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    specialityId?: number;
+    domainIds?: number[];
+    experiences?: WorkerExperienceInput[];
+    experienceYears?: number;
+    bio?: string;
+    city?: string;
+    zipCode?: string;
+    latitude?: number;
+    longitude?: number;
+    birthDate?: string;
+    gender?: string;
+    // Note: File uploads handled separately via FormData
 }
 
 export interface RegisterInstitutionRequest {
-  email: string;
-  password: string;
-  institution_name: string;
-  address: string;
+    email: string;
+    password: string;
+    institutionName: string;
+    address?: string;
+    city?: string;
+    latitude?: number;
+    longitude?: number;
 }
 
-// --------------------
-// API RESPONSE TYPES
-// --------------------
+// Worker experience for registration
+export interface WorkerExperienceInput {
+    jobTitle: string;
+    organization: string;
+    startDate: string;
+    endDate?: string | null;
+    description?: string;
+}
 
+
+// ============================================
+// API RESPONSE DTOs
+// ============================================
+
+// Auth response (login, register)
 export interface AuthResponse {
-  token: string;
-  message: string;
-  user: Worker | Institution | Admin;
+    message: string;
+    token: string;
+    user: {
+        id: number;
+        email: string;
+        role: UserRole;
+        createdAt: string;
+    };
 }
 
-// Unified type for the state
+// Full profile response (from /auth/me endpoint)
+export interface MeResponse {
+    message: string;
+    user: AuthenticatedUser;
+}
+
+
+// ============================================
+// UTILITY TYPES
+// ============================================
+
+// Unified type for authenticated user state
 export type AuthenticatedUser = Worker | Institution | Admin;
+
+// Type guards
+export function isWorker(user: AuthenticatedUser): user is Worker {
+    return 'firstName' in user && 'lastName' in user;
+}
+export function isInstitution(user: AuthenticatedUser): user is Institution {
+    return 'institutionName' in user;
+}
+export function isAdmin(user: AuthenticatedUser): user is Admin {
+    return !isWorker(user) && !isInstitution(user);
+}
