@@ -1,14 +1,19 @@
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
+
+import { ThemeToggle } from "./components/common/ThemeToggle";
 
 const App = () => {
   return (
     <div className="flex flex-col justify-center items-center gap-2">
-      <div className="text-red-500 text-3xl font-bold">App</div>
+      <div className="text-primary dark:text-primary  bg-background dark:bg-dark-background  text-3xl font-bold">
+        App
+      </div>
+      <ThemeToggle />
       <Button size="lg" variant="destructive" className="cursor-pointer">
         Click me
       </Button>
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
