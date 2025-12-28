@@ -56,14 +56,15 @@ export const protect = asyncHandler(async (req: Request, res: Response, next: Ne
 });
 
 // role-based authorization
-export const authorizeRoles = (...allowedRoles: string[]) => {
+export const authorizeRoles = (allowedRoles: string[]) => {
     return (req: Request, res: Response, next: NextFunction) => {
         const authReq = req as AuthenticatedRequest;
-        const role = (authReq.user as any)?.user?.role?.name || (authReq.user as any)?.role || null;
+        const user = authReq.user as any;
+        const userRole = user?.role?.name || user?.user?.role?.name;
 
-        if (!role || !allowedRoles.includes(role.toString())) {
+        if (!userRole || !allowedRoles.includes(userRole)) {
             res.status(403);
-            throw new Error("Forbidden: insufficient privileges");
+            throw new Error("Not authorized to access this route");
         }
         next();
     };
