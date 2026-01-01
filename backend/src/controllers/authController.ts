@@ -1,53 +1,82 @@
+/**
+ * Authentication Controller
+ */
+
 import asyncHandler from "express-async-handler";
-import bcrypt from "bcryptjs";
-import crypto from "crypto";
 import { Request, Response } from "express";
-import { generateToken } from "../utils/helpers";
-import { createWorkerUser, createInstitutionUser } from "../services/authServices";
-import { getUserByEmail } from "../services/userService";
-import { sendVerificationEmail, sendPasswordResetEmail } from "../services/emailService";
-import { Institution, User, Worker } from "../utils/types";
 import { prisma } from "../lib/prisma";
+import {
+    getUserByEmail,
+    hashPassword,
+    comparePassword,
+    generateToken,
+    generateSecureToken,
+    verifyEmailToken,
+    generatePasswordResetToken,
+    resetPasswordWithToken,
+    createWorkerUser,
+    createInstitutionUser
+} from "../services/authServices";
+import { sendVerificationEmail, sendPasswordResetEmail } from "../services/emailService";
+import { RoleType } from "../types/auth.types";
 
 export interface AuthenticatedRequest extends Request {
-    user: User | Worker | Institution;
+    user?: any;
 }
 
+/**
+ * Login user
+ * POST /api/auth/login
+ */
 const login = asyncHandler(async (req: Request, res: Response) => {
     const { email, password } = req.body;
-    if (!email || !password) {
-        res.status(400);
-        throw new Error("Please provide all fields!");
-    }
 
-    // check if user exists
     const user = await getUserByEmail(email);
     if (!user) {
-        res.status(401);
-        throw new Error("user not found!");
+        res.status(401).json({
+            success: false,
+            message: "Invalid credentials"
+        });
+        return;
     }
 
-    // check if password is correct
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
-    if (!isPasswordCorrect) {
-        res.status(401);
-        throw new Error("Invalid credentials!");
+    const isPasswordValid = await comparePassword(password, user.password);
+    if (!isPasswordValid) {
+        res.status(401).json({
+            success: false,
+            message: "Invalid credentials"
+        });
+        return;
     }
 
-    const roleName = user.role.name as 'admin' | 'worker' | 'institution';
+    const roleName = user.role.name as RoleType;
+    const token = generateToken({
+        userId: user.id,
+        email: user.email,
+        role: roleName
+    });
 
     res.status(200).json({
-        message: "user logged in successfully!",
-        user: {
-            id: user.id,
-            email: user.email,
-            role: roleName,
-            createdAt: user.createdAt,
-        },
-        token: generateToken(user.id, roleName),
+        success: true,
+        message: "Login successful",
+        data: {
+            user: {
+                id: user.id,
+                email: user.email,
+                role: roleName,
+                status: user.status,
+                createdAt: user.createdAt
+            },
+            token
+        }
     });
 });
 
+
+/**
+ * Register worker
+ * POST /api/auth/register/worker
+ */
 const registerWorker = asyncHandler(async (req: Request, res: Response) => {
     const {
         email, password, firstName, lastName,
@@ -56,23 +85,30 @@ const registerWorker = asyncHandler(async (req: Request, res: Response) => {
         zipCode, latitude, longitude, birthDate, gender
     } = req.body;
     const files = req.files as Express.Multer.File[];
-
-    // Validate required fields
-    if (!email || !password || !firstName || !lastName) {
-        res.status(400);
-        throw new Error("Please provide all required fields!");
+    if (!files || files.length === 0) {
+        res.status(400).json({
+            success: false,
+            error: "VALIDATION_ERROR",
+            message: "Validation failed",
+            details: [{ field: "files", message: "files is required" }]
+        });
+        return;
     }
 
     // Check if user exists
     const existingUser = await getUserByEmail(email);
     if (existingUser) {
-        res.status(409);
-        throw new Error("User already exists!");
+        res.status(409).json({
+            success: false,
+            error: "VALIDATION_ERROR",
+            message: "Validation failed",
+            details: [{ field: "body.email", message: "User with this email already exists" }]
+        });
+        return;
     }
 
     // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await hashPassword(password);
 
     // Parse domainIds
     const parsedDomainIds = domainIds ? JSON.parse(domainIds) : [];
@@ -102,14 +138,13 @@ const registerWorker = asyncHandler(async (req: Request, res: Response) => {
                 birthDate: birthDate ? new Date(birthDate) : null,
                 gender: gender || null,
             },
-            parsedDomainIds, // Pass domain IDs to service
-            parsedExperiences // Pass experiences to service
+            parsedDomainIds,
+            parsedExperiences
         );
 
-        // Handle File Uploads - extract type from field name
+        // Handle File Uploads
         if (files && files.length > 0) {
             const documentPromises = files.map((file) => {
-                // Extract type from fieldname: 'document_DIPLOMA' → 'DIPLOMA'
                 const docType = file.fieldname.startsWith('document_')
                     ? file.fieldname.replace('document_', '').toUpperCase()
                     : 'OTHER';
@@ -127,55 +162,74 @@ const registerWorker = asyncHandler(async (req: Request, res: Response) => {
             await Promise.all(documentPromises);
         }
 
-        // Send Verification Email
-        const verificationToken = crypto.randomBytes(32).toString("hex");
-        const hashedToken = crypto.createHash("sha256").update(verificationToken).digest("hex");
-
-        // Save token to user
+        // Generate and save verification token
+        const { token: verificationToken, hashedToken } = generateSecureToken();
         await prisma.user.update({
             where: { id: user.id },
             data: { verificationToken: hashedToken }
         });
 
+        // Send verification email
         await sendVerificationEmail(user.email, verificationToken);
 
+        // Generate JWT token
+        const token = generateToken({
+            userId: user.id,
+            email: user.email,
+            role: 'worker'
+        });
+
         res.status(201).json({
+            success: true,
             message: "Worker registered successfully! Please verify your email.",
-            user: {
-                id: user.id,
-                email: user.email,
-                role: 'worker',
-                createdAt: user.createdAt,
-            },
+            data: {
+                user: {
+                    id: user.id,
+                    email: user.email,
+                    role: 'worker',
+                    createdAt: user.createdAt
+                },
+                worker: {
+                    id: worker.id,
+                    firstName: worker.firstName,
+                    lastName: worker.lastName,
+                    status: worker.status
+                },
+                token
+            }
         });
     } catch (error) {
-        console.error(error);
-        res.status(400);
-        throw new Error("Invalid user data or file upload failed");
+        console.error("Worker registration error:", error);
+        res.status(400).json({
+            success: false,
+            message: "Registration failed. Please check your data and try again."
+        });
     }
 });
 
+
+/**
+ * Register institution
+ * POST /api/auth/register/institution
+ */
 const registerInstitution = asyncHandler(async (req: Request, res: Response) => {
     const { email, password, institutionName, address, city, latitude, longitude } = req.body;
-
-    if (!email || !password || !institutionName) {
-        res.status(400);
-        throw new Error("Please provide all required fields!");
-    }
 
     // Check if user exists
     const existingUser = await getUserByEmail(email);
     if (existingUser) {
-        res.status(409);
-        throw new Error("User already exists!");
+        res.status(409).json({
+            success: false,
+            message: "User with this email already exists"
+        });
+        return;
     }
 
     // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await hashPassword(password);
 
     try {
-        const { user } = await createInstitutionUser(
+        const { user, institution } = await createInstitutionUser(
             { email, password: hashedPassword },
             {
                 institutionName,
@@ -186,142 +240,155 @@ const registerInstitution = asyncHandler(async (req: Request, res: Response) => 
             }
         );
 
-        // Send Verification Email
-        const verificationToken = crypto.randomBytes(32).toString("hex");
-        const hashedToken = crypto.createHash("sha256").update(verificationToken).digest("hex");
-
+        // Generate and save verification token
+        const { token: verificationToken, hashedToken } = generateSecureToken();
         await prisma.user.update({
             where: { id: user.id },
             data: { verificationToken: hashedToken }
         });
 
+        // Send verification email
         await sendVerificationEmail(user.email, verificationToken);
 
+        // Generate JWT token
+        const token = generateToken({
+            userId: user.id,
+            email: user.email,
+            role: 'institution'
+        });
+
         res.status(201).json({
+            success: true,
             message: "Institution registered successfully! Please verify your email.",
-            user: {
-                id: user.id,
-                email: user.email,
-                role: 'institution',
-                createdAt: user.createdAt,
-            },
+            data: {
+                user: {
+                    id: user.id,
+                    email: user.email,
+                    role: 'institution',
+                    createdAt: user.createdAt
+                },
+                institution: {
+                    id: institution.id,
+                    institutionName: institution.institutionName
+                },
+                token
+            }
         });
     } catch (error) {
-        res.status(400);
-        throw new Error("Invalid user data");
+        console.error("Institution registration error:", error);
+        res.status(400).json({
+            success: false,
+            message: "Registration failed. Please check your data and try again."
+        });
     }
 });
 
+/**
+ * Verify email
+ * GET /api/auth/verify-email?token=xxx
+ */
 const verifyEmail = asyncHandler(async (req: Request, res: Response) => {
-    const { token } = req.query;
+    const token = req.query.token as string;
 
-    if (!token) {
-        res.status(400);
-        throw new Error("Missing verification token");
+    const verified = await verifyEmailToken(token);
+
+    if (!verified) {
+        res.status(401).json({
+            success: false,
+            message: "Invalid or expired verification token"
+        });
+        return;
     }
 
-    const hashedToken = crypto.createHash("sha256").update(token as string).digest("hex");
-
-    const user = await prisma.user.findFirst({
-        where: { verificationToken: hashedToken }
+    res.status(200).json({
+        success: true,
+        message: "Email verified successfully"
     });
-
-    if (!user) {
-        res.status(401);
-        throw new Error("Invalid or expired token");
-    }
-
-    await prisma.user.update({
-        where: { id: user.id },
-        data: {
-            verificationToken: null,
-            status: 'ACTIVE'
-        }
-    });
-
-    res.status(200).json({ message: "Email verified successfully" });
 });
 
+
+/**
+ * Forgot password - request reset
+ * POST /api/auth/forgot-password
+ */
 const forgotPassword = asyncHandler(async (req: Request, res: Response) => {
     const { email } = req.body;
-    const user = await getUserByEmail(email);
 
-    if (!user) {
-        res.status(404);
-        throw new Error("User not found");
+    const result = await generatePasswordResetToken(email);
+
+    if (!result) {
+        // Don't reveal if user exists or not for security
+        res.status(200).json({
+            success: true,
+            message: "If an account with that email exists, a password reset link has been sent"
+        });
+        return;
     }
-
-    const resetToken = crypto.randomBytes(32).toString("hex");
-    const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
-
-    await prisma.user.update({
-        where: { id: user.id },
-        data: {
-            passwordResetToken: hashedToken,
-            passwordResetExpires: new Date(Date.now() + 10 * 60 * 1000) // 10 minutes
-        }
-    });
 
     try {
-        await sendPasswordResetEmail(user.email, resetToken);
-        res.status(200).json({ message: "Password reset email sent" });
+        await sendPasswordResetEmail(result.user.email, result.token);
+        res.status(200).json({
+            success: true,
+            message: "Password reset email sent"
+        });
     } catch (error) {
+        // Clear the reset token on email failure
         await prisma.user.update({
-            where: { id: user.id },
+            where: { id: result.user.id },
             data: { passwordResetToken: null, passwordResetExpires: null }
         });
-        res.status(500);
-        throw new Error("Email sending failed");
+        res.status(500).json({
+            success: false,
+            message: "Failed to send password reset email"
+        });
     }
 });
 
+/**
+ * Reset password with token
+ * POST /api/auth/reset-password?token=xxx
+ */
 const resetPassword = asyncHandler(async (req: Request, res: Response) => {
-    const { token } = req.query;
+    const token = req.query.token as string;
     const { password } = req.body;
 
-    if (!token) {
-        res.status(400);
-        throw new Error("Missing token")
+    const success = await resetPasswordWithToken(token, password);
+
+    if (!success) {
+        res.status(401).json({
+            success: false,
+            message: "Invalid or expired reset token"
+        });
+        return;
     }
 
-    if (!password) {
-        res.status(400);
-        throw new Error("Please provide a new password")
-    }
-
-    const hashedToken = crypto.createHash("sha256").update(token as string).digest("hex");
-
-    const user = await prisma.user.findFirst({
-        where: {
-            passwordResetToken: hashedToken,
-            passwordResetExpires: { gt: new Date() }
-        }
+    res.status(200).json({
+        success: true,
+        message: "Password reset successfully"
     });
-
-    if (!user) {
-        res.status(401);
-        throw new Error("Invalid or expired token");
-    }
-
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    await prisma.user.update({
-        where: { id: user.id },
-        data: {
-            password: hashedPassword,
-            passwordResetToken: null,
-            passwordResetExpires: null
-        }
-    });
-
-    res.status(200).json({ message: "Password reset successfully" });
 });
 
+/**
+ * Get current user
+ * GET /api/auth/me
+ */
 const getMe = asyncHandler(async (req: Request, res: Response) => {
+    const authReq = req as AuthenticatedRequest;
+
+    if (!authReq.user) {
+        res.status(401).json({
+            success: false,
+            message: "Not authenticated"
+        });
+        return;
+    }
+
     res.status(200).json({
-        message: "authenticated successfully!",
-        user: (req as AuthenticatedRequest).user || null,
+        success: true,
+        message: "User retrieved successfully",
+        data: {
+            user: authReq.user
+        }
     });
 });
 
@@ -329,8 +396,8 @@ export {
     login,
     registerWorker,
     registerInstitution,
-    getMe,
     verifyEmail,
     forgotPassword,
-    resetPassword
-}
+    resetPassword,
+    getMe
+};

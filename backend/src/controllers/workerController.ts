@@ -1,29 +1,118 @@
+/**
+ * Worker Controller
+ */
+
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import { prisma } from "../lib/prisma";
 import * as workerService from "../services/workerService";
-import { AuthenticatedRequest } from "./authController";
+import { AuthenticatedRequest } from "../middleware/authMiddleware";
+import { WorkerFilters } from "../types/worker.types";
 
-export const getMyProfile = asyncHandler(async (req: Request, res: Response) => {
-    const worker = (req as AuthenticatedRequest).user as any;
-    if (!worker) {
-        res.status(404);
-        throw new Error("Worker profile not found");
-    }
-    res.json(worker);
+/**
+ * Get all workers (admin only)
+ * GET /api/workers
+ */
+export const getWorkers = asyncHandler(async (req: Request, res: Response) => {
+    const {
+        status,
+        specialityId,
+        city,
+        domainId,
+        minExperience,
+        maxExperience,
+        page = 1,
+        limit = 10
+    } = req.query;
+
+    const filters: WorkerFilters = {};
+    if (status) filters.status = status as any;
+    if (specialityId) filters.specialityId = Number(specialityId);
+    if (city) filters.city = city as string;
+    if (domainId) filters.domainId = Number(domainId);
+    if (minExperience) filters.minExperience = Number(minExperience);
+    if (maxExperience) filters.maxExperience = Number(maxExperience);
+
+    const result = await workerService.findAll(filters, Number(page), Number(limit));
+
+    res.json({
+        success: true,
+        data: result.workers,
+        pagination: result.pagination
+    });
 });
 
+/**
+ * Get current worker profile
+ * GET /api/workers/me
+ */
+export const getCurrentWorker = asyncHandler(async (req: Request, res: Response) => {
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.user?.userId;
+
+    if (!userId) {
+        res.status(401).json({
+            success: false,
+            message: "Not authorized"
+        });
+        return;
+    }
+
+    const worker = await workerService.findByUserId(userId);
+
+    if (!worker) {
+        res.status(404).json({
+            success: false,
+            message: "Worker profile not found"
+        });
+        return;
+    }
+
+    res.json({
+        success: true,
+        data: worker
+    });
+});
+
+/**
+ * Get worker by ID (public)
+ * GET /api/workers/:id
+ */
 export const getWorkerById = asyncHandler(async (req: Request, res: Response) => {
-    const id = parseInt(req.params.id);
-    const worker = await workerService.getWorkerById(id);
+    const id = Number(req.params.id);
+
+    const worker = await workerService.findById(id);
+
     if (!worker) {
-        res.status(404);
-        throw new Error("Worker not found");
+        res.status(404).json({
+            success: false,
+            message: "Worker not found"
+        });
+        return;
     }
-    res.json(worker);
+
+    res.json({
+        success: true,
+        data: worker
+    });
 });
 
-export const updateMyProfile = asyncHandler(async (req: Request, res: Response) => {
+/**
+ * Update current worker profile
+ * PUT /api/workers/me
+ */
+export const updateWorker = asyncHandler(async (req: Request, res: Response) => {
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.user?.userId;
+
+    if (!userId) {
+        res.status(401).json({
+            success: false,
+            message: "Not authorized"
+        });
+        return;
+    }
+
     const {
         firstName,
         lastName,
@@ -38,172 +127,546 @@ export const updateMyProfile = asyncHandler(async (req: Request, res: Response) 
         gender
     } = req.body;
 
-    const userId = ((req as AuthenticatedRequest).user as any).userId;
-    const worker = await workerService.updateWorkerProfile(userId, {
+    const worker = await workerService.updateByUserId(userId, {
         firstName,
         lastName,
-        specialityId: specialityId ? Number(specialityId) : null,
-        experienceYears: experienceYears ? Number(experienceYears) : null,
+        specialityId: specialityId !== undefined ? (specialityId === null ? null : Number(specialityId)) : undefined,
+        experienceYears: experienceYears !== undefined ? (experienceYears === null ? null : Number(experienceYears)) : undefined,
         bio,
         city,
         zipCode,
-        latitude: latitude ? Number(latitude) : undefined,
-        longitude: longitude ? Number(longitude) : undefined,
-        birthDate: birthDate ? new Date(birthDate) : undefined,
+        latitude: latitude !== undefined ? (latitude === null ? null : Number(latitude)) : undefined,
+        longitude: longitude !== undefined ? (longitude === null ? null : Number(longitude)) : undefined,
+        birthDate: birthDate !== undefined ? (birthDate === null ? null : birthDate) : undefined,
         gender
     });
 
-    res.json(worker);
+    res.json({
+        success: true,
+        data: worker,
+        message: "Profile updated successfully"
+    });
 });
 
-export const updateMyDomains = asyncHandler(async (req: Request, res: Response) => {
-    const { domainIds } = req.body;
-    if (!Array.isArray(domainIds)) {
-        res.status(400);
-        throw new Error("domainIds must be an array");
+/**
+ * Upload document
+ * POST /api/workers/documents
+ */
+export const uploadDocument = asyncHandler(async (req: Request, res: Response) => {
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.user?.userId;
+
+    if (!userId) {
+        res.status(401).json({
+            success: false,
+            message: "Not authorized"
+        });
+        return;
     }
 
-    const userId = ((req as AuthenticatedRequest).user as any).userId;
-    const worker = await workerService.updateWorkerDomains(userId, domainIds);
-    res.json(worker);
-});
-
-export const getMyDocuments = asyncHandler(async (req: Request, res: Response) => {
-    const userId = ((req as AuthenticatedRequest).user as any).userId;
-    const documents = await workerService.getWorkerDocuments(userId);
-    res.json(documents);
-});
-
-export const uploadDocument = asyncHandler(async (req: Request, res: Response) => {
     const file = req.file as Express.Multer.File;
+    if (!file) {
+        res.status(400).json({
+            success: false,
+            error: "VALIDATION_ERROR",
+            message: "Validation failed",
+            details: [{ field: "file", message: "file is required" }]
+        });
+        return;
+    }
+
     const { type } = req.body;
 
-    if (!file) {
-        res.status(400);
-        throw new Error("No file uploaded");
-    }
-
-    if (!type) {
-        res.status(400);
-        throw new Error("Document type is required");
-    }
-
-    const userId = ((req as AuthenticatedRequest).user as any).userId;
     const worker = await prisma.worker.findUnique({ where: { userId } });
     if (!worker) {
-        res.status(404);
-        throw new Error("Worker not found");
+        res.status(404).json({
+            success: false,
+            message: "Worker not found"
+        });
+        return;
     }
 
-    const document = await prisma.workerDocument.create({
-        data: {
-            workerId: worker.id,
-            type: type.toUpperCase(),
-            fileUrl: file.path,
-            status: 'PENDING'
+    const document = await workerService.uploadDocument(worker.id, file, type);
+
+    res.status(201).json({
+        success: true,
+        data: document,
+        message: "Document uploaded successfully"
+    });
+});
+
+/**
+ * Get worker documents
+ * GET /api/workers/documents
+ */
+export const getDocuments = asyncHandler(async (req: Request, res: Response) => {
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.user?.userId;
+
+    if (!userId) {
+        res.status(401).json({
+            success: false,
+            message: "Not authorized"
+        });
+        return;
+    }
+
+    const worker = await prisma.worker.findUnique({ where: { userId } });
+    if (!worker) {
+        res.status(404).json({
+            success: false,
+            message: "Worker not found"
+        });
+        return;
+    }
+
+    const documents = await workerService.getDocuments(worker.id);
+
+    res.json({
+        success: true,
+        data: documents
+    });
+});
+
+/**
+ * Add experience
+ * POST /api/workers/experiences
+ */
+export const addExperience = asyncHandler(async (req: Request, res: Response) => {
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.user?.userId;
+
+    if (!userId) {
+        res.status(401).json({
+            success: false,
+            message: "Not authorized"
+        });
+        return;
+    }
+
+    const worker = await prisma.worker.findUnique({ where: { userId } });
+    if (!worker) {
+        res.status(404).json({
+            success: false,
+            message: "Worker not found"
+        });
+        return;
+    }
+
+    const { jobTitle, organization, startDate, endDate, description } = req.body;
+
+    const experience = await workerService.addExperience(worker.id, {
+        jobTitle,
+        organization,
+        startDate,
+        endDate,
+        description
+    });
+
+    res.status(201).json({
+        success: true,
+        data: experience,
+        message: "Experience added successfully"
+    });
+});
+
+/**
+ * Update experience
+ * PUT /api/workers/experiences/:id
+ */
+export const updateExperience = asyncHandler(async (req: Request, res: Response) => {
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.user?.userId;
+    const experienceId = Number(req.params.id);
+
+    if (!userId) {
+        res.status(401).json({
+            success: false,
+            message: "Not authorized"
+        });
+        return;
+    }
+
+    const worker = await prisma.worker.findUnique({ where: { userId } });
+    if (!worker) {
+        res.status(404).json({
+            success: false,
+            message: "Worker not found"
+        });
+        return;
+    }
+
+    const { jobTitle, organization, startDate, endDate, description } = req.body;
+
+    try {
+        const experience = await workerService.updateExperience(worker.id, experienceId, {
+            jobTitle,
+            organization,
+            startDate,
+            endDate,
+            description
+        });
+
+        res.json({
+            success: true,
+            data: experience,
+            message: "Experience updated successfully"
+        });
+    } catch (error: any) {
+        if (error.message === "Experience not found or unauthorized") {
+            res.status(404).json({
+                success: false,
+                message: error.message
+            });
+            return;
         }
-    });
-
-    res.status(201).json(document);
+        throw error;
+    }
 });
 
-export const deleteDocument = asyncHandler(async (req: Request, res: Response) => {
-    const documentId = parseInt(req.params.id);
-    const userId = ((req as AuthenticatedRequest).user as any).userId;
-    await workerService.deleteWorkerDocument(userId, documentId);
-    res.json({ message: "Document deleted successfully" });
-});
+/**
+ * Delete experience
+ * DELETE /api/workers/experiences/:id
+ */
+export const deleteExperience = asyncHandler(async (req: Request, res: Response) => {
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.user?.userId;
+    const experienceId = Number(req.params.id);
 
-export const getMyAvailabilities = asyncHandler(async (req: Request, res: Response) => {
-    const userId = ((req as AuthenticatedRequest).user as any).userId;
-    const availabilities = await workerService.getWorkerAvailabilities(userId);
-    res.json(availabilities);
-});
-
-export const createAvailability = asyncHandler(async (req: Request, res: Response) => {
-    const { startDate, endDate, isRecurring } = req.body;
-
-    if (!startDate || !endDate) {
-        res.status(400);
-        throw new Error("Start date and end date are required");
+    if (!userId) {
+        res.status(401).json({
+            success: false,
+            message: "Not authorized"
+        });
+        return;
     }
 
-    const userId = ((req as AuthenticatedRequest).user as any).userId;
-    const availability = await workerService.createWorkerAvailability(userId, {
-        startDate: new Date(startDate),
-        endDate: new Date(endDate),
-        isRecurring: isRecurring || false
-    });
+    const worker = await prisma.worker.findUnique({ where: { userId } });
+    if (!worker) {
+        res.status(404).json({
+            success: false,
+            message: "Worker not found"
+        });
+        return;
+    }
 
-    res.status(201).json(availability);
+    try {
+        await workerService.deleteExperience(worker.id, experienceId);
+
+        res.json({
+            success: true,
+            message: "Experience deleted successfully"
+        });
+    } catch (error: any) {
+        if (error.message === "Experience not found or unauthorized") {
+            res.status(404).json({
+                success: false,
+                message: error.message
+            });
+            return;
+        }
+        throw error;
+    }
 });
 
-export const updateAvailability = asyncHandler(async (req: Request, res: Response) => {
-    const availabilityId = parseInt(req.params.id);
+/**
+ * Add availability
+ * POST /api/workers/availabilities
+ */
+export const addAvailability = asyncHandler(async (req: Request, res: Response) => {
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.user?.userId;
+
+    if (!userId) {
+        res.status(401).json({
+            success: false,
+            message: "Not authorized"
+        });
+        return;
+    }
+
+    const worker = await prisma.worker.findUnique({ where: { userId } });
+    if (!worker) {
+        res.status(404).json({
+            success: false,
+            message: "Worker not found"
+        });
+        return;
+    }
+
     const { startDate, endDate, isRecurring } = req.body;
 
-    const userId = ((req as AuthenticatedRequest).user as any).userId;
-    const availability = await workerService.updateWorkerAvailability(userId, availabilityId, {
-        startDate: startDate ? new Date(startDate) : undefined,
-        endDate: endDate ? new Date(endDate) : undefined,
+    const availability = await workerService.addAvailability(worker.id, {
+        startDate,
+        endDate,
         isRecurring
     });
 
-    res.json(availability);
+    res.status(201).json({
+        success: true,
+        data: availability,
+        message: "Availability added successfully"
+    });
 });
 
-export const deleteAvailability = asyncHandler(async (req: Request, res: Response) => {
-    const availabilityId = parseInt(req.params.id);
-    const userId = ((req as AuthenticatedRequest).user as any).userId;
-    await workerService.deleteWorkerAvailability(userId, availabilityId);
-    res.json({ message: "Availability deleted successfully" });
-});
+/**
+ * Update availability
+ * PUT /api/workers/availabilities/:id
+ */
+export const updateAvailability = asyncHandler(async (req: Request, res: Response) => {
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.user?.userId;
+    const availabilityId = Number(req.params.id);
 
-export const getMyExperiences = asyncHandler(async (req: Request, res: Response) => {
-    const userId = ((req as AuthenticatedRequest).user as any).userId;
-    const experiences = await workerService.getWorkerExperiences(userId);
-    res.json(experiences);
-});
-
-export const createExperience = asyncHandler(async (req: Request, res: Response) => {
-    const { jobTitle, organization, startDate, endDate, description } = req.body;
-
-    if (!jobTitle || !organization || !startDate) {
-        res.status(400);
-        throw new Error("Job title, organization, and start date are required");
+    if (!userId) {
+        res.status(401).json({
+            success: false,
+            message: "Not authorized"
+        });
+        return;
     }
 
-    const userId = ((req as AuthenticatedRequest).user as any).userId;
-    const experience = await workerService.createWorkerExperience(userId, {
-        jobTitle,
-        organization,
-        startDate: new Date(startDate),
-        endDate: endDate ? new Date(endDate) : null,
-        description
-    });
+    const worker = await prisma.worker.findUnique({ where: { userId } });
+    if (!worker) {
+        res.status(404).json({
+            success: false,
+            message: "Worker not found"
+        });
+        return;
+    }
 
-    res.status(201).json(experience);
+    const { startDate, endDate, isRecurring } = req.body;
+
+    try {
+        const availability = await workerService.updateAvailability(worker.id, availabilityId, {
+            startDate,
+            endDate,
+            isRecurring
+        });
+
+        res.json({
+            success: true,
+            data: availability,
+            message: "Availability updated successfully"
+        });
+    } catch (error: any) {
+        if (error.message === "Availability not found or unauthorized") {
+            res.status(404).json({
+                success: false,
+                message: error.message
+            });
+            return;
+        }
+        throw error;
+    }
 });
 
-export const updateExperience = asyncHandler(async (req: Request, res: Response) => {
-    const experienceId = parseInt(req.params.id);
-    const { jobTitle, organization, startDate, endDate, description } = req.body;
+/**
+ * Delete availability
+ * DELETE /api/workers/availabilities/:id
+ */
+export const deleteAvailability = asyncHandler(async (req: Request, res: Response) => {
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.user?.userId;
+    const availabilityId = Number(req.params.id);
 
-    const userId = ((req as AuthenticatedRequest).user as any).userId;
-    const experience = await workerService.updateWorkerExperience(userId, experienceId, {
-        jobTitle,
-        organization,
-        startDate: startDate ? new Date(startDate) : undefined,
-        endDate: endDate === null ? null : (endDate ? new Date(endDate) : undefined),
-        description
-    });
+    if (!userId) {
+        res.status(401).json({
+            success: false,
+            message: "Not authorized"
+        });
+        return;
+    }
 
-    res.json(experience);
+    const worker = await prisma.worker.findUnique({ where: { userId } });
+    if (!worker) {
+        res.status(404).json({
+            success: false,
+            message: "Worker not found"
+        });
+        return;
+    }
+
+    try {
+        await workerService.deleteAvailability(worker.id, availabilityId);
+
+        res.json({
+            success: true,
+            message: "Availability deleted successfully"
+        });
+    } catch (error: any) {
+        if (error.message === "Availability not found or unauthorized") {
+            res.status(404).json({
+                success: false,
+                message: error.message
+            });
+            return;
+        }
+        throw error;
+    }
 });
 
-export const deleteExperience = asyncHandler(async (req: Request, res: Response) => {
-    const experienceId = parseInt(req.params.id);
-    const userId = ((req as AuthenticatedRequest).user as any).userId;
-    await workerService.deleteWorkerExperience(userId, experienceId);
-    res.json({ message: "Experience deleted successfully" });
+/**
+ * Add domain
+ * POST /api/workers/domains
+ */
+export const addDomain = asyncHandler(async (req: Request, res: Response) => {
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.user?.userId;
+
+    if (!userId) {
+        res.status(401).json({
+            success: false,
+            message: "Not authorized"
+        });
+        return;
+    }
+
+    const worker = await prisma.worker.findUnique({ where: { userId } });
+    if (!worker) {
+        res.status(404).json({
+            success: false,
+            message: "Worker not found"
+        });
+        return;
+    }
+
+    const { domainId } = req.body;
+
+    try {
+        const workerDomain = await workerService.addDomain(worker.id, Number(domainId));
+
+        res.status(201).json({
+            success: true,
+            data: workerDomain,
+            message: "Domain added successfully"
+        });
+    } catch (error: any) {
+        if (error.message === "Domain not found") {
+            res.status(404).json({
+                success: false,
+                message: error.message
+            });
+            return;
+        }
+        if (error.message === "Domain already associated with worker") {
+            res.status(409).json({
+                success: false,
+                message: error.message
+            });
+            return;
+        }
+        throw error;
+    }
+});
+
+/**
+ * Remove domain
+ * DELETE /api/workers/domains/:id
+ */
+export const removeDomain = asyncHandler(async (req: Request, res: Response) => {
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.user?.userId;
+    const domainId = Number(req.params.id);
+
+    if (!userId) {
+        res.status(401).json({
+            success: false,
+            message: "Not authorized"
+        });
+        return;
+    }
+
+    const worker = await prisma.worker.findUnique({ where: { userId } });
+    if (!worker) {
+        res.status(404).json({
+            success: false,
+            message: "Worker not found"
+        });
+        return;
+    }
+
+    try {
+        await workerService.removeDomain(worker.id, domainId);
+
+        res.json({
+            success: true,
+            message: "Domain removed successfully"
+        });
+    } catch (error: any) {
+        if (error.message === "Domain association not found") {
+            res.status(404).json({
+                success: false,
+                message: error.message
+            });
+            return;
+        }
+        throw error;
+    }
+});
+
+/**
+ * Get worker availabilities
+ * GET /api/workers/availabilities
+ */
+export const getMyAvailabilities = asyncHandler(async (req: Request, res: Response) => {
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.user?.userId;
+
+    if (!userId) {
+        res.status(401).json({
+            success: false,
+            message: "Not authorized"
+        });
+        return;
+    }
+
+    const worker = await prisma.worker.findUnique({ where: { userId } });
+    if (!worker) {
+        res.status(404).json({
+            success: false,
+            message: "Worker not found"
+        });
+        return;
+    }
+
+    const availabilities = await workerService.getAvailabilities(worker.id);
+
+    res.json({
+        success: true,
+        data: availabilities
+    });
+});
+
+/**
+ * Get worker experiences
+ * GET /api/workers/experiences
+ */
+export const getMyExperiences = asyncHandler(async (req: Request, res: Response) => {
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.user?.userId;
+
+    if (!userId) {
+        res.status(401).json({
+            success: false,
+            message: "Not authorized"
+        });
+        return;
+    }
+
+    const worker = await prisma.worker.findUnique({ where: { userId } });
+    if (!worker) {
+        res.status(404).json({
+            success: false,
+            message: "Worker not found"
+        });
+        return;
+    }
+
+    const experiences = await workerService.getExperiences(worker.id);
+
+    res.json({
+        success: true,
+        data: experiences
+    });
 });

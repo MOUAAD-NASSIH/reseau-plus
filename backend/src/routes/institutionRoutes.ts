@@ -1,16 +1,26 @@
+/**
+ * Institution Routes
+ */
+
 import { Router } from "express";
 import { protect, authorizeRoles } from "../middleware/authMiddleware";
 import {
-    getMyProfile,
+    getInstitutions,
+    getCurrentInstitution,
     getInstitutionById,
-    updateMyProfile
+    updateInstitution
 } from "../controllers/institutionController";
 
 const router = Router();
-const institutionOnly = authorizeRoles(['institution']);
 
-router.get("/me", protect, institutionOnly, getMyProfile);
-router.put("/me", protect, institutionOnly, updateMyProfile);
+// Admin routes
+router.get("/", protect, authorizeRoles('admin'), getInstitutions);
+
+// Institution profile routes (protected)
+router.get("/me", protect, authorizeRoles('institution'), getCurrentInstitution);
+router.put("/me", protect, authorizeRoles('institution'), updateInstitution);
+
+// Public routes
 router.get("/:id", getInstitutionById);
 
 export default router;

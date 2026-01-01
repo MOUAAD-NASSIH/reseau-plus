@@ -1,24 +1,40 @@
+/**
+ * Authentication Routes
+ */
+
 import { Router } from "express";
 import { protect } from "../middleware/authMiddleware";
 import upload from "../middleware/uploadMiddleware";
+import { validateRequest } from "../middleware/validateMiddleware";
+import {
+    loginSchema,
+    registerWorkerSchema,
+    registerInstitutionSchema,
+    verifyEmailSchema,
+    requestResetSchema,
+    resetPasswordSchema
+} from "../schemas/authSchemas";
 import {
     login,
     registerWorker,
     registerInstitution,
-    getMe,
     verifyEmail,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    getMe
 } from "../controllers/authController";
 
 const router = Router();
 
-router.post("/register/worker", upload.any(), registerWorker);
-router.post("/register/institution", registerInstitution);
-router.post("/login", login);
-router.get("/verify-email", verifyEmail);
-router.post("/forgot-password", forgotPassword);
-router.post("/reset-password", resetPassword);
+// Public routes
+router.post("/register/worker", upload.any(), validateRequest(registerWorkerSchema), registerWorker);
+router.post("/register/institution", validateRequest(registerInstitutionSchema), registerInstitution);
+router.post("/login", validateRequest(loginSchema), login);
+router.get("/verify-email", validateRequest(verifyEmailSchema), verifyEmail);
+router.post("/forgot-password", validateRequest(requestResetSchema), forgotPassword);
+router.post("/reset-password", validateRequest(resetPasswordSchema), resetPassword);
+
+// Protected routes
 router.get("/me", protect, getMe);
 
 export default router;
