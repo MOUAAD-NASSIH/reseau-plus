@@ -7,7 +7,7 @@ import type {
     RegisterInstitutionRequest,
     AuthResponse,
     MeResponse,
-} from "@/types/authTypes";
+} from "@/types/auth.types";
 import { createWorkerRegistrationFormData } from "@/lib/helpers";
 
 export const authService = {

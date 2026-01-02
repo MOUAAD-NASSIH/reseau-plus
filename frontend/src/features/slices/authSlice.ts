@@ -7,7 +7,7 @@ import type {
     RegisterInstitutionRequest,
     AuthResponse,
     MeResponse,
-} from "@/types/authTypes";
+} from "@/types/auth.types";
 
 // -------------------- INITIAL STATE --------------------
 interface AuthState {
@@ -125,7 +125,7 @@ export const authSlice = createSlice({
             .addCase(login.fulfilled, (state, action) => {
                 state.isLoading = false;
                 state.isAuthenticated = true;
-                localStorage.setItem("auth_token", action.payload.token);
+                localStorage.setItem("auth_token", action.payload.data.token);
             })
             .addCase(login.rejected, (state, action) => {
                 state.isLoading = false;
@@ -139,7 +139,7 @@ export const authSlice = createSlice({
             })
             .addCase(getMe.fulfilled, (state, action) => {
                 state.isLoading = false;
-                state.user = action.payload.user;
+                state.user = action.payload.data.user;
                 state.isAuthenticated = true;
             })
             .addCase(getMe.rejected, (state, action) => {

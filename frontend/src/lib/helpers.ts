@@ -1,4 +1,4 @@
-import type { RegisterWorkerRequest, WorkerExperienceInput } from '@/types/authTypes';
+import type { RegisterWorkerRequest, WorkerExperienceInput } from '@/types/auth.types';
 
 /**
  * Helper to convert RegisterWorkerRequest to FormData for file uploads

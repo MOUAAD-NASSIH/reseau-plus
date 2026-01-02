@@ -116,13 +116,22 @@ export interface WorkerDomain {
     domain?: Domain;
 }
 
+export interface WorkerAvailability {
+    id: number;
+    workerId: number;
+    startDate: string;
+    endDate: string;
+    isRecurring: boolean;
+    createdAt: string;
+}
+
 // ============================================
 // API REQUEST DTOs
 // ============================================
 
 export interface LoginRequest {
-  email: string;
-  password: string;
+    email: string;
+    password: string;
 }
 
 export interface RegisterWorkerRequest {
@@ -170,20 +179,37 @@ export interface WorkerExperienceInput {
 
 // Auth response (login, register)
 export interface AuthResponse {
+    success: boolean;
     message: string;
-    token: string;
-    user: {
-        id: number;
-        email: string;
-        role: UserRole;
-        createdAt: string;
+    data: {
+        user: {
+            id: number;
+            email: string;
+            role: UserRole;
+            status?: UserStatus;
+            createdAt: string;
+        };
+        worker?: {
+            id: number;
+            firstName: string;
+            lastName: string;
+            status: WorkerStatus;
+        };
+        institution?: {
+            id: number;
+            institutionName: string;
+        };
+        token: string;
     };
 }
 
 // Full profile response (from /auth/me endpoint)
 export interface MeResponse {
+    success: boolean;
     message: string;
-    user: AuthenticatedUser;
+    data: {
+        user: AuthenticatedUser;
+    };
 }
 
 
@@ -203,4 +229,96 @@ export function isInstitution(user: AuthenticatedUser): user is Institution {
 }
 export function isAdmin(user: AuthenticatedUser): user is Admin {
     return !isWorker(user) && !isInstitution(user);
+}
+
+// ============================================
+// ENHANCED WORKER TYPES
+// ============================================
+
+export type DocumentType = 'DIPLOMA' | 'CV' | 'ID' | 'OTHER';
+
+/**
+ * Worker profile update input
+ */
+export interface UpdateWorkerInput {
+    firstName?: string;
+    lastName?: string;
+    specialityId?: number | null;
+    experienceYears?: number | null;
+    bio?: string | null;
+    city?: string | null;
+    zipCode?: string | null;
+    latitude?: number | null;
+    longitude?: number | null;
+    birthDate?: string | null;
+    gender?: string | null;
+}
+
+/**
+ * Worker filter options
+ */
+export interface WorkerFilters {
+    status?: WorkerStatus;
+    specialityId?: number;
+    city?: string;
+    domainId?: number;
+    minExperience?: number;
+    maxExperience?: number;
+    page?: number;
+    limit?: number;
+}
+
+/**
+ * Document upload input
+ */
+export interface DocumentUploadInput {
+    type: DocumentType;
+    file: File;
+}
+
+// ============================================
+// ENHANCED INSTITUTION TYPES
+// ============================================
+
+/**
+ * Institution profile update input
+ */
+export interface UpdateInstitutionInput {
+    institutionName?: string;
+    address?: string | null;
+    city?: string | null;
+    latitude?: number | null;
+    longitude?: number | null;
+}
+
+/**
+ * Institution filter options
+ */
+export interface InstitutionFilters {
+    city?: string;
+    search?: string;
+    page?: number;
+    limit?: number;
+}
+
+// ============================================
+// DOMAIN & SPECIALITY FILTERS
+// ============================================
+
+/**
+ * Domain filter options
+ */
+export interface DomainFilters {
+    search?: string;
+    page?: number;
+    limit?: number;
+}
+
+/**
+ * Speciality filter options
+ */
+export interface SpecialityFilters {
+    search?: string;
+    page?: number;
+    limit?: number;
 }
