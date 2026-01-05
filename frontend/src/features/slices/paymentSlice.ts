@@ -19,7 +19,11 @@ export interface PaymentState {
     selectedPayment: Payment | null;
     currentPaymentIntent: {
         clientSecret: string;
-        paymentId: number;
+        paymentIntentId: string;
+        amount: number;
+        platformFee: number;
+        workerAmount: number;
+        currency: string;
     } | null;
     feeCalculation: PaymentFeeCalculation | null;
     isLoading: boolean;
@@ -41,7 +45,7 @@ const initialState: PaymentState = {
 
 // Create payment intent
 export const createPaymentIntent = createAsyncThunk<
-    { clientSecret: string; paymentId: number },
+    { clientSecret: string; paymentIntentId: string; amount: number; platformFee: number; workerAmount: number; currency: string },
     CreatePaymentIntentInput,
     { rejectValue: string }
 >("payments/createIntent", async (data, thunkAPI) => {

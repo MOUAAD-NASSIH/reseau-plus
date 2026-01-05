@@ -61,7 +61,7 @@ export const createAvailabilitySchema = z
     .object({
         startDate: dateStringSchema,
         endDate: dateStringSchema,
-        isRecurring: z.boolean().default(false),
+        isRecurring: z.boolean(),
     })
     .refine(
         (data) => new Date(data.endDate) > new Date(data.startDate),

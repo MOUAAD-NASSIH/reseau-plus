@@ -10,6 +10,26 @@ export const loginSchema = z.object({
 });
 
 // ============================================
+// FORGOT PASSWORD SCHEMA
+// ============================================
+
+export const forgotPasswordSchema = z.object({
+    email: z.string().email("Invalid email address"),
+});
+
+// ============================================
+// RESET PASSWORD SCHEMA
+// ============================================
+
+export const resetPasswordSchema = z.object({
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    confirmPassword: z.string().min(6, "Password must be at least 6 characters"),
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+});
+
+// ============================================
 // WORKER REGISTRATION SCHEMA
 // ============================================
 
@@ -55,6 +75,8 @@ export const registerInstitutionSchema = z.object({
 });
 
 export type LoginSchema = z.infer<typeof loginSchema>;
+export type ForgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>;
 export type RegisterWorkerSchema = z.infer<typeof registerWorkerSchema>;
 export type RegisterInstitutionSchema = z.infer<typeof registerInstitutionSchema>;
 export type WorkerExperienceSchema = z.infer<typeof workerExperienceSchema>;

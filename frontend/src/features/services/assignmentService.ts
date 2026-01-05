@@ -1,11 +1,12 @@
 /**
  * Assignment Service
  * API service for mission assignment operations
+ * 
+ * NOTE: Success toasts are handled by components, not services.
+ * This prevents duplicate toasts when components also show notifications.
  */
 
-import { toast } from "sonner";
 import { api } from "@/api/axios";
-import axios from "axios";
 import type { ApiResponse } from "@/types/api.types";
 import type {
     MissionAssignment,
@@ -33,58 +34,28 @@ export const assignmentService = {
      * Get all assignments (filtered by role)
      */
     getAll: async (filters?: AssignmentFilters): Promise<ApiResponse<MissionAssignment[]>> => {
-        try {
-            const response = await api.get<ApiResponse<MissionAssignment[]>>(
-                `/assignments${buildQueryString(filters)}`
-            );
-            return response.data;
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                const message = error.response?.data?.message || "Failed to fetch assignments";
-                toast.error(message);
-                throw new Error(message);
-            }
-            toast.error("Unknown error fetching assignments");
-            throw new Error("Unknown error fetching assignments");
-        }
+        const response = await api.get<ApiResponse<MissionAssignment[]>>(
+            `/assignments${buildQueryString(filters)}`
+        );
+        return response.data;
     },
 
     /**
      * Get assignment by ID
      */
     getById: async (id: number): Promise<ApiResponse<MissionAssignment>> => {
-        try {
-            const response = await api.get<ApiResponse<MissionAssignment>>(`/assignments/${id}`);
-            return response.data;
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                const message = error.response?.data?.message || "Failed to fetch assignment";
-                toast.error(message);
-                throw new Error(message);
-            }
-            toast.error("Unknown error fetching assignment");
-            throw new Error("Unknown error fetching assignment");
-        }
+        const response = await api.get<ApiResponse<MissionAssignment>>(`/assignments/${id}`);
+        return response.data;
     },
 
     /**
      * Get worker's own assignments
      */
     getMyAssignments: async (filters?: AssignmentFilters): Promise<ApiResponse<MissionAssignment[]>> => {
-        try {
-            const response = await api.get<ApiResponse<MissionAssignment[]>>(
-                `/assignments/my${buildQueryString(filters)}`
-            );
-            return response.data;
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                const message = error.response?.data?.message || "Failed to fetch your assignments";
-                toast.error(message);
-                throw new Error(message);
-            }
-            toast.error("Unknown error fetching your assignments");
-            throw new Error("Unknown error fetching your assignments");
-        }
+        const response = await api.get<ApiResponse<MissionAssignment[]>>(
+            `/assignments/my${buildQueryString(filters)}`
+        );
+        return response.data;
     },
 
     /**
@@ -93,20 +64,10 @@ export const assignmentService = {
     getInstitutionAssignments: async (
         filters?: AssignmentFilters
     ): Promise<ApiResponse<MissionAssignment[]>> => {
-        try {
-            const response = await api.get<ApiResponse<MissionAssignment[]>>(
-                `/assignments/institution${buildQueryString(filters)}`
-            );
-            return response.data;
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                const message = error.response?.data?.message || "Failed to fetch institution assignments";
-                toast.error(message);
-                throw new Error(message);
-            }
-            toast.error("Unknown error fetching institution assignments");
-            throw new Error("Unknown error fetching institution assignments");
-        }
+        const response = await api.get<ApiResponse<MissionAssignment[]>>(
+            `/assignments/institution${buildQueryString(filters)}`
+        );
+        return response.data;
     },
 
     /**
@@ -116,21 +77,10 @@ export const assignmentService = {
         id: number,
         status: AssignmentStatus
     ): Promise<ApiResponse<MissionAssignment>> => {
-        try {
-            const response = await api.put<ApiResponse<MissionAssignment>>(
-                `/assignments/${id}/status`,
-                { status }
-            );
-            toast.success("Assignment status updated");
-            return response.data;
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                const message = error.response?.data?.message || "Failed to update assignment status";
-                toast.error(message);
-                throw new Error(message);
-            }
-            toast.error("Unknown error updating assignment status");
-            throw new Error("Unknown error updating assignment status");
-        }
+        const response = await api.put<ApiResponse<MissionAssignment>>(
+            `/assignments/${id}/status`,
+            { status }
+        );
+        return response.data;
     },
 };

@@ -3,9 +3,7 @@
  * API service for review and rating operations
  */
 
-import { toast } from "sonner";
 import { api } from "@/api/axios";
-import axios from "axios";
 import type { ApiResponse } from "@/types/api.types";
 import type {
     Review,
@@ -34,19 +32,8 @@ export const reviewService = {
      * Create a review (worker or institution)
      */
     create: async (data: CreateReviewInput): Promise<ApiResponse<Review>> => {
-        try {
-            const response = await api.post<ApiResponse<Review>>("/reviews", data);
-            toast.success("Review submitted successfully");
-            return response.data;
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                const message = error.response?.data?.message || "Failed to submit review";
-                toast.error(message);
-                throw new Error(message);
-            }
-            toast.error("Unknown error submitting review");
-            throw new Error("Unknown error submitting review");
-        }
+        const response = await api.post<ApiResponse<Review>>("/reviews", data);
+        return response.data;
     },
 
     /**
@@ -56,20 +43,10 @@ export const reviewService = {
         workerId: number,
         filters?: ReviewFilters
     ): Promise<ApiResponse<Review[]>> => {
-        try {
-            const response = await api.get<ApiResponse<Review[]>>(
-                `/reviews/worker/${workerId}${buildQueryString(filters)}`
-            );
-            return response.data;
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                const message = error.response?.data?.message || "Failed to fetch worker reviews";
-                toast.error(message);
-                throw new Error(message);
-            }
-            toast.error("Unknown error fetching worker reviews");
-            throw new Error("Unknown error fetching worker reviews");
-        }
+        const response = await api.get<ApiResponse<Review[]>>(
+            `/reviews/worker/${workerId}${buildQueryString(filters)}`
+        );
+        return response.data;
     },
 
     /**
@@ -79,20 +56,10 @@ export const reviewService = {
         institutionId: number,
         filters?: ReviewFilters
     ): Promise<ApiResponse<Review[]>> => {
-        try {
-            const response = await api.get<ApiResponse<Review[]>>(
-                `/reviews/institution/${institutionId}${buildQueryString(filters)}`
-            );
-            return response.data;
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                const message = error.response?.data?.message || "Failed to fetch institution reviews";
-                toast.error(message);
-                throw new Error(message);
-            }
-            toast.error("Unknown error fetching institution reviews");
-            throw new Error("Unknown error fetching institution reviews");
-        }
+        const response = await api.get<ApiResponse<Review[]>>(
+            `/reviews/institution/${institutionId}${buildQueryString(filters)}`
+        );
+        return response.data;
     },
 
     /**
@@ -113,76 +80,36 @@ export const reviewService = {
      * Get reviews received by current user
      */
     getMyReceivedReviews: async (): Promise<ApiResponse<Review[]>> => {
-        try {
-            const response = await api.get<ApiResponse<Review[]>>("/reviews/received");
-            return response.data;
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                const message = error.response?.data?.message || "Failed to fetch received reviews";
-                toast.error(message);
-                throw new Error(message);
-            }
-            toast.error("Unknown error fetching received reviews");
-            throw new Error("Unknown error fetching received reviews");
-        }
+        const response = await api.get<ApiResponse<Review[]>>("/reviews/received");
+        return response.data;
     },
 
     /**
      * Get reviews written by current user
      */
     getMyWrittenReviews: async (): Promise<ApiResponse<Review[]>> => {
-        try {
-            const response = await api.get<ApiResponse<Review[]>>("/reviews/written");
-            return response.data;
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                const message = error.response?.data?.message || "Failed to fetch written reviews";
-                toast.error(message);
-                throw new Error(message);
-            }
-            toast.error("Unknown error fetching written reviews");
-            throw new Error("Unknown error fetching written reviews");
-        }
+        const response = await api.get<ApiResponse<Review[]>>("/reviews/written");
+        return response.data;
     },
 
     /**
      * Get worker's average rating (public)
      */
     getWorkerAverageRating: async (workerId: number): Promise<ApiResponse<AverageRating>> => {
-        try {
-            const response = await api.get<ApiResponse<AverageRating>>(
-                `/reviews/worker/${workerId}/rating`
-            );
-            return response.data;
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                const message = error.response?.data?.message || "Failed to fetch worker rating";
-                toast.error(message);
-                throw new Error(message);
-            }
-            toast.error("Unknown error fetching worker rating");
-            throw new Error("Unknown error fetching worker rating");
-        }
+        const response = await api.get<ApiResponse<AverageRating>>(
+            `/reviews/worker/${workerId}/rating`
+        );
+        return response.data;
     },
 
     /**
      * Get institution's average rating (public)
      */
     getInstitutionAverageRating: async (institutionId: number): Promise<ApiResponse<AverageRating>> => {
-        try {
-            const response = await api.get<ApiResponse<AverageRating>>(
-                `/reviews/institution/${institutionId}/rating`
-            );
-            return response.data;
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                const message = error.response?.data?.message || "Failed to fetch institution rating";
-                toast.error(message);
-                throw new Error(message);
-            }
-            toast.error("Unknown error fetching institution rating");
-            throw new Error("Unknown error fetching institution rating");
-        }
+        const response = await api.get<ApiResponse<AverageRating>>(
+            `/reviews/institution/${institutionId}/rating`
+        );
+        return response.data;
     },
 
     /**
@@ -202,38 +129,17 @@ export const reviewService = {
      * Get all reviews (admin only)
      */
     getAll: async (filters?: ReviewFilters): Promise<ApiResponse<Review[]>> => {
-        try {
-            const response = await api.get<ApiResponse<Review[]>>(
-                `/reviews${buildQueryString(filters)}`
-            );
-            return response.data;
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                const message = error.response?.data?.message || "Failed to fetch reviews";
-                toast.error(message);
-                throw new Error(message);
-            }
-            toast.error("Unknown error fetching reviews");
-            throw new Error("Unknown error fetching reviews");
-        }
+        const response = await api.get<ApiResponse<Review[]>>(
+            `/reviews${buildQueryString(filters)}`
+        );
+        return response.data;
     },
 
     /**
      * Delete a review (admin only)
      */
     delete: async (id: number): Promise<ApiResponse<void>> => {
-        try {
-            const response = await api.delete<ApiResponse<void>>(`/reviews/${id}`);
-            toast.success("Review deleted");
-            return response.data;
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                const message = error.response?.data?.message || "Failed to delete review";
-                toast.error(message);
-                throw new Error(message);
-            }
-            toast.error("Unknown error deleting review");
-            throw new Error("Unknown error deleting review");
-        }
+        const response = await api.delete<ApiResponse<void>>(`/reviews/${id}`);
+        return response.data;
     },
 };

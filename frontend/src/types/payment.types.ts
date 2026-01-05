@@ -42,6 +42,18 @@ export interface CreatePaymentIntentInput {
     assignmentId: number;
 }
 
+/**
+ * Payment intent response from backend
+ */
+export interface PaymentIntentResponse {
+    clientSecret: string;
+    paymentIntentId: string;
+    amount: number;
+    platformFee: number;
+    workerAmount: number;
+    currency: string;
+}
+
 // ============================================
 // CALCULATION INTERFACES
 // ============================================

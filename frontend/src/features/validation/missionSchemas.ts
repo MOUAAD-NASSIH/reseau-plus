@@ -43,7 +43,7 @@ export const createMissionSchema = z
         requiredSpecialityId: positiveIntSchema.optional(),
         location: safeStringSchema.optional(),
         budget: positiveNumberSchema.optional(),
-        urgency: urgencySchema.default("MEDIUM"),
+        urgency: urgencySchema,
         domainIds: z.array(positiveIntSchema).optional(),
     })
     .refine(
