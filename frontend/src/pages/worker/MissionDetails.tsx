@@ -16,8 +16,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { useMission } from "@/features/hooks/useMissions";
-import { useMyApplications, useApplyToMission } from "@/features/hooks/useApplications";
+import { useGetMissionQuery } from "@/features/api/endpoints/missionEndpoints";
+import { useGetMyApplicationsQuery, useApplyToMissionMutation } from "@/features/api/endpoints/applicationEndpoints";
 import type { Urgency } from "@/types/mission.types";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
@@ -60,9 +60,9 @@ export default function MissionDetails() {
     const navigate = useNavigate();
     const missionId = parseInt(id || "0");
 
-    const { data: missionData, isLoading: missionLoading, error: missionError } = useMission(missionId);
-    const { data: applicationsData, isLoading: applicationsLoading } = useMyApplications();
-    const applyMutation = useApplyToMission();
+    const { data: missionData, isLoading: missionLoading, error: missionError } = useGetMissionQuery(missionId);
+    const { data: applicationsData, isLoading: applicationsLoading } = useGetMyApplicationsQuery();
+    const [applyToMission, { isLoading: isApplying }] = useApplyToMissionMutation();
 
     const mission = missionData?.data;
     const applications = applicationsData?.data || [];
@@ -73,7 +73,7 @@ export default function MissionDetails() {
 
     const handleApply = async () => {
         try {
-            await applyMutation.mutateAsync({ missionId });
+            await applyToMission({ missionId }).unwrap();
             showSuccessToast("Application submitted", "Your application has been sent to the institution.");
         } catch (error) {
             showErrorToast(error, "Failed to submit application");
@@ -282,9 +282,9 @@ export default function MissionDetails() {
                             <Button
                                 size="lg"
                                 onClick={handleApply}
-                                disabled={applyMutation.isPending}
+                                disabled={isApplying}
                             >
-                                {applyMutation.isPending ? (
+                                {isApplying ? (
                                     <>
                                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                         Applying...
@@ -307,3 +307,4 @@ export default function MissionDetails() {
         </div>
     );
 }
+

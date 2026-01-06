@@ -29,7 +29,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { useAllReviews } from "@/features/hooks/useReviews";
+import { useGetAllReviewsQuery } from "@/features/api/endpoints/reviewEndpoints";
 import type { Review } from "@/types/review.types";
 import type { User } from "@/types/auth.types";
 
@@ -182,7 +182,7 @@ export default function ReviewsOverview() {
     const [dialogOpen, setDialogOpen] = useState(false);
 
     // Fetch data
-    const { data: reviewsData, isLoading: reviewsLoading } = useAllReviews(
+    const { data: reviewsData, isLoading: reviewsLoading } = useGetAllReviewsQuery(
         ratingFilter !== "ALL" ? { minRating: parseInt(ratingFilter), maxRating: parseInt(ratingFilter) } : undefined
     );
 
@@ -439,3 +439,4 @@ export default function ReviewsOverview() {
         </div>
     );
 }
+

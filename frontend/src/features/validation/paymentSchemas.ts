@@ -12,18 +12,16 @@ import {
     sortOrderSchema,
 } from "./commonSchemas";
 
-// ============================================
 // ENUM SCHEMAS
-// ============================================
+
 
 /**
  * Payment status enum schema
  */
 export const paymentStatusSchema = z.enum(["PENDING", "COMPLETED", "FAILED"]);
 
-// ============================================
 // CREATE PAYMENT INTENT SCHEMA
-// ============================================
+
 
 /**
  * Create payment intent input schema
@@ -32,9 +30,8 @@ export const createPaymentIntentSchema = z.object({
     assignmentId: positiveIntSchema,
 });
 
-// ============================================
 // CALCULATE FEES SCHEMA
-// ============================================
+
 
 /**
  * Calculate fees input schema
@@ -43,9 +40,8 @@ export const calculateFeesSchema = z.object({
     amount: positiveNumberSchema,
 });
 
-// ============================================
 // PAYMENT FILTER SCHEMA
-// ============================================
+
 
 /**
  * Payment filter schema
@@ -89,11 +85,11 @@ export const paymentFilterSchema = z
         }
     );
 
-// ============================================
 // TYPE EXPORTS
-// ============================================
+
 
 export type PaymentStatus = z.infer<typeof paymentStatusSchema>;
 export type CreatePaymentIntentInput = z.infer<typeof createPaymentIntentSchema>;
 export type CalculateFeesInput = z.infer<typeof calculateFeesSchema>;
 export type PaymentFilters = z.infer<typeof paymentFilterSchema>;
+

@@ -16,17 +16,17 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { usePayments } from "@/features/hooks/usePayments";
-import { useInstitutionAssignments } from "@/features/hooks/useAssignments";
+import { useGetPaymentsQuery } from "@/features/api/endpoints/paymentEndpoints";
+import { useGetInstitutionAssignmentsQuery } from "@/features/api/endpoints/assignmentEndpoints";
 import type { Payment, PaymentStatus } from "@/types/payment.types";
 
 export default function PaymentHistory() {
     const [statusFilter, setStatusFilter] = useState<PaymentStatus | "ALL">("ALL");
 
-    const { data: paymentsData, isLoading: paymentsLoading } = usePayments(
+    const { data: paymentsData, isLoading: paymentsLoading } = useGetPaymentsQuery(
         statusFilter !== "ALL" ? { status: statusFilter } : undefined
     );
-    const { data: assignmentsData, isLoading: assignmentsLoading } = useInstitutionAssignments();
+    const { data: assignmentsData, isLoading: assignmentsLoading } = useGetInstitutionAssignmentsQuery();
 
     const payments = paymentsData?.data || [];
     const assignments = assignmentsData?.data || [];
@@ -337,3 +337,4 @@ export default function PaymentHistory() {
         </div>
     );
 }
+

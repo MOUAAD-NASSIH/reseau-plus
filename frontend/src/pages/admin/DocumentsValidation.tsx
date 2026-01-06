@@ -24,9 +24,9 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import {
-    usePendingDocuments,
-    useReviewDocument,
-} from "@/features/hooks/useAdmin";
+    useGetPendingDocumentsQuery,
+    useReviewDocumentMutation,
+} from "@/features/api/endpoints/adminEndpoints";
 import type { WorkerDocument } from "@/types/auth.types";
 
 interface DocumentReviewDialogProps {
@@ -230,8 +230,8 @@ export default function DocumentsValidation() {
     const [selectedDocument, setSelectedDocument] = useState<WorkerDocument | null>(null);
     const [dialogOpen, setDialogOpen] = useState(false);
 
-    const { data: pendingDocumentsData, isLoading } = usePendingDocuments();
-    const reviewDocument = useReviewDocument();
+    const { data: pendingDocumentsData, isLoading } = useGetPendingDocumentsQuery();
+    const [reviewDocument, { isLoading: isReviewingDocument }] = useReviewDocumentMutation();
 
     const pendingDocuments = pendingDocumentsData?.data || [];
 
@@ -241,27 +241,21 @@ export default function DocumentsValidation() {
     };
 
     const handleApprove = (documentId: number) => {
-        reviewDocument.mutate(
-            { documentId, status: "APPROVED" },
-            {
-                onSuccess: () => {
-                    setDialogOpen(false);
-                    setSelectedDocument(null);
-                },
-            }
-        );
+        reviewDocument({ documentId, status: "APPROVED" })
+            .unwrap()
+            .then(() => {
+                setDialogOpen(false);
+                setSelectedDocument(null);
+            });
     };
 
     const handleReject = (documentId: number, comment: string) => {
-        reviewDocument.mutate(
-            { documentId, status: "REJECTED", comment },
-            {
-                onSuccess: () => {
-                    setDialogOpen(false);
-                    setSelectedDocument(null);
-                },
-            }
-        );
+        reviewDocument({ documentId, status: "REJECTED", comment })
+            .unwrap()
+            .then(() => {
+                setDialogOpen(false);
+                setSelectedDocument(null);
+            });
     };
 
     const getDocumentTypeLabel = (type: string) => {
@@ -352,9 +346,10 @@ export default function DocumentsValidation() {
                 onOpenChange={setDialogOpen}
                 onApprove={handleApprove}
                 onReject={handleReject}
-                isApproving={reviewDocument.isPending && !selectedDocument?.adminComment}
-                isRejecting={reviewDocument.isPending && !!selectedDocument?.adminComment}
+                isApproving={isReviewingDocument && !selectedDocument?.adminComment}
+                isRejecting={isReviewingDocument && !!selectedDocument?.adminComment}
             />
         </div>
     );
 }
+

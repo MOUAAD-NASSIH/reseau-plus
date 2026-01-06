@@ -60,3 +60,4 @@ export type { NotificationType, Notification, NotificationFilters } from './noti
 
 // Domain & Speciality Filters (from auth.types)
 export type { DomainFilters, SpecialityFilters } from './auth.types';
+

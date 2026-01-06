@@ -11,18 +11,16 @@ import {
     sortOrderSchema,
 } from "./commonSchemas";
 
-// ============================================
 // ENUM SCHEMAS
-// ============================================
+
 
 /**
  * Assignment status enum schema
  */
 export const assignmentStatusSchema = z.enum(["ACTIVE", "ONGOING", "COMPLETED", "CANCELLED"]);
 
-// ============================================
 // CREATE ASSIGNMENT SCHEMA
-// ============================================
+
 
 /**
  * Create assignment input schema
@@ -33,9 +31,8 @@ export const createAssignmentSchema = z.object({
     institutionId: positiveIntSchema,
 });
 
-// ============================================
 // UPDATE ASSIGNMENT STATUS SCHEMA
-// ============================================
+
 
 /**
  * Update assignment status input schema
@@ -44,9 +41,8 @@ export const updateAssignmentStatusSchema = z.object({
     status: assignmentStatusSchema,
 });
 
-// ============================================
 // ASSIGNMENT FILTER SCHEMA
-// ============================================
+
 
 /**
  * Assignment filter schema
@@ -76,11 +72,11 @@ export const assignmentFilterSchema = z
         }
     );
 
-// ============================================
 // TYPE EXPORTS
-// ============================================
+
 
 export type AssignmentStatus = z.infer<typeof assignmentStatusSchema>;
 export type CreateAssignmentInput = z.infer<typeof createAssignmentSchema>;
 export type UpdateAssignmentStatusInput = z.infer<typeof updateAssignmentStatusSchema>;
 export type AssignmentFilters = z.infer<typeof assignmentFilterSchema>;
+

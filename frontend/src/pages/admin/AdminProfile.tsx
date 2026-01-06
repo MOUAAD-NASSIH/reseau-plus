@@ -10,12 +10,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Label } from "@/components/ui/label";
-import { useCurrentUser } from "@/features/hooks/useAuth";
-import { useAdminDashboard } from "@/features/hooks/useAdmin";
+import { useGetCurrentUserQuery } from "@/features/api/endpoints/authEndpoints";
+import { useGetAdminDashboardQuery } from "@/features/api/endpoints/adminEndpoints";
 
 export default function AdminProfile() {
-    const { data: userData, isLoading: userLoading } = useCurrentUser();
-    const { data: dashboardData, isLoading: dashboardLoading } = useAdminDashboard();
+    const { data: userData, isLoading: userLoading } = useGetCurrentUserQuery();
+    const { data: dashboardData, isLoading: dashboardLoading } = useGetAdminDashboardQuery();
 
     const user = userData?.data?.user;
     const stats = dashboardData?.data;
@@ -219,3 +219,4 @@ export default function AdminProfile() {
         </div>
     );
 }
+

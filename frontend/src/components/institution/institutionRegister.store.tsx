@@ -22,3 +22,4 @@ export const useInstitutionRegisterStore = create<InstitutionRegisterStore>(
         reset: () => set({ data: {} }),
     })
 );
+

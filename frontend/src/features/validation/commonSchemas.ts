@@ -5,9 +5,8 @@
 
 import { z } from "zod";
 
-// ============================================
 // PRIMITIVE SCHEMAS
-// ============================================
+
 
 /**
  * Email validation schema
@@ -53,9 +52,8 @@ export const positiveNumberSchema = z
     .number()
     .positive("Must be a positive number");
 
-// ============================================
 // COORDINATE SCHEMAS
-// ============================================
+
 
 /**
  * Latitude validation schema (-90 to 90)
@@ -73,9 +71,8 @@ export const longitudeSchema = z
     .min(-180, "Longitude must be between -180 and 180")
     .max(180, "Longitude must be between -180 and 180");
 
-// ============================================
 // DATE SCHEMAS
-// ============================================
+
 
 /**
  * ISO date string schema (YYYY-MM-DD or full ISO)
@@ -90,9 +87,8 @@ export const dateStringSchema = z.string().refine(
  */
 export const optionalDateStringSchema = dateStringSchema.optional().nullable();
 
-// ============================================
 // PAGINATION SCHEMAS
-// ============================================
+
 
 /**
  * Page number schema (min 1)
@@ -126,9 +122,8 @@ export const paginationSchema = z.object({
     limit: limitSchema.optional(),
 });
 
-// ============================================
 // ID SCHEMAS
-// ============================================
+
 
 /**
  * ID parameter schema
@@ -140,9 +135,8 @@ export const idSchema = positiveIntSchema;
  */
 export const optionalIdSchema = positiveIntSchema.optional().nullable();
 
-// ============================================
 // RATING SCHEMA
-// ============================================
+
 
 /**
  * Rating schema (1-5)
@@ -153,9 +147,8 @@ export const ratingSchema = z
     .min(1, "Rating must be at least 1")
     .max(5, "Rating must be at most 5");
 
-// ============================================
 // ZIP CODE SCHEMA
-// ============================================
+
 
 /**
  * Zip code schema
@@ -166,9 +159,8 @@ export const zipCodeSchema = z
     .max(20, "Zip code must be at most 20 characters")
     .trim();
 
-// ============================================
 // EXPERIENCE YEARS SCHEMA
-// ============================================
+
 
 /**
  * Experience years schema (0-50)
@@ -179,9 +171,9 @@ export const experienceYearsSchema = z
     .min(0, "Experience years must be 0 or greater")
     .max(50, "Experience years must be 50 or less");
 
-// ============================================
 // TYPE EXPORTS
-// ============================================
+
 
 export type PaginationInput = z.infer<typeof paginationSchema>;
 export type SortOrder = z.infer<typeof sortOrderSchema>;
+

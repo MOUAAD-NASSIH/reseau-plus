@@ -11,3 +11,4 @@ export function ProfileItem({ label, value }: ProfileItemProps) {
         </div>
     );
 }
+

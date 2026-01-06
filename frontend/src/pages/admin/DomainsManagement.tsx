@@ -35,11 +35,11 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import {
-    useDomains,
-    useCreateDomain,
-    useUpdateDomain,
-    useDeleteDomain,
-} from "@/features/hooks/useDomains";
+    useGetDomainsQuery,
+    useCreateDomainMutation,
+    useUpdateDomainMutation,
+    useDeleteDomainMutation,
+} from "@/features/api/endpoints/domainEndpoints";
 import type { Domain } from "@/types/auth.types";
 
 const domainSchema = z.object({
@@ -157,10 +157,10 @@ export default function DomainsManagement() {
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [domainToDelete, setDomainToDelete] = useState<Domain | null>(null);
 
-    const { data: domainsData, isLoading } = useDomains();
-    const createDomain = useCreateDomain();
-    const updateDomain = useUpdateDomain();
-    const deleteDomain = useDeleteDomain();
+    const { data: domainsData, isLoading } = useGetDomainsQuery();
+    const [createDomain, { isLoading: isCreating }] = useCreateDomainMutation();
+    const [updateDomain, { isLoading: isUpdating }] = useUpdateDomainMutation();
+    const [deleteDomain, { isLoading: isDeleting }] = useDeleteDomainMutation();
 
     const domains = domainsData?.data || [];
 
@@ -179,34 +179,30 @@ export default function DomainsManagement() {
         setDeleteDialogOpen(true);
     }, []);
 
-    const handleFormSubmit = useCallback((data: DomainFormData) => {
-        if (selectedDomain) {
-            updateDomain.mutate(
-                { id: selectedDomain.id, data },
-                {
-                    onSuccess: () => {
-                        setFormDialogOpen(false);
-                        setSelectedDomain(null);
-                    },
-                }
-            );
-        } else {
-            createDomain.mutate(data, {
-                onSuccess: () => {
-                    setFormDialogOpen(false);
-                },
-            });
+    const handleFormSubmit = useCallback(async (data: DomainFormData) => {
+        try {
+            if (selectedDomain) {
+                await updateDomain({ id: selectedDomain.id, data }).unwrap();
+                setFormDialogOpen(false);
+                setSelectedDomain(null);
+            } else {
+                await createDomain(data).unwrap();
+                setFormDialogOpen(false);
+            }
+        } catch {
+            // Error handling is done by RTK Query
         }
     }, [selectedDomain, updateDomain, createDomain]);
 
-    const handleDeleteConfirm = useCallback(() => {
+    const handleDeleteConfirm = useCallback(async () => {
         if (domainToDelete) {
-            deleteDomain.mutate(domainToDelete.id, {
-                onSuccess: () => {
-                    setDeleteDialogOpen(false);
-                    setDomainToDelete(null);
-                },
-            });
+            try {
+                await deleteDomain(domainToDelete.id).unwrap();
+                setDeleteDialogOpen(false);
+                setDomainToDelete(null);
+            } catch {
+                // Error handling is done by RTK Query
+            }
         }
     }, [domainToDelete, deleteDomain]);
 
@@ -325,7 +321,7 @@ export default function DomainsManagement() {
                 open={formDialogOpen}
                 onOpenChange={setFormDialogOpen}
                 onSubmit={handleFormSubmit}
-                isSubmitting={createDomain.isPending || updateDomain.isPending}
+                isSubmitting={isCreating || isUpdating}
             />
 
             {/* Delete Confirmation Dialog */}
@@ -344,7 +340,7 @@ export default function DomainsManagement() {
                             onClick={handleDeleteConfirm}
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                         >
-                            {deleteDomain.isPending ? "Deleting..." : "Delete"}
+                            {isDeleting ? "Deleting..." : "Delete"}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
@@ -352,3 +348,4 @@ export default function DomainsManagement() {
         </div>
     );
 }
+

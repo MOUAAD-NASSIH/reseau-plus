@@ -30,8 +30,8 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { useAllMissions } from "@/features/hooks/useMissions";
-import { useSpecialities } from "@/features/hooks/useDomains";
+import { useGetAllMissionsQuery } from "@/features/api/endpoints/missionEndpoints";
+import { useGetSpecialitiesQuery } from "@/features/api/endpoints/domainEndpoints";
 import type { Mission, MissionStatus, Urgency } from "@/types/mission.types";
 
 const urgencyColors: Record<Urgency, string> = {
@@ -181,7 +181,7 @@ export default function MissionsOverview() {
     const [dialogOpen, setDialogOpen] = useState(false);
 
     // Fetch data
-    const { data: missionsData, isLoading: missionsLoading } = useAllMissions(
+    const { data: missionsData, isLoading: missionsLoading } = useGetAllMissionsQuery(
         statusFilter !== "ALL" || urgencyFilter !== "ALL" || specialityFilter !== "ALL"
             ? {
                 status: statusFilter !== "ALL" ? statusFilter : undefined,
@@ -190,7 +190,7 @@ export default function MissionsOverview() {
             }
             : undefined
     );
-    const { data: specialitiesData } = useSpecialities();
+    const { data: specialitiesData } = useGetSpecialitiesQuery();
 
     const specialities = specialitiesData?.data || [];
     const missions = missionsData?.data || [];
@@ -463,3 +463,4 @@ export default function MissionsOverview() {
         </div>
     );
 }
+

@@ -1,10 +1,8 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
-import { QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "./components/providers/ThemeProvider.tsx";
 import { store } from "./features/store";
-import { queryClient } from "./lib/queryClient";
 import { Toaster } from "sonner";
 import App from "./App.tsx";
 import "./index.css";
@@ -22,11 +20,10 @@ createRoot(document.getElementById("root")!).render(
       closeButton
     />
     <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <App />
-        </ThemeProvider>
-      </QueryClientProvider>
+      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <App />
+      </ThemeProvider>
     </Provider>
   </StrictMode>
 );
+

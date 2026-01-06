@@ -1,9 +1,10 @@
-import { Navigate } from "react-router";
+import { Navigate, useLocation } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import type { RootState, AppDispatch } from "@/features/store";
 import type { UserRole } from "@/types/auth.types";
-import { getMe } from "@/features/slices/authSlice";
+import { useGetCurrentUserQuery } from "@/features/api/endpoints/authEndpoints";
+import { setUser } from "@/features/slices/authSlice";
 
 interface GuestGuardProps {
     children: React.ReactNode;
@@ -71,37 +72,29 @@ function getDashboardPath(role: UserRole | null): string {
  */
 export default function GuestGuard({ children }: GuestGuardProps) {
     const dispatch = useDispatch<AppDispatch>();
-    const { isAuthenticated, user, isLoading } = useSelector(
+    const location = useLocation();
+    const { isAuthenticated, user } = useSelector(
         (state: RootState) => state.auth
     );
-    const [isValidating, setIsValidating] = useState(true);
 
+    // Check if token exists
+    const hasToken = !!localStorage.getItem("auth_token");
+
+    // Use RTK Query to fetch current user if we have a token
+    const { data, isLoading } = useGetCurrentUserQuery(undefined, {
+        skip: !hasToken,
+    });
+
+    // Update auth state when user data is fetched
     useEffect(() => {
-        const validateAuth = async () => {
-            const token = localStorage.getItem("auth_token");
-
-            if (!token) {
-                setIsValidating(false);
-                return;
-            }
-
-            // If we have a token but no user, validate with getMe
-            if (!user) {
-                try {
-                    await dispatch(getMe()).unwrap();
-                } catch {
-                    // Token is invalid, allow access to guest pages
-                }
-            }
-
-            setIsValidating(false);
-        };
-
-        validateAuth();
-    }, [dispatch, user]);
+        if (data?.data?.user) {
+            // Dispatch action to update auth state with user data
+            dispatch(setUser(data.data.user));
+        }
+    }, [data, dispatch]);
 
     // Show loading state during validation
-    if (isValidating || isLoading) {
+    if (hasToken && isLoading) {
         return (
             <div className="flex h-screen items-center justify-center">
                 <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
@@ -109,12 +102,31 @@ export default function GuestGuard({ children }: GuestGuardProps) {
         );
     }
 
-    // If user is authenticated, redirect to their dashboard
+    // Check if we have a redirect location from ProtectedRoute
+    const from = (location.state as { from?: Location })?.from;
+
+    // If user is authenticated, redirect to their dashboard or the original location
     if (isAuthenticated && user) {
         const userRole = getUserRole(user);
+        // If we have a saved location, redirect there (unless it's the login page)
+        if (from && from.pathname !== "/login") {
+            return <Navigate to={from.pathname} replace />;
+        }
+        const dashboardPath = getDashboardPath(userRole);
+        return <Navigate to={dashboardPath} replace />;
+    }
+
+    // Also check RTK Query data for authenticated user
+    if (data?.data?.user) {
+        const userRole = getUserRole(data.data.user);
+        // If we have a saved location, redirect there (unless it's the login page)
+        if (from && from.pathname !== "/login") {
+            return <Navigate to={from.pathname} replace />;
+        }
         const dashboardPath = getDashboardPath(userRole);
         return <Navigate to={dashboardPath} replace />;
     }
 
     return <>{children}</>;
 }
+

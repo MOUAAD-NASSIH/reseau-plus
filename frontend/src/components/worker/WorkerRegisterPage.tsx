@@ -15,7 +15,7 @@ import StepConfirm from "./steps/StepConfirm";
 
 import { submitWorkerRegistration } from "./submitWorkerRegistration";
 
-import { useAppDispatch } from "@/features/helpers";
+import { useAppDispatch } from "@/features/hooks";
 import { getMe } from "@/features/slices/authSlice";
 import { useNavigate } from "react-router";
 import { useState } from "react";
@@ -73,7 +73,7 @@ export default function WorkerRegisterPage() {
 
       dispatch(getMe());
       reset();
-      navigate("/worker/dashboard");
+      navigate("/worker");
     } catch (error) {
       console.error("Worker registration failed:", error);
 
@@ -112,3 +112,4 @@ export default function WorkerRegisterPage() {
     </RegisterLayout>
   );
 }
+

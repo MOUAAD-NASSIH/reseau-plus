@@ -13,8 +13,9 @@ import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
 import { NotificationBell } from "@/components/common/NotificationBell";
 import { Button } from "@/components/ui/button";
-import { useAppDispatch, useAppSelector } from "@/features/helpers";
+import { useAppDispatch, useAppSelector } from "@/features/hooks";
 import { logout } from "@/features/slices/authSlice";
+import { useLogoutMutation } from "@/features/api/endpoints/authEndpoints";
 
 // Key for persisting sidebar collapsed state
 const SIDEBAR_COLLAPSED_KEY = "sidebar-collapsed";
@@ -75,13 +76,17 @@ export default function DashboardLayout({
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const user = useAppSelector((s) => s.auth.user);
+    const [logoutMutation] = useLogoutMutation();
 
     // Persist sidebar collapsed state to localStorage
     useEffect(() => {
         localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(sidebarCollapsed));
     }, [sidebarCollapsed]);
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        // Use RTK Query logout mutation which clears cache
+        await logoutMutation();
+        // Also dispatch Redux logout action for UI state
         dispatch(logout());
         navigate("/login");
     };
@@ -390,3 +395,4 @@ export default function DashboardLayout({
         </div>
     );
 }
+

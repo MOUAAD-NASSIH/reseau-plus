@@ -2,6 +2,7 @@ import { Navigate } from "react-router";
 import { useSelector } from "react-redux";
 import type { UserRole } from "@/types/auth.types";
 import type { RootState } from "@/features/store";
+import { useGetCurrentUserQuery } from "@/features/api/endpoints/authEndpoints";
 
 interface RoleGuardProps {
   allowedRoles: UserRole[];
@@ -60,7 +61,30 @@ export default function RoleGuard({
   fallbackPath = "/",
 }: RoleGuardProps) {
   const user = useSelector((state: RootState) => state.auth.user);
-  const userRole = getUserRole(user);
+  const hasToken = !!localStorage.getItem("auth_token");
+
+  // Also check RTK Query data in case Redux state hasn't been updated yet
+  const { data: currentUserData, isLoading, isFetching } = useGetCurrentUserQuery(undefined, {
+    skip: !hasToken,
+  });
+
+  // Try to get role from Redux state first, then from RTK Query data
+  let userRole = getUserRole(user);
+
+  // If no role from Redux, try RTK Query data
+  if (!userRole && currentUserData?.data?.user) {
+    userRole = getUserRole(currentUserData.data.user);
+  }
+
+  // Show loading state while fetching user data (if we have a token but no role yet)
+  // This prevents premature redirect to unauthorized page
+  if (hasToken && !userRole && (isLoading || isFetching)) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      </div>
+    );
+  }
 
   // Check if user's role is in the allowed roles array
   if (!userRole || !allowedRoles.includes(userRole)) {
@@ -69,3 +93,4 @@ export default function RoleGuard({
 
   return <>{children}</>;
 }
+

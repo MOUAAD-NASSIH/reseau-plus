@@ -487,3 +487,4 @@ export function DataTable<TData, TValue>({
 
 // Re-export types for convenience
 export type { ColumnDef, SortingState, ColumnFiltersState }
+

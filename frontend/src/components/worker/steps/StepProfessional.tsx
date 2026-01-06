@@ -21,12 +21,12 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-import { useSpecialities } from "@/features/hooks/useDomains";
+import { useGetSpecialitiesQuery } from "@/features/api/endpoints/domainEndpoints";
 import { DomainMultiSelect } from "@/components/common/DomainMultiSelect";
 
 export default function StepProfessional() {
   const { data, updateData } = useWorkerRegisterStore();
-  const { data: specialitiesData } = useSpecialities();
+  const { data: specialitiesData } = useGetSpecialitiesQuery();
   const specialities = specialitiesData?.data || [];
 
   const form = useForm<WorkerProfessionalForm>({
@@ -148,3 +148,4 @@ export default function StepProfessional() {
     </div>
   );
 }
+

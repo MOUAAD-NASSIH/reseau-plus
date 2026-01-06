@@ -18,8 +18,12 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import { useMyReviews, useCreateReview } from "@/features/hooks/useReviews";
-import { useMyAssignments } from "@/features/hooks/useAssignments";
+import {
+    useGetMyReceivedReviewsQuery,
+    useGetMyWrittenReviewsQuery,
+    useCreateReviewMutation,
+} from "@/features/api/endpoints/reviewEndpoints";
+import { useGetMyAssignmentsQuery } from "@/features/api/endpoints/assignmentEndpoints";
 import { createReviewSchema, type CreateReviewInput } from "@/features/validation/reviewSchemas";
 import type { Review } from "@/types/review.types";
 import type { MissionAssignment } from "@/types/assignment.types";
@@ -114,7 +118,7 @@ interface ReviewFormProps {
 }
 
 function ReviewForm({ assignment, onSuccess, onCancel }: ReviewFormProps) {
-    const createReview = useCreateReview();
+    const [createReview, { isLoading: isCreating }] = useCreateReviewMutation();
     const [rating, setRating] = useState(0);
 
     const {
@@ -133,7 +137,7 @@ function ReviewForm({ assignment, onSuccess, onCancel }: ReviewFormProps) {
 
     const onSubmit = async (data: CreateReviewInput) => {
         try {
-            await createReview.mutateAsync(data);
+            await createReview(data).unwrap();
             showSuccessToast("Review submitted", "Thank you for your feedback!");
             onSuccess();
         } catch (error) {
@@ -181,8 +185,8 @@ function ReviewForm({ assignment, onSuccess, onCancel }: ReviewFormProps) {
                 <Button type="button" variant="outline" onClick={onCancel}>
                     Cancel
                 </Button>
-                <Button type="submit" disabled={createReview.isPending || rating === 0}>
-                    {createReview.isPending ? (
+                <Button type="submit" disabled={isCreating || rating === 0}>
+                    {isCreating ? (
                         <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Submitting...</>
                     ) : (
                         <><Send className="mr-2 h-4 w-4" />Submit Review</>
@@ -197,8 +201,11 @@ export default function WorkerReviews() {
     const [searchParams] = useSearchParams();
     const preselectedAssignmentId = searchParams.get("assignmentId");
 
-    const { received, written, isLoading } = useMyReviews();
-    const { data: assignmentsData, isLoading: assignmentsLoading } = useMyAssignments();
+    const { data: receivedData, isLoading: receivedLoading } = useGetMyReceivedReviewsQuery();
+    const { data: writtenData, isLoading: writtenLoading } = useGetMyWrittenReviewsQuery();
+    const { data: assignmentsData, isLoading: assignmentsLoading } = useGetMyAssignmentsQuery();
+
+    const isLoading = receivedLoading || writtenLoading;
 
     const [showReviewForm, setShowReviewForm] = useState(false);
     const [selectedAssignment, setSelectedAssignment] = useState<MissionAssignment | null>(null);
@@ -206,8 +213,8 @@ export default function WorkerReviews() {
     // Track if we've already processed the preselected assignment
     const hasProcessedPreselection = useRef(false);
 
-    const receivedReviews = received.data?.data || [];
-    const writtenReviews = written.data?.data || [];
+    const receivedReviews = receivedData?.data || [];
+    const writtenReviews = writtenData?.data || [];
     const assignments = assignmentsData?.data || [];
 
     // Get completed assignments that haven't been reviewed yet
@@ -425,3 +432,4 @@ export default function WorkerReviews() {
         </div>
     );
 }
+

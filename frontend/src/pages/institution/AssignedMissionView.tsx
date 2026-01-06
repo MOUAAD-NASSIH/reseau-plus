@@ -20,8 +20,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { useAssignment, useUpdateAssignmentStatus } from "@/features/hooks/useAssignments";
-import { usePayments } from "@/features/hooks/usePayments";
+import { useGetAssignmentQuery, useUpdateAssignmentStatusMutation } from "@/features/api/endpoints/assignmentEndpoints";
+import { useGetPaymentsQuery } from "@/features/api/endpoints/paymentEndpoints";
 import type { AssignmentStatus } from "@/types/assignment.types";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 
@@ -30,11 +30,11 @@ export default function AssignedMissionView() {
     const navigate = useNavigate();
     const assignmentId = parseInt(id || "0");
 
-    const { data: assignmentData, isLoading: assignmentLoading } = useAssignment(assignmentId);
-    const { data: paymentsData, isLoading: paymentsLoading } = usePayments({
+    const { data: assignmentData, isLoading: assignmentLoading } = useGetAssignmentQuery(assignmentId);
+    const { data: paymentsData, isLoading: paymentsLoading } = useGetPaymentsQuery({
         missionAssignmentId: assignmentId,
     });
-    const updateStatus = useUpdateAssignmentStatus();
+    const [updateStatus, { isLoading: isUpdating }] = useUpdateAssignmentStatusMutation();
 
     const assignment = assignmentData?.data;
     const payments = paymentsData?.data || [];
@@ -42,7 +42,7 @@ export default function AssignedMissionView() {
 
     const handleStatusChange = async (newStatus: AssignmentStatus) => {
         try {
-            await updateStatus.mutateAsync({ id: assignmentId, status: newStatus });
+            await updateStatus({ id: assignmentId, status: newStatus }).unwrap();
             showSuccessToast("Status updated", "The assignment status has been updated.");
         } catch (error) {
             showErrorToast(error, "Failed to update status. Please try again.");
@@ -270,7 +270,7 @@ export default function AssignedMissionView() {
                                 <Select
                                     value={assignment.status}
                                     onValueChange={(value) => handleStatusChange(value as AssignmentStatus)}
-                                    disabled={updateStatus.isPending}
+                                    disabled={isUpdating}
                                 >
                                     <SelectTrigger>
                                         <SelectValue />
@@ -349,3 +349,4 @@ export default function AssignedMissionView() {
         </div>
     );
 }
+

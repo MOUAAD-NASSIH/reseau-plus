@@ -5,16 +5,14 @@
 
 import type { Institution, Speciality, Domain } from './auth.types';
 
-// ============================================
 // ENUMS / STATUS TYPES
-// ============================================
+
 
 export type MissionStatus = 'OPEN' | 'ONGOING' | 'CLOSED' | 'CANCELLED';
 export type Urgency = 'HIGH' | 'MEDIUM' | 'LOW';
 
-// ============================================
 // ENTITY INTERFACES
-// ============================================
+
 
 /**
  * Mission entity
@@ -51,9 +49,8 @@ export interface MissionDomain {
     domain?: Domain;
 }
 
-// ============================================
 // INPUT INTERFACES
-// ============================================
+
 
 /**
  * Mission creation input
@@ -86,9 +83,8 @@ export interface UpdateMissionInput {
     domainIds?: number[];
 }
 
-// ============================================
 // FILTER INTERFACES
-// ============================================
+
 
 /**
  * Mission filter options
@@ -109,3 +105,4 @@ export interface MissionFilters {
     page?: number;
     limit?: number;
 }
+

@@ -21,14 +21,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/common/EmptyState";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-    useNotifications,
-    useMarkAsRead,
-    useMarkAllAsRead,
-    useDeleteNotification,
-} from "@/features/hooks/useNotifications";
+    useGetNotificationsQuery,
+    useMarkAsReadMutation,
+    useMarkAllAsReadMutation,
+    useDeleteNotificationMutation,
+} from "@/features/api/endpoints/notificationEndpoints";
 import type { Notification, NotificationType } from "@/types/notification.types";
 import { cn } from "@/lib/utils";
-import { useAppSelector } from "@/features/helpers";
+import { useAppSelector } from "@/features/hooks";
 
 /**
  * Get the redirect URL based on notification type and user role
@@ -230,10 +230,10 @@ export default function WorkerNotifications() {
     const apiUser = user as { role?: string };
     const userRole = apiUser?.role || "worker";
 
-    const { data: notificationsData, isLoading } = useNotifications();
-    const markAsRead = useMarkAsRead();
-    const markAllAsRead = useMarkAllAsRead();
-    const deleteNotification = useDeleteNotification();
+    const { data: notificationsData, isLoading } = useGetNotificationsQuery();
+    const [markAsRead] = useMarkAsReadMutation();
+    const [markAllAsRead, { isLoading: isMarkingAllAsRead }] = useMarkAllAsReadMutation();
+    const [deleteNotification] = useDeleteNotificationMutation();
 
     const notifications = notificationsData?.data || [];
     const unreadNotifications = notifications.filter((n) => !n.isRead);
@@ -243,20 +243,20 @@ export default function WorkerNotifications() {
     const handleMarkAsRead = async (id: number) => {
         setMarkingId(id);
         try {
-            await markAsRead.mutateAsync(id);
+            await markAsRead(id).unwrap();
         } finally {
             setMarkingId(null);
         }
     };
 
     const handleMarkAllAsRead = async () => {
-        await markAllAsRead.mutateAsync();
+        await markAllAsRead().unwrap();
     };
 
     const handleDelete = async (id: number) => {
         setDeletingId(id);
         try {
-            await deleteNotification.mutateAsync(id);
+            await deleteNotification(id).unwrap();
         } finally {
             setDeletingId(null);
         }
@@ -334,9 +334,9 @@ export default function WorkerNotifications() {
                             variant="outline"
                             size="sm"
                             onClick={handleMarkAllAsRead}
-                            disabled={markAllAsRead.isPending}
+                            disabled={isMarkingAllAsRead}
                         >
-                            {markAllAsRead.isPending ? (
+                            {isMarkingAllAsRead ? (
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                             ) : (
                                 <CheckCheck className="mr-2 h-4 w-4" />
@@ -434,3 +434,4 @@ function NotificationsSkeleton() {
         </div>
     );
 }
+

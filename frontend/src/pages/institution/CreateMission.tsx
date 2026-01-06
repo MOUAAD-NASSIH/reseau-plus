@@ -15,16 +15,16 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useCreateMission } from "@/features/hooks/useMissions";
-import { useDomains, useSpecialities } from "@/features/hooks/useDomains";
+import { useCreateMissionMutation } from "@/features/api/endpoints/missionEndpoints";
+import { useGetDomainsQuery, useGetSpecialitiesQuery } from "@/features/api/endpoints/domainEndpoints";
 import { createMissionSchema, type CreateMissionInput } from "@/features/validation/missionSchemas";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 
 export default function CreateMission() {
     const navigate = useNavigate();
-    const createMission = useCreateMission();
-    const { data: domainsData, isLoading: domainsLoading } = useDomains();
-    const { data: specialitiesData, isLoading: specialitiesLoading } = useSpecialities();
+    const [createMission, { isLoading: isCreating }] = useCreateMissionMutation();
+    const { data: domainsData, isLoading: domainsLoading } = useGetDomainsQuery();
+    const { data: specialitiesData, isLoading: specialitiesLoading } = useGetSpecialitiesQuery();
 
     const domains = domainsData?.data || [];
     const specialities = specialitiesData?.data || [];
@@ -61,7 +61,7 @@ export default function CreateMission() {
 
     const onSubmit = async (data: CreateMissionInput) => {
         try {
-            await createMission.mutateAsync(data);
+            await createMission(data).unwrap();
             showSuccessToast("Mission created", "Your mission has been created successfully.");
             navigate("/institution/missions");
         } catch (error) {
@@ -267,8 +267,8 @@ export default function CreateMission() {
                         >
                             Cancel
                         </Button>
-                        <Button type="submit" disabled={isSubmitting}>
-                            {isSubmitting ? "Creating..." : "Create Mission"}
+                        <Button type="submit" disabled={isSubmitting || isCreating}>
+                            {isSubmitting || isCreating ? "Creating..." : "Create Mission"}
                         </Button>
                     </div>
                 </form>
@@ -276,3 +276,4 @@ export default function CreateMission() {
         </Card>
     );
 }
+

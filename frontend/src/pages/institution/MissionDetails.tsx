@@ -28,8 +28,8 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useMission, useDeleteMission } from "@/features/hooks/useMissions";
-import { useMissionApplications } from "@/features/hooks/useApplications";
+import { useGetMissionQuery, useDeleteMissionMutation } from "@/features/api/endpoints/missionEndpoints";
+import { useGetMissionApplicationsQuery } from "@/features/api/endpoints/applicationEndpoints";
 import type { Urgency } from "@/types/mission.types";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
@@ -72,9 +72,9 @@ export default function InstitutionMissionDetails() {
     const navigate = useNavigate();
     const missionId = parseInt(id || "0");
 
-    const { data: missionData, isLoading: missionLoading, error: missionError } = useMission(missionId);
-    const { data: applicationsData, isLoading: applicationsLoading } = useMissionApplications(missionId);
-    const deleteMission = useDeleteMission();
+    const { data: missionData, isLoading: missionLoading, error: missionError } = useGetMissionQuery(missionId);
+    const { data: applicationsData, isLoading: applicationsLoading } = useGetMissionApplicationsQuery({ missionId });
+    const [deleteMission] = useDeleteMissionMutation();
 
     const mission = missionData?.data;
     const applications = applicationsData?.data || [];
@@ -82,7 +82,7 @@ export default function InstitutionMissionDetails() {
 
     const handleDelete = async () => {
         try {
-            await deleteMission.mutateAsync(missionId);
+            await deleteMission(missionId).unwrap();
             showSuccessToast("Mission deleted", "The mission has been deleted successfully.");
             navigate("/institution/missions");
         } catch (error) {
@@ -318,3 +318,4 @@ export default function InstitutionMissionDetails() {
         </div>
     );
 }
+

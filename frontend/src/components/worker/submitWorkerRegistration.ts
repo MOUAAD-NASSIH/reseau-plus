@@ -1,4 +1,4 @@
-import { api } from "@/api/axios";
+import { axiosInstance } from "@/lib/axios";
 import type { WorkerRegisterData } from "./workerRegister.store";
 
 export async function submitWorkerRegistration(data: WorkerRegisterData) {
@@ -30,5 +30,6 @@ export async function submitWorkerRegistration(data: WorkerRegisterData) {
     formData.append(`document_${doc.type}`, doc.file);
   });
 
-  return api.post("/auth/register/worker", formData);
+  return axiosInstance.post("/auth/register/worker", formData);
 }
+

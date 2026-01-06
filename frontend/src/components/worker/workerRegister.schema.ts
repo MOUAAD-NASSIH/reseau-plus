@@ -65,3 +65,4 @@ export type WorkerPersonalForm = z.infer<typeof workerPersonalSchema>;
 export type WorkerProfessionalForm = z.infer<typeof workerProfessionalSchema>;
 export type WorkerExperienceForm = z.infer<typeof workerExperienceSchema>;
 export type WorkerDocumentsForm = z.infer<typeof workerDocumentsSchema>;
+

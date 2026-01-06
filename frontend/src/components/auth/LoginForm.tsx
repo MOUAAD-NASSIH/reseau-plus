@@ -1,21 +1,27 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail, Lock } from "lucide-react";
-import axios from "axios";
+import { useNavigate, useLocation } from "react-router";
 
 import {
     loginSchema,
     type LoginSchema,
 } from "@/features/validation/authSchema";
-import { useLogin } from "@/features/hooks/useAuth";
+import { useLoginMutation } from "@/features/api/endpoints/authEndpoints";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link } from "react-router";
 import RegisterRoleDialog from "../common/RegisterRoleDialog";
+import type { AxiosBaseQueryError } from "@/features/api/baseQuery";
 
 export default function LoginForm() {
-    const loginMutation = useLogin();
+    const [login, { isLoading: isLoginLoading }] = useLoginMutation();
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    // Get the redirect location from state (if coming from ProtectedRoute)
+    const from = (location.state as { from?: Location })?.from;
 
     const form = useForm<LoginSchema>({
         resolver: zodResolver(loginSchema),
@@ -35,29 +41,49 @@ export default function LoginForm() {
 
     const onSubmit = async (data: LoginSchema) => {
         try {
-            await loginMutation.mutateAsync(data);
-            // Navigation is handled by useLogin hook based on role
+            const response = await login(data).unwrap();
+
+            // Store token
+            localStorage.setItem("auth_token", response.data.token);
+
+            // If we have a saved location, redirect there
+            if (from && from.pathname !== "/login") {
+                navigate(from.pathname, { replace: true });
+                return;
+            }
+
+            // Otherwise, navigate based on role
+            const role = response.data.user.role;
+            if (role === "admin") {
+                navigate("/admin", { replace: true });
+            } else if (role === "institution") {
+                navigate("/institution", { replace: true });
+            } else if (role === "worker") {
+                navigate("/worker", { replace: true });
+            } else {
+                navigate("/", { replace: true });
+            }
         } catch (error) {
-            // Handle backend validation errors
-            if (axios.isAxiosError(error) && error.response?.data?.errors) {
-                const backendErrors = error.response.data.errors;
-                Object.entries(backendErrors).forEach(([field, message]) => {
+            // Handle RTK Query error format
+            const apiError = error as AxiosBaseQueryError;
+            if (apiError.data?.details) {
+                apiError.data.details.forEach(({ field, message }) => {
                     setError(field as keyof LoginSchema, {
                         type: "server",
-                        message: message as string,
+                        message: message,
                     });
                 });
-            } else if (axios.isAxiosError(error) && error.response?.data?.message) {
+            } else if (apiError.message) {
                 // Set general error on email field for display
                 setError("email", {
                     type: "server",
-                    message: error.response.data.message,
+                    message: apiError.message,
                 });
             }
         }
     };
 
-    const isLoading = isSubmitting || loginMutation.isPending;
+    const isLoading = isSubmitting || isLoginLoading;
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -131,3 +157,4 @@ export default function LoginForm() {
         </form>
     );
 }
+

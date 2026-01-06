@@ -33,12 +33,12 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import { useMission } from "@/features/hooks/useMissions";
+import { useGetMissionQuery } from "@/features/api/endpoints/missionEndpoints";
 import {
-    useMissionApplications,
-    useAcceptApplication,
-    useRejectApplication,
-} from "@/features/hooks/useApplications";
+    useGetMissionApplicationsQuery,
+    useAcceptApplicationMutation,
+    useRejectApplicationMutation,
+} from "@/features/api/endpoints/applicationEndpoints";
 import type { ApplicationStatus, MissionApplication } from "@/types/application.types";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 
@@ -50,13 +50,18 @@ export default function MissionApplicants() {
     const [selectedApplicant, setSelectedApplicant] = useState<MissionApplication | null>(null);
     const [processingId, setProcessingId] = useState<number | null>(null);
 
-    const { data: missionData, isLoading: missionLoading } = useMission(missionId);
-    const { data: applicationsData, isLoading: applicationsLoading } = useMissionApplications(
-        missionId,
-        statusFilter !== "ALL" ? { status: statusFilter } : undefined
+    const { data: missionData, isLoading: missionLoading } = useGetMissionQuery(missionId, {
+        skip: !missionId,
+    });
+    const { data: applicationsData, isLoading: applicationsLoading } = useGetMissionApplicationsQuery(
+        {
+            missionId,
+            filters: statusFilter !== "ALL" ? { status: statusFilter } : undefined,
+        },
+        { skip: !missionId }
     );
-    const acceptApplication = useAcceptApplication();
-    const rejectApplication = useRejectApplication();
+    const [acceptApplication, { isLoading: isAccepting }] = useAcceptApplicationMutation();
+    const [rejectApplication, { isLoading: isRejecting }] = useRejectApplicationMutation();
 
     const mission = missionData?.data;
     const applications = applicationsData?.data || [];
@@ -64,7 +69,7 @@ export default function MissionApplicants() {
     const handleAccept = useCallback(async (applicationId: number) => {
         setProcessingId(applicationId);
         try {
-            await acceptApplication.mutateAsync(applicationId);
+            await acceptApplication({ id: applicationId, missionId }).unwrap();
             showSuccessToast("Application accepted", "The worker has been assigned to this mission.");
             setSelectedApplicant(null);
         } catch (error) {
@@ -72,12 +77,12 @@ export default function MissionApplicants() {
         } finally {
             setProcessingId(null);
         }
-    }, [acceptApplication]);
+    }, [acceptApplication, missionId]);
 
     const handleReject = useCallback(async (applicationId: number) => {
         setProcessingId(applicationId);
         try {
-            await rejectApplication.mutateAsync(applicationId);
+            await rejectApplication({ id: applicationId, missionId }).unwrap();
             showSuccessToast("Application rejected", "The application has been rejected.");
             setSelectedApplicant(null);
         } catch (error) {
@@ -85,7 +90,7 @@ export default function MissionApplicants() {
         } finally {
             setProcessingId(null);
         }
-    }, [rejectApplication]);
+    }, [rejectApplication, missionId]);
 
     const onViewProfile = useCallback((application: MissionApplication) => {
         setSelectedApplicant(application);
@@ -437,9 +442,9 @@ export default function MissionApplicants() {
                                     <Button
                                         variant="destructive"
                                         onClick={() => handleReject(selectedApplicant.id)}
-                                        disabled={rejectApplication.isPending}
+                                        disabled={isRejecting}
                                     >
-                                        {rejectApplication.isPending ? (
+                                        {isRejecting ? (
                                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                         ) : (
                                             <X className="h-4 w-4 mr-1" />
@@ -448,9 +453,9 @@ export default function MissionApplicants() {
                                     </Button>
                                     <Button
                                         onClick={() => handleAccept(selectedApplicant.id)}
-                                        disabled={acceptApplication.isPending}
+                                        disabled={isAccepting}
                                     >
-                                        {acceptApplication.isPending ? (
+                                        {isAccepting ? (
                                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                         ) : (
                                             <Check className="h-4 w-4 mr-1" />
@@ -466,3 +471,4 @@ export default function MissionApplicants() {
         </div>
     );
 }
+

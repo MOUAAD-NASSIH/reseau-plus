@@ -12,8 +12,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { useAssignment } from "@/features/hooks/useAssignments";
-import { useCreatePaymentIntent, usePayments } from "@/features/hooks/usePayments";
+import { useGetAssignmentQuery } from "@/features/api/endpoints/assignmentEndpoints";
+import { useGetPaymentsQuery, useCreatePaymentIntentMutation } from "@/features/api/endpoints/paymentEndpoints";
 import { showErrorToast } from "@/lib/toast";
 import { stripePromise } from "@/lib/stripe";
 import { StripeCheckoutForm } from "@/components/payment/StripeCheckoutForm";
@@ -50,13 +50,19 @@ export default function PaymentPage() {
     const [paymentAmount, setPaymentAmount] = useState<number>(0);
 
     // Only fetch data if we have a valid assignment ID
-    const { data: assignmentData, isLoading: assignmentLoading } = useAssignment(
-        isValidAssignmentId ? assignmentId : 0
+    const { data: assignmentData, isLoading: assignmentLoading } = useGetAssignmentQuery(
+        assignmentId,
+        { skip: !isValidAssignmentId }
     );
-    const { data: paymentsData, isLoading: paymentsLoading, refetch: refetchPayments } = usePayments(
-        isValidAssignmentId ? { missionAssignmentId: assignmentId } : undefined
+    const { data: paymentsData, isLoading: paymentsLoading, refetch: refetchPayments } = useGetPaymentsQuery(
+        isValidAssignmentId ? { missionAssignmentId: assignmentId } : undefined,
+        {
+            skip: !isValidAssignmentId,
+            // Refetch when the assignment ID changes to ensure fresh data
+            refetchOnMountOrArgChange: true,
+        }
     );
-    const createPaymentIntent = useCreatePaymentIntent();
+    const [createPaymentIntent] = useCreatePaymentIntentMutation();
 
     // If no valid assignment ID, redirect to payment history
     if (!isValidAssignmentId) {
@@ -72,9 +78,9 @@ export default function PaymentPage() {
         setErrorMessage("");
 
         try {
-            const response = await createPaymentIntent.mutateAsync({
+            const response = await createPaymentIntent({
                 assignmentId,
-            });
+            }).unwrap();
 
             if (response.data && "clientSecret" in response.data) {
                 setClientSecret(response.data.clientSecret as string);
@@ -89,8 +95,8 @@ export default function PaymentPage() {
             }
         } catch (error) {
             setPaymentState("error");
-            const err = error as { response?: { data?: { message?: string } }; message?: string };
-            const message = err?.response?.data?.message || err?.message || "Failed to initialize payment. Please try again.";
+            const err = error as { data?: { message?: string }; message?: string };
+            const message = err?.data?.message || err?.message || "Failed to initialize payment. Please try again.";
             setErrorMessage(message);
             showErrorToast(error, "Payment initialization failed");
         }
@@ -487,3 +493,4 @@ export default function PaymentPage() {
         </div>
     );
 }
+

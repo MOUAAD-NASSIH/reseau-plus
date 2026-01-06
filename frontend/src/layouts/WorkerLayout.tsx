@@ -72,3 +72,4 @@ export default function WorkerLayout({ children, title, description }: WorkerLay
         </DashboardLayout>
     );
 }
+

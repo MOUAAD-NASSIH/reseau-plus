@@ -1,6 +1,6 @@
 import { User, Briefcase, FileText } from "lucide-react";
 import { useWorkerRegisterStore } from "../workerRegister.store";
-import { useDomains } from "@/features/hooks/useDomains";
+import { useGetDomainsQuery } from "@/features/api/endpoints/domainEndpoints";
 
 import { ProfileSection } from "@/components/common/profile/ProfileSection";
 import { ProfileItem } from "@/components/common/profile/ProfileItem";
@@ -10,7 +10,7 @@ import { ExperienceList } from "@/components/common/profile/ExperienceList";
 
 export default function StepConfirm() {
   const { data } = useWorkerRegisterStore();
-  const { data: domainsData } = useDomains();
+  const { data: domainsData } = useGetDomainsQuery();
   const domains = domainsData?.data || [];
 
   const domainNames =
@@ -55,3 +55,4 @@ export default function StepConfirm() {
     </div>
   );
 }
+

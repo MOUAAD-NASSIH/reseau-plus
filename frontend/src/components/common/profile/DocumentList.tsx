@@ -28,3 +28,4 @@ export function DocumentList({ documents }: DocumentListProps) {
         </div>
     );
 }
+

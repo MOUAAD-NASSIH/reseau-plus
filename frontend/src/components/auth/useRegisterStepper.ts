@@ -24,3 +24,4 @@ export function useRegisterStepper(totalSteps: number) {
     goTo,
   };
 }
+

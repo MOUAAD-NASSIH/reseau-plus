@@ -1,7 +1,7 @@
 /**
  * AvailabilityCalendar Component
  * A professional calendar UI for workers to manage their availability slots
- * Requirements: 9.1-9.17
+
  */
 
 import { useState, useMemo, useCallback } from "react";
@@ -68,10 +68,8 @@ const localizer = dateFnsLocalizer({
 // Create drag and drop calendar component
 const DnDCalendar = withDragAndDrop<CalendarEvent>(Calendar);
 
-
-// ============================================
 // TYPES
-// ============================================
+
 
 interface AvailabilityCalendarProps {
     /** Availability data from existing hooks (passed as props) */
@@ -103,9 +101,8 @@ interface SlotFormProps {
     isEditing?: boolean;
 }
 
-// ============================================
 // SLOT FORM COMPONENT
-// ============================================
+
 
 function SlotForm({
     onSubmit,
@@ -193,10 +190,8 @@ function SlotForm({
     );
 }
 
-
-// ============================================
 // CALENDAR SKELETON LOADER
-// ============================================
+
 
 function CalendarSkeleton() {
     return (
@@ -229,9 +224,8 @@ function CalendarSkeleton() {
     );
 }
 
-// ============================================
 // CUSTOM EVENT COMPONENT
-// ============================================
+
 
 interface EventComponentProps {
     event: CalendarEvent;
@@ -253,9 +247,8 @@ function EventComponent({ event }: EventComponentProps) {
     );
 }
 
-// ============================================
 // MAIN CALENDAR COMPONENT
-// ============================================
+
 
 export function AvailabilityCalendar({
     availabilities,
@@ -717,3 +710,4 @@ export function AvailabilityCalendar({
 }
 
 export default AvailabilityCalendar;
+

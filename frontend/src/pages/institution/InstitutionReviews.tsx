@@ -18,11 +18,11 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-    useMyReceivedReviews,
-    useMyWrittenReviews,
-    useCreateReview,
-} from "@/features/hooks/useReviews";
-import { useInstitutionAssignments } from "@/features/hooks/useAssignments";
+    useGetMyReceivedReviewsQuery,
+    useGetMyWrittenReviewsQuery,
+    useCreateReviewMutation,
+} from "@/features/api/endpoints/reviewEndpoints";
+import { useGetInstitutionAssignmentsQuery } from "@/features/api/endpoints/assignmentEndpoints";
 import { createReviewSchema, type CreateReviewInput } from "@/features/validation/reviewSchemas";
 import type { MissionAssignment } from "@/types/assignment.types";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
@@ -68,12 +68,12 @@ export default function InstitutionReviews() {
     // Track if we've already processed the preselected assignment
     const hasProcessedPreselection = useRef(false);
 
-    const { data: receivedData, isLoading: receivedLoading } = useMyReceivedReviews();
-    const { data: writtenData, isLoading: writtenLoading } = useMyWrittenReviews();
-    const { data: assignmentsData, isLoading: assignmentsLoading } = useInstitutionAssignments({
+    const { data: receivedData, isLoading: receivedLoading } = useGetMyReceivedReviewsQuery();
+    const { data: writtenData, isLoading: writtenLoading } = useGetMyWrittenReviewsQuery();
+    const { data: assignmentsData, isLoading: assignmentsLoading } = useGetInstitutionAssignmentsQuery({
         status: "COMPLETED",
     });
-    const createReview = useCreateReview();
+    const [createReview, { isLoading: isCreatingReview }] = useCreateReviewMutation();
 
     const receivedReviews = receivedData?.data || [];
     const writtenReviews = writtenData?.data || [];
@@ -138,7 +138,7 @@ export default function InstitutionReviews() {
 
     const onSubmit = async (data: CreateReviewInput) => {
         try {
-            await createReview.mutateAsync(data);
+            await createReview(data).unwrap();
             showSuccessToast("Review submitted", "Your review has been submitted successfully.");
             closeReviewDialog();
         } catch (error) {
@@ -429,8 +429,8 @@ export default function InstitutionReviews() {
                             >
                                 Cancel
                             </Button>
-                            <Button type="submit" disabled={isSubmitting}>
-                                {isSubmitting ? "Submitting..." : "Submit Review"}
+                            <Button type="submit" disabled={isSubmitting || isCreatingReview}>
+                                {isSubmitting || isCreatingReview ? "Submitting..." : "Submit Review"}
                             </Button>
                         </div>
                     </form>
@@ -439,3 +439,4 @@ export default function InstitutionReviews() {
         </div>
     );
 }
+

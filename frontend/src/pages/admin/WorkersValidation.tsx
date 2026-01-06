@@ -28,11 +28,11 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import {
-    usePendingWorkers,
-    useValidateWorker,
-    useRejectWorker,
-    useReviewDocument,
-} from "@/features/hooks/useAdmin";
+    useGetPendingWorkersQuery,
+    useValidateWorkerMutation,
+    useRejectWorkerMutation,
+    useReviewDocumentMutation,
+} from "@/features/api/endpoints/adminEndpoints";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 import type { Worker, WorkerDocument } from "@/types/auth.types";
 
@@ -371,10 +371,10 @@ export default function WorkersValidation() {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [processingDocumentId, setProcessingDocumentId] = useState<number | null>(null);
 
-    const { data: pendingWorkersData, isLoading, refetch } = usePendingWorkers();
-    const validateWorker = useValidateWorker();
-    const rejectWorker = useRejectWorker();
-    const reviewDocument = useReviewDocument();
+    const { data: pendingWorkersData, isLoading, refetch } = useGetPendingWorkersQuery();
+    const [validateWorker, { isLoading: isValidating }] = useValidateWorkerMutation();
+    const [rejectWorker, { isLoading: isRejecting }] = useRejectWorkerMutation();
+    const [reviewDocument, { isLoading: isReviewingDocument }] = useReviewDocumentMutation();
 
     const pendingWorkers = pendingWorkersData?.data || [];
 
@@ -384,84 +384,75 @@ export default function WorkersValidation() {
     }, []);
 
     const handleApprove = useCallback((workerId: number) => {
-        validateWorker.mutate(workerId, {
-            onSuccess: () => {
+        validateWorker(workerId)
+            .unwrap()
+            .then(() => {
                 setDialogOpen(false);
                 setSelectedWorker(null);
-            },
-        });
+            });
     }, [validateWorker]);
 
     const handleReject = useCallback((workerId: number, reason: string) => {
-        rejectWorker.mutate(
-            { workerId, reason },
-            {
-                onSuccess: () => {
-                    setDialogOpen(false);
-                    setSelectedWorker(null);
-                },
-            }
-        );
+        rejectWorker({ workerId, reason })
+            .unwrap()
+            .then(() => {
+                setDialogOpen(false);
+                setSelectedWorker(null);
+            });
     }, [rejectWorker]);
 
     const handleApproveDocument = useCallback((documentId: number) => {
         setProcessingDocumentId(documentId);
-        reviewDocument.mutate(
-            { documentId, status: "APPROVED" },
-            {
-                onSuccess: () => {
-                    showSuccessToast("Document approved", "The document has been approved.");
-                    setProcessingDocumentId(null);
-                    // Update the local selectedWorker state to reflect the change
-                    if (selectedWorker) {
-                        setSelectedWorker({
-                            ...selectedWorker,
-                            documents: selectedWorker.documents?.map((doc) =>
-                                doc.id === documentId
-                                    ? { ...doc, status: "APPROVED" as const }
-                                    : doc
-                            ),
-                        });
-                    }
-                    // Refetch to update the worker's documents
-                    refetch();
-                },
-                onError: (error) => {
-                    showErrorToast(error, "Failed to approve document.");
-                    setProcessingDocumentId(null);
-                },
-            }
-        );
+        reviewDocument({ documentId, status: "APPROVED" })
+            .unwrap()
+            .then(() => {
+                showSuccessToast("Document approved", "The document has been approved.");
+                setProcessingDocumentId(null);
+                // Update the local selectedWorker state to reflect the change
+                if (selectedWorker) {
+                    setSelectedWorker({
+                        ...selectedWorker,
+                        documents: selectedWorker.documents?.map((doc) =>
+                            doc.id === documentId
+                                ? { ...doc, status: "APPROVED" as const }
+                                : doc
+                        ),
+                    });
+                }
+                // Refetch to update the worker's documents
+                refetch();
+            })
+            .catch((error) => {
+                showErrorToast(error, "Failed to approve document.");
+                setProcessingDocumentId(null);
+            });
     }, [reviewDocument, refetch, selectedWorker]);
 
     const handleRejectDocument = useCallback((documentId: number, comment: string) => {
         setProcessingDocumentId(documentId);
-        reviewDocument.mutate(
-            { documentId, status: "REJECTED", comment },
-            {
-                onSuccess: () => {
-                    showSuccessToast("Document rejected", "The document has been rejected.");
-                    setProcessingDocumentId(null);
-                    // Update the local selectedWorker state to reflect the change
-                    if (selectedWorker) {
-                        setSelectedWorker({
-                            ...selectedWorker,
-                            documents: selectedWorker.documents?.map((doc) =>
-                                doc.id === documentId
-                                    ? { ...doc, status: "REJECTED" as const, adminComment: comment }
-                                    : doc
-                            ),
-                        });
-                    }
-                    // Refetch to update the worker's documents
-                    refetch();
-                },
-                onError: (error) => {
-                    showErrorToast(error, "Failed to reject document.");
-                    setProcessingDocumentId(null);
-                },
-            }
-        );
+        reviewDocument({ documentId, status: "REJECTED", comment })
+            .unwrap()
+            .then(() => {
+                showSuccessToast("Document rejected", "The document has been rejected.");
+                setProcessingDocumentId(null);
+                // Update the local selectedWorker state to reflect the change
+                if (selectedWorker) {
+                    setSelectedWorker({
+                        ...selectedWorker,
+                        documents: selectedWorker.documents?.map((doc) =>
+                            doc.id === documentId
+                                ? { ...doc, status: "REJECTED" as const, adminComment: comment }
+                                : doc
+                        ),
+                    });
+                }
+                // Refetch to update the worker's documents
+                refetch();
+            })
+            .catch((error) => {
+                showErrorToast(error, "Failed to reject document.");
+                setProcessingDocumentId(null);
+            });
     }, [reviewDocument, refetch, selectedWorker]);
 
     // Column definitions for DataTable
@@ -610,12 +601,13 @@ export default function WorkersValidation() {
                 onReject={handleReject}
                 onApproveDocument={handleApproveDocument}
                 onRejectDocument={handleRejectDocument}
-                isApproving={validateWorker.isPending}
-                isRejecting={rejectWorker.isPending}
-                isApprovingDocument={reviewDocument.isPending && processingDocumentId !== null}
-                isRejectingDocument={reviewDocument.isPending && processingDocumentId !== null}
+                isApproving={isValidating}
+                isRejecting={isRejecting}
+                isApprovingDocument={isReviewingDocument && processingDocumentId !== null}
+                isRejectingDocument={isReviewingDocument && processingDocumentId !== null}
                 processingDocumentId={processingDocumentId}
             />
         </div>
     );
 }
+

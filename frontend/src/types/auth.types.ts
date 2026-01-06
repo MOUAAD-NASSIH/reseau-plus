@@ -1,15 +1,14 @@
-// ============================================
+
 // ENUMS
-// ============================================
+
 
 export type UserRole = 'admin' | 'worker' | 'institution';
 export type UserStatus = 'ACTIVE' | 'SUSPENDED' | 'BANNED';
 export type WorkerStatus = 'PENDING' | 'VERIFIED' | 'REJECTED';
 export type DocumentStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
-// ============================================
 // BASE MODELS
-// ============================================
+
 
 export interface Role {
     id: number;
@@ -69,9 +68,8 @@ export interface Institution {
 // Admin Profile
 export type Admin = User;
 
-// ============================================
 // RELATED MODELS
-// ============================================
+
 
 export interface Speciality {
     id: number;
@@ -125,9 +123,8 @@ export interface WorkerAvailability {
     createdAt: string;
 }
 
-// ============================================
 // API REQUEST DTOs
-// ============================================
+
 
 export interface LoginRequest {
     email: string;
@@ -172,10 +169,8 @@ export interface WorkerExperienceInput {
     description?: string;
 }
 
-
-// ============================================
 // API RESPONSE DTOs
-// ============================================
+
 
 // Auth response (login, register)
 export interface AuthResponse {
@@ -212,10 +207,8 @@ export interface MeResponse {
     };
 }
 
-
-// ============================================
 // UTILITY TYPES
-// ============================================
+
 
 // Unified type for authenticated user state
 export type AuthenticatedUser = Worker | Institution | Admin;
@@ -231,9 +224,8 @@ export function isAdmin(user: AuthenticatedUser): user is Admin {
     return !isWorker(user) && !isInstitution(user);
 }
 
-// ============================================
 // ENHANCED WORKER TYPES
-// ============================================
+
 
 export type DocumentType = 'DIPLOMA' | 'CV' | 'ID' | 'OTHER';
 
@@ -276,9 +268,8 @@ export interface DocumentUploadInput {
     file: File;
 }
 
-// ============================================
 // ENHANCED INSTITUTION TYPES
-// ============================================
+
 
 /**
  * Institution profile update input
@@ -301,9 +292,8 @@ export interface InstitutionFilters {
     limit?: number;
 }
 
-// ============================================
 // DOMAIN & SPECIALITY FILTERS
-// ============================================
+
 
 /**
  * Domain filter options

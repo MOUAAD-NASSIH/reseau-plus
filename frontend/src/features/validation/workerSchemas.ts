@@ -15,9 +15,8 @@ import {
     paginationSchema,
 } from "./commonSchemas";
 
-// ============================================
 // ENUM SCHEMAS
-// ============================================
+
 
 /**
  * Worker status enum schema
@@ -29,9 +28,8 @@ export const workerStatusSchema = z.enum(["PENDING", "VERIFIED", "REJECTED"]);
  */
 export const documentTypeSchema = z.enum(["DIPLOMA", "CV", "ID", "OTHER"]);
 
-// ============================================
 // UPDATE WORKER PROFILE SCHEMA
-// ============================================
+
 
 /**
  * Update worker profile input schema
@@ -50,9 +48,8 @@ export const updateWorkerProfileSchema = z.object({
     gender: safeStringSchema.max(20, "Gender must be 20 characters or less").optional().nullable(),
 });
 
-// ============================================
 // WORKER AVAILABILITY SCHEMA
-// ============================================
+
 
 /**
  * Create worker availability input schema
@@ -93,9 +90,8 @@ export const updateAvailabilitySchema = z
         }
     );
 
-// ============================================
 // WORKER EXPERIENCE SCHEMA
-// ============================================
+
 
 /**
  * Create worker experience input schema
@@ -145,9 +141,8 @@ export const updateExperienceSchema = z
         }
     );
 
-// ============================================
 // DOCUMENT UPLOAD SCHEMA
-// ============================================
+
 
 /**
  * Document upload input schema
@@ -156,9 +151,8 @@ export const documentUploadSchema = z.object({
     type: documentTypeSchema,
 });
 
-// ============================================
 // DOMAIN MANAGEMENT SCHEMAS
-// ============================================
+
 
 /**
  * Add domain to worker schema
@@ -167,9 +161,8 @@ export const addDomainSchema = z.object({
     domainId: positiveIntSchema,
 });
 
-// ============================================
 // WORKER FILTER SCHEMA
-// ============================================
+
 
 /**
  * Worker filter schema
@@ -197,9 +190,8 @@ export const workerFilterSchema = z
         }
     );
 
-// ============================================
 // TYPE EXPORTS
-// ============================================
+
 
 export type WorkerStatus = z.infer<typeof workerStatusSchema>;
 export type DocumentType = z.infer<typeof documentTypeSchema>;
@@ -211,3 +203,4 @@ export type UpdateExperienceInput = z.infer<typeof updateExperienceSchema>;
 export type DocumentUploadInput = z.infer<typeof documentUploadSchema>;
 export type AddDomainInput = z.infer<typeof addDomainSchema>;
 export type WorkerFilters = z.infer<typeof workerFilterSchema>;
+

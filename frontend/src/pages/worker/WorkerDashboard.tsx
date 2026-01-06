@@ -17,20 +17,23 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { KPICard } from "@/components/common/KPICard";
-import { useWorkerProfile, useWorkerAvailabilities } from "@/features/hooks/useWorkers";
-import { useMyApplications } from "@/features/hooks/useApplications";
-import { useMyAssignments } from "@/features/hooks/useAssignments";
-import { useMyReceivedReviews } from "@/features/hooks/useReviews";
-import { useNotifications } from "@/features/hooks/useNotifications";
+import {
+    useGetWorkerProfileQuery,
+    useGetWorkerAvailabilitiesQuery,
+} from "@/features/api/endpoints/workerEndpoints";
+import { useGetMyApplicationsQuery } from "@/features/api/endpoints/applicationEndpoints";
+import { useGetMyAssignmentsQuery } from "@/features/api/endpoints/assignmentEndpoints";
+import { useGetMyReceivedReviewsQuery } from "@/features/api/endpoints/reviewEndpoints";
+import { useGetNotificationsQuery } from "@/features/api/endpoints/notificationEndpoints";
 import { format, isAfter, isBefore, addDays } from "date-fns";
 
 export default function WorkerDashboard() {
-    const { data: profileData, isLoading: profileLoading } = useWorkerProfile();
-    const { data: applicationsData, isLoading: applicationsLoading } = useMyApplications();
-    const { data: assignmentsData, isLoading: assignmentsLoading } = useMyAssignments();
-    const { data: reviewsData, isLoading: reviewsLoading } = useMyReceivedReviews();
-    const { data: notificationsData, isLoading: notificationsLoading } = useNotifications();
-    const { data: availabilitiesData, isLoading: availabilitiesLoading } = useWorkerAvailabilities();
+    const { data: profileData, isLoading: profileLoading } = useGetWorkerProfileQuery();
+    const { data: applicationsData, isLoading: applicationsLoading } = useGetMyApplicationsQuery();
+    const { data: assignmentsData, isLoading: assignmentsLoading } = useGetMyAssignmentsQuery();
+    const { data: reviewsData, isLoading: reviewsLoading } = useGetMyReceivedReviewsQuery();
+    const { data: notificationsData, isLoading: notificationsLoading } = useGetNotificationsQuery();
+    const { data: availabilitiesData, isLoading: availabilitiesLoading } = useGetWorkerAvailabilitiesQuery();
 
     const worker = profileData?.data;
     const applications = applicationsData?.data || [];
@@ -230,8 +233,8 @@ export default function WorkerDashboard() {
                                     <div
                                         key={notification.id}
                                         className={`p-3 rounded-lg border ${!notification.isRead
-                                                ? "bg-primary/5 border-primary/20"
-                                                : "bg-muted/50"
+                                            ? "bg-primary/5 border-primary/20"
+                                            : "bg-muted/50"
                                             }`}
                                     >
                                         <p className={`text-sm ${!notification.isRead ? "font-medium" : ""}`}>
@@ -403,3 +406,4 @@ export default function WorkerDashboard() {
         </div>
     );
 }
+

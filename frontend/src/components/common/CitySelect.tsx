@@ -1,5 +1,4 @@
-import { useState, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useMemo, useEffect } from "react";
 import axios from "axios";
 import { Check, ChevronsUpDown, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -19,31 +18,50 @@ interface CitiesApiResponse {
     data: string[];
 }
 
-// Fetch Moroccan cities from the geography API
-const fetchMoroccanCities = async (): Promise<string[]> => {
-    const response = await axios.post<CitiesApiResponse>(
-        "https://countriesnow.space/api/v0.1/countries/cities",
-        { country: "Morocco" }
-    );
-
-    if (response.data.error) {
-        throw new Error(response.data.msg);
-    }
-
-    // Sort cities alphabetically
-    return response.data.data.sort((a, b) => a.localeCompare(b));
-};
+// Cache for cities data to avoid refetching
+let citiesCache: string[] | null = null;
 
 export function CitySelect({ value, onChange, placeholder = "Select a city" }: CitySelectProps) {
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState("");
+    const [cities, setCities] = useState<string[]>(citiesCache || []);
+    const [isLoading, setIsLoading] = useState(!citiesCache);
+    const [isError, setIsError] = useState(false);
 
-    const { data: cities, isLoading, isError } = useQuery({
-        queryKey: ["moroccan-cities"],
-        queryFn: fetchMoroccanCities,
-        staleTime: 1000 * 60 * 60 * 24, // Cache for 24 hours
-        gcTime: 1000 * 60 * 60 * 24 * 7, // Keep in cache for 7 days
-    });
+    // Fetch Moroccan cities from the geography API
+    useEffect(() => {
+        if (citiesCache) {
+            setCities(citiesCache);
+            setIsLoading(false);
+            return;
+        }
+
+        const fetchCities = async () => {
+            try {
+                setIsLoading(true);
+                const response = await axios.post<CitiesApiResponse>(
+                    "https://countriesnow.space/api/v0.1/countries/cities",
+                    { country: "Morocco" }
+                );
+
+                if (response.data.error) {
+                    throw new Error(response.data.msg);
+                }
+
+                // Sort cities alphabetically
+                const sortedCities = response.data.data.sort((a, b) => a.localeCompare(b));
+                citiesCache = sortedCities;
+                setCities(sortedCities);
+                setIsError(false);
+            } catch {
+                setIsError(true);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchCities();
+    }, []);
 
     // Filter cities based on search
     const filteredCities = useMemo(() => {
@@ -66,7 +84,7 @@ export function CitySelect({ value, onChange, placeholder = "Select a city" }: C
         return <Skeleton className="h-12 w-full" />;
     }
 
-    if (isError || !cities) {
+    if (isError || !cities.length) {
         return (
             <Button
                 variant="outline"
@@ -156,3 +174,4 @@ export function CitySelect({ value, onChange, placeholder = "Select a city" }: C
         </div>
     );
 }
+

@@ -6,13 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useInstitutionProfile, useUpdateInstitutionProfile } from "@/features/hooks/useInstitutions";
+import {
+    useGetInstitutionProfileQuery,
+    useUpdateInstitutionProfileMutation,
+} from "@/features/api/endpoints/institutionEndpoints";
 import { updateInstitutionProfileSchema, type UpdateInstitutionProfileInput } from "@/features/validation/institutionSchemas";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 
 export default function InstitutionProfile() {
-    const { data: profileData, isLoading } = useInstitutionProfile();
-    const updateProfile = useUpdateInstitutionProfile();
+    const { data: profileData, isLoading } = useGetInstitutionProfileQuery();
+    const [updateProfile] = useUpdateInstitutionProfileMutation();
 
     const institution = profileData?.data;
 
@@ -45,7 +48,7 @@ export default function InstitutionProfile() {
 
     const onSubmit = async (data: UpdateInstitutionProfileInput) => {
         try {
-            await updateProfile.mutateAsync(data);
+            await updateProfile(data).unwrap();
             showSuccessToast("Profile updated", "Your institution profile has been updated successfully.");
         } catch (error) {
             showErrorToast(error, "Failed to update profile. Please try again.");
@@ -190,3 +193,4 @@ export default function InstitutionProfile() {
         </Card>
     );
 }
+

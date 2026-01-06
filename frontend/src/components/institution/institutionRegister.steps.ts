@@ -3,3 +3,4 @@ export const institutionSteps = [
   { id: "institution", label: "Institution" },
   { id: "confirm", label: "Confirm" },
 ];
+

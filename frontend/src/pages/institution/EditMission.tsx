@@ -16,8 +16,8 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useMission, useUpdateMission } from "@/features/hooks/useMissions";
-import { useDomains, useSpecialities } from "@/features/hooks/useDomains";
+import { useGetMissionQuery, useUpdateMissionMutation } from "@/features/api/endpoints/missionEndpoints";
+import { useGetDomainsQuery, useGetSpecialitiesQuery } from "@/features/api/endpoints/domainEndpoints";
 import { updateMissionSchema, type UpdateMissionInput } from "@/features/validation/missionSchemas";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 
@@ -26,10 +26,10 @@ export default function EditMission() {
     const navigate = useNavigate();
     const missionId = parseInt(id || "0");
 
-    const { data: missionData, isLoading: missionLoading } = useMission(missionId);
-    const updateMission = useUpdateMission();
-    const { data: domainsData, isLoading: domainsLoading } = useDomains();
-    const { data: specialitiesData, isLoading: specialitiesLoading } = useSpecialities();
+    const { data: missionData, isLoading: missionLoading } = useGetMissionQuery(missionId);
+    const [updateMission, { isLoading: isUpdating }] = useUpdateMissionMutation();
+    const { data: domainsData, isLoading: domainsLoading } = useGetDomainsQuery();
+    const { data: specialitiesData, isLoading: specialitiesLoading } = useGetSpecialitiesQuery();
 
     const mission = missionData?.data;
     const domains = domainsData?.data || [];
@@ -88,7 +88,7 @@ export default function EditMission() {
 
     const onSubmit = async (data: UpdateMissionInput) => {
         try {
-            await updateMission.mutateAsync({ id: missionId, data });
+            await updateMission({ id: missionId, data }).unwrap();
             showSuccessToast("Mission updated", "Your mission has been updated successfully.");
             navigate("/institution/missions");
         } catch (error) {
@@ -352,8 +352,8 @@ export default function EditMission() {
                         >
                             Cancel
                         </Button>
-                        <Button type="submit" disabled={isSubmitting || !isDirty}>
-                            {isSubmitting ? "Saving..." : "Save Changes"}
+                        <Button type="submit" disabled={isSubmitting || isUpdating || !isDirty}>
+                            {isSubmitting || isUpdating ? "Saving..." : "Save Changes"}
                         </Button>
                     </div>
                 </form>
@@ -361,3 +361,4 @@ export default function EditMission() {
         </Card>
     );
 }
+

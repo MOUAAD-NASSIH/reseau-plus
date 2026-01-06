@@ -15,18 +15,18 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { KPICard } from "@/components/common/KPICard";
-import { useInstitutionProfile } from "@/features/hooks/useInstitutions";
-import { useMyMissions } from "@/features/hooks/useMissions";
-import { usePayments } from "@/features/hooks/usePayments";
-import { useMyReceivedReviews } from "@/features/hooks/useReviews";
-import { useInstitutionAssignments } from "@/features/hooks/useAssignments";
+import { useGetInstitutionProfileQuery } from "@/features/api/endpoints/institutionEndpoints";
+import { useGetMyMissionsQuery } from "@/features/api/endpoints/missionEndpoints";
+import { useGetPaymentsQuery } from "@/features/api/endpoints/paymentEndpoints";
+import { useGetMyReceivedReviewsQuery } from "@/features/api/endpoints/reviewEndpoints";
+import { useGetInstitutionAssignmentsQuery } from "@/features/api/endpoints/assignmentEndpoints";
 
 export default function InstitutionDashboard() {
-    const { data: profileData, isLoading: profileLoading } = useInstitutionProfile();
-    const { data: missionsData, isLoading: missionsLoading } = useMyMissions();
-    const { data: paymentsData, isLoading: paymentsLoading } = usePayments();
-    const { data: reviewsData, isLoading: reviewsLoading } = useMyReceivedReviews();
-    const { data: assignmentsData, isLoading: assignmentsLoading } = useInstitutionAssignments();
+    const { data: profileData, isLoading: profileLoading } = useGetInstitutionProfileQuery();
+    const { data: missionsData, isLoading: missionsLoading } = useGetMyMissionsQuery();
+    const { data: paymentsData, isLoading: paymentsLoading } = useGetPaymentsQuery();
+    const { data: reviewsData, isLoading: reviewsLoading } = useGetMyReceivedReviewsQuery();
+    const { data: assignmentsData, isLoading: assignmentsLoading } = useGetInstitutionAssignmentsQuery();
 
     const institution = profileData?.data;
     const missions = missionsData?.data || [];
@@ -306,3 +306,4 @@ export default function InstitutionDashboard() {
         </div>
     );
 }
+

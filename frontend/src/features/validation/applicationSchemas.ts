@@ -10,18 +10,16 @@ import {
     paginationSchema,
 } from "./commonSchemas";
 
-// ============================================
 // ENUM SCHEMAS
-// ============================================
+
 
 /**
  * Application status enum schema
  */
 export const applicationStatusSchema = z.enum(["SUBMITTED", "REJECTED", "ACCEPTED"]);
 
-// ============================================
 // CREATE APPLICATION SCHEMA
-// ============================================
+
 
 /**
  * Create application input schema (apply to mission)
@@ -30,9 +28,8 @@ export const createApplicationSchema = z.object({
     missionId: positiveIntSchema,
 });
 
-// ============================================
 // APPLICATION FILTER SCHEMA
-// ============================================
+
 
 /**
  * Application filter schema
@@ -69,12 +66,12 @@ export const myApplicationsFilterSchema = z
     })
     .merge(paginationSchema);
 
-// ============================================
 // TYPE EXPORTS
-// ============================================
+
 
 export type ApplicationStatus = z.infer<typeof applicationStatusSchema>;
 export type CreateApplicationInput = z.infer<typeof createApplicationSchema>;
 export type ApplicationFilters = z.infer<typeof applicationFilterSchema>;
 export type MissionApplicationsFilters = z.infer<typeof missionApplicationsFilterSchema>;
 export type MyApplicationsFilters = z.infer<typeof myApplicationsFilterSchema>;
+

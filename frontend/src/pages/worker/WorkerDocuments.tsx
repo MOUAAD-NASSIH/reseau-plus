@@ -12,7 +12,10 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { EmptyState } from "@/components/common/EmptyState";
-import { useWorkerDocuments, useUploadDocument } from "@/features/hooks/useWorkers";
+import {
+    useGetWorkerDocumentsQuery,
+    useUploadDocumentMutation,
+} from "@/features/api/endpoints/workerEndpoints";
 import type { DocumentType, WorkerDocument } from "@/types/auth.types";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
@@ -66,8 +69,8 @@ function DocumentCard({ document }: DocumentCardProps) {
 }
 
 export default function WorkerDocuments() {
-    const { data: documentsData, isLoading } = useWorkerDocuments();
-    const uploadDocument = useUploadDocument();
+    const { data: documentsData, isLoading } = useGetWorkerDocumentsQuery();
+    const [uploadDocument, { isLoading: isUploading }] = useUploadDocumentMutation();
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const [selectedType, setSelectedType] = useState<DocumentType>("DIPLOMA");
@@ -111,7 +114,7 @@ export default function WorkerDocuments() {
     const handleUpload = async () => {
         if (!selectedFile) return;
         try {
-            await uploadDocument.mutateAsync({ type: selectedType, file: selectedFile });
+            await uploadDocument({ type: selectedType, file: selectedFile }).unwrap();
             showSuccessToast("Document uploaded", "Your document has been uploaded successfully.");
             setSelectedFile(null);
             if (fileInputRef.current) fileInputRef.current.value = "";
@@ -193,8 +196,8 @@ export default function WorkerDocuments() {
                                 <Button variant="ghost" size="icon" onClick={clearSelectedFile}>
                                     <Trash2 className="h-4 w-4" />
                                 </Button>
-                                <Button onClick={handleUpload} disabled={uploadDocument.isPending}>
-                                    {uploadDocument.isPending ? (
+                                <Button onClick={handleUpload} disabled={isUploading}>
+                                    {isUploading ? (
                                         <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Uploading...</>
                                     ) : (
                                         <><Upload className="mr-2 h-4 w-4" />Upload</>
@@ -257,3 +260,4 @@ export default function WorkerDocuments() {
         </div>
     );
 }
+

@@ -5,9 +5,8 @@
 
 import type { User } from './auth.types';
 
-// ============================================
 // ENTITY INTERFACES
-// ============================================
+
 
 /**
  * Review entity
@@ -25,9 +24,8 @@ export interface Review {
     reviewee?: User;
 }
 
-// ============================================
 // INPUT INTERFACES
-// ============================================
+
 
 /**
  * Review creation input
@@ -39,9 +37,8 @@ export interface CreateReviewInput {
     comment?: string;
 }
 
-// ============================================
 // FILTER INTERFACES
-// ============================================
+
 
 /**
  * Review filter options
@@ -56,9 +53,8 @@ export interface ReviewFilters {
     limit?: number;
 }
 
-// ============================================
 // AGGREGATE INTERFACES
-// ============================================
+
 
 /**
  * Average rating result
@@ -69,9 +65,9 @@ export interface AverageRating {
     totalReviews: number;
 }
 
-// ============================================
 // CONSTANTS
-// ============================================
+
 
 export const RATING_MIN = 1;
 export const RATING_MAX = 5;
+

@@ -3,15 +3,13 @@
  * Frontend types mirroring backend payment models
  */
 
-// ============================================
 // ENUMS / STATUS TYPES
-// ============================================
+
 
 export type PaymentStatus = 'PENDING' | 'COMPLETED' | 'FAILED';
 
-// ============================================
 // ENTITY INTERFACES
-// ============================================
+
 
 /**
  * Payment entity
@@ -30,9 +28,8 @@ export interface Payment {
     createdAt: string;
 }
 
-// ============================================
 // INPUT INTERFACES
-// ============================================
+
 
 /**
  * Payment intent creation input
@@ -54,9 +51,8 @@ export interface PaymentIntentResponse {
     currency: string;
 }
 
-// ============================================
 // CALCULATION INTERFACES
-// ============================================
+
 
 /**
  * Payment fee calculation result
@@ -67,9 +63,8 @@ export interface PaymentFeeCalculation {
     workerAmount: number;
 }
 
-// ============================================
 // FILTER INTERFACES
-// ============================================
+
 
 /**
  * Payment filter options
@@ -86,3 +81,4 @@ export interface PaymentFilters {
     page?: number;
     limit?: number;
 }
+

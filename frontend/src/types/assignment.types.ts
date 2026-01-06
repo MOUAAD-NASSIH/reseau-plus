@@ -6,15 +6,13 @@
 import type { Worker, Institution } from './auth.types';
 import type { Mission } from './mission.types';
 
-// ============================================
 // ENUMS / STATUS TYPES
-// ============================================
+
 
 export type AssignmentStatus = 'ACTIVE' | 'ONGOING' | 'COMPLETED' | 'CANCELLED';
 
-// ============================================
 // ENTITY INTERFACES
-// ============================================
+
 
 /**
  * Mission assignment entity
@@ -32,9 +30,8 @@ export interface MissionAssignment {
     institution?: Institution;
 }
 
-// ============================================
 // INPUT INTERFACES
-// ============================================
+
 
 /**
  * Assignment creation input
@@ -52,9 +49,8 @@ export interface UpdateAssignmentStatusInput {
     status: AssignmentStatus;
 }
 
-// ============================================
 // FILTER INTERFACES
-// ============================================
+
 
 /**
  * Assignment filter options
@@ -69,3 +65,4 @@ export interface AssignmentFilters {
     page?: number;
     limit?: number;
 }
+

@@ -5,11 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/common/EmptyState";
 import {
-    useNotifications,
-    useMarkAsRead,
-    useMarkAllAsRead,
-    useDeleteNotification,
-} from "@/features/hooks/useNotifications";
+    useGetNotificationsQuery,
+    useMarkAsReadMutation,
+    useMarkAllAsReadMutation,
+    useDeleteNotificationMutation,
+} from "@/features/api/endpoints/notificationEndpoints";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 import type { Notification, NotificationType } from "@/types/notification.types";
@@ -38,17 +38,17 @@ const getNotificationRedirectUrl = (type: NotificationType): string | null => {
 
 export default function InstitutionNotifications() {
     const navigate = useNavigate();
-    const { data: notificationsData, isLoading } = useNotifications();
-    const markAsRead = useMarkAsRead();
-    const markAllAsRead = useMarkAllAsRead();
-    const deleteNotification = useDeleteNotification();
+    const { data: notificationsData, isLoading } = useGetNotificationsQuery();
+    const [markAsRead, { isLoading: isMarkingAsRead }] = useMarkAsReadMutation();
+    const [markAllAsRead, { isLoading: isMarkingAllAsRead }] = useMarkAllAsReadMutation();
+    const [deleteNotification, { isLoading: isDeletingNotification }] = useDeleteNotificationMutation();
 
     const notifications = notificationsData?.data || [];
     const unreadCount = notifications.filter((n) => !n.isRead).length;
 
     const handleMarkAsRead = async (id: number) => {
         try {
-            await markAsRead.mutateAsync(id);
+            await markAsRead(id).unwrap();
         } catch (error) {
             showErrorToast(error, "Failed to mark notification as read.");
         }
@@ -56,7 +56,7 @@ export default function InstitutionNotifications() {
 
     const handleMarkAllAsRead = async () => {
         try {
-            await markAllAsRead.mutateAsync();
+            await markAllAsRead().unwrap();
             showSuccessToast("All notifications marked as read");
         } catch (error) {
             showErrorToast(error, "Failed to mark all notifications as read.");
@@ -65,7 +65,7 @@ export default function InstitutionNotifications() {
 
     const handleDelete = async (id: number) => {
         try {
-            await deleteNotification.mutateAsync(id);
+            await deleteNotification(id).unwrap();
             showSuccessToast("Notification deleted");
         } catch (error) {
             showErrorToast(error, "Failed to delete notification.");
@@ -117,7 +117,7 @@ export default function InstitutionNotifications() {
                         variant="outline"
                         size="sm"
                         onClick={handleMarkAllAsRead}
-                        disabled={markAllAsRead.isPending}
+                        disabled={isMarkingAllAsRead}
                     >
                         <CheckCheck className="h-4 w-4 mr-2" />
                         Mark all as read
@@ -215,7 +215,7 @@ export default function InstitutionNotifications() {
                                                         e.stopPropagation();
                                                         handleMarkAsRead(notification.id);
                                                     }}
-                                                    disabled={markAsRead.isPending}
+                                                    disabled={isMarkingAsRead}
                                                     title="Mark as read"
                                                 >
                                                     <Check className="h-4 w-4" />
@@ -228,7 +228,7 @@ export default function InstitutionNotifications() {
                                                     e.stopPropagation();
                                                     handleDelete(notification.id);
                                                 }}
-                                                disabled={deleteNotification.isPending}
+                                                disabled={isDeletingNotification}
                                                 title="Delete notification"
                                                 className="text-muted-foreground hover:text-destructive"
                                             >
@@ -245,3 +245,4 @@ export default function InstitutionNotifications() {
         </div>
     );
 }
+

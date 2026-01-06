@@ -2,6 +2,7 @@ import { Navigate } from "react-router";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/features/store";
 import type { WorkerStatus } from "@/types/auth.types";
+import { useGetCurrentUserQuery } from "@/features/api/endpoints/authEndpoints";
 
 interface WorkerVerifiedGuardProps {
     children: React.ReactNode;
@@ -32,12 +33,30 @@ export default function WorkerVerifiedGuard({
     fallbackPath = "/worker/pending-approval",
 }: WorkerVerifiedGuardProps) {
     const user = useSelector((state: RootState) => state.auth.user);
+    const hasToken = !!localStorage.getItem("auth_token");
 
-    if (!user) {
+    // Also check RTK Query data in case Redux state hasn't been updated yet
+    const { data: currentUserData, isLoading, isFetching } = useGetCurrentUserQuery(undefined, {
+        skip: !hasToken,
+    });
+
+    // Use Redux user or RTK Query user
+    const effectiveUser = user || currentUserData?.data?.user;
+
+    // Show loading state while fetching user data (if we have a token but no user yet)
+    if (hasToken && !effectiveUser && (isLoading || isFetching)) {
+        return (
+            <div className="flex h-screen items-center justify-center">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+            </div>
+        );
+    }
+
+    if (!effectiveUser) {
         return <>{children}</>;
     }
 
-    const apiUser = user as ApiWorkerUser;
+    const apiUser = effectiveUser as ApiWorkerUser;
 
     // Check if user is a worker
     const isWorkerRole = apiUser.role === "worker";
@@ -54,3 +73,4 @@ export default function WorkerVerifiedGuard({
     // Allow access for verified workers or non-worker users
     return <>{children}</>;
 }
+

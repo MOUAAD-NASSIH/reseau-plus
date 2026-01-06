@@ -13,9 +13,8 @@ import {
     sortOrderSchema,
 } from "./commonSchemas";
 
-// ============================================
 // ENUM SCHEMAS
-// ============================================
+
 
 /**
  * Mission status enum schema
@@ -27,9 +26,8 @@ export const missionStatusSchema = z.enum(["OPEN", "ONGOING", "CLOSED", "CANCELL
  */
 export const urgencySchema = z.enum(["HIGH", "MEDIUM", "LOW"]);
 
-// ============================================
 // CREATE MISSION SCHEMA
-// ============================================
+
 
 /**
  * Create mission input schema
@@ -54,9 +52,8 @@ export const createMissionSchema = z
         }
     );
 
-// ============================================
 // UPDATE MISSION SCHEMA
-// ============================================
+
 
 /**
  * Update mission input schema
@@ -87,9 +84,8 @@ export const updateMissionSchema = z
         }
     );
 
-// ============================================
 // MISSION FILTER SCHEMA
-// ============================================
+
 
 /**
  * Mission filter schema
@@ -149,12 +145,12 @@ export const missionFilterSchema = z
         }
     );
 
-// ============================================
 // TYPE EXPORTS
-// ============================================
+
 
 export type MissionStatus = z.infer<typeof missionStatusSchema>;
 export type Urgency = z.infer<typeof urgencySchema>;
 export type CreateMissionInput = z.infer<typeof createMissionSchema>;
 export type UpdateMissionInput = z.infer<typeof updateMissionSchema>;
 export type MissionFilters = z.infer<typeof missionFilterSchema>;
+

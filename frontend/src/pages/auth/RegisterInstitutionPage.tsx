@@ -13,7 +13,7 @@ import StepConfirm from "@/components/institution/steps/StepConfirm";
 import { submitInstitutionRegistration } from "@/components/institution/submitInstitutionRegistration";
 import { useNavigate } from "react-router";
 import { useState } from "react";
-import { useAppDispatch } from "@/features/helpers";
+import { useAppDispatch } from "@/features/hooks";
 import { getMe } from "@/features/slices/authSlice";
 
 const stepComponents = [StepAccount, StepInstitutionInfo, StepConfirm];
@@ -65,3 +65,4 @@ export default function InstitutionRegisterPage() {
     </RegisterLayout>
   );
 }
+

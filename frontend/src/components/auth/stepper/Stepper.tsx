@@ -62,3 +62,4 @@ export function Stepper({ steps, currentStep }: Props) {
     </ol>
   );
 }
+

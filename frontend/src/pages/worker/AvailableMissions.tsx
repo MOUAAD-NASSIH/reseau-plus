@@ -23,9 +23,9 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DataTable, DataTableColumnHeader } from "@/components/common/DataTable";
-import { useAvailableMissions } from "@/features/hooks/useMissions";
-import { useMyApplications } from "@/features/hooks/useApplications";
-import { useSpecialities, useDomains } from "@/features/hooks/useDomains";
+import { useGetAvailableMissionsQuery } from "@/features/api/endpoints/missionEndpoints";
+import { useGetMyApplicationsQuery } from "@/features/api/endpoints/applicationEndpoints";
+import { useGetSpecialitiesQuery, useGetDomainsQuery } from "@/features/api/endpoints/domainEndpoints";
 import type { Mission, Urgency } from "@/types/mission.types";
 
 const URGENCY_OPTIONS: { value: Urgency | "ALL"; label: string }[] = [
@@ -54,10 +54,10 @@ export default function AvailableMissions() {
     const [selectedDomain, setSelectedDomain] = useState<string>("ALL");
     const [selectedUrgency, setSelectedUrgency] = useState<string>("ALL");
 
-    const { data: missionsData, isLoading: missionsLoading } = useAvailableMissions();
-    const { data: applicationsData, isLoading: applicationsLoading } = useMyApplications();
-    const { data: specialitiesData, isLoading: specialitiesLoading } = useSpecialities();
-    const { data: domainsData, isLoading: domainsLoading } = useDomains();
+    const { data: missionsData, isLoading: missionsLoading } = useGetAvailableMissionsQuery();
+    const { data: applicationsData, isLoading: applicationsLoading } = useGetMyApplicationsQuery();
+    const { data: specialitiesData, isLoading: specialitiesLoading } = useGetSpecialitiesQuery();
+    const { data: domainsData, isLoading: domainsLoading } = useGetDomainsQuery();
 
     const specialities = specialitiesData?.data || [];
     const domains = domainsData?.data || [];
@@ -362,3 +362,4 @@ export default function AvailableMissions() {
         </div>
     );
 }
+

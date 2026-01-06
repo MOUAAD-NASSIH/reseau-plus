@@ -15,11 +15,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { KPICard } from "@/components/common/KPICard";
-import { useAdminDashboard, usePendingWorkers } from "@/features/hooks/useAdmin";
+import {
+    useGetAdminDashboardQuery,
+    useGetPendingWorkersQuery,
+} from "@/features/api/endpoints/adminEndpoints";
 
 export default function AdminDashboard() {
-    const { data: dashboardData, isLoading: dashboardLoading } = useAdminDashboard();
-    const { data: pendingWorkersData, isLoading: pendingWorkersLoading } = usePendingWorkers();
+    const { data: dashboardData, isLoading: dashboardLoading } = useGetAdminDashboardQuery(undefined, {
+        // Ensure fresh data on mount
+        refetchOnMountOrArgChange: true,
+    });
+    const { data: pendingWorkersData, isLoading: pendingWorkersLoading } = useGetPendingWorkersQuery(undefined, {
+        // Ensure fresh data on mount
+        refetchOnMountOrArgChange: true,
+    });
 
     const stats = dashboardData?.data;
     const pendingWorkers = pendingWorkersData?.data || [];
@@ -269,3 +278,4 @@ export default function AdminDashboard() {
         </div>
     );
 }
+

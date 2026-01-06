@@ -32,7 +32,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { usePayments } from "@/features/hooks/usePayments";
+import { useGetPaymentsQuery } from "@/features/api/endpoints/paymentEndpoints";
 import type { Payment, PaymentStatus } from "@/types/payment.types";
 
 interface PaymentDetailsDialogProps {
@@ -166,7 +166,7 @@ export default function PaymentsOverview() {
     const [dialogOpen, setDialogOpen] = useState(false);
 
     // Fetch data
-    const { data: paymentsData, isLoading: paymentsLoading } = usePayments(
+    const { data: paymentsData, isLoading: paymentsLoading } = useGetPaymentsQuery(
         statusFilter !== "ALL" ? { status: statusFilter } : undefined
     );
 
@@ -432,3 +432,4 @@ export default function PaymentsOverview() {
         </div>
     );
 }
+

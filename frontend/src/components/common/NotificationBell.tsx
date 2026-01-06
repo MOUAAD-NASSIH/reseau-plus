@@ -1,10 +1,10 @@
 /**
  * NotificationBell Component
  * Displays a bell icon with unread count badge and dropdown with recent notifications
- * Requirements: 20.1
+
  */
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
 import { Bell, CheckCheck, Loader2, ExternalLink } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
@@ -19,13 +19,13 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import {
-    useNotifications,
-    useUnreadNotificationCount,
-    useMarkAsRead,
-    useMarkAllAsRead,
-} from "@/features/hooks/useNotifications";
+    useGetNotificationsQuery,
+    useGetUnreadNotificationCountQuery,
+    useMarkAsReadMutation,
+    useMarkAllAsReadMutation,
+} from "@/features/api/endpoints/notificationEndpoints";
 import type { Notification, NotificationType } from "@/types/notification.types";
-import { useAppSelector } from "@/features/helpers";
+import { useAppSelector } from "@/features/hooks";
 
 /**
  * API response structure from /auth/me endpoint
@@ -181,33 +181,45 @@ export function NotificationBell() {
     const user = useAppSelector((s) => s.auth.user);
     const [markingId, setMarkingId] = useState<number | null>(null);
     const [isOpen, setIsOpen] = useState(false);
+    const previousUnreadCount = useRef<number>(0);
 
     const apiUser = user as ApiUser;
     const userRole = apiUser?.role || "";
 
     // Fetch unread count (polls every 30 seconds)
-    const { data: unreadCountData } = useUnreadNotificationCount();
+    const { data: unreadCountData } = useGetUnreadNotificationCountQuery(undefined, {
+        pollingInterval: 30000, // Poll every 30 seconds
+    });
     const unreadCount = unreadCountData?.data?.count ?? 0;
 
     // Fetch recent notifications (limit to 5 for dropdown)
-    const { data: notificationsData, isLoading } = useNotifications({ limit: 5 });
+    const { data: notificationsData, isLoading, refetch: refetchNotifications } = useGetNotificationsQuery({ limit: 5 });
     const notifications = notificationsData?.data ?? [];
 
+    // Refetch notifications when unread count increases (new notification arrived)
+    useEffect(() => {
+        if (unreadCount > previousUnreadCount.current) {
+            // New notification arrived, refetch the notifications list
+            refetchNotifications();
+        }
+        previousUnreadCount.current = unreadCount;
+    }, [unreadCount, refetchNotifications]);
+
     // Mutations
-    const markAsRead = useMarkAsRead();
-    const markAllAsRead = useMarkAllAsRead();
+    const [markAsRead] = useMarkAsReadMutation();
+    const [markAllAsRead, { isLoading: isMarkingAllAsRead }] = useMarkAllAsReadMutation();
 
     const handleMarkAsRead = async (id: number) => {
         setMarkingId(id);
         try {
-            await markAsRead.mutateAsync(id);
+            await markAsRead(id).unwrap();
         } finally {
             setMarkingId(null);
         }
     };
 
     const handleMarkAllAsRead = async () => {
-        await markAllAsRead.mutateAsync();
+        await markAllAsRead().unwrap();
     };
 
     const handleNotificationClick = (notification: Notification) => {
@@ -267,9 +279,9 @@ export function NotificationBell() {
                             size="sm"
                             className="h-auto p-1 text-xs hover:bg-primary/10"
                             onClick={handleMarkAllAsRead}
-                            disabled={markAllAsRead.isPending}
+                            disabled={isMarkingAllAsRead}
                         >
-                            {markAllAsRead.isPending ? (
+                            {isMarkingAllAsRead ? (
                                 <Loader2 className="h-3 w-3 animate-spin mr-1" />
                             ) : (
                                 <CheckCheck className="h-3 w-3 mr-1" />
@@ -327,3 +339,4 @@ export function NotificationBell() {
         </DropdownMenu>
     );
 }
+

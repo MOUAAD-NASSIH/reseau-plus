@@ -25,9 +25,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { useInstitutionAssignments } from "@/features/hooks/useAssignments";
-import { useMyWrittenReviews } from "@/features/hooks/useReviews";
-import { usePayments } from "@/features/hooks/usePayments";
+import { useGetInstitutionAssignmentsQuery } from "@/features/api/endpoints/assignmentEndpoints";
+import { useGetMyWrittenReviewsQuery } from "@/features/api/endpoints/reviewEndpoints";
+import { useGetPaymentsQuery } from "@/features/api/endpoints/paymentEndpoints";
 import type { MissionAssignment, AssignmentStatus } from "@/types/assignment.types";
 
 export default function InstitutionAssignments() {
@@ -35,15 +35,15 @@ export default function InstitutionAssignments() {
     const [statusFilter, setStatusFilter] = useState<AssignmentStatus | "ALL">("ALL");
 
     // Fetch institution's assignments
-    const { data: assignmentsData, isLoading } = useInstitutionAssignments(
+    const { data: assignmentsData, isLoading } = useGetInstitutionAssignmentsQuery(
         statusFilter !== "ALL" ? { status: statusFilter } : undefined
     );
 
     // Fetch written reviews to check which assignments have been reviewed
-    const { data: writtenReviewsData } = useMyWrittenReviews();
+    const { data: writtenReviewsData } = useGetMyWrittenReviewsQuery();
 
     // Fetch payments to check which assignments have been paid
-    const { data: paymentsData } = usePayments();
+    const { data: paymentsData } = useGetPaymentsQuery();
 
     const assignments = assignmentsData?.data || [];
     const writtenReviews = writtenReviewsData?.data || [];
@@ -351,3 +351,4 @@ export default function InstitutionAssignments() {
         </div>
     );
 }
+

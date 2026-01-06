@@ -31,7 +31,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { useAllAssignments } from "@/features/hooks/useAssignments";
+import { useGetAllAssignmentsQuery } from "@/features/api/endpoints/assignmentEndpoints";
 import type { MissionAssignment, AssignmentStatus } from "@/types/assignment.types";
 
 interface AssignmentDetailsDialogProps {
@@ -162,7 +162,7 @@ export default function AssignmentsOverview() {
     const [dialogOpen, setDialogOpen] = useState(false);
 
     // Fetch data
-    const { data: assignmentsData, isLoading: assignmentsLoading } = useAllAssignments(
+    const { data: assignmentsData, isLoading: assignmentsLoading } = useGetAllAssignmentsQuery(
         statusFilter !== "ALL" ? { status: statusFilter } : undefined
     );
 
@@ -377,3 +377,4 @@ export default function AssignmentsOverview() {
         </div>
     );
 }
+

@@ -2,7 +2,6 @@
  * Property-Based Tests for API Request Authentication
  * 
  * Feature: social-workers-frontend-mvp, Property 9: API Request Authentication
- * **Validates: Requirements 21.2**
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
@@ -208,3 +207,4 @@ describe('Property 9: API Request Authentication', () => {
         )
     })
 })
+

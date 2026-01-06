@@ -1,7 +1,7 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useDomains } from "@/features/hooks/useDomains";
+import { useGetDomainsQuery } from "@/features/api/endpoints/domainEndpoints";
 
 interface DomainMultiSelectProps {
     value: number[];
@@ -9,7 +9,7 @@ interface DomainMultiSelectProps {
 }
 
 export function DomainMultiSelect({ value, onChange }: DomainMultiSelectProps) {
-    const { data: domainsData, isLoading } = useDomains();
+    const { data: domainsData, isLoading } = useGetDomainsQuery();
     const domains = domainsData?.data || [];
 
     const handleToggle = (domainId: number) => {
@@ -49,3 +49,4 @@ export function DomainMultiSelect({ value, onChange }: DomainMultiSelectProps) {
         </div>
     );
 }
+

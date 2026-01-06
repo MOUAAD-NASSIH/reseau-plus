@@ -38,3 +38,4 @@ export const useWorkerRegisterStore = create<WorkerRegisterStore>((set) => ({
         set((state) => ({ data: { ...state.data, ...partial } })),
     reset: () => set({ data: {} }),
 }));
+

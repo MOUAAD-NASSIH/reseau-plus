@@ -32,7 +32,10 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import { useMyApplications, useWithdrawApplication } from "@/features/hooks/useApplications";
+import {
+    useGetMyApplicationsQuery,
+    useWithdrawApplicationMutation,
+} from "@/features/api/endpoints/applicationEndpoints";
 import type { MissionApplication, ApplicationStatus } from "@/types/application.types";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 
@@ -44,14 +47,14 @@ const STATUS_OPTIONS: { value: ApplicationStatus | "ALL"; label: string }[] = [
 ];
 
 export default function MyApplications() {
-    const { data: applicationsData, isLoading } = useMyApplications();
-    const withdrawApplication = useWithdrawApplication();
+    const { data: applicationsData, isLoading } = useGetMyApplicationsQuery();
+    const [withdrawApplication, { isLoading: isWithdrawing }] = useWithdrawApplicationMutation();
 
     const [statusFilter, setStatusFilter] = useState<string>("ALL");
     const [withdrawingId, setWithdrawingId] = useState<number | null>(null);
-    const [confirmWithdrawId, setConfirmWithdrawId] = useState<number | null>(null);
+    const [confirmWithdrawApp, setConfirmWithdrawApp] = useState<MissionApplication | null>(null);
 
-    const applications = applicationsData?.data || [];
+    const applications = useMemo(() => applicationsData?.data || [], [applicationsData?.data]);
 
     // Filter applications
     const filteredApplications = useMemo(() => {
@@ -73,21 +76,24 @@ export default function MyApplications() {
     }), [applications]);
 
     const handleWithdraw = async () => {
-        if (!confirmWithdrawId) return;
-        setWithdrawingId(confirmWithdrawId);
+        if (!confirmWithdrawApp) return;
+        setWithdrawingId(confirmWithdrawApp.id);
         try {
-            await withdrawApplication.mutateAsync(confirmWithdrawId);
+            await withdrawApplication({
+                id: confirmWithdrawApp.id,
+                missionId: confirmWithdrawApp.missionId,
+            }).unwrap();
             showSuccessToast("Application withdrawn", "Your application has been withdrawn.");
         } catch (error) {
             showErrorToast(error, "Failed to withdraw application");
         } finally {
             setWithdrawingId(null);
-            setConfirmWithdrawId(null);
+            setConfirmWithdrawApp(null);
         }
     };
 
-    const onWithdrawClick = useCallback((id: number) => {
-        setConfirmWithdrawId(id);
+    const onWithdrawClick = useCallback((application: MissionApplication) => {
+        setConfirmWithdrawApp(application);
     }, []);
 
     // Column definitions for DataTable
@@ -180,7 +186,7 @@ export default function MyApplications() {
                 cell: ({ row }) => {
                     const application = row.original;
                     const canWithdraw = application.status === "SUBMITTED";
-                    const isWithdrawing = withdrawingId === application.id;
+                    const isCurrentlyWithdrawing = withdrawingId === application.id;
 
                     return (
                         <div className="flex items-center gap-2">
@@ -195,10 +201,10 @@ export default function MyApplications() {
                                     variant="ghost"
                                     size="sm"
                                     className="text-destructive hover:text-destructive"
-                                    onClick={() => onWithdrawClick(application.id)}
-                                    disabled={isWithdrawing}
+                                    onClick={() => onWithdrawClick(application)}
+                                    disabled={isCurrentlyWithdrawing}
                                 >
-                                    {isWithdrawing ? (
+                                    {isCurrentlyWithdrawing ? (
                                         <Loader2 className="h-4 w-4 animate-spin" />
                                     ) : (
                                         <Trash2 className="h-4 w-4" />
@@ -334,7 +340,7 @@ export default function MyApplications() {
             </Card>
 
             {/* Withdraw Confirmation Dialog */}
-            <Dialog open={!!confirmWithdrawId} onOpenChange={() => setConfirmWithdrawId(null)}>
+            <Dialog open={!!confirmWithdrawApp} onOpenChange={() => setConfirmWithdrawApp(null)}>
                 <DialogContent>
                     <DialogHeader>
                         <DialogTitle>Withdraw Application</DialogTitle>
@@ -343,15 +349,15 @@ export default function MyApplications() {
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
-                        <Button variant="outline" onClick={() => setConfirmWithdrawId(null)}>
+                        <Button variant="outline" onClick={() => setConfirmWithdrawApp(null)}>
                             Cancel
                         </Button>
                         <Button
                             variant="destructive"
                             onClick={handleWithdraw}
-                            disabled={withdrawApplication.isPending}
+                            disabled={isWithdrawing}
                         >
-                            {withdrawApplication.isPending ? (
+                            {isWithdrawing ? (
                                 <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Withdrawing...</>
                             ) : (
                                 "Withdraw Application"
@@ -363,3 +369,4 @@ export default function MyApplications() {
         </div>
     );
 }
+

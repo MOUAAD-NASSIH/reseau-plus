@@ -22,3 +22,4 @@ export function DomainList({ domainNames }: DomainListProps) {
         </div>
     );
 }
+

@@ -35,11 +35,11 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import {
-    useSpecialities,
-    useCreateSpeciality,
-    useUpdateSpeciality,
-    useDeleteSpeciality,
-} from "@/features/hooks/useDomains";
+    useGetSpecialitiesQuery,
+    useCreateSpecialityMutation,
+    useUpdateSpecialityMutation,
+    useDeleteSpecialityMutation,
+} from "@/features/api/endpoints/domainEndpoints";
 import type { Speciality } from "@/types/auth.types";
 
 const specialitySchema = z.object({
@@ -159,10 +159,10 @@ export default function SpecialitiesManagement() {
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [specialityToDelete, setSpecialityToDelete] = useState<Speciality | null>(null);
 
-    const { data: specialitiesData, isLoading } = useSpecialities();
-    const createSpeciality = useCreateSpeciality();
-    const updateSpeciality = useUpdateSpeciality();
-    const deleteSpeciality = useDeleteSpeciality();
+    const { data: specialitiesData, isLoading } = useGetSpecialitiesQuery();
+    const [createSpeciality, { isLoading: isCreating }] = useCreateSpecialityMutation();
+    const [updateSpeciality, { isLoading: isUpdating }] = useUpdateSpecialityMutation();
+    const [deleteSpeciality, { isLoading: isDeleting }] = useDeleteSpecialityMutation();
 
     const specialities = specialitiesData?.data || [];
 
@@ -181,34 +181,30 @@ export default function SpecialitiesManagement() {
         setDeleteDialogOpen(true);
     }, []);
 
-    const handleFormSubmit = useCallback((data: SpecialityFormData) => {
-        if (selectedSpeciality) {
-            updateSpeciality.mutate(
-                { id: selectedSpeciality.id, data },
-                {
-                    onSuccess: () => {
-                        setFormDialogOpen(false);
-                        setSelectedSpeciality(null);
-                    },
-                }
-            );
-        } else {
-            createSpeciality.mutate(data, {
-                onSuccess: () => {
-                    setFormDialogOpen(false);
-                },
-            });
+    const handleFormSubmit = useCallback(async (data: SpecialityFormData) => {
+        try {
+            if (selectedSpeciality) {
+                await updateSpeciality({ id: selectedSpeciality.id, data }).unwrap();
+                setFormDialogOpen(false);
+                setSelectedSpeciality(null);
+            } else {
+                await createSpeciality(data).unwrap();
+                setFormDialogOpen(false);
+            }
+        } catch {
+            // Error handling is done by RTK Query
         }
     }, [selectedSpeciality, updateSpeciality, createSpeciality]);
 
-    const handleDeleteConfirm = useCallback(() => {
+    const handleDeleteConfirm = useCallback(async () => {
         if (specialityToDelete) {
-            deleteSpeciality.mutate(specialityToDelete.id, {
-                onSuccess: () => {
-                    setDeleteDialogOpen(false);
-                    setSpecialityToDelete(null);
-                },
-            });
+            try {
+                await deleteSpeciality(specialityToDelete.id).unwrap();
+                setDeleteDialogOpen(false);
+                setSpecialityToDelete(null);
+            } catch {
+                // Error handling is done by RTK Query
+            }
         }
     }, [specialityToDelete, deleteSpeciality]);
 
@@ -328,7 +324,7 @@ export default function SpecialitiesManagement() {
                 open={formDialogOpen}
                 onOpenChange={setFormDialogOpen}
                 onSubmit={handleFormSubmit}
-                isSubmitting={createSpeciality.isPending || updateSpeciality.isPending}
+                isSubmitting={isCreating || isUpdating}
             />
 
             {/* Delete Confirmation Dialog */}
@@ -347,7 +343,7 @@ export default function SpecialitiesManagement() {
                             onClick={handleDeleteConfirm}
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                         >
-                            {deleteSpeciality.isPending ? "Deleting..." : "Delete"}
+                            {isDeleting ? "Deleting..." : "Delete"}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
@@ -355,3 +351,4 @@ export default function SpecialitiesManagement() {
         </div>
     );
 }
+

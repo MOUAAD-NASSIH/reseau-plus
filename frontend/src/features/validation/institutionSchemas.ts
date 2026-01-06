@@ -11,9 +11,8 @@ import {
     paginationSchema,
 } from "./commonSchemas";
 
-// ============================================
 // UPDATE INSTITUTION PROFILE SCHEMA
-// ============================================
+
 
 /**
  * Update institution profile input schema
@@ -26,9 +25,8 @@ export const updateInstitutionProfileSchema = z.object({
     longitude: longitudeSchema.optional().nullable(),
 });
 
-// ============================================
 // INSTITUTION FILTER SCHEMA
-// ============================================
+
 
 /**
  * Institution filter schema
@@ -40,9 +38,9 @@ export const institutionFilterSchema = z
     })
     .merge(paginationSchema);
 
-// ============================================
 // TYPE EXPORTS
-// ============================================
+
 
 export type UpdateInstitutionProfileInput = z.infer<typeof updateInstitutionProfileSchema>;
 export type InstitutionFilters = z.infer<typeof institutionFilterSchema>;
+

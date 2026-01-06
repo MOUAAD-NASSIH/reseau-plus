@@ -24,8 +24,8 @@ import {
 } from "@/components/ui/select";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { DataTable, DataTableColumnHeader } from "@/components/common/DataTable";
-import { useMyAssignments } from "@/features/hooks/useAssignments";
-import { useMyWrittenReviews } from "@/features/hooks/useReviews";
+import { useGetMyAssignmentsQuery } from "@/features/api/endpoints/assignmentEndpoints";
+import { useGetMyWrittenReviewsQuery } from "@/features/api/endpoints/reviewEndpoints";
 import type { MissionAssignment, AssignmentStatus } from "@/types/assignment.types";
 
 const STATUS_OPTIONS: { value: AssignmentStatus | "ALL"; label: string }[] = [
@@ -37,8 +37,8 @@ const STATUS_OPTIONS: { value: AssignmentStatus | "ALL"; label: string }[] = [
 ];
 
 export default function AssignedMissions() {
-    const { data: assignmentsData, isLoading } = useMyAssignments();
-    const { data: writtenReviewsData } = useMyWrittenReviews();
+    const { data: assignmentsData, isLoading } = useGetMyAssignmentsQuery();
+    const { data: writtenReviewsData } = useGetMyWrittenReviewsQuery();
     const [statusFilter, setStatusFilter] = useState<string>("ALL");
 
     const assignments = useMemo(() => assignmentsData?.data || [], [assignmentsData?.data]);
@@ -343,3 +343,4 @@ export default function AssignedMissions() {
         </div>
     );
 }
+

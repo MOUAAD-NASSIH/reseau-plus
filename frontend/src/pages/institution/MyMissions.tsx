@@ -25,7 +25,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useMyMissions, useDeleteMission } from "@/features/hooks/useMissions";
+import { useGetMyMissionsQuery, useDeleteMissionMutation } from "@/features/api/endpoints/missionEndpoints";
 import type { Mission, MissionStatus, Urgency } from "@/types/mission.types";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 
@@ -41,16 +41,16 @@ function getUrgencyBadge(urgency: Urgency) {
 export default function MyMissions() {
     const [statusFilter, setStatusFilter] = useState<MissionStatus | "ALL">("ALL");
 
-    const { data: missionsData, isLoading } = useMyMissions(
+    const { data: missionsData, isLoading } = useGetMyMissionsQuery(
         statusFilter !== "ALL" ? { status: statusFilter } : undefined
     );
-    const deleteMission = useDeleteMission();
+    const [deleteMission] = useDeleteMissionMutation();
 
     const missions = missionsData?.data || [];
 
     const handleDelete = useCallback(async (id: number) => {
         try {
-            await deleteMission.mutateAsync(id);
+            await deleteMission(id).unwrap();
             showSuccessToast("Mission deleted", "The mission has been deleted successfully.");
         } catch (error) {
             showErrorToast(error, "Failed to delete mission. Please try again.");
@@ -281,3 +281,4 @@ export default function MyMissions() {
         </div>
     );
 }
+

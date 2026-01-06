@@ -1,25 +1,22 @@
 import { z } from "zod";
 
-// ============================================
 // LOGIN SCHEMA
-// ============================================
+
 
 export const loginSchema = z.object({
     email: z.string().email("Invalid email address"),
     password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-// ============================================
 // FORGOT PASSWORD SCHEMA
-// ============================================
+
 
 export const forgotPasswordSchema = z.object({
     email: z.string().email("Invalid email address"),
 });
 
-// ============================================
 // RESET PASSWORD SCHEMA
-// ============================================
+
 
 export const resetPasswordSchema = z.object({
     password: z.string().min(6, "Password must be at least 6 characters"),
@@ -29,9 +26,8 @@ export const resetPasswordSchema = z.object({
     path: ["confirmPassword"],
 });
 
-// ============================================
 // WORKER REGISTRATION SCHEMA
-// ============================================
+
 
 // Worker experience schema for nested validation
 export const workerExperienceSchema = z.object({
@@ -60,9 +56,8 @@ export const registerWorkerSchema = z.object({
     gender: z.string().optional(),
 });
 
-// ============================================
 // INSTITUTION REGISTRATION SCHEMA
-// ============================================
+
 
 export const registerInstitutionSchema = z.object({
     email: z.string().email("Invalid email address"),

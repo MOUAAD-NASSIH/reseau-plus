@@ -125,3 +125,4 @@ export function StripeCheckoutForm({ amount, onSuccess, onError }: StripeCheckou
         </form>
     );
 }
+

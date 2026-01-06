@@ -3,9 +3,8 @@
  * Frontend types mirroring backend notification models
  */
 
-// ============================================
 // ENUMS / STATUS TYPES
-// ============================================
+
 
 /**
  * Notification type union
@@ -26,9 +25,8 @@ export type NotificationType =
     | 'REVIEW_RECEIVED'
     | 'GENERAL';
 
-// ============================================
 // ENTITY INTERFACES
-// ============================================
+
 
 /**
  * Notification entity
@@ -42,9 +40,8 @@ export interface Notification {
     createdAt: string;
 }
 
-// ============================================
 // FILTER INTERFACES
-// ============================================
+
 
 /**
  * Notification filter options
@@ -55,3 +52,4 @@ export interface NotificationFilters {
     page?: number;
     limit?: number;
 }
+

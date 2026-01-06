@@ -1,7 +1,6 @@
 /**
  * Calendar Utility Functions
  * Helpers for the AvailabilityCalendar component
- * Requirements: 9.5, 9.18
  */
 
 import type { WorkerAvailability } from "@/types/auth.types";
@@ -192,3 +191,4 @@ export function isPastDate(date: Date): boolean {
 export function getDefaultEndDate(startDate: Date): Date {
     return new Date(startDate);
 }
+

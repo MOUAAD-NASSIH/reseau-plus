@@ -30,3 +30,4 @@ export const institutionInfoSchema = z.object({
 
 export type InstitutionAccountForm = z.infer<typeof institutionAccountSchema>;
 export type InstitutionInfoForm = z.infer<typeof institutionInfoSchema>;
+

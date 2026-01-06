@@ -12,9 +12,8 @@ import {
     sortOrderSchema,
 } from "./commonSchemas";
 
-// ============================================
 // CREATE REVIEW SCHEMA
-// ============================================
+
 
 /**
  * Create review input schema
@@ -26,9 +25,8 @@ export const createReviewSchema = z.object({
     comment: safeStringSchema.max(2000, "Comment must be 2000 characters or less").optional(),
 });
 
-// ============================================
 // DELETE REVIEW SCHEMA (ADMIN)
-// ============================================
+
 
 /**
  * Delete review input schema (requires reason)
@@ -37,9 +35,8 @@ export const deleteReviewSchema = z.object({
     reason: safeStringSchema.min(1, "Reason is required for deleting a review"),
 });
 
-// ============================================
 // REVIEW FILTER SCHEMA
-// ============================================
+
 
 /**
  * Review filter schema
@@ -88,12 +85,12 @@ export const institutionReviewsFilterSchema = z
     })
     .merge(paginationSchema);
 
-// ============================================
 // TYPE EXPORTS
-// ============================================
+
 
 export type CreateReviewInput = z.infer<typeof createReviewSchema>;
 export type DeleteReviewInput = z.infer<typeof deleteReviewSchema>;
 export type ReviewFilters = z.infer<typeof reviewFilterSchema>;
 export type WorkerReviewsFilters = z.infer<typeof workerReviewsFilterSchema>;
 export type InstitutionReviewsFilters = z.infer<typeof institutionReviewsFilterSchema>;
+

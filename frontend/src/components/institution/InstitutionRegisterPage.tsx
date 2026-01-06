@@ -13,7 +13,7 @@ import StepConfirm from "./steps/StepConfirm";
 import { submitInstitutionRegistration } from "./submitInstitutionRegistration";
 import { useNavigate } from "react-router";
 import { useState } from "react";
-import { useAppDispatch } from "@/features/helpers";
+import { useAppDispatch } from "@/features/hooks";
 import { getMe } from "@/features/slices/authSlice";
 import { showErrorToast, showSuccessToast } from "@/lib/toast";
 import axios from "axios";
@@ -63,7 +63,7 @@ export default function InstitutionRegisterPage() {
 
       dispatch(getMe());
       reset();
-      navigate("/institution/dashboard");
+      navigate("/institution");
     } catch (error) {
       console.error("Institution registration failed:", error);
 
@@ -102,3 +102,4 @@ export default function InstitutionRegisterPage() {
     </RegisterLayout>
   );
 }
+

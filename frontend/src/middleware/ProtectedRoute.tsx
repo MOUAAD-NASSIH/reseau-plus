@@ -1,8 +1,9 @@
-import { Navigate } from "react-router";
+import { Navigate, useLocation } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import type { RootState, AppDispatch } from "@/features/store";
-import { getMe } from "@/features/slices/authSlice";
+import { useGetCurrentUserQuery } from "@/features/api/endpoints/authEndpoints";
+import { setUser, clearAuth } from "@/features/slices/authSlice";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -10,37 +11,37 @@ interface ProtectedRouteProps {
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   const dispatch = useDispatch<AppDispatch>();
-  const { isAuthenticated, user, isLoading } = useSelector(
+  const location = useLocation();
+  const { isAuthenticated, user } = useSelector(
     (state: RootState) => state.auth
   );
-  const [isValidating, setIsValidating] = useState(true);
 
+  // Check if token exists
+  const hasToken = !!localStorage.getItem("auth_token");
+
+  // Use RTK Query to fetch current user if we have a token
+  const { data, isLoading, isError, isFetching } = useGetCurrentUserQuery(undefined, {
+    skip: !hasToken,
+  });
+
+  // Update auth state when user data is fetched
   useEffect(() => {
-    const validateAuth = async () => {
-      const token = localStorage.getItem("auth_token");
+    if (data?.data?.user) {
+      // Dispatch action to update auth state with user data
+      dispatch(setUser(data.data.user));
+    }
+  }, [data, dispatch]);
 
-      if (!token) {
-        setIsValidating(false);
-        return;
-      }
+  // Clear auth state on error
+  useEffect(() => {
+    if (isError && hasToken) {
+      dispatch(clearAuth());
+      localStorage.removeItem("auth_token");
+    }
+  }, [isError, hasToken, dispatch]);
 
-      // If we have a token but no user, validate with getMe
-      if (!user) {
-        try {
-          await dispatch(getMe()).unwrap();
-        } catch {
-          // Token is invalid, will redirect to login
-        }
-      }
-
-      setIsValidating(false);
-    };
-
-    validateAuth();
-  }, [dispatch, user]);
-
-  // Show loading state during validation
-  if (isValidating || isLoading) {
+  // Show loading state during initial validation
+  if (hasToken && (isLoading || (isFetching && !user))) {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
@@ -48,10 +49,21 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     );
   }
 
-  // Redirect to login if not authenticated
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+  // Redirect to login if no token or error fetching user
+  if (!hasToken || isError) {
+    // Save the current location to redirect back after login
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  // Wait for user data to be available (either from Redux or RTK Query)
+  if (!isAuthenticated && !data?.data?.user) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      </div>
+    );
   }
 
   return <>{children}</>;
 }
+

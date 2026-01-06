@@ -38,8 +38,10 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { useAdminLogs } from "@/features/hooks/useAdmin";
-import type { AdminLog } from "@/features/services/adminService";
+import {
+    useGetAdminLogsQuery,
+    type AdminLog,
+} from "@/features/api/endpoints/adminEndpoints";
 
 // Action type badge colors
 const actionTypeColors: Record<string, string> = {
@@ -162,7 +164,7 @@ export default function AdminLogs() {
     const [dialogOpen, setDialogOpen] = useState(false);
 
     // Fetch data
-    const { data: logsData, isLoading: logsLoading } = useAdminLogs(
+    const { data: logsData, isLoading: logsLoading } = useGetAdminLogsQuery(
         actionTypeFilter !== "ALL" ? { actionType: actionTypeFilter } : undefined
     );
 
@@ -404,3 +406,4 @@ export default function AdminLogs() {
         </div>
     );
 }
+

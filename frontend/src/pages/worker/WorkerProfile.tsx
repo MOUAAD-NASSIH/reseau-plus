@@ -16,8 +16,11 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatusBadge } from "@/components/common/StatusBadge";
-import { useWorkerProfile, useUpdateWorkerProfile } from "@/features/hooks/useWorkers";
-import { useSpecialities } from "@/features/hooks/useDomains";
+import {
+    useGetWorkerProfileQuery,
+    useUpdateWorkerProfileMutation,
+} from "@/features/api/endpoints/workerEndpoints";
+import { useGetSpecialitiesQuery } from "@/features/api/endpoints/domainEndpoints";
 import {
     updateWorkerProfileSchema,
     type UpdateWorkerProfileInput,
@@ -25,9 +28,9 @@ import {
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 
 export default function WorkerProfile() {
-    const { data: profileData, isLoading: profileLoading } = useWorkerProfile();
-    const { data: specialitiesData, isLoading: specialitiesLoading } = useSpecialities();
-    const updateProfile = useUpdateWorkerProfile();
+    const { data: profileData, isLoading: profileLoading } = useGetWorkerProfileQuery();
+    const { data: specialitiesData, isLoading: specialitiesLoading } = useGetSpecialitiesQuery();
+    const [updateProfile, { isLoading: isUpdating }] = useUpdateWorkerProfileMutation();
 
     const worker = profileData?.data;
     const specialities = specialitiesData?.data || [];
@@ -73,7 +76,7 @@ export default function WorkerProfile() {
 
     const onSubmit = async (data: UpdateWorkerProfileInput) => {
         try {
-            await updateProfile.mutateAsync(data);
+            await updateProfile(data).unwrap();
             showSuccessToast("Profile updated", "Your profile has been saved successfully.");
         } catch (error) {
             showErrorToast(error, "Failed to update profile");
@@ -340,9 +343,9 @@ export default function WorkerProfile() {
             <div className="flex justify-end">
                 <Button
                     type="submit"
-                    disabled={updateProfile.isPending || !isDirty}
+                    disabled={isUpdating || !isDirty}
                 >
-                    {updateProfile.isPending ? (
+                    {isUpdating ? (
                         <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                             Saving...
@@ -358,3 +361,4 @@ export default function WorkerProfile() {
         </form>
     );
 }
+

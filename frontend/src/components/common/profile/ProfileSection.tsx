@@ -20,3 +20,4 @@ export function ProfileSection({ title, icon: Icon, children }: ProfileSectionPr
         </Card>
     );
 }
+

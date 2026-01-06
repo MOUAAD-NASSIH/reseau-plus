@@ -1,4 +1,4 @@
-import { api } from "@/api/axios";
+import { axiosInstance } from "@/lib/axios";
 import type {
     LoginRequest,
     RegisterWorkerRequest,
@@ -25,7 +25,7 @@ interface ApiMessageResponse {
 export const authService = {
     // Login
     login: async (data: LoginRequest): Promise<AuthResponse> => {
-        const response = await api.post<AuthResponse>("/auth/login", data);
+        const response = await axiosInstance.post<AuthResponse>("/auth/login", data);
         return response.data;
     },
 
@@ -39,7 +39,7 @@ export const authService = {
             ? createWorkerRegistrationFormData(data, files)
             : data;
 
-        const response = await api.post<AuthResponse>(
+        const response = await axiosInstance.post<AuthResponse>(
             "/auth/register/worker",
             payload,
             {
@@ -55,7 +55,7 @@ export const authService = {
     registerInstitution: async (
         data: RegisterInstitutionRequest
     ): Promise<AuthResponse> => {
-        const response = await api.post<AuthResponse>(
+        const response = await axiosInstance.post<AuthResponse>(
             "/auth/register/institution",
             data
         );
@@ -64,19 +64,20 @@ export const authService = {
 
     // Get Current User
     getMe: async (): Promise<MeResponse> => {
-        const response = await api.get<MeResponse>("/auth/me");
+        const response = await axiosInstance.get<MeResponse>("/auth/me");
         return response.data;
     },
 
     // Forgot Password - Request password reset email
     forgotPassword: async (data: ForgotPasswordRequest): Promise<ApiMessageResponse> => {
-        const response = await api.post<ApiMessageResponse>("/auth/forgot-password", data);
+        const response = await axiosInstance.post<ApiMessageResponse>("/auth/forgot-password", data);
         return response.data;
     },
 
     // Reset Password - Set new password with token
     resetPassword: async (token: string, data: ResetPasswordRequest): Promise<ApiMessageResponse> => {
-        const response = await api.post<ApiMessageResponse>(`/auth/reset-password?token=${token}`, data);
+        const response = await axiosInstance.post<ApiMessageResponse>(`/auth/reset-password?token=${token}`, data);
         return response.data;
     },
 };
+

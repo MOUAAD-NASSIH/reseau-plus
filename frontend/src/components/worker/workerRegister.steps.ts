@@ -6,3 +6,4 @@ export const workerSteps = [
   { id: "documents", label: "Documents" },
   { id: "confirm", label: "Confirm" },
 ];
+
