@@ -1,151 +1,236 @@
 import { useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Briefcase, Layers } from "lucide-react";
+import { Clock, Target, Info, FileText } from "lucide-react";
+import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 import {
   workerProfessionalSchema,
   type WorkerProfessionalForm,
 } from "../workerRegister.schema";
-
 import { useWorkerRegisterStore } from "../workerRegister.store";
-
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
-  SelectTrigger,
-  SelectValue,
   SelectContent,
   SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-
-import { useGetSpecialitiesQuery } from "@/features/api/endpoints/domainEndpoints";
-import { DomainMultiSelect } from "@/components/common/DomainMultiSelect";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useGetDomainsQuery, useGetSpecialitiesQuery } from "@/features/api/endpoints/domainEndpoints";
+import { shouldReduceMotion, staggerContainer, fadeUpItem } from "@/lib/animations";
+import { cn } from "@/lib/utils";
 
 export default function StepProfessional() {
   const { data, updateData } = useWorkerRegisterStore();
-  const { data: specialitiesData } = useGetSpecialitiesQuery();
-  const specialities = specialitiesData?.data || [];
+  const { t } = useTranslation();
+
+  const { data: specialitiesData, isLoading: isLoadingSpecialities } = useGetSpecialitiesQuery();
+  const { data: domainsData, isLoading: isLoadingDomains } = useGetDomainsQuery();
 
   const form = useForm<WorkerProfessionalForm>({
     resolver: zodResolver(workerProfessionalSchema),
-    mode: "onBlur",
+    mode: "onChange",
     defaultValues: {
       specialityId: data.specialityId,
-      experienceYears: data.experienceYears,
+      experienceYears: data.experienceYears ?? 0,
       bio: data.bio ?? "",
       domainIds: data.domainIds ?? [],
     },
   });
 
-  /* ================================
-     Persist valid data
-  ================================ */
   useEffect(() => {
     const sub = form.watch((values) => {
-      const result = workerProfessionalSchema.safeParse(values);
-      if (result.success) {
-        updateData(result.data);
-      }
+      updateData({
+        specialityId: values.specialityId,
+        experienceYears: values.experienceYears,
+        bio: values.bio,
+        domainIds: values.domainIds?.filter((id): id is number => id !== undefined),
+      });
     });
     return () => sub.unsubscribe();
   }, [form, updateData]);
 
+  const toggleDomain = (id: number) => {
+    const current = form.getValues("domainIds") || [];
+    const updated = current.includes(id)
+      ? current.filter((d) => d !== id)
+      : [...current, id];
+    form.setValue("domainIds", updated, { shouldValidate: true });
+  };
+
+  const reduceMotion = shouldReduceMotion();
+  const specialities = specialitiesData?.data || [];
+  const domains = domainsData?.data || [];
+
   return (
-    <div className="space-y-8">
+    <motion.div
+      className="space-y-8"
+      variants={staggerContainer}
+      initial="initial"
+      animate="animate"
+    >
       {/* Header */}
-      <div className="space-y-1">
-        <h2 className="text-2xl font-bold tracking-tight">
-          Professional information
-        </h2>
-        <p className="text-muted-foreground">
-          Help institutions understand your expertise and experience
+      <motion.div variants={reduceMotion ? {} : fadeUpItem}>
+        <h2 className="text-xl font-semibold mb-2">{t('AUTH.REGISTER_WORKER.STEP_PROFESSIONAL.TITLE')}</h2>
+        <p className="text-sm text-muted-foreground">
+          {t('AUTH.REGISTER_WORKER.STEP_PROFESSIONAL.SUBTITLE')}
         </p>
-      </div>
+      </motion.div>
 
-      {/* Speciality */}
-      {/* Speciality */}
-      <div className="space-y-2">
-        <Label>Primary speciality *</Label>
+      {/* Form */}
+      <motion.div
+        className="space-y-6"
+        variants={reduceMotion ? {} : fadeUpItem}
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Speciality */}
+          <div className="space-y-2">
+            <Label htmlFor="specialityId" required>{t('AUTH.REGISTER_WORKER.STEP_PROFESSIONAL.SPECIALITY_LABEL')}</Label>
+            {isLoadingSpecialities ? (
+              <Skeleton className="h-11 w-full bg-secondary/20" />
+            ) : (
+              <Select
+                defaultValue={data.specialityId?.toString()}
+                onValueChange={(val) => form.setValue("specialityId", parseInt(val), { shouldValidate: true })}
+              >
+                <SelectTrigger
+                  id="specialityId"
+                  className={cn(
+                    "h-11 bg-secondary/20 hover:bg-secondary/30 transition-all border-border/50 focus:border-primary/50",
+                    form.formState.errors.specialityId && "border-destructive"
+                  )}
+                >
+                  <SelectValue placeholder={t('AUTH.REGISTER_WORKER.STEP_PROFESSIONAL.SPECIALITY_PLACEHOLDER')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {specialities.map((s) => (
+                    <SelectItem key={s.id} value={s.id.toString()}>{s.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+            {form.formState.errors.specialityId && (
+              <p className="text-xs font-medium text-destructive">{form.formState.errors.specialityId.message}</p>
+            )}
+          </div>
 
-        <Controller
-          control={form.control}
-          name="specialityId"
-          render={({ field }) => (
-            <Select
-              value={field.value ? String(field.value) : undefined}
-              onValueChange={(v) => field.onChange(Number(v))}
-            >
-              {/* ⬇️ FULL WIDTH */}
-              <SelectTrigger className="h-12 w-full">
-                <Briefcase className="mr-2 h-4 w-4 text-muted-foreground" />
-                <SelectValue placeholder="Select your main speciality" />
-              </SelectTrigger>
-
-              {/* ⬇️ MATCH WIDTH */}
-              <SelectContent className="w-full">
-                {specialities.map((s: { id: number; name: string }) => (
-                  <SelectItem key={s.id} value={String(s.id)}>
-                    {s.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-        />
-      </div>
-
-      {/* Experience */}
-      <div className="space-y-2">
-        <Label>Years of professional experience</Label>
-        <div className="relative">
-          <Layers className="absolute left-3 top-3.5 h-5 w-5 text-muted-foreground" />
-          <Input
-            type="number"
-            min={0}
-            className="pl-11 h-12"
-            placeholder="e.g. 5"
-            {...form.register("experienceYears", {
-              valueAsNumber: true,
-            })}
-          />
+          {/* Years of Experience */}
+          <div className="space-y-2">
+            <Label htmlFor="experienceYears" required>{t('AUTH.REGISTER_WORKER.STEP_PROFESSIONAL.EXPERIENCE_LABEL')}</Label>
+            <div className="relative group">
+              <Clock className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+              <Input
+                id="experienceYears"
+                type="number"
+                min="0"
+                placeholder={t('AUTH.REGISTER_WORKER.STEP_PROFESSIONAL.EXPERIENCE_PLACEHOLDER')}
+                className={cn(
+                  "h-11 pl-9 bg-secondary/20 hover:bg-secondary/30 transition-all border-border/50 focus:border-primary/50",
+                  form.formState.errors.experienceYears && "border-destructive focus-visible:ring-destructive"
+                )}
+                {...form.register("experienceYears", { valueAsNumber: true })}
+              />
+            </div>
+            {form.formState.errors.experienceYears ? (
+              <p className="text-xs font-medium text-destructive">{form.formState.errors.experienceYears.message}</p>
+            ) : (
+              <p className="text-[0.8rem] text-muted-foreground">{t('AUTH.REGISTER_WORKER.STEP_PROFESSIONAL.EXPERIENCE_HELPER')}</p>
+            )}
+          </div>
         </div>
-        <p className="text-xs text-muted-foreground">
-          Approximate number of years in this field
-        </p>
-      </div>
 
-      {/* Domains */}
-      <div className="space-y-2">
-        <Label>Domains of intervention</Label>
-        <Controller
-          control={form.control}
-          name="domainIds"
-          render={({ field }) => (
-            <DomainMultiSelect
-              value={field.value ?? []}
-              onChange={field.onChange}
-            />
+        {/* Domains of Intervention */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <Target className="h-4 w-4 text-primary" />
+            <Label className="text-sm font-semibold">{t('AUTH.REGISTER_WORKER.STEP_PROFESSIONAL.DOMAINS_LABEL')}</Label>
+            <span className="text-xs text-destructive">*</span>
+          </div>
+          <p className="text-[0.8rem] text-muted-foreground mb-4">
+            {t('AUTH.REGISTER_WORKER.STEP_PROFESSIONAL.DOMAINS_HELPER')}
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {isLoadingDomains ? (
+              Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton key={i} className="h-12 w-full bg-secondary/20 rounded-lg" />
+              ))
+            ) : (
+              domains.map((d) => (
+                <div
+                  key={d.id}
+                  onClick={() => toggleDomain(d.id)}
+                  className={cn(
+                    "flex items-center gap-3 p-3 rounded-lg border border-border/50 cursor-pointer transition-all hover:bg-secondary/20",
+                    form.watch("domainIds")?.includes(d.id)
+                      ? "bg-primary/5 border-primary/30 ring-1 ring-primary/20"
+                      : "bg-secondary/10"
+                  )}
+                >
+                  <Checkbox
+                    id={`domain-${d.id}`}
+                    checked={form.watch("domainIds")?.includes(d.id)}
+                    className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                  />
+                  <Label htmlFor={`domain-${d.id}`} className="flex-1 cursor-pointer font-medium text-sm">
+                    {d.name}
+                  </Label>
+                </div>
+              ))
+            )}
+          </div>
+          {form.formState.errors.domainIds && (
+            <p className="text-xs font-medium text-destructive mt-1">{form.formState.errors.domainIds.message}</p>
           )}
-        />
-        <p className="text-xs text-muted-foreground">
-          Select all domains you are comfortable working in
-        </p>
-      </div>
+        </div>
 
-      {/* Bio */}
-      <div className="space-y-2">
-        <Label>Professional bio</Label>
-        <Textarea
-          rows={5}
-          placeholder="Briefly describe your professional background, key skills, and the type of missions you are looking for..."
-          {...form.register("bio")}
-        />
-        <p className="text-xs text-muted-foreground">Max 2000 characters</p>
-      </div>
-    </div>
+        {/* Bio */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="bio" required>{t('AUTH.REGISTER_WORKER.STEP_PROFESSIONAL.BIO_LABEL')}</Label>
+            <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
+              {form.watch("bio")?.length || 0} / 2000
+            </span>
+          </div>
+          <div className="relative group">
+            <FileText className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+            <Textarea
+              id="bio"
+              placeholder={t('AUTH.REGISTER_WORKER.STEP_PROFESSIONAL.BIO_PLACEHOLDER')}
+              rows={4}
+              className={cn(
+                "pl-9 bg-secondary/20 hover:bg-secondary/30 transition-all border-border/50 focus:border-primary/50 resize-none placeholder:opacity-60",
+                form.formState.errors.bio && "border-destructive focus-visible:ring-destructive"
+              )}
+              {...form.register("bio")}
+            />
+          </div>
+          {form.formState.errors.bio ? (
+            <p className="text-xs font-medium text-destructive">{form.formState.errors.bio.message}</p>
+          ) : (
+            <p className="text-[0.8rem] text-muted-foreground">{t('AUTH.REGISTER_WORKER.STEP_PROFESSIONAL.BIO_MAX_CHARS')}</p>
+          )}
+        </div>
+
+        {/* Info Box */}
+        <div className="p-4 rounded-xl bg-primary/5 border border-primary/10 flex gap-4">
+          <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+            <Info className="h-5 w-5 text-primary" />
+          </div>
+          <div className="space-y-1">
+            <h4 className="text-sm font-semibold text-primary">{t('AUTH.REGISTER_WORKER.STEP_PROFESSIONAL.INFO_BOX_TITLE')}</h4>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              {t('AUTH.REGISTER_WORKER.STEP_PROFESSIONAL.INFO_BOX_DESC')}
+            </p>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
   );
 }
-

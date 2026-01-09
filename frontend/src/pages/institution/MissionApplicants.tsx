@@ -284,7 +284,7 @@ export default function MissionApplicants() {
         <div className="space-y-6">
             {/* Back link and mission info */}
             <div className="flex items-center gap-4">
-                <Button variant="ghost" size="icon" asChild>
+                <Button variant="ghost" size="icon" asChild aria-label="Go back to missions">
                     <Link to="/institution/missions">
                         <ArrowLeft className="h-4 w-4" />
                     </Link>

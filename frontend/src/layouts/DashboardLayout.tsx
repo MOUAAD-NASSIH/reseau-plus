@@ -9,6 +9,7 @@ import {
     ChevronLeft,
     type LucideIcon,
 } from "lucide-react";
+import Logo from "@/assets/Logo";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
 import { NotificationBell } from "@/components/common/NotificationBell";
@@ -196,14 +197,13 @@ export default function DashboardLayout({
                     "flex items-center h-16 px-4 border-b border-border bg-card/50 backdrop-blur-sm",
                     sidebarCollapsed ? "lg:justify-center" : "justify-between"
                 )}>
-                    <Link
-                        to="/"
-                        className={cn(
-                            "text-xl font-bold text-primary transition-all duration-300",
-                            sidebarCollapsed && "lg:hidden"
-                        )}
-                    >
-                        SocialWorkers
+                    <Link to="/" className={cn("flex items-center gap-2", sidebarCollapsed && "lg:hidden")}>
+                        <div className="flex h-9 w-9 items-center justify-center rounded-lg text-primary bg-primary/10">
+                            <Logo />
+                        </div>
+                        <span className="inline-block font-semibold text-lg font-spline">
+                            Réseau+
+                        </span>
                     </Link>
                     <div className={cn(
                         "flex items-center gap-1",
@@ -215,6 +215,7 @@ export default function DashboardLayout({
                             size="icon"
                             className="hidden lg:flex h-8 w-8 hover:bg-primary/10 transition-colors duration-200"
                             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                            aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
                         >
                             <ChevronLeft
                                 className={cn(
@@ -229,6 +230,7 @@ export default function DashboardLayout({
                             size="icon"
                             className="lg:hidden h-8 w-8 hover:bg-primary/10 transition-colors duration-200"
                             onClick={() => setSidebarOpen(false)}
+                            aria-label="Close sidebar"
                         >
                             <X className="h-5 w-5" />
                         </Button>
@@ -312,6 +314,7 @@ export default function DashboardLayout({
                                 size="icon"
                                 className="lg:hidden h-9 w-9 hover:bg-primary/10 transition-colors duration-200"
                                 onClick={() => setSidebarOpen(true)}
+                                aria-label="Open sidebar menu"
                             >
                                 <Menu className="h-5 w-5" />
                             </Button>

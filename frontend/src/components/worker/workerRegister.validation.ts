@@ -4,6 +4,7 @@ import {
   workerProfessionalSchema,
   workerExperienceSchema,
   workerDocumentsSchema,
+  workerTermsSchema,
 } from "./workerRegister.schema";
 
 import type { WorkerRegisterData } from "./workerRegister.store";
@@ -14,9 +15,10 @@ export function isWorkerStepValid(
 ): boolean {
   switch (step) {
     case 0:
-      return workerAccountSchema.omit({ confirmPassword: true }).safeParse({
+      return workerAccountSchema.safeParse({
         email: data.email,
         password: data.password,
+        confirmPassword: data.confirmPassword,
       }).success;
 
     case 1:
@@ -26,13 +28,14 @@ export function isWorkerStepValid(
       return workerProfessionalSchema.safeParse(data).success;
 
     case 3:
+      // Experiences are optional
       return workerExperienceSchema.safeParse(data).success;
 
     case 4:
       return workerDocumentsSchema.safeParse(data).success;
 
     case 5:
-      return true;
+      return workerTermsSchema.safeParse({ termsAccepted: data.termsAccepted }).success;
 
     default:
       return false;

@@ -217,6 +217,7 @@ export default function InstitutionNotifications() {
                                                     }}
                                                     disabled={isMarkingAsRead}
                                                     title="Mark as read"
+                                                    aria-label="Mark notification as read"
                                                 >
                                                     <Check className="h-4 w-4" />
                                                 </Button>
@@ -230,6 +231,7 @@ export default function InstitutionNotifications() {
                                                 }}
                                                 disabled={isDeletingNotification}
                                                 title="Delete notification"
+                                                aria-label="Delete notification"
                                                 className="text-muted-foreground hover:text-destructive"
                                             >
                                                 <Trash2 className="h-4 w-4" />

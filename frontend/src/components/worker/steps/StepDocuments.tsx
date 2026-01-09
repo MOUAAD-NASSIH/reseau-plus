@@ -1,189 +1,243 @@
-import { useEffect, useRef } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Upload, FileText, Trash, CheckCircle2 } from "lucide-react";
-
+import { useRef } from "react";
 import {
-  workerDocumentsSchema,
-  type WorkerDocumentsForm,
-} from "../workerRegister.schema";
+  FileCheck,
+  ShieldCheck,
+  AlertCircle,
+  X,
+  FileText,
+  BadgeCheck,
+  CreditCard,
+  GraduationCap,
+  Upload
+} from "lucide-react";
+import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 import { useWorkerRegisterStore } from "../workerRegister.store";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { shouldReduceMotion, staggerContainer, fadeUpItem } from "@/lib/animations";
+import { cn } from "@/lib/utils";
 
-const REQUIRED_DOCS = [
-  {
-    type: "DIPLOMA",
-    label: "Diploma",
-    description: "Official diploma or certification (PDF)",
-  },
-  {
-    type: "CV",
-    label: "Curriculum Vitae (CV)",
-    description: "Updated resume highlighting your experience",
-  },
-  {
-    type: "ID",
-    label: "Identity Document",
-    description: "National ID or passport",
-  },
-] as const;
+interface DocumentType {
+  id: "DIPLOMA" | "CV" | "ID";
+  titleKey: string;
+  descKey: string;
+  formatsKey: string;
+  icon: any;
+  required: boolean;
+}
 
-type DocType = (typeof REQUIRED_DOCS)[number]["type"];
+const DOCUMENT_TYPES: DocumentType[] = [
+  {
+    id: "DIPLOMA",
+    titleKey: "AUTH.REGISTER_WORKER.STEP_DOCUMENTS.DIPLOMA_TITLE",
+    descKey: "AUTH.REGISTER_WORKER.STEP_DOCUMENTS.DIPLOMA_DESC",
+    formatsKey: "AUTH.REGISTER_WORKER.STEP_DOCUMENTS.SUPPORTED_FORMATS",
+    icon: GraduationCap,
+    required: true,
+  },
+  {
+    id: "ID",
+    titleKey: "AUTH.REGISTER_WORKER.STEP_DOCUMENTS.ID_TITLE",
+    descKey: "AUTH.REGISTER_WORKER.STEP_DOCUMENTS.ID_DESC",
+    formatsKey: "AUTH.REGISTER_WORKER.STEP_DOCUMENTS.SUPPORTED_FORMATS",
+    icon: CreditCard,
+    required: true,
+  },
+  {
+    id: "CV",
+    titleKey: "AUTH.REGISTER_WORKER.STEP_DOCUMENTS.CV_TITLE",
+    descKey: "AUTH.REGISTER_WORKER.STEP_DOCUMENTS.CV_DESC",
+    formatsKey: "AUTH.REGISTER_WORKER.STEP_DOCUMENTS.SUPPORTED_FORMATS_CV",
+    icon: FileText,
+    required: false,
+  }
+];
 
 export default function StepDocuments() {
   const { data, updateData } = useWorkerRegisterStore();
+  const { t } = useTranslation();
+  const inputRefs = {
+    DIPLOMA: useRef<HTMLInputElement>(null),
+    CV: useRef<HTMLInputElement>(null),
+    ID: useRef<HTMLInputElement>(null),
+  };
 
-  const form = useForm<WorkerDocumentsForm>({
-    resolver: zodResolver(workerDocumentsSchema),
-    defaultValues: {
-      documents: data.documents ?? [],
-    },
-  });
+  const documents = data.documents || [];
 
-  const fileInputs = useRef<Record<DocType, HTMLInputElement | null>>({
-    DIPLOMA: null,
-    CV: null,
-    ID: null,
-  });
-
-  /* ================================
-     Persist valid data
-  ================================ */
-  useEffect(() => {
-    const sub = form.watch((values) => {
-      const result = workerDocumentsSchema.safeParse(values);
-      if (result.success) {
-        updateData(result.data);
-      }
-    });
-    return () => sub.unsubscribe();
-  }, [form, updateData]);
-
-  function onFileChange(type: DocType, file?: File) {
+  const handleFileChange = (type: "DIPLOMA" | "CV" | "ID", file: File | null) => {
     if (!file) return;
 
-    const existing = form.getValues("documents") ?? [];
-    const filtered = existing.filter((d) => d.type !== type);
+    // Filter out existing document of same type
+    const otherDocs = documents.filter((doc) => doc.type !== type);
 
-    form.setValue("documents", [...filtered, { type, file }], {
-      shouldValidate: true,
+    updateData({
+      documents: [
+        ...otherDocs,
+        { type, file, status: "UPLOADED" as const },
+      ],
     });
-  }
+  };
 
-  function removeFile(type: DocType) {
-    const updated =
-      form.getValues("documents")?.filter((d) => d.type !== type) ?? [];
-
-    form.setValue("documents", updated, {
-      shouldValidate: true,
+  const removeFile = (type: "DIPLOMA" | "CV" | "ID") => {
+    updateData({
+      documents: documents.filter((doc) => doc.type !== type),
     });
-  }
+    // Reset file input
+    if (inputRefs[type].current) {
+      inputRefs[type].current!.value = "";
+    }
+  };
 
-  const documents = form.watch("documents") ?? [];
+  const reduceMotion = shouldReduceMotion();
 
   return (
-    <div className="space-y-8">
+    <motion.div
+      className="space-y-8"
+      variants={staggerContainer}
+      initial="initial"
+      animate="animate"
+    >
       {/* Header */}
-      <div className="space-y-1">
-        <h2 className="text-2xl font-bold tracking-tight">
-          Required documents
+      <motion.div variants={reduceMotion ? {} : fadeUpItem}>
+        <h2 className="text-xl md:text-2xl font-bold mb-2 tracking-tight text-foreground">
+          {t('AUTH.REGISTER_WORKER.STEP_DOCUMENTS.TITLE')}
         </h2>
-        <p className="text-muted-foreground">
-          These documents are required for verification and approval
+        <p className="text-sm md:text-base text-muted-foreground">
+          {t('AUTH.REGISTER_WORKER.STEP_DOCUMENTS.SUBTITLE')}
         </p>
-      </div>
+      </motion.div>
 
-      {/* Document list */}
-      <div className="space-y-4">
-        {REQUIRED_DOCS.map((doc) => {
-          const uploaded = documents.find((d) => d.type === doc.type);
+      {/* Verification Shield Info */}
+      <motion.div
+        variants={reduceMotion ? {} : fadeUpItem}
+        className="p-4 rounded-xl bg-primary/5 border border-primary/10 flex items-start gap-4 shadow-sm"
+      >
+        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+          <ShieldCheck className="h-5 w-5 text-primary" />
+        </div>
+        <div className="space-y-1">
+          <h4 className="text-sm font-bold text-foreground">{t('AUTH.REGISTER_WORKER.STEP_DOCUMENTS.SECURE_UPLOAD_TITLE')}</h4>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            {t('AUTH.REGISTER_WORKER.STEP_DOCUMENTS.SECURE_UPLOAD_DESC')}
+          </p>
+        </div>
+      </motion.div>
+
+      {/* Document Grid */}
+      <div className="grid grid-cols-1 gap-4">
+        {DOCUMENT_TYPES.map((docType) => {
+          const uploadedDoc = documents.find((d) => d.type === docType.id);
+          const Icon = docType.icon;
 
           return (
-            <div
-              key={doc.type}
-              className="flex items-start justify-between gap-4 rounded-xl border border-border bg-card p-5"
+            <motion.div
+              key={docType.id}
+              variants={reduceMotion ? {} : fadeUpItem}
+              className={cn(
+                "group relative overflow-hidden rounded-2xl border transition-all duration-300",
+                uploadedDoc
+                  ? "bg-linear-to-br from-primary/5 to-transparent border-primary/30 shadow-md ring-1 ring-primary/20"
+                  : "bg-card border-border hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5"
+              )}
             >
-              {/* Left content */}
-              <div className="flex items-start gap-4">
-                {uploaded ? (
-                  <CheckCircle2 className="h-6 w-6 text-primary mt-1" />
-                ) : (
-                  <FileText className="h-6 w-6 text-muted-foreground mt-1" />
-                )}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center p-5 gap-5">
+                {/* Icon Section */}
+                <div className={cn(
+                  "h-14 w-14 sm:h-16 sm:w-16 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-500 shadow-sm",
+                  uploadedDoc
+                    ? "bg-primary text-primary-foreground shadow-primary/20 scale-100"
+                    : "bg-secondary text-muted-foreground group-hover:scale-105 group-hover:bg-secondary/80"
+                )}>
+                  <Icon className={cn("h-7 w-7 sm:h-8 sm:w-8", uploadedDoc && "animate-in zoom-in spin-in-[360deg] duration-500")} />
+                </div>
 
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <p className="font-medium">{doc.label}</p>
-
-                    {uploaded ? (
-                      <Badge variant="secondary">Uploaded</Badge>
+                {/* Content Section */}
+                <div className="flex-1 min-w-0 space-y-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h3 className="font-bold text-base sm:text-lg tracking-tight">{t(docType.titleKey)}</h3>
+                    {docType.required ? (
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-destructive/10 text-destructive uppercase tracking-wider border border-destructive/10">
+                        {t('AUTH.REGISTER_WORKER.STEP_DOCUMENTS.REQUIRED')}
+                      </span>
                     ) : (
-                      <Badge variant="outline">Required</Badge>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-secondary text-muted-foreground uppercase tracking-wider border border-border">
+                        {t('AUTH.REGISTER_WORKER.STEP_DOCUMENTS.OPTIONAL')}
+                      </span>
                     )}
                   </div>
 
-                  <p className="text-sm text-muted-foreground">
-                    {doc.description}
+                  <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-lg">
+                    {t(docType.descKey)}
                   </p>
 
-                  {uploaded && (
-                    <p className="text-sm text-muted-foreground">
-                      {uploaded.file.name}
+                  {uploadedDoc ? (
+                    <div className="flex items-center gap-2 text-xs font-bold text-primary bg-primary/10 w-fit px-3 py-1.5 rounded-lg animate-in fade-in slide-in-from-bottom-1">
+                      <FileCheck className="h-3.5 w-3.5" />
+                      <span className="truncate max-w-[150px] sm:max-w-[300px]">{uploadedDoc.file.name}</span>
+                      <span className="text-muted-foreground/70 font-medium">
+                        • {(uploadedDoc.file.size / 1024 / 1024).toFixed(2)} MB
+                      </span>
+                    </div>
+                  ) : (
+                    <p className="text-[10px] sm:text-xs font-medium text-muted-foreground/60 flex items-center gap-1.5">
+                      <AlertCircle className="h-3 w-3" />
+                      {t(docType.formatsKey)}
                     </p>
+                  )}
+                </div>
+
+                {/* Action Section */}
+                <div className="flex items-center justify-end sm:justify-start">
+                  {uploadedDoc ? (
+                    <div className="flex items-center gap-2">
+                      <BadgeCheck className="h-6 w-6 text-primary animate-in zoom-in" />
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-9 w-9 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+                        onClick={() => removeFile(docType.id)}
+                      >
+                        <X className="h-5 w-5" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full sm:w-auto rounded-xl border-dashed border-2 border-primary/20 hover:border-primary hover:bg-primary/5 text-foreground hover:text-primary transition-all h-10 px-4 group/btn"
+                      onClick={() => inputRefs[docType.id].current?.click()}
+                    >
+                      <Upload className="h-4 w-4 mr-2 group-hover/btn:-translate-y-0.5 transition-transform" />
+                      {t('AUTH.REGISTER_WORKER.STEP_DOCUMENTS.UPLOAD_BUTTON')}
+                    </Button>
                   )}
                 </div>
               </div>
 
-              {/* Actions */}
-              <div className="flex items-center gap-2">
-                {!uploaded ? (
-                  <>
-                    <input
-                      ref={(el) => {
-                        fileInputs.current[doc.type] = el;
-                      }}
-                      type="file"
-                      className="hidden"
-                      onChange={(e) =>
-                        onFileChange(doc.type, e.target.files?.[0])
-                      }
-                    />
+              {/* Progress Bar (Visual only for now) */}
+              {uploadedDoc && (
+                <div className="absolute bottom-0 left-0 w-full h-1 bg-primary/20">
+                  <motion.div
+                    initial={{ width: "0%" }}
+                    animate={{ width: "100%" }}
+                    transition={{ duration: 0.5, ease: "circOut" }}
+                    className="h-full bg-primary"
+                  />
+                </div>
+              )}
 
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => fileInputs.current[doc.type]?.click()}
-                    >
-                      <Upload className="mr-2 h-4 w-4" />
-                      Upload
-                    </Button>
-                  </>
-                ) : (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => removeFile(doc.type)}
-                    className="text-muted-foreground hover:text-destructive"
-                  >
-                    <Trash className="h-4 w-4" />
-                  </Button>
-                )}
-              </div>
-            </div>
+              <input
+                type="file"
+                ref={inputRefs[docType.id]}
+                className="hidden"
+                accept={docType.id === "CV" ? ".pdf,.docx" : ".pdf"}
+                onChange={(e) => handleFileChange(docType.id, e.target.files?.[0] || null)}
+              />
+            </motion.div>
           );
         })}
       </div>
-
-      {/* Error */}
-      {form.formState.errors.documents && (
-        <p className="text-sm text-destructive">
-          {form.formState.errors.documents.message}
-        </p>
-      )}
-    </div>
+    </motion.div>
   );
 }
-

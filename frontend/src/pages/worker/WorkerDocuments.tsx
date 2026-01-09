@@ -56,7 +56,7 @@ function DocumentCard({ document }: DocumentCardProps) {
                     </div>
                     <div className="flex items-center gap-2">
                         <StatusBadge status={document.status} />
-                        <Button variant="ghost" size="icon" asChild>
+                        <Button variant="ghost" size="icon" asChild aria-label="Open document in new tab">
                             <a href={document.fileUrl} target="_blank" rel="noopener noreferrer">
                                 <ExternalLink className="h-4 w-4" />
                             </a>
@@ -193,7 +193,7 @@ export default function WorkerDocuments() {
                                 </div>
                             </div>
                             <div className="flex items-center gap-2">
-                                <Button variant="ghost" size="icon" onClick={clearSelectedFile}>
+                                <Button variant="ghost" size="icon" onClick={clearSelectedFile} aria-label="Remove selected file">
                                     <Trash2 className="h-4 w-4" />
                                 </Button>
                                 <Button onClick={handleUpload} disabled={isUploading}>

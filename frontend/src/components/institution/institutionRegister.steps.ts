@@ -1,6 +1,6 @@
 export const institutionSteps = [
-  { id: "account", label: "Account" },
-  { id: "institution", label: "Institution" },
-  { id: "confirm", label: "Confirm" },
+  { id: "account", label: "AUTH.REGISTER_INSTITUTION.LAYOUT.STEP_ACCOUNT" },
+  { id: "institution", label: "AUTH.REGISTER_INSTITUTION.LAYOUT.STEP_INFO" },
+  { id: "confirm", label: "AUTH.REGISTER_INSTITUTION.LAYOUT.STEP_CONFIRM" },
 ];
 

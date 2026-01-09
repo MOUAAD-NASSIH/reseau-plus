@@ -33,6 +33,7 @@ export interface Worker {
     lastName: string;
     specialityId?: number | null;
     experienceYears?: number | null;
+    role: UserRole;
     bio?: string | null;
     city?: string | null;
     zipCode?: string | null;
@@ -56,6 +57,7 @@ export interface Institution {
     id: number;
     userId: number;
     institutionName: string;
+    role: UserRole;
     address?: string | null;
     city?: string | null;
     latitude?: number | null;

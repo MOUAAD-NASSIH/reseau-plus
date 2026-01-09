@@ -2,10 +2,10 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router";
 
 // Layouts
 import {
-  AuthLayout,
   WorkerLayout,
   InstitutionLayout,
   AdminLayout,
+  PublicLayout,
 } from "@/layouts";
 
 // Middleware/Guards
@@ -73,65 +73,54 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public Routes */}
-        <Route
-          path="/"
-          element={
-            <GuestGuard>
-              <Landing />
-            </GuestGuard>
-          }
-        />
+        {/* Public Routes - Wrapped in PublicLayout */}
+        <Route element={<PublicLayout />}>
+          <Route path="/" element={<Landing />} />
 
-        {/* Auth Routes - Protected by GuestGuard (only for unauthenticated users) */}
-        <Route
-          path="/login"
-          element={
-            <GuestGuard>
-              <AuthLayout>
+          {/* Auth Routes - Wrapped in GuestGuard (for unauthenticated logic) */}
+          <Route
+            path="/login"
+            element={
+              <GuestGuard>
                 <Login />
-              </AuthLayout>
-            </GuestGuard>
-          }
-        />
-        <Route
-          path="/forgot-password"
-          element={
-            <GuestGuard>
-              <AuthLayout>
+              </GuestGuard>
+            }
+          />
+          <Route
+            path="/forgot-password"
+            element={
+              <GuestGuard>
                 <ForgotPasswordPage />
-              </AuthLayout>
-            </GuestGuard>
-          }
-        />
-        <Route
-          path="/reset-password"
-          element={
-            <GuestGuard>
-              <AuthLayout>
+              </GuestGuard>
+            }
+          />
+          <Route
+            path="/reset-password"
+            element={
+              <GuestGuard>
                 <ResetPasswordPage />
-              </AuthLayout>
-            </GuestGuard>
-          }
-        />
+              </GuestGuard>
+            }
+          />
 
-        {/* Registration Routes - Protected by GuestGuard (only for unauthenticated users) */}
-        <Route
-          path="/register/worker"
-          element={
-            <GuestGuard>
-              <WorkerRegisterPage />
-            </GuestGuard>
-          }
-        />
-        <Route
-          path="/register/institution"
-          element={
-            <GuestGuard>
-              <InstitutionRegisterPage />
-            </GuestGuard>
-          }
-        />
+          {/* Registration Routes */}
+          <Route
+            path="/register/worker"
+            element={
+              <GuestGuard>
+                <WorkerRegisterPage />
+              </GuestGuard>
+            }
+          />
+          <Route
+            path="/register/institution"
+            element={
+              <GuestGuard>
+                <InstitutionRegisterPage />
+              </GuestGuard>
+            }
+          />
+        </Route>
 
         {/* Worker Routes */}
         <Route

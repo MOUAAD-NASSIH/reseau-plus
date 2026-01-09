@@ -164,6 +164,7 @@ export default function PaymentHistory() {
                                 size="icon"
                                 asChild
                                 title="View assignment"
+                                aria-label="View assignment details"
                             >
                                 <Link to={`/institution/assignments/${payment.missionAssignmentId}`}>
                                     <Eye className="h-4 w-4" />

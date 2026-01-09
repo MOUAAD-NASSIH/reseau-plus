@@ -145,6 +145,7 @@ export default function MyMissions() {
                                 size="icon"
                                 asChild
                                 title="View details"
+                                aria-label="View mission details"
                             >
                                 <Link to={`/institution/missions/${mission.id}`}>
                                     <Eye className="h-4 w-4" />
@@ -155,6 +156,7 @@ export default function MyMissions() {
                                 size="icon"
                                 asChild
                                 title="View applicants"
+                                aria-label="View mission applicants"
                             >
                                 <Link to={`/institution/missions/${mission.id}/applicants`}>
                                     <Users className="h-4 w-4" />
@@ -165,6 +167,7 @@ export default function MyMissions() {
                                 size="icon"
                                 asChild
                                 title="Edit mission"
+                                aria-label="Edit mission"
                             >
                                 <Link to={`/institution/missions/${mission.id}/edit`}>
                                     <Edit className="h-4 w-4" />
@@ -176,6 +179,7 @@ export default function MyMissions() {
                                         variant="ghost"
                                         size="icon"
                                         title="Delete mission"
+                                        aria-label="Delete mission"
                                         className="text-destructive hover:text-destructive"
                                     >
                                         <Trash2 className="h-4 w-4" />

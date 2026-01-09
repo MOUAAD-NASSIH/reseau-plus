@@ -1,5 +1,6 @@
 import RegisterLayout from "../auth/RegisterLayout";
 import StepNavigation from "../auth/StepNavigation";
+import RegistrationSuccess from "../auth/RegistrationSuccess";
 import { useRegisterStepper } from "../auth/useRegisterStepper";
 
 import { workerSteps } from "./workerRegister.steps";
@@ -17,9 +18,8 @@ import { submitWorkerRegistration } from "./submitWorkerRegistration";
 
 import { useAppDispatch } from "@/features/hooks";
 import { getMe } from "@/features/slices/authSlice";
-import { useNavigate } from "react-router";
 import { useState } from "react";
-import { showErrorToast, showSuccessToast } from "@/lib/toast";
+import { showErrorToast } from "@/lib/toast";
 import axios from "axios";
 
 const stepComponents = [
@@ -40,10 +40,10 @@ export default function WorkerRegisterPage() {
   const canProceed = isWorkerStepValid(currentStep, data);
 
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [backendError, setBackendError] = useState<string | null>(null);
+  const [isRegistrationComplete, setIsRegistrationComplete] = useState(false);
 
   async function handleNext() {
     // Clear any previous backend error
@@ -66,14 +66,11 @@ export default function WorkerRegisterPage() {
 
       localStorage.setItem("auth_token", response.data.data.token);
 
-      showSuccessToast(
-        "Registration completed 🎉",
-        "Welcome to the network. Your profile has been created."
-      );
-
       dispatch(getMe());
       reset();
-      navigate("/worker");
+
+      // Show success animation instead of navigating immediately
+      setIsRegistrationComplete(true);
     } catch (error) {
       console.error("Worker registration failed:", error);
 
@@ -89,6 +86,20 @@ export default function WorkerRegisterPage() {
     } finally {
       setIsSubmitting(false);
     }
+  }
+
+  // Show success screen after registration
+  if (isRegistrationComplete) {
+    return (
+      <RegisterLayout steps={workerSteps} currentStep={workerSteps.length - 1}>
+        <RegistrationSuccess
+          title="Welcome to the Network! 🎉"
+          message="Your worker profile has been created successfully. You can now browse available missions and start applying."
+          redirectPath="/worker"
+          redirectLabel="Go to Dashboard"
+        />
+      </RegisterLayout>
+    );
   }
 
   return (

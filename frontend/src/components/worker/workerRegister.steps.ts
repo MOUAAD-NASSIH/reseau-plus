@@ -1,9 +1,9 @@
 export const workerSteps = [
-  { id: "account", label: "Account" },
-  { id: "personal", label: "Personal" },
-  { id: "professional", label: "Professional" },
-  { id: "experience", label: "Experience" },
-  { id: "documents", label: "Documents" },
-  { id: "confirm", label: "Confirm" },
+  { id: "account", label: "AUTH.REGISTER_WORKER.LAYOUT.STEP_ACCOUNT" },
+  { id: "personal", label: "AUTH.REGISTER_WORKER.LAYOUT.STEP_PERSONAL" },
+  { id: "professional", label: "AUTH.REGISTER_WORKER.LAYOUT.STEP_PROFESSIONAL" },
+  { id: "experience", label: "AUTH.REGISTER_WORKER.LAYOUT.STEP_EXPERIENCE" },
+  { id: "documents", label: "AUTH.REGISTER_WORKER.LAYOUT.STEP_DOCUMENTS" },
+  { id: "confirm", label: "AUTH.REGISTER_WORKER.LAYOUT.STEP_CONFIRM" },
 ];
 

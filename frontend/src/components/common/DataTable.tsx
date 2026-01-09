@@ -101,6 +101,7 @@ function DataTableColumnFilter<TData>({
                     size="icon"
                     className="absolute right-0 top-0 h-8 w-8"
                     onClick={() => column.setFilterValue("")}
+                    aria-label="Clear filter"
                 >
                     <X className="h-3 w-3" />
                 </Button>
@@ -389,6 +390,7 @@ export function DataTable<TData, TValue>({
                                 size="icon"
                                 className="absolute right-0 top-0 h-full w-9"
                                 onClick={() => setGlobalFilter("")}
+                                aria-label="Clear search"
                             >
                                 <X className="h-4 w-4" />
                             </Button>

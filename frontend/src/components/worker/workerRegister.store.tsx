@@ -3,6 +3,7 @@ import { create } from "zustand";
 export interface WorkerRegisterData {
     email?: string;
     password?: string;
+    confirmPassword?: string;
     firstName?: string;
     lastName?: string;
     birthDate?: Date;
@@ -19,11 +20,14 @@ export interface WorkerRegisterData {
         startDate: Date;
         endDate?: Date | null;
         description?: string | null;
+        isCurrent?: boolean;
     }[];
     documents?: {
         type: "DIPLOMA" | "CV" | "ID";
         file: File;
+        status?: "PENDING" | "UPLOADED" | "ERROR";
     }[];
+    termsAccepted?: boolean;
 }
 
 interface WorkerRegisterStore {

@@ -20,7 +20,7 @@ export function ThemeToggle() {
 
   if (!mounted) {
     return (
-      <Button variant="ghost" size="icon" className="rounded-full">
+      <Button variant="ghost" size="icon" className="rounded-full" aria-label="Toggle theme">
         <Sun className="h-[1.2rem] w-[1.2rem]" />
       </Button>
     );
@@ -39,11 +39,12 @@ export function ThemeToggle() {
       className="rounded-full cursor-pointer hover:bg-primary/20 dark:hover:bg-primary/50"
       onClick={cycleTheme}
       title={`Current theme: ${theme}`}
+      aria-label={`Toggle theme, current: ${theme}`}
     >
       {theme === "light" && <Sun className="h-[1.2rem] w-[1.2rem] transition-all" />}
       {theme === "dark" && <Moon className="h-[1.2rem] w-[1.2rem] transition-all" />}
       {(theme === "system" || !theme) && <Laptop className="h-[1.2rem] w-[1.2rem] transition-all" />}
-      <span className="sr-only" aria-label="Toggle theme">Toggle theme</span>
+      <span className="sr-only">Toggle theme</span>
     </Button>
   );
 }

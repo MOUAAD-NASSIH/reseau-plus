@@ -188,6 +188,7 @@ function NotificationCard({
                                 }}
                                 disabled={isMarkingAsRead}
                                 title="Mark as read"
+                                aria-label="Mark notification as read"
                             >
                                 {isMarkingAsRead ? (
                                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -205,6 +206,7 @@ function NotificationCard({
                             }}
                             disabled={isDeleting}
                             title="Delete notification"
+                            aria-label="Delete notification"
                             className="text-muted-foreground hover:text-destructive"
                         >
                             {isDeleting ? (

@@ -1,5 +1,6 @@
 import RegisterLayout from "../auth/RegisterLayout";
 import StepNavigation from "../auth/StepNavigation";
+import RegistrationSuccess from "../auth/RegistrationSuccess";
 import { useRegisterStepper } from "../auth/useRegisterStepper";
 
 import { institutionSteps } from "./institutionRegister.steps";
@@ -11,11 +12,10 @@ import StepInstitutionInfo from "./steps/StepInstitutionInfo";
 import StepConfirm from "./steps/StepConfirm";
 
 import { submitInstitutionRegistration } from "./submitInstitutionRegistration";
-import { useNavigate } from "react-router";
 import { useState } from "react";
 import { useAppDispatch } from "@/features/hooks";
 import { getMe } from "@/features/slices/authSlice";
-import { showErrorToast, showSuccessToast } from "@/lib/toast";
+import { showErrorToast } from "@/lib/toast";
 import axios from "axios";
 
 const stepComponents = [StepAccount, StepInstitutionInfo, StepConfirm];
@@ -30,16 +30,14 @@ export default function InstitutionRegisterPage() {
 
   const canProceed = isInstitutionStepValid(currentStep, data);
 
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [backendError, setBackendError] = useState<string | null>(null);
+  const [isRegistrationComplete, setIsRegistrationComplete] = useState(false);
 
   async function handleNext() {
-    // Clear any previous backend error
     setBackendError(null);
 
-    // Validate current step before proceeding
     if (!canProceed) {
       return;
     }
@@ -56,14 +54,11 @@ export default function InstitutionRegisterPage() {
 
       localStorage.setItem("auth_token", res.data.data.token);
 
-      showSuccessToast(
-        "Registration completed 🎉",
-        "Your institution account has been created successfully."
-      );
-
       dispatch(getMe());
       reset();
-      navigate("/institution");
+
+      // Show success animation instead of navigating immediately
+      setIsRegistrationComplete(true);
     } catch (error) {
       console.error("Institution registration failed:", error);
 
@@ -81,6 +76,20 @@ export default function InstitutionRegisterPage() {
     }
   }
 
+  // Show success screen after registration
+  if (isRegistrationComplete) {
+    return (
+      <RegisterLayout steps={institutionSteps} currentStep={institutionSteps.length - 1}>
+        <RegistrationSuccess
+          title="Institution Registered! 🎉"
+          message="Your institution account has been created successfully. You can now post missions and find qualified workers."
+          redirectPath="/institution"
+          redirectLabel="Go to Dashboard"
+        />
+      </RegisterLayout>
+    );
+  }
+
   return (
     <RegisterLayout steps={institutionSteps} currentStep={currentStep}>
       <StepComponent />
@@ -95,9 +104,10 @@ export default function InstitutionRegisterPage() {
       <StepNavigation
         currentStep={currentStep}
         totalSteps={institutionSteps.length}
-        canProceed={canProceed && !isSubmitting}
+        canProceed={canProceed}
         onNext={handleNext}
         onBack={back}
+        isSubmitting={isSubmitting}
       />
     </RegisterLayout>
   );
