@@ -32,9 +32,11 @@ import AvailableMissions from "@/pages/worker/AvailableMissions";
 import MissionDetails from "@/pages/worker/MissionDetails";
 import MyApplications from "@/pages/worker/MyApplications";
 import AssignedMissions from "@/pages/worker/AssignedMissions";
+import AssignmentDetails from "@/pages/worker/AssignmentDetails";
 import WorkerReviews from "@/pages/worker/WorkerReviews";
 import WorkerNotifications from "@/pages/worker/WorkerNotifications";
 import PendingApproval from "@/pages/worker/PendingApproval";
+import Messages from "@/pages/worker/Messages";
 
 // Institution Pages
 import InstitutionDashboard from "@/pages/institution/InstitutionDashboard";
@@ -50,6 +52,7 @@ import PaymentPage from "@/pages/institution/PaymentPage";
 import PaymentHistory from "@/pages/institution/PaymentHistory";
 import InstitutionReviews from "@/pages/institution/InstitutionReviews";
 import InstitutionNotifications from "@/pages/institution/InstitutionNotifications";
+import InstitutionMessages from "@/pages/institution/InstitutionMessages";
 
 // Admin Pages
 import AdminDashboard from "@/pages/admin/AdminDashboard";
@@ -230,6 +233,20 @@ const App = () => {
           }
         />
         <Route
+          path="/worker/assignments/:id"
+          element={
+            <ProtectedRoute>
+              <RoleGuard allowedRoles={["worker"]} fallbackPath="/unauthorized">
+                <WorkerVerifiedGuard>
+                  <WorkerLayout title="Assignment Details" description="View assignment information">
+                    <AssignmentDetails />
+                  </WorkerLayout>
+                </WorkerVerifiedGuard>
+              </RoleGuard>
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/worker/reviews"
           element={
             <ProtectedRoute>
@@ -237,6 +254,20 @@ const App = () => {
                 <WorkerVerifiedGuard>
                   <WorkerLayout title="Reviews" description="View and write reviews for completed missions">
                     <WorkerReviews />
+                  </WorkerLayout>
+                </WorkerVerifiedGuard>
+              </RoleGuard>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/worker/messages"
+          element={
+            <ProtectedRoute>
+              <RoleGuard allowedRoles={["worker"]} fallbackPath="/unauthorized">
+                <WorkerVerifiedGuard>
+                  <WorkerLayout title="Messages" description="Chat with institutions about missions">
+                    <Messages />
                   </WorkerLayout>
                 </WorkerVerifiedGuard>
               </RoleGuard>
@@ -448,6 +479,21 @@ const App = () => {
               >
                 <InstitutionLayout title="Reviews" description="View and write reviews">
                   <InstitutionReviews />
+                </InstitutionLayout>
+              </RoleGuard>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/institution/messages"
+          element={
+            <ProtectedRoute>
+              <RoleGuard
+                allowedRoles={["institution"]}
+                fallbackPath="/unauthorized"
+              >
+                <InstitutionLayout title="Messages" description="Chat with workers about missions">
+                  <InstitutionMessages />
                 </InstitutionLayout>
               </RoleGuard>
             </ProtectedRoute>

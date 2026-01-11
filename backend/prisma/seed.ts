@@ -347,6 +347,97 @@ async function main() {
             status: "CLOSED",
         },
     });
+
+    const mission5 = await prisma.mission.create({
+        data: {
+            institutionId: institution.id,
+            title: "Youth Mentorship Program",
+            description: "Mentor at-risk youth in the community, providing guidance and support for education and personal development.",
+            startDate: new Date("2024-05-01"),
+            endDate: new Date("2024-12-31"),
+            requiredSpecialityId: createdSpecialities[0].id,
+            location: "Agadir",
+            budget: 7500,
+            urgency: "LOW",
+            status: "OPEN",
+        },
+    });
+
+    const mission6 = await prisma.mission.create({
+        data: {
+            institutionId: institution2.id,
+            title: "Disability Support Coordinator",
+            description: "Coordinate support services for individuals with disabilities, including resource allocation and advocacy.",
+            startDate: new Date("2024-04-01"),
+            endDate: new Date("2024-10-31"),
+            requiredSpecialityId: createdSpecialities[0].id,
+            location: "Casablanca",
+            budget: 9000,
+            urgency: "HIGH",
+            status: "ONGOING",
+        },
+    });
+
+    const mission7 = await prisma.mission.create({
+        data: {
+            institutionId: institution.id,
+            title: "Crisis Intervention Team Member",
+            description: "Provide immediate crisis intervention and support for families experiencing domestic violence or emergency situations.",
+            startDate: new Date("2024-03-15"),
+            endDate: new Date("2024-09-15"),
+            requiredSpecialityId: createdSpecialities[3].id,
+            location: "Agadir",
+            budget: 12000,
+            urgency: "HIGH",
+            status: "OPEN",
+        },
+    });
+
+    const mission8 = await prisma.mission.create({
+        data: {
+            institutionId: institution2.id,
+            title: "Senior Living Wellness Program",
+            description: "Develop and implement wellness activities for seniors in assisted living facilities.",
+            startDate: new Date("2024-06-01"),
+            endDate: new Date("2024-12-31"),
+            requiredSpecialityId: createdSpecialities[2].id,
+            location: "Casablanca",
+            budget: 6500,
+            urgency: "MEDIUM",
+            status: "OPEN",
+        },
+    });
+
+    const mission9 = await prisma.mission.create({
+        data: {
+            institutionId: institution.id,
+            title: "Substance Abuse Counseling",
+            description: "Provide counseling and support services for individuals struggling with substance abuse issues.",
+            startDate: new Date("2024-02-15"),
+            endDate: new Date("2024-08-15"),
+            requiredSpecialityId: createdSpecialities[3].id,
+            location: "Agadir",
+            budget: 11000,
+            urgency: "HIGH",
+            status: "ONGOING",
+        },
+    });
+
+    const mission10 = await prisma.mission.create({
+        data: {
+            institutionId: institution2.id,
+            title: "Foster Care Support Services",
+            description: "Support foster families and children in foster care with resources, counseling, and home visits.",
+            startDate: new Date("2024-01-01"),
+            endDate: new Date("2024-06-30"),
+            requiredSpecialityId: createdSpecialities[1].id,
+            location: "Casablanca",
+            budget: 8500,
+            urgency: "MEDIUM",
+            status: "ONGOING",
+        },
+    });
+
     console.log("✓ Missions created.");
 
     // 11. Create Mission Domains
@@ -358,6 +449,16 @@ async function main() {
             { missionId: mission3.id, domainId: createdDomains[0].id },
             { missionId: mission4.id, domainId: createdDomains[0].id },
             { missionId: mission4.id, domainId: createdDomains[2].id },
+            { missionId: mission5.id, domainId: createdDomains[1].id },
+            { missionId: mission5.id, domainId: createdDomains[2].id },
+            { missionId: mission6.id, domainId: createdDomains[4].id },
+            { missionId: mission6.id, domainId: createdDomains[0].id },
+            { missionId: mission7.id, domainId: createdDomains[3].id },
+            { missionId: mission7.id, domainId: createdDomains[2].id },
+            { missionId: mission8.id, domainId: createdDomains[0].id },
+            { missionId: mission9.id, domainId: createdDomains[0].id },
+            { missionId: mission9.id, domainId: createdDomains[2].id },
+            { missionId: mission10.id, domainId: createdDomains[3].id },
         ],
         skipDuplicates: true,
     });
@@ -387,6 +488,55 @@ async function main() {
             status: "ACCEPTED",
         },
     });
+
+    const application4 = await prisma.missionApplication.create({
+        data: {
+            missionId: mission5.id,
+            workerId: worker2.id,
+            status: "SUBMITTED",
+        },
+    });
+
+    const application5 = await prisma.missionApplication.create({
+        data: {
+            missionId: mission6.id,
+            workerId: worker.id,
+            status: "ACCEPTED",
+        },
+    });
+
+    const application6 = await prisma.missionApplication.create({
+        data: {
+            missionId: mission7.id,
+            workerId: worker.id,
+            status: "SUBMITTED",
+        },
+    });
+
+    const application7 = await prisma.missionApplication.create({
+        data: {
+            missionId: mission8.id,
+            workerId: worker2.id,
+            status: "REJECTED",
+        },
+    });
+
+    const application8 = await prisma.missionApplication.create({
+        data: {
+            missionId: mission9.id,
+            workerId: worker2.id,
+            status: "ACCEPTED",
+        },
+    });
+
+    const application9 = await prisma.missionApplication.create({
+        data: {
+            missionId: mission10.id,
+            workerId: worker.id,
+            status: "ACCEPTED",
+        },
+    });
+
     console.log("✓ Mission applications created.");
 
     // 13. Create Mission Assignments
@@ -407,6 +557,34 @@ async function main() {
             status: "COMPLETED",
         },
     });
+
+    const assignment3 = await prisma.missionAssignment.create({
+        data: {
+            missionId: mission6.id,
+            workerId: worker.id,
+            institutionId: institution2.id,
+            status: "ONGOING",
+        },
+    });
+
+    const assignment4 = await prisma.missionAssignment.create({
+        data: {
+            missionId: mission9.id,
+            workerId: worker2.id,
+            institutionId: institution.id,
+            status: "ONGOING",
+        },
+    });
+
+    const assignment5 = await prisma.missionAssignment.create({
+        data: {
+            missionId: mission10.id,
+            workerId: worker.id,
+            institutionId: institution2.id,
+            status: "ACTIVE",
+        },
+    });
+
     console.log("✓ Mission assignments created.");
 
     // 14. Create Payments
@@ -422,6 +600,31 @@ async function main() {
             paidAt: new Date("2024-01-05"),
         },
     });
+
+    await prisma.payment.create({
+        data: {
+            missionAssignmentId: assignment3.id,
+            institutionId: institution2.id,
+            workerId: worker.id,
+            amountTotal: 9000,
+            platformFee: 1350,
+            workerAmount: 7650,
+            status: "PENDING",
+        },
+    });
+
+    await prisma.payment.create({
+        data: {
+            missionAssignmentId: assignment4.id,
+            institutionId: institution.id,
+            workerId: worker2.id,
+            amountTotal: 11000,
+            platformFee: 1650,
+            workerAmount: 9350,
+            status: "PENDING",
+        },
+    });
+
     console.log("✓ Payments created.");
 
     // 15. Create Reviews

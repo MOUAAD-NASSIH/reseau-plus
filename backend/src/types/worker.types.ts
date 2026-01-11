@@ -14,6 +14,7 @@ export interface Worker {
     userId: number;
     firstName: string;
     lastName: string;
+    profilePicture?: string | null;
     specialityId?: number | null;
     experienceYears?: number | null;
     bio?: string | null;
@@ -84,6 +85,7 @@ export interface WorkerDomain {
 export interface UpdateWorkerInput {
     firstName?: string;
     lastName?: string;
+    profilePicture?: string | null;
     specialityId?: number | null;
     experienceYears?: number | null;
     bio?: string | null;
@@ -112,6 +114,7 @@ export interface ExperienceInput {
 export interface AvailabilityInput {
     startDate: Date | string;
     endDate: Date | string;
+    status?: 'available' | 'blocked';
     isRecurring?: boolean;
 }
 

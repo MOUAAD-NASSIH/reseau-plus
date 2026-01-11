@@ -25,6 +25,7 @@ export interface NavItem {
     label: string;
     href: string;
     icon: LucideIcon;
+    badge?: number | string;
 }
 
 interface DashboardLayoutProps {
@@ -189,7 +190,7 @@ export default function DashboardLayout({
                     "transform transition-all duration-300 ease-in-out",
                     "lg:translate-x-0 lg:shadow-none",
                     sidebarOpen ? "translate-x-0" : "-translate-x-full",
-                    sidebarCollapsed ? "lg:w-[72px]" : "w-64"
+                    sidebarCollapsed ? "lg:w-18" : "w-64"
                 )}
             >
                 {/* Sidebar header */}
@@ -277,11 +278,24 @@ export default function DashboardLayout({
                                     !isActive && "group-hover:scale-110"
                                 )} />
                                 <span className={cn(
-                                    "transition-all duration-300",
+                                    "transition-all duration-300 flex-1",
                                     sidebarCollapsed && "lg:hidden lg:opacity-0 lg:w-0"
                                 )}>
                                     {item.label}
                                 </span>
+                                {/* Badge indicator */}
+                                {item.badge && (
+                                    <span className={cn(
+                                        "flex items-center justify-center px-2 min-w-5 h-5 text-xs font-bold rounded-full",
+                                        "transition-all duration-200",
+                                        isActive
+                                            ? "bg-primary-foreground text-primary"
+                                            : "bg-red-500 text-white",
+                                        sidebarCollapsed && "lg:absolute lg:top-0 lg:right-0 lg:min-w-4 lg:h-4 lg:text-[10px]"
+                                    )}>
+                                        {item.badge}
+                                    </span>
+                                )}
                                 {/* Tooltip for collapsed state */}
                                 {sidebarCollapsed && (
                                     <span className={cn(
@@ -291,6 +305,7 @@ export default function DashboardLayout({
                                         "hidden lg:block"
                                     )}>
                                         {item.label}
+                                        {item.badge && ` (${item.badge})`}
                                     </span>
                                 )}
                             </Link>
@@ -302,7 +317,7 @@ export default function DashboardLayout({
             {/* Main content area */}
             <div className={cn(
                 "transition-all duration-300 ease-in-out",
-                sidebarCollapsed ? "lg:pl-[72px]" : "lg:pl-64"
+                sidebarCollapsed ? "lg:pl-18" : "lg:pl-64"
             )}>
                 {/* Header */}
                 <header className="sticky top-0 z-30 h-16 bg-card/95 backdrop-blur-sm border-b border-border shadow-sm">

@@ -20,6 +20,8 @@ import {
     createReviewSchema,
     getWorkerReviewsSchema,
     getInstitutionReviewsSchema,
+    getWorkerRatingSchema,
+    getInstitutionRatingSchema,
     deleteReviewSchema,
     reviewFilterSchema
 } from "../schemas/reviewSchemas";
@@ -28,9 +30,9 @@ const router = express.Router();
 
 // Public routes - Get reviews for workers and institutions
 router.get("/worker/:workerId", validateRequest(getWorkerReviewsSchema), getWorkerReviews);
-router.get("/worker/:workerId/rating", getWorkerAverageRating);
+router.get("/worker/:workerId/rating", validateRequest(getWorkerRatingSchema), getWorkerAverageRating);
 router.get("/institution/:id", validateRequest(getInstitutionReviewsSchema), getInstitutionReviews);
-router.get("/institution/:id/rating", getInstitutionAverageRating);
+router.get("/institution/:id/rating", validateRequest(getInstitutionRatingSchema), getInstitutionAverageRating);
 
 // Protected routes - User's own reviews
 router.get("/received", protect, getMyReceivedReviews);

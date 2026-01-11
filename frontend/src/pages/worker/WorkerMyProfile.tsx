@@ -7,6 +7,7 @@ import {
     Upload,
     Edit,
     MoreVertical,
+    Bell,
     Menu,
     ChevronRight,
     Search,
@@ -33,7 +34,7 @@ import {
 } from "@/features/validation/workerSchemas";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 
-export default function WorkerProfile() {
+export default function WorkerMyProfile() {
     const { data: profileData, isLoading: profileLoading } = useGetWorkerProfileQuery();
     const [updateProfile, { isLoading: isUpdating }] = useUpdateWorkerProfileMutation();
     const [uploadProfilePicture, { isLoading: isUploadingPicture }] = useUploadProfilePictureMutation();
@@ -97,33 +98,6 @@ export default function WorkerProfile() {
         }
     };
 
-    const handleProfilePictureUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (!file) return;
-
-        // Validate file type
-        if (!file.type.startsWith("image/")) {
-            showErrorToast("Invalid file type", "Please select an image file.");
-            return;
-        }
-
-        // Validate file size (max 5MB)
-        if (file.size > 5 * 1024 * 1024) {
-            showErrorToast("File too large", "Image must be less than 5MB.");
-            return;
-        }
-
-        try {
-            const formData = new FormData();
-            formData.append("profilePicture", file);
-
-            await uploadProfilePicture(formData).unwrap();
-            showSuccessToast("Profile picture updated", "Your profile picture has been uploaded successfully.");
-        } catch (error) {
-            showErrorToast(error, "Failed to upload profile picture");
-        }
-    };
-
     const handleCancel = () => {
         reset();
         if (worker?.bio) setBio(worker.bio);
@@ -138,6 +112,32 @@ export default function WorkerProfile() {
 
     const removeSpeciality = (spec: string) => {
         setSelectedSpecialities(selectedSpecialities.filter((s) => s !== spec));
+    };
+
+    const handleProfilePictureUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            showErrorToast(new Error("Invalid file type"), "Please upload an image file");
+            return;
+        }
+
+        // Validate file size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            showErrorToast(new Error("File too large"), "Image must be less than 5MB");
+            return;
+        }
+
+        try {
+            const formData = new FormData();
+            formData.append('profilePicture', file);
+            await uploadProfilePicture(formData).unwrap();
+            showSuccessToast("Profile picture updated", "Your profile picture has been uploaded successfully.");
+        } catch (error) {
+            showErrorToast(error, "Failed to upload profile picture");
+        }
     };
 
     // Calculate profile completion
@@ -181,6 +181,10 @@ export default function WorkerProfile() {
                     </h2>
                 </div>
                 <div className="flex items-center gap-4">
+                    <button className="relative p-2 text-muted-foreground hover:text-foreground transition-colors">
+                        <Bell className="h-5 w-5" />
+                        <span className="absolute top-2 right-2 size-2 bg-primary rounded-full"></span>
+                    </button>
                     <div className="flex gap-2">
                         <Button
                             type="button"
@@ -210,7 +214,7 @@ export default function WorkerProfile() {
 
             {/* Scrollable Area */}
             <div className="flex-1 overflow-y-auto p-4 lg:p-10">
-                <div className="flex flex-col gap-8">
+                <div className="max-w-6xl mx-auto flex flex-col gap-8">
                     {/* Page Heading */}
                     <div className="flex flex-col gap-2">
                         <div className="flex items-center gap-2 text-muted-foreground text-sm font-medium mb-1">
@@ -236,12 +240,10 @@ export default function WorkerProfile() {
                                 <div className="absolute top-0 left-0 w-full h-24 bg-linear-to-b from-primary/20 to-transparent opacity-50"></div>
                                 <div className="relative mt-4 mb-4">
                                     <div
-                                        className="size-32 rounded-full border-4 border-background shadow-xl bg-cover bg-center bg-no-repeat bg-muted flex items-center justify-center text-4xl font-bold text-foreground"
-                                        style={{
-                                            backgroundImage: worker?.profilePicture
-                                                ? `url(${worker.profilePicture})`
-                                                : undefined,
-                                        }}
+                                        className="size-32 rounded-full border-4 border-background shadow-xl bg-cover bg-center bg-no-repeat bg-muted flex items-center justify-center text-4xl font-bold text-foreground overflow-hidden"
+                                        style={worker?.profilePicture ? {
+                                            backgroundImage: `url(${worker.profilePicture})`
+                                        } : {}}
                                     >
                                         {!worker?.profilePicture && (
                                             <>{worker?.firstName?.[0]}{worker?.lastName?.[0]}</>
@@ -255,8 +257,7 @@ export default function WorkerProfile() {
                                         className="hidden"
                                     />
                                     <button
-                                        type="button"
-                                        onClick={() => document.getElementById("profilePictureUpload")?.click()}
+                                        onClick={() => document.getElementById('profilePictureUpload')?.click()}
                                         disabled={isUploadingPicture}
                                         className="absolute bottom-1 right-1 bg-card border border-border p-2 rounded-full text-foreground hover:text-primary hover:border-primary transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
@@ -330,49 +331,6 @@ export default function WorkerProfile() {
                                 <p className="text-xs text-muted-foreground">
                                     Turn this off if you are fully booked or on leave.
                                 </p>
-                            </Card>
-
-                            {/* Specializations */}
-                            <Card className="p-6 border border-border">
-                                <h3 className="text-lg font-bold text-foreground mb-1">
-                                    Specializations
-                                </h3>
-                                <p className="text-sm text-muted-foreground mb-6">
-                                    Select the areas where you have verified expertise.
-                                </p>
-                                <div className="flex flex-wrap gap-2 mb-4">
-                                    {selectedSpecialities.map((spec) => (
-                                        <Badge
-                                            key={spec}
-                                            variant="outline"
-                                            className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-primary/20 text-primary border-primary/30 text-sm font-medium"
-                                        >
-                                            {spec}
-                                            <button
-                                                type="button"
-                                                onClick={() => removeSpeciality(spec)}
-                                                className="hover:text-foreground ml-1"
-                                            >
-                                                <X className="h-3 w-3" />
-                                            </button>
-                                        </Badge>
-                                    ))}
-                                </div>
-                                <div className="relative group">
-                                    <Search className="absolute left-4 top-3 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                                    <Input
-                                        value={newSpeciality}
-                                        onChange={(e) => setNewSpeciality(e.target.value)}
-                                        onKeyPress={(e) => {
-                                            if (e.key === "Enter") {
-                                                e.preventDefault();
-                                                addSpeciality();
-                                            }
-                                        }}
-                                        placeholder="Add a specialization (e.g. Substance Abuse, Elderly Care...)"
-                                        className="w-full bg-muted/50 rounded-full pl-12 pr-4 py-3"
-                                    />
-                                </div>
                             </Card>
                         </div>
 
@@ -525,6 +483,49 @@ export default function WorkerProfile() {
                                 </div>
                             </Card>
 
+                            {/* Skills & Specializations */}
+                            <Card className="p-6 lg:p-8 border border-border">
+                                <h3 className="text-lg font-bold text-foreground mb-1">
+                                    Specializations
+                                </h3>
+                                <p className="text-sm text-muted-foreground mb-6">
+                                    Select the areas where you have verified expertise.
+                                </p>
+                                <div className="flex flex-wrap gap-2 mb-4">
+                                    {selectedSpecialities.map((spec) => (
+                                        <Badge
+                                            key={spec}
+                                            variant="outline"
+                                            className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-primary/20 text-primary border-primary/30 text-sm font-medium"
+                                        >
+                                            {spec}
+                                            <button
+                                                type="button"
+                                                onClick={() => removeSpeciality(spec)}
+                                                className="hover:text-foreground ml-1"
+                                            >
+                                                <X className="h-3 w-3" />
+                                            </button>
+                                        </Badge>
+                                    ))}
+                                </div>
+                                <div className="relative group">
+                                    <Search className="absolute left-4 top-3 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                                    <Input
+                                        value={newSpeciality}
+                                        onChange={(e) => setNewSpeciality(e.target.value)}
+                                        onKeyPress={(e) => {
+                                            if (e.key === "Enter") {
+                                                e.preventDefault();
+                                                addSpeciality();
+                                            }
+                                        }}
+                                        placeholder="Add a specialization (e.g. Substance Abuse, Elderly Care...)"
+                                        className="w-full bg-muted/50 rounded-full pl-12 pr-4 py-3"
+                                    />
+                                </div>
+                            </Card>
+
                             {/* Documents */}
                             <Card className="p-6 lg:p-8 border border-border">
                                 <div className="flex justify-between items-center mb-6">
@@ -593,4 +594,3 @@ export default function WorkerProfile() {
         </div>
     );
 }
-

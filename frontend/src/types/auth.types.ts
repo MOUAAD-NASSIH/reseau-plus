@@ -31,6 +31,7 @@ export interface Worker {
     userId: number;
     firstName: string;
     lastName: string;
+    profilePicture?: string | null;
     specialityId?: number | null;
     experienceYears?: number | null;
     role: UserRole;
@@ -57,6 +58,7 @@ export interface Institution {
     id: number;
     userId: number;
     institutionName: string;
+    logo?: string | null;
     role: UserRole;
     address?: string | null;
     city?: string | null;
@@ -121,6 +123,7 @@ export interface WorkerAvailability {
     workerId: number;
     startDate: string;
     endDate: string;
+    status: 'available' | 'blocked';
     isRecurring: boolean;
     createdAt: string;
 }

@@ -37,6 +37,7 @@ export const documentTypeSchema = z.enum(["DIPLOMA", "CV", "ID", "OTHER"]);
 export const updateWorkerProfileSchema = z.object({
     firstName: safeStringSchema.min(1, "First name is required").optional(),
     lastName: safeStringSchema.min(1, "Last name is required").optional(),
+    profilePicture: safeStringSchema.max(500).optional().nullable(),
     specialityId: positiveIntSchema.optional().nullable(),
     experienceYears: experienceYearsSchema.optional().nullable(),
     bio: safeStringSchema.max(2000, "Bio must be 2000 characters or less").optional().nullable(),
@@ -58,6 +59,7 @@ export const createAvailabilitySchema = z
     .object({
         startDate: dateStringSchema,
         endDate: dateStringSchema,
+        status: z.enum(["available", "blocked"]).default("available"),
         isRecurring: z.boolean(),
     })
     .refine(
@@ -75,6 +77,7 @@ export const updateAvailabilitySchema = z
     .object({
         startDate: dateStringSchema.optional(),
         endDate: dateStringSchema.optional(),
+        status: z.enum(["available", "blocked"]).optional(),
         isRecurring: z.boolean().optional(),
     })
     .refine(

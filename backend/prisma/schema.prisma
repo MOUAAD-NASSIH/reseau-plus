@@ -67,6 +67,12 @@ enum Urgency {
   LOW
 }
 
+enum MessageStatus {
+  SENT
+  DELIVERED
+  READ
+}
+
 // ============================================
 // AUTHENTICATION & ROLES
 // ============================================
@@ -101,6 +107,8 @@ model User {
   receivedReviews   Review[]       @relation("Reviewee")
   adminLogs         AdminLog[]     @relation("AdminLog_Admin")
   adminLogsAsTarget AdminLog[]     @relation("AdminLog_TargetUser")
+  sentMessages      Message[]      @relation("MessageSender")
+  receivedMessages  Message[]      @relation("MessageReceiver")
 
   @@index([email])
   @@index([roleId])
@@ -143,6 +151,7 @@ model Worker {
   userId          Int          @unique @map("user_id")
   firstName       String       @map("first_name") @db.VarChar(100)
   lastName        String       @map("last_name") @db.VarChar(100)
+  profilePicture  String?      @map("profile_picture") @db.VarChar(500)
   specialityId    Int?         @map("speciality_id")
   experienceYears Int?         @map("experience_years")
   bio             String?      @db.Text
@@ -212,8 +221,9 @@ model WorkerExperience {
 model WorkerAvailability {
   id          Int      @id @default(autoincrement())
   workerId    Int      @map("worker_id")
-  startDate   DateTime @map("start_date") @db.Date
-  endDate     DateTime @map("end_date") @db.Date
+  startDate   DateTime @map("start_date") @db.Timestamptz
+  endDate     DateTime @map("end_date") @db.Timestamptz
+  status      String   @default("available") // "available" or "blocked"
   isRecurring Boolean  @default(false) @map("is_recurring")
   createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
 
@@ -249,6 +259,7 @@ model Institution {
   id              Int      @id @default(autoincrement())
   userId          Int      @unique @map("user_id")
   institutionName String   @map("institution_name") @db.VarChar(255)
+  logo            String?  @db.VarChar(500)
   address         String?  @db.Text
   city            String?  @db.VarChar(100)
   latitude        Float?   @db.DoublePrecision
@@ -461,4 +472,43 @@ model AdminLog {
   @@index([actionType])
   @@index([createdAt])
   @@map("admin_logs")
+}
+
+// ============================================
+// MESSAGING SYSTEM
+// ============================================
+
+model Conversation {
+  id               Int      @id @default(autoincrement())
+  participantIds   Int[]    @map("participant_ids")
+  lastMessageAt    DateTime @default(now()) @map("last_message_at") @db.Timestamptz
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  // Relations
+  messages     Message[]
+
+  @@index([lastMessageAt])
+  @@map("conversations")
+}
+
+model Message {
+  id             Int           @id @default(autoincrement())
+  conversationId Int           @map("conversation_id")
+  senderId       Int           @map("sender_id")
+  receiverId     Int           @map("receiver_id")
+  content        String        @db.Text
+  status         MessageStatus @default(SENT)
+  createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime      @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User         @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver     User         @relation("MessageReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+  @@index([senderId])
+  @@index([receiverId])
+  @@index([createdAt])
+  @@map("messages")
 }

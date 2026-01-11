@@ -2,7 +2,7 @@
  * Custom base query for RTK Query that uses the generic Axios instance.
  */
 
-import type { BaseQueryFn } from "@reduxjs/toolkit/query/react";
+import type { BaseQueryFn } from "@reduxjs/toolkit/query";
 import type { AxiosRequestConfig, AxiosError } from "axios";
 import { axiosInstance } from "@/lib/axios";
 

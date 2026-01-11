@@ -30,6 +30,7 @@ export const updateWorkerProfileSchema = z.object({
     body: z.object({
         firstName: safeStringSchema.min(1).optional(),
         lastName: safeStringSchema.min(1).optional(),
+        profilePicture: safeStringSchema.max(500).optional().nullable(),
         specialityId: z.coerce.number().int().positive().optional().nullable(),
         experienceYears: experienceYearsSchema.optional().nullable(),
         bio: safeStringSchema.max(2000).optional().nullable(),
@@ -49,6 +50,7 @@ export const availabilitySchema = z.object({
     body: z.object({
         startDate: z.coerce.date(),
         endDate: z.coerce.date(),
+        status: z.enum(['available', 'blocked']).optional().default('available'),
         isRecurring: z.boolean().default(false),
     }).refine(
         (data) => data.endDate > data.startDate,
@@ -67,6 +69,7 @@ export const updateAvailabilitySchema = z.object({
     body: z.object({
         startDate: z.coerce.date().optional(),
         endDate: z.coerce.date().optional(),
+        status: z.enum(['available', 'blocked']).optional(),
         isRecurring: z.boolean().optional(),
     }).refine(
         (data) => {

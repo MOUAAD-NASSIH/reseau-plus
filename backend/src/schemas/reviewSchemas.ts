@@ -55,6 +55,22 @@ export const deleteReviewSchema = z.object({
 });
 
 /**
+ * Get worker rating schema
+ */
+export const getWorkerRatingSchema = z.object({
+    params: z.object({
+        workerId: z.coerce.number().int().positive({ message: "Worker ID must be a positive integer" }),
+    }),
+});
+
+/**
+ * Get institution rating schema
+ */
+export const getInstitutionRatingSchema = z.object({
+    params: idParamSchema,
+});
+
+/**
  * Review filter schema
  */
 export const reviewFilterSchema = z.object({

@@ -144,6 +144,29 @@ export const errorHandler = (
     // Log all errors
     logError(err, req);
 
+    // Handle Multer errors
+    if (err.name === 'MulterError') {
+        const multerError = err as any;
+        console.error('Multer error:', multerError);
+        
+        if (multerError.code === 'LIMIT_FILE_SIZE') {
+            res.status(400).json(
+                createErrorResponse('File too large. Maximum size is 10MB', 'VALIDATION_ERROR')
+            );
+            return;
+        }
+        if (multerError.code === 'LIMIT_UNEXPECTED_FILE') {
+            res.status(400).json(
+                createErrorResponse('Unexpected file field', 'VALIDATION_ERROR')
+            );
+            return;
+        }
+        res.status(400).json(
+            createErrorResponse(multerError.message || 'File upload error', 'VALIDATION_ERROR')
+        );
+        return;
+    }
+
     // Handle Zod validation errors
     if (err instanceof ZodError) {
         const details = formatZodErrors(err);

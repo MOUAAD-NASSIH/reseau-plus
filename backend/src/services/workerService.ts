@@ -302,6 +302,7 @@ export const addAvailability = async (workerId: number, data: AvailabilityInput)
             workerId,
             startDate: new Date(data.startDate),
             endDate: new Date(data.endDate),
+            status: data.status || 'available',
             isRecurring: data.isRecurring || false
         }
     });
@@ -330,6 +331,7 @@ export const updateAvailability = async (
     const updateData: any = {};
     if (data.startDate !== undefined) updateData.startDate = new Date(data.startDate);
     if (data.endDate !== undefined) updateData.endDate = new Date(data.endDate);
+    if (data.status !== undefined) updateData.status = data.status;
     if (data.isRecurring !== undefined) updateData.isRecurring = data.isRecurring;
 
     return prisma.workerAvailability.update({

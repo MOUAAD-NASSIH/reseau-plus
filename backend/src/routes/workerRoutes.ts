@@ -22,7 +22,8 @@ import {
     addDomain,
     removeDomain,
     getMyAvailabilities,
-    getMyExperiences
+    getMyExperiences,
+    uploadProfilePicture
 } from "../controllers/workerController";
 import {
     updateWorkerProfileSchema,
@@ -47,6 +48,7 @@ router.get("/", protect, adminOnly, validateRequest(workerFilterSchema), getWork
 // Profile routes
 router.get("/me", protect, workerOnly, getCurrentWorker);
 router.put("/me", protect, workerOnly, validateRequest(updateWorkerProfileSchema), updateWorker);
+router.post("/profile-picture", protect, workerOnly, upload.single('profilePicture'), uploadProfilePicture);
 
 // Documents
 router.get("/documents", protect, workerOnly, getDocuments);

@@ -20,6 +20,7 @@ import type {
 export interface WorkerAvailabilityInput {
     startDate: string;
     endDate: string;
+    status?: 'available' | 'blocked';
     isRecurring?: boolean;
 }
 
@@ -114,6 +115,21 @@ export const workerApi = api.injectEndpoints({
         }),
 
         /**
+         * Upload profile picture
+         */
+        uploadProfilePicture: builder.mutation<ApiResponse<Worker>, FormData>({
+            query: (formData) => ({
+                url: "/workers/profile-picture",
+                method: "POST",
+                data: formData,
+            }),
+            invalidatesTags: [
+                { type: "Workers", id: "PROFILE" },
+                { type: "Workers", id: "LIST" },
+            ],
+        }),
+
+        /**
          * Upload a document
          */
         uploadDocument: builder.mutation<
@@ -128,9 +144,7 @@ export const workerApi = api.injectEndpoints({
                     url: "/workers/documents",
                     method: "POST",
                     data: formData,
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                    },
+                    // Let axios set Content-Type with proper boundary
                 };
             },
             invalidatesTags: [
@@ -222,6 +236,7 @@ export const {
     useGetWorkerDocumentsQuery,
     useGetWorkerAvailabilitiesQuery,
     useUpdateWorkerProfileMutation,
+    useUploadProfilePictureMutation,
     useUploadDocumentMutation,
     useAddAvailabilityMutation,
     useUpdateAvailabilityMutation,

@@ -183,7 +183,10 @@ export const getWorkerAverageRating = asyncHandler(async (req: AuthenticatedRequ
 
     res.json({
         success: true,
-        data: rating
+        data: {
+            average: rating.averageRating,
+            count: rating.totalReviews
+        }
     });
 });
 
@@ -199,7 +202,10 @@ export const getInstitutionAverageRating = asyncHandler(async (req: Authenticate
 
     res.json({
         success: true,
-        data: rating
+        data: {
+            average: rating.averageRating,
+            count: rating.totalReviews
+        }
     });
 });
 

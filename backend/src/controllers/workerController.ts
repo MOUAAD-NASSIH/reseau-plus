@@ -116,6 +116,7 @@ export const updateWorker = asyncHandler(async (req: Request, res: Response) => 
     const {
         firstName,
         lastName,
+        profilePicture,
         specialityId,
         experienceYears,
         bio,
@@ -130,6 +131,7 @@ export const updateWorker = asyncHandler(async (req: Request, res: Response) => 
     const worker = await workerService.updateByUserId(userId, {
         firstName,
         lastName,
+        profilePicture,
         specialityId: specialityId !== undefined ? (specialityId === null ? null : Number(specialityId)) : undefined,
         experienceYears: experienceYears !== undefined ? (experienceYears === null ? null : Number(experienceYears)) : undefined,
         bio,
@@ -394,11 +396,14 @@ export const addAvailability = asyncHandler(async (req: Request, res: Response) 
         return;
     }
 
-    const { startDate, endDate, isRecurring } = req.body;
+    const { startDate, endDate, status, isRecurring } = req.body;
+
+    console.log('Received availability data:', { startDate, endDate, status, isRecurring });
 
     const availability = await workerService.addAvailability(worker.id, {
         startDate,
         endDate,
+        status,
         isRecurring
     });
 
@@ -435,12 +440,13 @@ export const updateAvailability = asyncHandler(async (req: Request, res: Respons
         return;
     }
 
-    const { startDate, endDate, isRecurring } = req.body;
+    const { startDate, endDate, status, isRecurring } = req.body;
 
     try {
         const availability = await workerService.updateAvailability(worker.id, availabilityId, {
             startDate,
             endDate,
+            status,
             isRecurring
         });
 
@@ -668,5 +674,67 @@ export const getMyExperiences = asyncHandler(async (req: Request, res: Response)
     res.json({
         success: true,
         data: experiences
+    });
+});
+
+/**
+ * Upload profile picture
+ * POST /api/workers/profile-picture
+ */
+export const uploadProfilePicture = asyncHandler(async (req: Request, res: Response) => {
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.user?.userId;
+
+    console.log('uploadProfilePicture called:', {
+        userId,
+        hasFile: !!req.file,
+        file: req.file ? {
+            fieldname: req.file.fieldname,
+            originalname: req.file.originalname,
+            mimetype: req.file.mimetype,
+            size: req.file.size,
+            path: req.file.path
+        } : null
+    });
+
+    if (!userId) {
+        console.log('No userId found');
+        res.status(401).json({
+            success: false,
+            message: "Not authorized"
+        });
+        return;
+    }
+
+    const file = req.file as Express.Multer.File;
+    if (!file) {
+        console.log('No file in request');
+        res.status(400).json({
+            success: false,
+            message: "No file uploaded"
+        });
+        return;
+    }
+
+    const worker = await prisma.worker.findUnique({ where: { userId } });
+    if (!worker) {
+        console.log('Worker not found for userId:', userId);
+        res.status(404).json({
+            success: false,
+            message: "Worker not found"
+        });
+        return;
+    }
+
+    // File is uploaded to Cloudinary via multer-storage-cloudinary
+    // file.path contains the Cloudinary URL
+    const updatedWorker = await workerService.update(worker.id, {
+        profilePicture: file.path
+    });
+
+    res.json({
+        success: true,
+        data: updatedWorker,
+        message: "Profile picture uploaded successfully"
     });
 });
