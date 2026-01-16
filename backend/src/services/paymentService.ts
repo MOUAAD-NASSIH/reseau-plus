@@ -235,7 +235,7 @@ export const createPaymentIntent = async (institutionId: number, assignmentId: n
     // Create Stripe PaymentIntent
     const paymentIntent = await stripe.paymentIntents.create({
         amount: Math.round(amount * 100), // Stripe uses cents
-        currency: 'eur',
+        currency: 'mad',
         metadata: {
             assignmentId: assignment.id.toString(),
             institutionId: institutionId.toString(),
@@ -279,7 +279,7 @@ export const createPaymentIntent = async (institutionId: number, assignmentId: n
         amount: fees.amountTotal,
         platformFee: fees.platformFee,
         workerAmount: fees.workerAmount,
-        currency: 'eur'
+        currency: 'mad'
     };
 };
 
@@ -343,14 +343,14 @@ const handlePaymentSuccess = async (paymentIntent: Stripe.PaymentIntent) => {
     await notificationService.createNotification(
         workerUserId,
         'PAYMENT_RECEIVED',
-        `Payment of €${amount.toFixed(2)} received for mission: ${missionTitle}`
+        `Payment of ${amount.toFixed(2)} MAD received for mission: ${missionTitle}`
     );
 
     // Notify institution
     await notificationService.createNotification(
         institutionUserId,
         'PAYMENT_COMPLETED',
-        `Payment of €${payment.amountTotal.toFixed(2)} completed for mission: ${missionTitle}`
+        `Payment of ${payment.amountTotal.toFixed(2)} MAD completed for mission: ${missionTitle}`
     );
 };
 

@@ -458,7 +458,7 @@ async function main() {
             {
                 userId: workerUser.id,
                 type: "PAYMENT_RECEIVED",
-                message: "You have received a payment of €8500.00 for mission 'Mental Health Outreach'.",
+                message: "You have received a payment of 8500.00 MAD for mission 'Mental Health Outreach'.",
                 isRead: true,
             },
             {
