@@ -93,6 +93,7 @@ model User {
   password             String     @db.VarChar(255)
   roleId               Int        @map("role_id")
   status               UserStatus @default(ACTIVE)
+  profilePicture       String?    @map("profile_picture") @db.VarChar(500) // For all user roles (workers, admins)
   verificationToken    String?    @map("verification_token")
   passwordResetToken   String?    @map("password_reset_token")
   passwordResetExpires DateTime?  @map("password_reset_expires") @db.Timestamptz
@@ -151,7 +152,6 @@ model Worker {
   userId          Int          @unique @map("user_id")
   firstName       String       @map("first_name") @db.VarChar(100)
   lastName        String       @map("last_name") @db.VarChar(100)
-  profilePicture  String?      @map("profile_picture") @db.VarChar(500)
   specialityId    Int?         @map("speciality_id")
   experienceYears Int?         @map("experience_years")
   bio             String?      @db.Text
@@ -479,13 +479,13 @@ model AdminLog {
 // ============================================
 
 model Conversation {
-  id               Int      @id @default(autoincrement())
-  participantIds   Int[]    @map("participant_ids")
-  lastMessageAt    DateTime @default(now()) @map("last_message_at") @db.Timestamptz
-  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
+  id             Int      @id @default(autoincrement())
+  participantIds Int[]    @map("participant_ids")
+  lastMessageAt  DateTime @default(now()) @map("last_message_at") @db.Timestamptz
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
 
   // Relations
-  messages     Message[]
+  messages Message[]
 
   @@index([lastMessageAt])
   @@map("conversations")

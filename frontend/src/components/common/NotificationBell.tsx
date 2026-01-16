@@ -1,12 +1,10 @@
 /**
- * NotificationBell Component
- * Displays a bell icon with unread count badge and dropdown with recent notifications
-
+ * NotificationBell - bell icon with unread count and dropdown for recent notifications
  */
 
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
-import { Bell, CheckCheck, Loader2, ExternalLink } from "lucide-react";
+import { Bell, CheckCheck, Loader2, ExternalLink, WifiOff } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,20 +24,14 @@ import {
 } from "@/features/api/endpoints/notificationEndpoints";
 import type { Notification, NotificationType } from "@/types/notification.types";
 import { useAppSelector } from "@/features/hooks";
+import { useNotificationSocket } from "@/socket/hooks/useNotificationSocket";
 
-/**
- * API response structure from /auth/me endpoint
- */
 interface ApiUser {
     role?: string;
 }
 
-/**
- * Get the redirect URL based on notification type and user role
- */
 const getNotificationRedirectUrl = (type: NotificationType, role: string): string | null => {
     switch (type) {
-        // Worker notifications
         case "APPLICATION_ACCEPTED":
         case "ASSIGNMENT_CREATED":
             return role === "worker" ? "/worker/assignments" : "/institution/assignments";
@@ -67,9 +59,6 @@ const getNotificationRedirectUrl = (type: NotificationType, role: string): strin
     }
 };
 
-/**
- * Get icon/color for notification type
- */
 const getNotificationStyle = (type: NotificationType): { color: string; bgColor: string } => {
     switch (type) {
         case "APPLICATION_ACCEPTED":
@@ -93,9 +82,6 @@ const getNotificationStyle = (type: NotificationType): { color: string; bgColor:
     }
 };
 
-/**
- * Format notification timestamp
- */
 const formatTimestamp = (dateString: string): string => {
     try {
         return formatDistanceToNow(new Date(dateString), { addSuffix: true });
@@ -117,11 +103,9 @@ function NotificationItem({ notification, onMarkAsRead, onNavigate, isMarking, u
     const redirectUrl = getNotificationRedirectUrl(notification.type, userRole);
 
     const handleClick = () => {
-        // Mark as read if not already read
         if (!notification.isRead) {
             onMarkAsRead(notification.id);
         }
-        // Navigate to the relevant page
         onNavigate(notification);
     };
 
@@ -186,26 +170,21 @@ export function NotificationBell() {
     const apiUser = user as ApiUser;
     const userRole = apiUser?.role || "";
 
-    // Fetch unread count (polls every 30 seconds)
-    const { data: unreadCountData } = useGetUnreadNotificationCountQuery(undefined, {
-        pollingInterval: 30000, // Poll every 30 seconds
-    });
+    const { isConnected } = useNotificationSocket();
+
+    const { data: unreadCountData } = useGetUnreadNotificationCountQuery();
     const unreadCount = unreadCountData?.data?.count ?? 0;
 
-    // Fetch recent notifications (limit to 5 for dropdown)
     const { data: notificationsData, isLoading, refetch: refetchNotifications } = useGetNotificationsQuery({ limit: 5 });
     const notifications = notificationsData?.data ?? [];
 
-    // Refetch notifications when unread count increases (new notification arrived)
     useEffect(() => {
         if (unreadCount > previousUnreadCount.current) {
-            // New notification arrived, refetch the notifications list
             refetchNotifications();
         }
         previousUnreadCount.current = unreadCount;
     }, [unreadCount, refetchNotifications]);
 
-    // Mutations
     const [markAsRead] = useMarkAsReadMutation();
     const [markAllAsRead, { isLoading: isMarkingAllAsRead }] = useMarkAllAsReadMutation();
 
@@ -232,14 +211,12 @@ export function NotificationBell() {
 
     const handleViewAll = () => {
         setIsOpen(false);
-        // Navigate to the appropriate notifications page based on user role
         if (user) {
             if (userRole === "worker") {
                 navigate("/worker/notifications");
             } else if (userRole === "institution") {
                 navigate("/institution/notifications");
             } else {
-                // Admin - could add admin notifications page later
                 navigate("/admin");
             }
         }
@@ -255,10 +232,16 @@ export function NotificationBell() {
                             {unreadCount > 99 ? "99+" : unreadCount}
                         </span>
                     )}
+                    {!isConnected && (
+                        <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-warning flex items-center justify-center" title="Real-time updates unavailable">
+                            <WifiOff className="h-2 w-2 text-warning-foreground" />
+                        </span>
+                    )}
                     <span className="sr-only">
                         {unreadCount > 0
                             ? `${unreadCount} unread notifications`
                             : "No unread notifications"}
+                        {!isConnected ? " (offline mode)" : ""}
                     </span>
                 </Button>
             </DropdownMenuTrigger>

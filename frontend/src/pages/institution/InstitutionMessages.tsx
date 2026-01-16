@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useGetMyConversationsQuery } from "../../services/messageService";
+import { useGetMyConversationsQuery } from "../../features/api/endpoints/messageEndpoints";
 import { MessageSquare, Search, User, Building2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import ChatWindow from "../../components/messages/ChatWindow";
@@ -39,7 +39,7 @@ export default function InstitutionMessages() {
             <MessageSquare className="w-6 h-6 text-primary" />
             Messages
           </h1>
-          
+
           {/* Search */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -79,9 +79,8 @@ export default function InstitutionMessages() {
                 <button
                   key={conversation.id}
                   onClick={() => setSelectedConversationId(conversation.id)}
-                  className={`w-full p-4 border-b border-card-border hover:bg-background-dark transition-colors text-left ${
-                    selectedConversationId === conversation.id ? "bg-background-dark" : ""
-                  }`}
+                  className={`w-full p-4 border-b border-card-border hover:bg-background-dark transition-colors text-left ${selectedConversationId === conversation.id ? "bg-background-dark" : ""
+                    }`}
                 >
                   <div className="flex items-start gap-3">
                     {/* Avatar */}

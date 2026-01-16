@@ -1,467 +1,615 @@
-import { useState } from "react";
-import { useParams, Link, useNavigate } from "react-router";
-import { format } from "date-fns";
+import { useState, useMemo } from "react";
+import { useParams, Link } from "react-router";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { format, differenceInDays } from "date-fns";
 import {
-    ArrowLeft,
     MapPin,
     Calendar,
-    DollarSign,
+    Briefcase,
     Building2,
-    CheckCircle,
-    AlertCircle,
+    DollarSign,
     Clock,
     Phone,
-    MessageSquare,
-    FileDown,
     FileText,
     HelpCircle,
     Star,
+    CheckCircle2,
+    RotateCcw,
+    Send,
+    Loader2,
+    User,
     TrendingUp,
-    Users,
-    Navigation,
+    ChevronRight,
 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { useGetAssignmentQuery } from "@/features/api/endpoints/assignmentEndpoints";
+import { useGetMissionQuery } from "@/features/api/endpoints/missionEndpoints";
+import { useGetMyWrittenReviewsQuery, useCreateReviewMutation, useGetMyReceivedReviewsQuery } from "@/features/api/endpoints/reviewEndpoints";
+import { useGetPaymentsQuery } from "@/features/api/endpoints/paymentEndpoints";
 import { cn } from "@/lib/utils";
+import { showInfoToast, showSuccessToast, showErrorToast } from "@/lib/toast";
+import { createReviewSchema, type CreateReviewInput } from "@/features/validation/reviewSchemas";
+import type { MissionAssignment } from "@/types/assignment.types";
 
-function getStatusColor(status: string) {
-    switch (status) {
-        case "ACTIVE":
-            return "bg-primary/20 text-primary border-primary/30";
-        case "ONGOING":
-            return "bg-blue-500/20 text-blue-400 border-blue-500/30";
-        case "COMPLETED":
-            return "bg-green-500/20 text-green-400 border-green-500/30";
-        case "CANCELLED":
-            return "bg-red-500/20 text-red-400 border-red-500/30";
-        default:
-            return "bg-muted text-muted-foreground";
-    }
+// --- Components ---
+
+interface StarRatingProps {
+    value: number;
+    onChange?: (value: number) => void;
+    readonly?: boolean;
+    size?: "sm" | "md" | "lg" | "xl";
 }
 
-function getUrgencyIcon(urgency: string) {
-    switch (urgency) {
-        case "HIGH":
-            return <AlertCircle className="h-4 w-4 text-red-400" />;
-        case "MEDIUM":
-            return <TrendingUp className="h-4 w-4 text-yellow-400" />;
-        case "LOW":
-            return <TrendingUp className="h-4 w-4 text-green-400" />;
-        default:
-            return null;
-    }
-}
+function StarRating({ value, onChange, readonly = false, size = "md" }: StarRatingProps) {
+    const [hoverValue, setHoverValue] = useState(0);
+    const sizeClasses = {
+        sm: "h-3.5 w-3.5",
+        md: "h-5 w-5",
+        lg: "h-6 w-6",
+        xl: "h-8 w-8"
+    };
 
-function AssignmentDetailsSkeleton() {
     return (
-        <div className="space-y-6">
-            <Skeleton className="h-12 w-full" />
-            <div className="grid lg:grid-cols-12 gap-8">
-                <div className="lg:col-span-7 space-y-6">
-                    <Skeleton className="h-64 w-full" />
-                    <Skeleton className="h-48 w-full" />
-                </div>
-                <div className="lg:col-span-5 space-y-6">
-                    <Skeleton className="h-64 w-full" />
-                    <Skeleton className="h-48 w-full" />
-                </div>
-            </div>
+        <div className="flex gap-1">
+            {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                    key={star}
+                    type="button"
+                    disabled={readonly}
+                    onClick={() => onChange?.(star)}
+                    onMouseEnter={() => !readonly && setHoverValue(star)}
+                    onMouseLeave={() => !readonly && setHoverValue(0)}
+                    className={cn(
+                        "transition-all duration-200 focus:outline-hidden",
+                        readonly ? "cursor-default" : "cursor-pointer hover:scale-110"
+                    )}
+                >
+                    <Star
+                        className={cn(
+                            sizeClasses[size],
+                            "transition-colors",
+                            (hoverValue || value) >= star
+                                ? "fill-yellow-400 text-yellow-400"
+                                : "text-muted-foreground/30"
+                        )}
+                    />
+                </button>
+            ))}
         </div>
     );
 }
 
+function ReviewForm({ assignment, onSuccess }: { assignment: MissionAssignment; onSuccess: () => void }) {
+    const [createReview, { isLoading: isCreating }] = useCreateReviewMutation();
+    const [rating, setRating] = useState(0);
+
+    const {
+        register,
+        handleSubmit,
+        setValue,
+        formState: { errors },
+    } = useForm<CreateReviewInput>({
+        resolver: zodResolver(createReviewSchema),
+        defaultValues: {
+            missionAssignmentId: assignment.id,
+            rating: 0,
+            comment: "",
+        },
+    });
+
+    const onSubmit = async (data: CreateReviewInput) => {
+        try {
+            await createReview(data).unwrap();
+            showSuccessToast("Review submitted", "Thank you for your feedback!");
+            onSuccess();
+        } catch (error) {
+            showErrorToast(error, "Failed to submit review");
+        }
+    };
+
+    const handleRatingChange = (value: number) => {
+        setRating(value);
+        setValue("rating", value, { shouldValidate: true });
+    };
+
+    return (
+        <Card className="border-primary/20 bg-primary/5 shadow-md overflow-hidden">
+            <CardHeader className="bg-primary/10 pb-4">
+                <CardTitle className="flex items-center gap-2 text-primary">
+                    <Star className="h-5 w-5 fill-primary" />
+                    How was your experience?
+                </CardTitle>
+                <CardDescription>
+                    Rate your collaboration with {assignment.institution?.institutionName}. This feedback is valuable for the community.
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                    <div className="space-y-3 text-center">
+                        <Label className="text-base font-medium">Click to rate</Label>
+                        <div className="flex justify-center">
+                            <StarRating value={rating} onChange={handleRatingChange} size="xl" />
+                        </div>
+                        {errors.rating && (
+                            <p className="text-sm text-destructive font-medium">{errors.rating.message}</p>
+                        )}
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="comment">Your Feedback <span className="text-muted-foreground font-normal">(Optional)</span></Label>
+                        <Textarea
+                            id="comment"
+                            {...register("comment")}
+                            placeholder="Share details about the work environment, communication, etc..."
+                            className="min-h-[100px] resize-none focus-visible:ring-primary bg-background"
+                        />
+                        {errors.comment && (
+                            <p className="text-sm text-destructive">{errors.comment.message}</p>
+                        )}
+                    </div>
+
+                    <div className="flex justify-end gap-3 pt-2">
+                        <Button
+                            type="submit"
+                            disabled={isCreating || rating === 0}
+                            className="rounded-full px-8 shadow-lg shadow-primary/20 w-full sm:w-auto"
+                        >
+                            {isCreating ? (
+                                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...</>
+                            ) : (
+                                <><Send className="mr-2 h-4 w-4" /> Submit Review</>
+                            )}
+                        </Button>
+                    </div>
+                </form>
+            </CardContent>
+        </Card>
+    );
+}
+
+// --- Helper Functions ---
+
+function getStatusConfig(status: string) {
+    switch (status) {
+        case "ACTIVE":
+            return { color: "bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/30", icon: TrendingUp, label: "Active" };
+        case "ONGOING":
+            return { color: "bg-yellow-500/15 text-yellow-700 dark:text-yellow-400 border-yellow-500/30", icon: Clock, label: "In Progress" };
+        case "COMPLETED":
+            return { color: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30", icon: CheckCircle2, label: "Completed" };
+        case "CANCELLED":
+            return { color: "bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/30", icon: RotateCcw, label: "Cancelled" };
+        default:
+            return { color: "bg-muted text-muted-foreground border-border", icon: Briefcase, label: status };
+    }
+}
+
+function getUrgencyConfig(urgency: string) {
+    switch (urgency) {
+        case "HIGH":
+            return { color: "bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/30", label: "Urgent" };
+        case "MEDIUM":
+            return { color: "bg-orange-500/15 text-orange-700 dark:text-orange-400 border-orange-500/30", label: "Medium Priority" };
+        case "LOW":
+            return { color: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30", label: "Standard" };
+        default:
+            return { color: "bg-muted text-muted-foreground border-border", label: urgency };
+    }
+}
+
+const handleSupport = () => {
+    showInfoToast("Coming Soon", "Support ticket feature will be available soon!");
+};
+
+const handleCall = () => {
+    showInfoToast("Coming Soon", "Call feature will be available soon!");
+};
+
+const handleGetDirections = () => {
+    showInfoToast("Coming Soon", "Map directions feature will be available soon!");
+};
+
+const handleViewMap = () => {
+    showInfoToast("Coming Soon", "Map view feature will be available soon!");
+};
+
+// --- Main Component ---
+
 export default function AssignmentDetails() {
     const { id } = useParams<{ id: string }>();
-    const navigate = useNavigate();
-    const assignmentId = parseInt(id || "0");
+    const assignmentId = Number(id);
 
-    const { data: assignmentData, isLoading, error } = useGetAssignmentQuery(assignmentId);
+    const { data: assignmentData, isLoading: assignmentLoading } = useGetAssignmentQuery(assignmentId);
+
+    // Fetch full mission details to ensure we get domains
+    const missionId = assignmentData?.data?.missionId;
+    const { data: fullMissionData, isLoading: missionLoading } = useGetMissionQuery(
+        missionId!,
+        { skip: !missionId }
+    );
+
+    const { data: writtenReviewsData } = useGetMyWrittenReviewsQuery();
+    const { data: receivedReviewsData } = useGetMyReceivedReviewsQuery();
+    const { data: paymentsData } = useGetPaymentsQuery();
+
     const assignment = assignmentData?.data;
-    const mission = assignment?.mission;
+    const mission = fullMissionData?.data || assignment?.mission;
     const institution = assignment?.institution;
 
-    const [rating, setRating] = useState(0);
-    const [feedback, setFeedback] = useState("");
-    const [tasks, setTasks] = useState([
-        { id: 1, text: "Complete initial intake forms for new arrivals (Form 3B)", completed: false },
-        { id: 2, text: "Conduct safety briefing for family units", completed: false },
-        { id: 3, text: "Log incident reports if any disturbances occur", completed: false },
-        { id: 4, text: "Handover briefing to morning shift lead", completed: false },
-    ]);
+    // Derived States
+    const isReviewed = useMemo(() =>
+        writtenReviewsData?.data?.some(r => r.missionAssignmentId === assignmentId),
+        [writtenReviewsData, assignmentId]);
+
+    const isPaid = useMemo(() =>
+        paymentsData?.data?.some(p => p.missionAssignmentId === assignmentId && p.status === 'COMPLETED'),
+        [paymentsData, assignmentId]);
+
+    const writtenReview = useMemo(() =>
+        writtenReviewsData?.data?.find(r => r.missionAssignmentId === assignmentId),
+        [writtenReviewsData, assignmentId]);
+
+    const receivedReview = useMemo(() =>
+        receivedReviewsData?.data?.find(r => r.missionAssignmentId === assignmentId),
+        [receivedReviewsData, assignmentId]);
+
+    const isLoading = assignmentLoading || (!!missionId && missionLoading);
 
     if (isLoading) {
-        return <AssignmentDetailsSkeleton />;
+        return (
+            <div className="min-h-screen bg-background p-4 md:p-8 space-y-8">
+                <div className="space-y-4">
+                    <Skeleton className="h-8 w-64" />
+                    <Skeleton className="h-4 w-96" />
+                </div>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div className="lg:col-span-2 space-y-6">
+                        <Skeleton className="h-64 w-full rounded-2xl" />
+                        <Skeleton className="h-32 w-full rounded-2xl" />
+                    </div>
+                    <div>
+                        <Skeleton className="h-96 w-full rounded-2xl" />
+                    </div>
+                </div>
+            </div>
+        );
     }
 
-    if (error || !assignment) {
+    if (!assignment || !mission) {
         return (
-            <div className="min-h-screen p-4 lg:px-40">
-                <Alert variant="destructive">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertTitle>Assignment not found</AlertTitle>
-                    <AlertDescription>
-                        The assignment you're looking for doesn't exist or has been removed.
-                    </AlertDescription>
-                </Alert>
-                <div className="mt-4">
-                    <Button variant="outline" onClick={() => navigate("/worker/assignments")}>
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        Back to Assignments
+            <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+                <div className="text-center space-y-4">
+                    <div className="size-16 rounded-full bg-muted/30 flex items-center justify-center mx-auto">
+                        <Briefcase className="h-8 w-8 text-muted-foreground" />
+                    </div>
+                    <h2 className="text-xl font-bold">Assignment Not Found</h2>
+                    <p className="text-muted-foreground max-w-md">We couldn't locate the assignment you're looking for. It may have been removed or you don't have access.</p>
+                    <Button asChild variant="outline" className="rounded-full">
+                        <Link to="/worker/assignments">Back to Assignments</Link>
                     </Button>
                 </div>
             </div>
         );
     }
 
-    const toggleTask = (id: number) => {
-        setTasks(tasks.map(task => task.id === id ? { ...task, completed: !task.completed } : task));
+    const statusConfig = getStatusConfig(assignment.status);
+    const urgencyConfig = getUrgencyConfig(mission.urgency);
+    const StatusIcon = statusConfig.icon;
+
+    const formatCurrency = (amount: number) => {
+        return new Intl.NumberFormat('fr-MA', {
+            style: 'decimal',
+            maximumFractionDigits: 0,
+        }).format(amount);
     };
 
     return (
-        <div className="min-h-screen bg-background-dark text-white">
-            {/* Breadcrumbs */}
-            <div className="px-4 md:px-10 lg:px-40 py-4">
-                <div className="flex flex-wrap gap-2 text-sm">
-                    <Link to="/worker/dashboard" className="text-text-subtle hover:text-primary transition-colors">
-                        Dashboard
-                    </Link>
-                    <span className="text-text-subtle">/</span>
-                    <Link to="/worker/assignments" className="text-text-subtle hover:text-primary transition-colors">
-                        Missions
-                    </Link>
-                    <span className="text-text-subtle">/</span>
-                    <span className="text-white font-medium">
-                        Mission #{assignment.id} Details
-                    </span>
-                </div>
-            </div>
-
-            {/* Page Heading & Actions */}
-            <div className="px-4 md:px-10 lg:px-40 pb-8 border-b border-card-border/30">
-                <div className="flex flex-col md:flex-row flex-wrap justify-between gap-6">
-                    <div className="flex flex-col gap-4">
-                        <div className="flex flex-col gap-1">
-                            <div className="flex flex-wrap gap-3 items-center">
-                                <h1 className="text-3xl md:text-4xl font-black leading-tight tracking-tight">
-                                    {mission?.title || "Assignment"}
-                                </h1>
-                                <Badge className={cn("flex items-center gap-2 px-3 py-1 border", getStatusColor(assignment.status))}>
-                                    <span className="size-2 rounded-full bg-current"></span>
-                                    <span className="text-xs font-bold uppercase tracking-wider">
-                                        {assignment.status}
-                                    </span>
-                                </Badge>
-                            </div>
-                            <p className="text-text-subtle text-base mt-1">
-                                {institution?.institutionName} • Ref ID: #{assignment.id}-{mission?.title?.substring(0, 3).toUpperCase()}
-                            </p>
-                        </div>
-
-                        {/* Chips */}
-                        <div className="flex gap-2 flex-wrap">
-                            {mission?.urgency && (
-                                <div className="flex h-8 items-center gap-2 rounded-full bg-card-dark border border-card-border px-4">
-                                    {getUrgencyIcon(mission.urgency)}
-                                    <p className="text-white text-xs font-medium">{mission.urgency} Priority</p>
-                                </div>
-                            )}
-                            {mission?.location && (
-                                <div className="flex h-8 items-center gap-2 rounded-full bg-card-dark border border-card-border px-4">
-                                    <MapPin className="h-4 w-4 text-text-subtle" />
-                                    <p className="text-white text-xs font-medium">On-Site</p>
-                                </div>
-                            )}
-                            <div className="flex h-8 items-center gap-2 rounded-full bg-card-dark border border-card-border px-4">
-                                <Users className="h-4 w-4 text-text-subtle" />
-                                <p className="text-white text-xs font-medium">Team Mission</p>
-                            </div>
-                        </div>
+        <div className="min-h-screen bg-background pb-12">
+            {/* Header Section */}
+            <div className="bg-card/40 border-b border-border pb-8">
+                <div className="container mx-auto">
+                    {/* Breadcrumbs */}
+                    <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-muted-foreground mb-8">
+                        <Link to="/worker" className="text-muted-foreground hover:text-primary transition-colors">
+                            Dashboard
+                        </Link>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        <Link to="/worker/assignments" className="text-muted-foreground hover:text-primary transition-colors">
+                            Assignments
+                        </Link>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-foreground font-medium truncate">
+                            Assignment#{assignment.id}
+                        </span>
                     </div>
 
-                    <div className="flex items-center gap-3 self-start md:self-end">
-                        <Button
-                            variant="outline"
-                            className="rounded-full border-card-border bg-card-dark hover:bg-card-border text-white"
-                        >
-                            <HelpCircle className="h-4 w-4 mr-2" />
-                            Support
-                        </Button>
-                        {assignment.status === "ACTIVE" && (
-                            <Button className="rounded-full bg-primary text-black hover:bg-primary/90 shadow-[0_0_20px_rgba(43,238,121,0.3)]">
-                                <CheckCircle className="h-4 w-4 mr-2" />
-                                Check In
+                    <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-8">
+                        <div className="flex-1 space-y-6">
+                            {/* Badges - Top (Status & Urgency) */}
+                            <div className="flex flex-wrap items-center gap-2">
+                                <Badge variant="outline" className={cn("px-2.5 py-1 text-xs font-semibold gap-1.5 border", statusConfig.color)}>
+                                    <StatusIcon className="h-3.5 w-3.5" />
+                                    {statusConfig.label}
+                                </Badge>
+                                <Badge variant="outline" className={cn("px-2.5 py-1 text-xs font-semibold border", urgencyConfig.color)}>
+                                    {urgencyConfig.label}
+                                </Badge>
+                            </div>
+
+                            {/* Title & Organization */}
+                            <div>
+                                <h1 className="text-3xl md:text-4xl font-black font-spline tracking-tight text-foreground mb-4 leading-tight">
+                                    {mission.title}
+                                </h1>
+                                <div className="flex items-center gap-4">
+                                    <div className="size-12 rounded-xl bg-white dark:bg-muted border border-border shadow-xs flex items-center justify-center p-2">
+                                        {institution?.logo ? (
+                                            <img src={institution.logo} alt="" className="w-full h-full object-contain" />
+                                        ) : (
+                                            <Building2 className="h-6 w-6 text-muted-foreground/40" />
+                                        )}
+                                    </div>
+                                    <div>
+                                        <p className="font-bold text-lg text-foreground">{institution?.institutionName}</p>
+                                        <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                                            {mission.location && (
+                                                <span className="flex items-center gap-1">
+                                                    <MapPin className="h-3.5 w-3.5" />
+                                                    {mission.location}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Badges - Bottom (Reviewed & Paid) */}
+                            <div className="flex flex-wrap items-center gap-2 pt-1">
+                                {isReviewed && (
+                                    <Badge variant="outline" className="px-3 py-1 text-xs font-bold gap-1.5 border border-purple-200 bg-purple-50 text-purple-700 dark:border-purple-900/50 dark:bg-purple-900/20 dark:text-purple-400">
+                                        <Star className="h-3.5 w-3.5 fill-current" />
+                                        Review Submitted
+                                    </Badge>
+                                )}
+                                {isPaid && (
+                                    <Badge variant="outline" className="px-3 py-1 text-xs font-bold gap-1.5 border border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-900/20 dark:text-emerald-400">
+                                        <DollarSign className="h-3.5 w-3.5" />
+                                        Payment Received
+                                    </Badge>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Actions -- Floating/Sidebar */}
+                        <div className="flex flex-col gap-3 lg:min-w-[200px] lg:pt-8">
+                            <Button size="lg" className="w-full rounded-full shadow-lg shadow-primary/20 font-bold" onClick={handleSupport}>
+                                <HelpCircle className="h-4 w-4 mr-2" />
+                                Get Support
                             </Button>
-                        )}
+                        </div>
                     </div>
                 </div>
             </div>
 
             {/* Main Content Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 px-4 md:px-10 lg:px-40 py-8">
-                {/* Left Column */}
-                <div className="lg:col-span-7 flex flex-col gap-8">
-                    {/* Mission Overview */}
-                    <div className="flex flex-col gap-4">
-                        <h2 className="text-white text-xl font-bold">Mission Overview</h2>
-                        <Card className="bg-card-dark border-card-border">
+            <div className="py-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+                    {/* Left Column: Details & Review */}
+                    <div className="lg:col-span-2 space-y-8" id="review">
+
+                        {/* Review Section (Conditional) */}
+                        {assignment.status === "COMPLETED" && (
+                            <div className="animate-in fade-in slide-in-from-top-4 duration-500 space-y-4">
+                                {/* Received Review (Institution Feedback) */}
+                                {receivedReview && (
+                                    <Card className="border-blue-200 bg-blue-50/50 dark:border-blue-900/30 dark:bg-blue-900/10">
+                                        <CardContent className="p-6 flex items-start gap-4">
+                                            <div className="size-10 rounded-full bg-blue-100 dark:bg-blue-900/40 flex items-center justify-center shrink-0 text-blue-600 dark:text-blue-400">
+                                                <Building2 className="h-5 w-5" />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <h3 className="font-bold font-spline text-lg text-blue-900 dark:text-blue-100">
+                                                    Institution Feedback
+                                                </h3>
+                                                <div className="flex items-center gap-1 mb-2">
+                                                    <StarRating value={receivedReview.rating} readonly size="sm" />
+                                                    <span className="text-sm font-bold ml-2 text-blue-700 dark:text-blue-300">
+                                                        {receivedReview.rating}/5
+                                                    </span>
+                                                </div>
+                                                {receivedReview.comment && (
+                                                    <p className="text-blue-800/80 dark:text-blue-300/80 italic">
+                                                        "{receivedReview.comment}"
+                                                    </p>
+                                                )}
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                )}
+
+                                {/* Worker Review (Your Feedback) */}
+                                {!isReviewed ? (
+                                    <ReviewForm assignment={assignment} onSuccess={() => { }} />
+                                ) : (
+                                    <Card className="border-purple-200 bg-purple-50/50 dark:border-purple-900/30 dark:bg-purple-900/10">
+                                        <CardContent className="p-6 flex items-start gap-4">
+                                            <div className="size-10 rounded-full bg-purple-100 dark:bg-purple-900/40 flex items-center justify-center shrink-0 text-purple-600 dark:text-purple-400">
+                                                <User className="h-5 w-5" />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <h3 className="font-bold font-spline text-lg text-purple-900 dark:text-purple-100"> Your Review</h3>
+                                                <div className="flex items-center gap-1 mb-2">
+                                                    <StarRating value={writtenReview?.rating || 0} readonly size="sm" />
+                                                    <span className="text-sm font-bold ml-2 text-purple-700 dark:text-purple-300">{writtenReview?.rating}/5</span>
+                                                </div>
+                                                {writtenReview?.comment && (
+                                                    <p className="text-purple-800/80 dark:text-purple-300/80 italic">"{writtenReview.comment}"</p>
+                                                )}
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Mission Overview (Description) */}
+                        <Card className="border-border shadow-xs overflow-hidden">
+                            <CardHeader className="bg-muted/30 pb-4 border-b border-border/50">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 rounded-lg bg-background border border-border/60 shadow-xs text-primary">
+                                        <FileText className="h-5 w-5" />
+                                    </div>
+                                    <div>
+                                        <CardTitle className="text-lg font-bold font-spline">Mission Overview</CardTitle>
+                                        <CardDescription>Details and context about this assignment</CardDescription>
+                                    </div>
+                                </div>
+                            </CardHeader>
                             <CardContent className="p-6">
-                                <p className="text-gray-300 leading-relaxed mb-6">
-                                    {mission?.description || "Provide professional social work services as assigned. Ensure all protocols are followed and documentation is completed accurately."}
+                                <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                                    {mission.description || "No description provided for this mission."}
                                 </p>
-                                
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
-                                    <div className="flex items-start gap-3">
-                                        <div className="size-10 rounded-full bg-card-border flex items-center justify-center shrink-0">
-                                            <Calendar className="h-5 w-5 text-primary" />
-                                        </div>
-                                        <div>
-                                            <p className="text-text-subtle text-xs uppercase tracking-wider font-bold">Date</p>
-                                            <p className="text-white font-medium">
-                                                {mission?.startDate ? format(new Date(mission.startDate), "MMM d, yyyy") : "N/A"}
-                                            </p>
-                                        </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* Requirements & Domains */}
+                        <Card className="border-border shadow-xs overflow-hidden">
+                            <CardHeader className="bg-muted/30 pb-4 border-b border-border/50">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 rounded-lg bg-background border border-border/60 shadow-xs text-primary">
+                                        <Briefcase className="h-5 w-5" />
                                     </div>
-                                    <div className="flex items-start gap-3">
-                                        <div className="size-10 rounded-full bg-card-border flex items-center justify-center shrink-0">
-                                            <Clock className="h-5 w-5 text-primary" />
-                                        </div>
-                                        <div>
-                                            <p className="text-text-subtle text-xs uppercase tracking-wider font-bold">Time</p>
-                                            <p className="text-white font-medium">
-                                                {mission?.startDate && mission?.endDate
-                                                    ? `${format(new Date(mission.startDate), "hh:mm a")} - ${format(new Date(mission.endDate), "hh:mm a")}`
-                                                    : "Full Day"}
-                                            </p>
-                                        </div>
+                                    <div>
+                                        <CardTitle className="text-lg font-bold font-spline">Requirements & Scope</CardTitle>
+                                        <CardDescription>Skills and expertise required</CardDescription>
                                     </div>
+                                </div>
+                            </CardHeader>
+                            <CardContent className="p-6 space-y-6">
+                                {/* Speciality */}
+                                <div>
+                                    <h4 className="text-sm font-bold font-spline uppercase tracking-wider text-muted-foreground mb-3">Primary Speciality</h4>
+                                    <Badge variant="outline" className="px-3 py-1 bg-background">
+                                        {mission.requiredSpeciality?.name || "General Social Work"}
+                                    </Badge>
+                                </div>
+
+                                <Separator />
+
+                                {/* Domains */}
+                                <div>
+                                    <h4 className="text-sm font-bold font-spline uppercase tracking-wider text-muted-foreground mb-3">Intervention Domains</h4>
+                                    {mission.domains && mission.domains.length > 0 ? (
+                                        <div className="flex flex-wrap gap-2">
+                                            {mission.domains.map((md) => (
+                                                <Badge key={md.id} variant="outline" className="px-3 py-1 bg-background">
+                                                    {md.domain?.name}
+                                                </Badge>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="text-sm text-muted-foreground italic">No specific domains listed</p>
+                                    )}
                                 </div>
                             </CardContent>
                         </Card>
                     </div>
 
-                    {/* Tasks & Responsibilities */}
-                    <div className="flex flex-col gap-4">
-                        <h2 className="text-white text-xl font-bold">Tasks & Responsibilities</h2>
-                        <Card className="bg-card-dark border-card-border">
-                            <CardContent className="p-6 flex flex-col gap-4">
-                                {tasks.map((task, index) => (
-                                    <div key={task.id}>
-                                        <label className="flex items-start gap-3 cursor-pointer group">
-                                            <Checkbox
-                                                checked={task.completed}
-                                                onCheckedChange={() => toggleTask(task.id)}
-                                                className="mt-1 size-5 rounded border-card-border bg-background-dark data-[state=checked]:bg-primary data-[state=checked]:text-black"
-                                            />
-                                            <span className={cn(
-                                                "text-gray-300 group-hover:text-white transition-colors",
-                                                task.completed && "line-through text-muted-foreground"
-                                            )}>
-                                                {task.text}
-                                            </span>
-                                        </label>
-                                        {index < tasks.length - 1 && (
-                                            <div className="h-px bg-card-border/50 w-full my-4"></div>
-                                        )}
-                                    </div>
-                                ))}
-                            </CardContent>
-                        </Card>
-                    </div>
+                    {/* Right Column: Key Details Sidebar */}
+                    <div className="space-y-6">
+                        <Card className="border-border shadow-sm overflow-hidden h-fit sticky top-24">
+                            <div className="h-2 bg-primary w-full" />
+                            <CardContent className="p-0">
+                                <div className="grid divide-y divide-border/60">
 
-                    {/* Post Mission Feedback */}
-                    {assignment.status === "COMPLETED" && (
-                        <div className="flex flex-col gap-4 mt-4">
-                            <div className="flex justify-between items-center">
-                                <h2 className="text-white text-xl font-bold">Mission Report</h2>
-                                <Badge className="text-xs font-medium bg-primary text-black px-2 py-1">
-                                    Post-Mission
-                                </Badge>
-                            </div>
-                            <Card className="bg-card-dark border-card-border opacity-75 hover:opacity-100 transition-opacity">
-                                <CardContent className="p-6">
-                                    <p className="text-text-subtle text-sm mb-4">
-                                        Please submit this report after your shift is completed.
-                                    </p>
-                                    <div className="flex flex-col gap-4">
-                                        <div>
-                                            <label className="block text-white text-sm font-medium mb-2">
-                                                How did the mission go?
-                                            </label>
-                                            <Textarea
-                                                value={feedback}
-                                                onChange={(e) => setFeedback(e.target.value)}
-                                                className="w-full bg-background-dark border-card-border text-white focus:border-primary resize-none h-32"
-                                                placeholder="Describe any issues, incidents, or general feedback..."
-                                            />
+                                    {/* Budget */}
+                                    <div className="p-5 flex items-start gap-4 hover:bg-muted/5 transition-colors">
+                                        <div className="p-2 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5">
+                                            <DollarSign className="h-5 w-5" />
                                         </div>
-                                        <div className="flex flex-col sm:flex-row gap-6 justify-between items-center">
-                                            <div className="flex flex-col gap-2">
-                                                <span className="text-white text-sm font-medium">Institution Rating</span>
-                                                <div className="flex gap-1">
-                                                    {[1, 2, 3, 4, 5].map((star) => (
-                                                        <Star
-                                                            key={star}
-                                                            className={cn(
-                                                                "h-6 w-6 cursor-pointer transition-colors",
-                                                                star <= rating
-                                                                    ? "fill-primary text-primary"
-                                                                    : "text-card-border hover:text-primary/50"
-                                                            )}
-                                                            onClick={() => setRating(star)}
-                                                        />
-                                                    ))}
+                                        <div>
+                                            <p className="text-sm font-medium text-muted-foreground mb-0.5">Total Budget</p>
+                                            <p className="text-2xl font-black text-foreground tabular-nums tracking-tight">
+                                                {formatCurrency(mission.budget || 0)} <span className="text-sm font-bold text-muted-foreground">MAD</span>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Dates */}
+                                    <div className="p-5 flex items-start gap-4 hover:bg-muted/5 transition-colors">
+                                        <div className="p-2 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 shrink-0 mt-0.5">
+                                            <Calendar className="h-5 w-5" />
+                                        </div>
+                                        <div className="space-y-4 w-full">
+                                            <div>
+                                                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">Start Date</p>
+                                                <p className="font-semibold">{format(new Date(mission.startDate), "MMMM d, yyyy")}</p>
+                                            </div>
+                                            <div>
+                                                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">End Date</p>
+                                                <p className="font-semibold">{format(new Date(mission.endDate), "MMMM d, yyyy")}</p>
+                                            </div>
+                                            <div className="pt-2 border-t border-border/50 flex justify-between items-center">
+                                                <span className="text-xs font-medium text-muted-foreground">Duration</span>
+                                                <Badge variant="secondary" className="text-xs font-bold">
+                                                    {differenceInDays(new Date(mission.endDate), new Date(mission.startDate))} days
+                                                </Badge>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Location */}
+                                    {institution?.address && (
+                                        <div className="p-5 space-y-4 hover:bg-muted/5 transition-colors">
+                                            <div className="flex items-start gap-4">
+                                                <div className="p-2 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 shrink-0 mt-0.5">
+                                                    <MapPin className="h-5 w-5" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm font-medium text-muted-foreground mb-1">Address</p>
+                                                    <p className="text-sm font-semibold leading-relaxed">{institution.address}</p>
                                                 </div>
                                             </div>
-                                            <Button className="w-full sm:w-auto rounded-full bg-white/10 text-white hover:bg-white/20 border border-transparent hover:border-white/30">
-                                                Submit Report
-                                            </Button>
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <Button variant="outline" size="sm" className="w-full rounded-full text-xs" onClick={handleViewMap}>
+                                                    View Map
+                                                </Button>
+                                                <Button variant="outline" size="sm" className="w-full rounded-full text-xs" onClick={handleGetDirections}>
+                                                    Directions
+                                                </Button>
+                                            </div>
                                         </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        </div>
-                    )}
-                </div>
+                                    )}
 
-                {/* Right Column */}
-                <div className="lg:col-span-5 flex flex-col gap-6">
-                    {/* Location Card */}
-                    {institution && (
-                        <Card className="bg-card-dark border-card-border overflow-hidden">
-                            <div className="h-40 w-full bg-gray-700 relative overflow-hidden group cursor-pointer">
-                                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-card-dark/80 flex items-center justify-center">
-                                    <div className="bg-primary/90 rounded-full p-3 shadow-lg transform group-hover:scale-110 transition-transform">
-                                        <Navigation className="h-6 w-6 text-black" />
+                                    {/* Contact */}
+                                    <div className="p-5 flex items-center justify-between gap-4 hover:bg-muted/5 transition-colors">
+                                        <div className="flex items-center gap-3">
+                                            <div className="size-10 rounded-full bg-muted flex items-center justify-center border border-border">
+                                                <User className="h-5 w-5 text-muted-foreground" />
+                                            </div>
+                                            <div>
+                                                <p className="text-sm font-bold">Institution Contact</p>
+                                                <p className="text-xs text-muted-foreground">Manager</p>
+                                            </div>
+                                        </div>
+                                        <Button variant="ghost" size="icon" className="rounded-full text-primary hover:bg-primary/10" onClick={handleCall}>
+                                            <Phone className="h-4 w-4" />
+                                        </Button>
                                     </div>
+
                                 </div>
-                            </div>
-                            <CardContent className="p-5 flex flex-col gap-3">
-                                <h3 className="text-white font-bold text-lg">{institution.institutionName}</h3>
-                                <div className="flex items-start gap-2 text-text-subtle">
-                                    <MapPin className="h-5 w-5 shrink-0 mt-0.5" />
-                                    <p className="text-sm">
-                                        {institution.address || "Address not provided"}<br />
-                                        {institution.city && `${institution.city}`}
-                                    </p>
-                                </div>
-                                <Button className="mt-2 w-full rounded-full border border-card-border bg-transparent text-white hover:bg-card-border">
-                                    <Navigation className="h-4 w-4 mr-2" />
-                                    Get Directions
-                                </Button>
                             </CardContent>
                         </Card>
-                    )}
+                    </div>
 
-                    {/* Contact Card */}
-                    <Card className="bg-card-dark border-card-border">
-                        <CardContent className="p-5">
-                            <h3 className="text-text-subtle text-xs font-bold uppercase tracking-wider mb-4">
-                                Point of Contact
-                            </h3>
-                            <div className="flex items-center gap-4 mb-5">
-                                <div className="size-12 rounded-full bg-gray-600 flex items-center justify-center text-white font-bold text-lg">
-                                    {institution?.institutionName?.charAt(0) || "?"}
-                                </div>
-                                <div>
-                                    <p className="text-white font-bold text-lg">Supervisor</p>
-                                    <p className="text-text-subtle text-sm">Shift Supervisor</p>
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-2 gap-3">
-                                <Button
-                                    variant="outline"
-                                    className="bg-background-dark border-card-border text-white hover:border-primary/50"
-                                >
-                                    <Phone className="h-4 w-4 mr-2 text-primary" />
-                                    Call
-                                </Button>
-                                <Button
-                                    variant="outline"
-                                    className="bg-background-dark border-card-border text-white hover:border-primary/50"
-                                >
-                                    <MessageSquare className="h-4 w-4 mr-2 text-primary" />
-                                    Message
-                                </Button>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    {/* Earnings Card */}
-                    <Card className="bg-gradient-to-br from-card-dark to-[#16291f] border-card-border">
-                        <CardContent className="p-5">
-                            <h3 className="text-text-subtle text-xs font-bold uppercase tracking-wider mb-2">
-                                Earnings Estimate
-                            </h3>
-                            <div className="flex items-end gap-1 mb-4">
-                                <span className="text-3xl font-bold text-white">
-                                    €{Number(mission?.budget || 0).toFixed(2)}
-                                </span>
-                                <span className="text-text-subtle text-sm mb-1.5 font-medium">/ Total</span>
-                            </div>
-                            <div className="flex justify-between items-center text-sm border-t border-card-border/50 pt-3">
-                                <span className="text-gray-400">
-                                    {mission?.budget && `Rate: €${(Number(mission.budget) / 8).toFixed(2)}/hr x 8hrs`}
-                                </span>
-                                <Badge className="bg-orange-500/20 text-orange-400 border border-orange-500/30">
-                                    <span className="size-1.5 rounded-full bg-orange-400 mr-1.5"></span>
-                                    <span className="text-xs font-bold">Pending</span>
-                                </Badge>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    {/* Documents */}
-                    <Card className="bg-card-dark border-card-border">
-                        <CardContent className="p-5">
-                            <div className="flex justify-between items-center mb-4">
-                                <h3 className="text-white font-bold text-lg">Documents</h3>
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="text-primary text-xs font-bold hover:underline h-auto p-0"
-                                >
-                                    Download All
-                                </Button>
-                            </div>
-                            <div className="flex flex-col gap-3">
-                                <div className="flex items-center justify-between p-3 rounded-lg bg-background-dark hover:bg-[#15291d] transition-colors group cursor-pointer border border-transparent hover:border-card-border">
-                                    <div className="flex items-center gap-3">
-                                        <div className="size-8 rounded bg-red-500/20 flex items-center justify-center text-red-500">
-                                            <FileText className="h-5 w-5" />
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <span className="text-white text-sm font-medium group-hover:text-primary transition-colors">
-                                                Safety_Protocol_v2.pdf
-                                            </span>
-                                            <span className="text-text-subtle text-xs">2.4 MB</span>
-                                        </div>
-                                    </div>
-                                    <FileDown className="h-5 w-5 text-text-subtle hover:text-white" />
-                                </div>
-                                <div className="flex items-center justify-between p-3 rounded-lg bg-background-dark hover:bg-[#15291d] transition-colors group cursor-pointer border border-transparent hover:border-card-border">
-                                    <div className="flex items-center gap-3">
-                                        <div className="size-8 rounded bg-blue-500/20 flex items-center justify-center text-blue-500">
-                                            <FileText className="h-5 w-5" />
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <span className="text-white text-sm font-medium group-hover:text-primary transition-colors">
-                                                Shift_Checklist.docx
-                                            </span>
-                                            <span className="text-text-subtle text-xs">145 KB</span>
-                                        </div>
-                                    </div>
-                                    <FileDown className="h-5 w-5 text-text-subtle hover:text-white" />
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
                 </div>
             </div>
         </div>

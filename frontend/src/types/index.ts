@@ -61,3 +61,16 @@ export type { NotificationType, Notification, NotificationFilters } from './noti
 // Domain & Speciality Filters (from auth.types)
 export type { DomainFilters, SpecialityFilters } from './auth.types';
 
+// Socket Types
+export type {
+    NotificationPayload,
+    MessageStatus,
+    UserInfo,
+    MessagePayload,
+    MessageReadPayload,
+    TypingPayload,
+    ErrorPayload,
+    ServerToClientEvents,
+    ClientToServerEvents,
+} from './socket.types';
+

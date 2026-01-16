@@ -4,7 +4,7 @@
 
 import { Router } from "express";
 import { protect } from "../middleware/authMiddleware";
-import upload from "../middleware/uploadMiddleware";
+import upload from "../middleware/documentUploadMiddleware";
 import { validateRequest } from "../middleware/validateMiddleware";
 import {
     loginSchema,

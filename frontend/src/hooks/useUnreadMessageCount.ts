@@ -1,4 +1,4 @@
-import { useGetMyConversationsQuery } from "@/services/messageService";
+import { useGetMyConversationsQuery } from "@/features/api/endpoints/messageEndpoints";
 
 /**
  * Hook to get the total count of unread messages across all conversations

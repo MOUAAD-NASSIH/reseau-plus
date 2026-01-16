@@ -5,7 +5,7 @@
 import { Router } from "express";
 import { protect, authorizeRoles, adminOnly } from "../middleware/authMiddleware";
 import { validateRequest } from "../middleware/validateMiddleware";
-import upload from "../middleware/uploadMiddleware";
+import upload from "../middleware/documentUploadMiddleware"
 import {
     getWorkers,
     getCurrentWorker,
@@ -22,8 +22,7 @@ import {
     addDomain,
     removeDomain,
     getMyAvailabilities,
-    getMyExperiences,
-    uploadProfilePicture
+    getMyExperiences
 } from "../controllers/workerController";
 import {
     updateWorkerProfileSchema,
@@ -46,9 +45,9 @@ const workerOnly = authorizeRoles('worker');
 router.get("/", protect, adminOnly, validateRequest(workerFilterSchema), getWorkers);
 
 // Profile routes
+// Note: Profile picture upload is handled by /api/profile/worker/picture (profileRoutes.ts)
 router.get("/me", protect, workerOnly, getCurrentWorker);
 router.put("/me", protect, workerOnly, validateRequest(updateWorkerProfileSchema), updateWorker);
-router.post("/profile-picture", protect, workerOnly, upload.single('profilePicture'), uploadProfilePicture);
 
 // Documents
 router.get("/documents", protect, workerOnly, getDocuments);

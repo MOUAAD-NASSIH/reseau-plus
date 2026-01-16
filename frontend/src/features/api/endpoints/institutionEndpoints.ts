@@ -70,6 +70,39 @@ export const institutionApi = api.injectEndpoints({
                 { type: "Institutions", id: "LIST" },
             ],
         }),
+
+        /**
+         * Upload institution logo
+         * Uses the profile routes: POST /api/profile/institution/picture
+         */
+        uploadInstitutionLogo: builder.mutation<ApiResponse<{ url: string; publicId: string }>, FormData>({
+            query: (formData) => ({
+                url: "/profile/institution/picture",
+                method: "POST",
+                data: formData,
+            }),
+            invalidatesTags: [
+                { type: "Institutions", id: "PROFILE" },
+                { type: "Institutions", id: "LIST" },
+                { type: "Auth", id: "ME" },
+            ],
+        }),
+
+        /**
+         * Delete institution logo
+         * Uses the profile routes: DELETE /api/profile/institution/picture
+         */
+        deleteInstitutionLogo: builder.mutation<ApiResponse<void>, void>({
+            query: () => ({
+                url: "/profile/institution/picture",
+                method: "DELETE",
+            }),
+            invalidatesTags: [
+                { type: "Institutions", id: "PROFILE" },
+                { type: "Institutions", id: "LIST" },
+                { type: "Auth", id: "ME" },
+            ],
+        }),
     }),
 });
 
@@ -82,5 +115,7 @@ export const {
     useGetInstitutionQuery,
     useGetAllInstitutionsQuery,
     useUpdateInstitutionProfileMutation,
+    useUploadInstitutionLogoMutation,
+    useDeleteInstitutionLogoMutation,
 } = institutionApi;
 

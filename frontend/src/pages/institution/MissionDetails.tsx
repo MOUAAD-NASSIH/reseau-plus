@@ -245,11 +245,12 @@ export default function InstitutionMissionDetails() {
 
                     {/* Speciality & Domains */}
                     <div className="space-y-3">
-                        {mission.speciality && (
+                        {mission.requiredSpeciality && (
                             <div>
                                 <h3 className="font-semibold mb-2">Required Speciality</h3>
-                                <Badge variant="secondary" className="text-sm">
-                                    {mission.speciality.name}
+                                <Badge variant="outline">
+                                    {mission.requiredSpeciality.name}
+                                    <span className="ml-1 text-xs text-destructive">*</span>
                                 </Badge>
                             </div>
                         )}

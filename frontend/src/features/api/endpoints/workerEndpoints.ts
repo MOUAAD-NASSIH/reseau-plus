@@ -1,6 +1,5 @@
 /**
- * Worker Endpoints Module
- * RTK Query endpoints for worker profile and related operations.
+ * Worker Endpoints - RTK Query endpoints for worker profile and related operations
  */
 
 import { api } from "../api";
@@ -13,10 +12,9 @@ import type {
     WorkerFilters,
     DocumentType,
 } from "@/types/auth.types";
+import type { MissionApplication } from "@/types/application.types";
+import type { MissionAssignment } from "@/types/assignment.types";
 
-/**
- * Worker availability input type
- */
 export interface WorkerAvailabilityInput {
     startDate: string;
     endDate: string;
@@ -24,30 +22,21 @@ export interface WorkerAvailabilityInput {
     isRecurring?: boolean;
 }
 
-/**
- * Worker API endpoints injected into the main API slice
- */
 export const workerApi = api.injectEndpoints({
     endpoints: (builder) => ({
-        /**
-         * Get current worker's profile
-         */
+        // Get current worker's profile
         getWorkerProfile: builder.query<ApiResponse<Worker>, void>({
             query: () => ({ url: "/workers/me" }),
             providesTags: [{ type: "Workers", id: "PROFILE" }],
         }),
 
-        /**
-         * Get a worker by ID (public)
-         */
+        // Get a worker by ID
         getWorker: builder.query<ApiResponse<Worker>, number>({
             query: (id) => ({ url: `/workers/${id}` }),
             providesTags: (_, __, id) => [{ type: "Workers", id }],
         }),
 
-        /**
-         * Get all workers (admin only)
-         */
+        // Get all workers (admin only)
         getAllWorkers: builder.query<ApiResponse<Worker[]>, WorkerFilters | void>({
             query: (filters) => ({
                 url: "/workers",
@@ -56,52 +45,37 @@ export const workerApi = api.injectEndpoints({
             providesTags: (result) =>
                 result?.data
                     ? [
-                        ...result.data.map(({ id }) => ({
-                            type: "Workers" as const,
-                            id,
-                        })),
+                        ...result.data.map(({ id }) => ({ type: "Workers" as const, id })),
                         { type: "Workers", id: "LIST" },
                     ]
                     : [{ type: "Workers", id: "LIST" }],
         }),
 
-        /**
-         * Get worker's documents
-         */
+        // Get worker's documents
         getWorkerDocuments: builder.query<ApiResponse<WorkerDocument[]>, void>({
             query: () => ({ url: "/workers/documents" }),
             providesTags: (result) =>
                 result?.data
                     ? [
-                        ...result.data.map(({ id }) => ({
-                            type: "Workers" as const,
-                            id: `DOCUMENT_${id}`,
-                        })),
+                        ...result.data.map(({ id }) => ({ type: "Workers" as const, id: `DOCUMENT_${id}` })),
                         { type: "Workers", id: "DOCUMENTS" },
                     ]
                     : [{ type: "Workers", id: "DOCUMENTS" }],
         }),
 
-        /**
-         * Get worker's availabilities
-         */
+        // Get worker's availabilities
         getWorkerAvailabilities: builder.query<ApiResponse<WorkerAvailability[]>, void>({
             query: () => ({ url: "/workers/availabilities" }),
             providesTags: (result) =>
                 result?.data
                     ? [
-                        ...result.data.map(({ id }) => ({
-                            type: "Workers" as const,
-                            id: `AVAILABILITY_${id}`,
-                        })),
+                        ...result.data.map(({ id }) => ({ type: "Workers" as const, id: `AVAILABILITY_${id}` })),
                         { type: "Workers", id: "AVAILABILITIES" },
                     ]
                     : [{ type: "Workers", id: "AVAILABILITIES" }],
         }),
 
-        /**
-         * Update current worker's profile
-         */
+        // Update current worker's profile
         updateWorkerProfile: builder.mutation<ApiResponse<Worker>, UpdateWorkerInput>({
             query: (data) => ({
                 url: "/workers/me",
@@ -114,28 +88,35 @@ export const workerApi = api.injectEndpoints({
             ],
         }),
 
-        /**
-         * Upload profile picture
-         */
-        uploadProfilePicture: builder.mutation<ApiResponse<Worker>, FormData>({
+        // Upload profile picture (POST /api/profile/worker/picture)
+        uploadProfilePicture: builder.mutation<ApiResponse<{ url: string; publicId: string }>, FormData>({
             query: (formData) => ({
-                url: "/workers/profile-picture",
+                url: "/profile/worker/picture",
                 method: "POST",
                 data: formData,
             }),
             invalidatesTags: [
                 { type: "Workers", id: "PROFILE" },
                 { type: "Workers", id: "LIST" },
+                { type: "Auth", id: "ME" },
             ],
         }),
 
-        /**
-         * Upload a document
-         */
-        uploadDocument: builder.mutation<
-            ApiResponse<WorkerDocument>,
-            { type: DocumentType; file: File }
-        >({
+        // Delete profile picture
+        deleteProfilePicture: builder.mutation<ApiResponse<void>, void>({
+            query: () => ({
+                url: "/profile/worker/picture",
+                method: "DELETE",
+            }),
+            invalidatesTags: [
+                { type: "Workers", id: "PROFILE" },
+                { type: "Workers", id: "LIST" },
+                { type: "Auth", id: "ME" },
+            ],
+        }),
+
+        // Upload a document
+        uploadDocument: builder.mutation<ApiResponse<WorkerDocument>, { type: DocumentType; file: File }>({
             query: ({ type, file }) => {
                 const formData = new FormData();
                 formData.append("document", file);
@@ -144,7 +125,6 @@ export const workerApi = api.injectEndpoints({
                     url: "/workers/documents",
                     method: "POST",
                     data: formData,
-                    // Let axios set Content-Type with proper boundary
                 };
             },
             invalidatesTags: [
@@ -153,9 +133,7 @@ export const workerApi = api.injectEndpoints({
             ],
         }),
 
-        /**
-         * Add availability
-         */
+        // Add availability
         addAvailability: builder.mutation<ApiResponse<WorkerAvailability>, WorkerAvailabilityInput>({
             query: (data) => ({
                 url: "/workers/availabilities",
@@ -165,9 +143,7 @@ export const workerApi = api.injectEndpoints({
             invalidatesTags: [{ type: "Workers", id: "AVAILABILITIES" }],
         }),
 
-        /**
-         * Update availability
-         */
+        // Update availability
         updateAvailability: builder.mutation<
             ApiResponse<WorkerAvailability>,
             { id: number; data: Partial<WorkerAvailabilityInput> }
@@ -183,9 +159,7 @@ export const workerApi = api.injectEndpoints({
             ],
         }),
 
-        /**
-         * Delete availability
-         */
+        // Delete availability
         deleteAvailability: builder.mutation<ApiResponse<void>, number>({
             query: (id) => ({
                 url: `/workers/availabilities/${id}`,
@@ -194,9 +168,7 @@ export const workerApi = api.injectEndpoints({
             invalidatesTags: [{ type: "Workers", id: "AVAILABILITIES" }],
         }),
 
-        /**
-         * Add a domain to worker
-         */
+        // Add a domain to worker
         addWorkerDomain: builder.mutation<ApiResponse<void>, number>({
             query: (domainId) => ({
                 url: "/workers/domains",
@@ -209,9 +181,7 @@ export const workerApi = api.injectEndpoints({
             ],
         }),
 
-        /**
-         * Remove a domain from worker
-         */
+        // Remove a domain from worker
         removeWorkerDomain: builder.mutation<ApiResponse<void>, number>({
             query: (domainId) => ({
                 url: `/workers/domains/${domainId}`,
@@ -222,13 +192,39 @@ export const workerApi = api.injectEndpoints({
                 { type: "Workers", id: "LIST" },
             ],
         }),
+
+        // Get my applications
+        getMyApplications: builder.query<
+            ApiResponse<MissionApplication[]>,
+            { status?: "SUBMITTED" | "ACCEPTED" | "REJECTED"; page?: number; limit?: number } | void
+        >({
+            query: (params) => ({
+                url: "/applications/my",
+                params: params ? { status: params.status, page: params.page || 1, limit: params.limit || 5 } : { page: 1, limit: 5 },
+            }),
+            providesTags: ["Applications"],
+        }),
+
+        // Get my assignments
+        getMyAssignments: builder.query<
+            ApiResponse<MissionAssignment[]>,
+            { status?: "ACTIVE" | "ONGOING" | "COMPLETED" | "CANCELLED"; page?: number; limit?: number } | void
+        >({
+            query: (params) => ({
+                url: "/assignments/my",
+                params: params ? { status: params.status, page: params.page || 1, limit: params.limit || 5 } : undefined,
+            }),
+            providesTags: ["Assignments"],
+        }),
+
+        // Get worker average rating
+        getWorkerAverageRating: builder.query<ApiResponse<{ average: number; count?: number }>, { workerId: number }>({
+            query: ({ workerId }) => ({ url: `/reviews/worker/${workerId}/rating` }),
+            providesTags: ["Reviews"],
+        }),
     }),
 });
 
-/**
- * Auto-generated hooks for worker endpoints
- * Export for use in components
- */
 export const {
     useGetWorkerProfileQuery,
     useGetWorkerQuery,
@@ -237,11 +233,14 @@ export const {
     useGetWorkerAvailabilitiesQuery,
     useUpdateWorkerProfileMutation,
     useUploadProfilePictureMutation,
+    useDeleteProfilePictureMutation,
     useUploadDocumentMutation,
     useAddAvailabilityMutation,
     useUpdateAvailabilityMutation,
     useDeleteAvailabilityMutation,
     useAddWorkerDomainMutation,
     useRemoveWorkerDomainMutation,
+    useGetMyApplicationsQuery,
+    useGetMyAssignmentsQuery,
+    useGetWorkerAverageRatingQuery,
 } = workerApi;
-

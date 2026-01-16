@@ -18,8 +18,6 @@ interface ApiWorkerUser {
     worker?: {
         status?: WorkerStatus;
     };
-    // Legacy structure support
-    status?: WorkerStatus;
 }
 
 /**
@@ -58,16 +56,9 @@ export default function WorkerVerifiedGuard({
 
     const apiUser = effectiveUser as ApiWorkerUser;
 
-    // Check if user is a worker
-    const isWorkerRole = apiUser.role === "worker";
-
-    if (isWorkerRole) {
-        // Get worker status from nested worker object (API response format)
-        const workerStatus = apiUser.worker?.status || apiUser.status;
-
-        if (workerStatus === "PENDING") {
-            return <Navigate to={fallbackPath} replace />;
-        }
+    // Check if user is a worker with PENDING status
+    if (apiUser.role === "worker" && apiUser.worker?.status === "PENDING") {
+        return <Navigate to={fallbackPath} replace />;
     }
 
     // Allow access for verified workers or non-worker users

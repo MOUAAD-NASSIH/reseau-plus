@@ -126,10 +126,12 @@ function SlotForm({
             startDate: defaultValues?.startDate || "",
             endDate: defaultValues?.endDate || "",
             isRecurring: defaultValues?.isRecurring ?? false,
+            status: defaultValues?.status || "available",
         },
     });
 
     const isRecurring = watch("isRecurring");
+    const status = watch("status");
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -149,6 +151,33 @@ function SlotForm({
                     )}
                 </div>
             </div>
+
+            <div className="space-y-3">
+                <Label>Status</Label>
+                <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-2">
+                        <input
+                            type="radio"
+                            id="status-available"
+                            value="available"
+                            className="bg-primary text-primary focus:ring-primary"
+                            {...register("status")}
+                        />
+                        <Label htmlFor="status-available" className="font-normal cursor-pointer">Available</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <input
+                            type="radio"
+                            id="status-blocked"
+                            value="blocked"
+                            className="text-destructive focus:ring-destructive"
+                            {...register("status")}
+                        />
+                        <Label htmlFor="status-blocked" className="font-normal cursor-pointer text-destructive">Blocked</Label>
+                    </div>
+                </div>
+            </div>
+
             <div className="flex items-center space-x-2">
                 <Checkbox
                     id="isRecurring"
@@ -309,6 +338,7 @@ export function AvailabilityCalendar({
                     startDate: formatDateForInput(start),
                     endDate: formatDateForInput(end),
                     isRecurring: args.event.isRecurring,
+                    status: (args.event.resource as any)?.status || "available",
                 });
             } catch (error) {
                 showErrorToast(error, "Failed to move availability");
@@ -335,6 +365,7 @@ export function AvailabilityCalendar({
                     startDate: formatDateForInput(start),
                     endDate: formatDateForInput(end),
                     isRecurring: args.event.isRecurring,
+                    status: (args.event.resource as any)?.status || "available",
                 });
             } catch (error) {
                 showErrorToast(error, "Failed to resize availability");
@@ -429,6 +460,9 @@ export function AvailabilityCalendar({
         if (event.isPast) {
             style.backgroundColor = "var(--muted)";
             style.color = "var(--muted-foreground)";
+        } else if ((event.resource as any)?.status === "blocked") {
+            style.backgroundColor = "var(--destructive)";
+            style.color = "var(--destructive-foreground)";
         } else {
             style.backgroundColor = "var(--primary)";
             style.color = "var(--primary-foreground)";
@@ -485,6 +519,7 @@ export function AvailabilityCalendar({
                                         startDate: formatDateForInput(selectedSlot.start),
                                         endDate: formatDateForInput(selectedSlot.end),
                                         isRecurring: false,
+                                        status: "available",
                                     }
                                     : undefined
                             }
@@ -559,6 +594,7 @@ export function AvailabilityCalendar({
                                     startDate: formatDateForInput(selectedSlot.start),
                                     endDate: formatDateForInput(addDays(selectedSlot.end, -1) < selectedSlot.start ? selectedSlot.start : addDays(selectedSlot.end, -1)),
                                     isRecurring: false,
+                                    status: "available",
                                 }
                                 : undefined
                         }
@@ -590,6 +626,7 @@ export function AvailabilityCalendar({
                                 startDate: formatDateForInput(selectedEvent.start),
                                 endDate: formatDateForInput(selectedEvent.end),
                                 isRecurring: selectedEvent.isRecurring,
+                                status: (selectedEvent.resource as any)?.status || "available",
                             }}
                             submitLabel="Update Availability"
                             isEditing
@@ -627,82 +664,117 @@ export function AvailabilityCalendar({
             {/* Custom calendar styles */}
             <style>{`
         .availability-calendar .rbc-calendar {
-          font-family: inherit;
+            font-family: var(--font-sans);
+            color: var(--foreground);
         }
         .availability-calendar .rbc-header {
-          padding: 8px;
-          font-weight: 600;
-          color: var(--foreground);
-          background: var(--muted);
-          border-color: var(--border);
+            padding: 12px 8px;
+            font-weight: 600;
+            color: var(--muted-foreground);
+            background: var(--muted);
+            border-bottom: 1px solid var(--border);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
         }
-        .availability-calendar .rbc-month-view,
+        .availability-calendar .rbc-month-view {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--card);
+        }
         .availability-calendar .rbc-time-view {
-          border-color: var(--border);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--card);
         }
         .availability-calendar .rbc-day-bg {
-          background: var(--background);
+            background: var(--card);
         }
         .availability-calendar .rbc-off-range-bg {
-          background: var(--muted);
+            background: var(--muted);
+            opacity: 0.5;
         }
         .availability-calendar .rbc-today {
-          background: var(--accent) !important;
+            background: var(--accent);
         }
         .availability-calendar .rbc-event {
-          background: var(--primary);
-          border: none;
+            background: var(--primary);
+            color: var(--primary-foreground);
+            border-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         .availability-calendar .rbc-event.rbc-selected {
-          background: var(--primary);
-          box-shadow: 0 0 0 2px var(--ring);
+            background: var(--primary);
+            box-shadow: 0 0 0 2px var(--ring);
+        }
+        .availability-calendar .rbc-toolbar {
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 8px;
         }
         .availability-calendar .rbc-toolbar button {
-          color: var(--foreground);
-          border-color: var(--border);
-          background: var(--background);
+            color: var(--foreground);
+            border: 1px solid var(--input);
+            background: var(--background);
+            border-radius: var(--radius);
+            padding: 6px 12px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
         }
         .availability-calendar .rbc-toolbar button:hover {
-          background: var(--muted);
+            background: var(--accent);
+            color: var(--accent-foreground);
         }
         .availability-calendar .rbc-toolbar button.rbc-active {
-          background: var(--primary);
-          color: var(--primary-foreground);
-          border-color: var(--primary);
+            background: var(--primary);
+            color: var(--primary-foreground);
+            border-color: var(--primary);
         }
-        .availability-calendar .rbc-month-row,
-        .availability-calendar .rbc-day-slot .rbc-time-slot {
-          border-color: var(--border);
-        }
-        .availability-calendar .rbc-timeslot-group {
-          border-color: var(--border);
-        }
-        .availability-calendar .rbc-time-content {
-          border-color: var(--border);
-        }
+        .availability-calendar .rbc-month-row, 
+        .availability-calendar .rbc-day-slot .rbc-time-slot,
+        .availability-calendar .rbc-timeslot-group,
+        .availability-calendar .rbc-time-content,
         .availability-calendar .rbc-time-header-content {
-          border-color: var(--border);
+            border-color: var(--border);
         }
         .availability-calendar .rbc-date-cell {
-          color: var(--foreground);
-          padding: 4px 8px;
+            color: var(--foreground);
+            padding: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
         }
         .availability-calendar .rbc-date-cell.rbc-off-range {
-          color: var(--muted-foreground);
-        }
-        .availability-calendar .rbc-show-more {
-          color: var(--primary);
-          font-weight: 500;
+            color: var(--muted-foreground);
         }
         .availability-calendar .rbc-current-time-indicator {
-          background: var(--destructive);
+            background: var(--destructive);
         }
-        /* Dark mode adjustments */
-        .dark .availability-calendar .rbc-toolbar button {
-          background: var(--card);
+        
+        /* Mobile Responsiveness */
+        @media (max-width: 640px) {
+            .availability-calendar .rbc-toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .availability-calendar .rbc-toolbar-label {
+                margin: 8px 0;
+                text-align: center;
+                font-weight: 700;
+            }
+            .availability-calendar .rbc-btn-group {
+                display: flex;
+                width: 100%;
+            }
+            .availability-calendar .rbc-btn-group button {
+                flex: 1;
+            }
         }
-        .dark .availability-calendar .rbc-day-bg {
-          background: var(--card);
+        
+        /* Dark mode overrides if needed (mostly handled by variables) */
+        .dark .availability-calendar-container {
+            /* Additional dark mode specific tweaks if vars aren't enough */
         }
       `}</style>
         </div>

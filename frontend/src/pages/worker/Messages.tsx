@@ -1,13 +1,39 @@
-import { useState } from "react";
-import { useGetMyConversationsQuery } from "../../services/messageService";
-import { MessageSquare, Search, User, Building2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router";
 import { formatDistanceToNow } from "date-fns";
-import ChatWindow from "../../components/messages/ChatWindow";
+import { MessageSquare, Search, User, Building2 } from "lucide-react";
+import { useGetMyConversationsQuery, useLazyGetOrCreateConversationQuery } from "@/features/api/endpoints/messageEndpoints";
+import ChatWindow from "@/components/messages/ChatWindow";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 export default function Messages() {
+  const location = useLocation();
+  const startConversationWith = location.state?.startConversationWith as number | undefined;
+
   const { data: conversations = [], isLoading } = useGetMyConversationsQuery();
   const [selectedConversationId, setSelectedConversationId] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Lazy query to get or create conversation
+  const [triggerGetOrCreateConversation, { data: newConversation, isSuccess }] = useLazyGetOrCreateConversationQuery();
+
+  // Auto-select/create conversation if requested via navigation state
+  useEffect(() => {
+    if (startConversationWith) {
+      triggerGetOrCreateConversation(startConversationWith);
+    }
+  }, [startConversationWith, triggerGetOrCreateConversation]);
+
+  // Select the conversation once it's created/fetched
+  useEffect(() => {
+    if (isSuccess && newConversation) {
+      setSelectedConversationId(newConversation.id);
+    }
+  }, [isSuccess, newConversation]);
 
   const filteredConversations = conversations.filter((conv) => {
     if (!conv.otherUser) return false;
@@ -17,135 +43,156 @@ export default function Messages() {
     return name.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
+  // Find selected conversation in the list, or use the newly created one as fallback
   const selectedConversation = conversations.find(
     (conv) => conv.id === selectedConversationId
-  );
+  ) || (newConversation?.id === selectedConversationId ? newConversation : null);
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
       </div>
     );
   }
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] bg-background-dark">
-      {/* Conversations List */}
-      <div className={`w-full md:w-96 bg-card-dark border-r border-card-border flex flex-col ${selectedConversationId ? 'hidden md:flex' : ''}`}>
+    <div className="flex h-[calc(100vh-4rem)] bg-background overflow-hidden">
+      {/* Conversations Sidebar */}
+      <div
+        className={cn(
+          "w-full md:w-80 lg:w-96 flex flex-col border-r border-border bg-card/50",
+          selectedConversationId ? "hidden md:flex" : "flex"
+        )}
+      >
         {/* Header */}
-        <div className="p-4 border-b border-card-border">
-          <h1 className="text-2xl font-bold mb-4 flex items-center gap-2">
-            <MessageSquare className="w-6 h-6 text-primary" />
+        <div className="py-4 border-b border-border bg-background/50 backdrop-blur-sm sticky top-0 z-10">
+          <h1 className="text-2xl font-bold font-spline mb-4 flex items-center gap-2 text-foreground">
+            <MessageSquare className="size-6 text-primary" />
             Messages
           </h1>
-          
-          {/* Search */}
+
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input
+            <Input
               type="text"
               placeholder="Search conversations..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-background-dark border border-card-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              className="pl-9 bg-background border-border hover:border-primary/50 transition-colors h-10 rounded-full"
             />
           </div>
         </div>
 
-        {/* Conversations List */}
-        <div className="flex-1 overflow-y-auto">
-          {filteredConversations.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
-              <MessageSquare className="w-16 h-16 mb-4 opacity-30" />
-              <p className="text-lg">No conversations yet</p>
-              <p className="text-sm mt-2">Start messaging from a mission</p>
-            </div>
-          ) : (
-            filteredConversations.map((conversation) => {
-              const otherUser = conversation.otherUser;
-              if (!otherUser) return null;
+        {/* List */}
+        <ScrollArea className="flex-1">
+          <div className="flex flex-col py-2 gap-1">
+            {filteredConversations.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground text-center px-4">
+                <div className="h-12 w-12 rounded-full bg-muted/50 flex items-center justify-center mb-3">
+                  <MessageSquare className="w-6 h-6 opacity-30" />
+                </div>
+                <p className="font-medium mb-1">No conversations</p>
+                <p className="text-xs">Start messaging from a mission details page</p>
+              </div>
+            ) : (
+              filteredConversations.map((conversation) => {
+                const otherUser = conversation.otherUser;
+                if (!otherUser) return null;
 
-              const isWorker = !!otherUser.worker;
-              const name = isWorker
-                ? `${otherUser.worker?.firstName} ${otherUser.worker?.lastName}`
-                : otherUser.institution?.institutionName || "Unknown";
-              const avatar = isWorker
-                ? otherUser.worker?.profilePicture
-                : otherUser.institution?.logo;
-              const lastMessage = conversation.messages[0];
+                const isWorker = !!otherUser.worker;
+                const name = isWorker
+                  ? `${otherUser.worker?.firstName} ${otherUser.worker?.lastName}`
+                  : otherUser.institution?.institutionName || "Unknown";
+                const avatar = isWorker
+                  ? otherUser.worker?.profilePicture
+                  : otherUser.institution?.logo;
+                const lastMessage = conversation.messages[0];
+                const isSelected = selectedConversationId === conversation.id;
 
-              return (
-                <button
-                  key={conversation.id}
-                  onClick={() => setSelectedConversationId(conversation.id)}
-                  className={`w-full p-4 border-b border-card-border hover:bg-background-dark transition-colors text-left ${
-                    selectedConversationId === conversation.id ? "bg-background-dark" : ""
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    {/* Avatar */}
-                    <div className="relative">
-                      {avatar ? (
-                        <img
-                          src={avatar}
-                          alt={name}
-                          className="w-12 h-12 rounded-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                          {isWorker ? (
-                            <User className="w-6 h-6 text-primary" />
-                          ) : (
-                            <Building2 className="w-6 h-6 text-primary" />
-                          )}
-                        </div>
-                      )}
-                      {conversation.unreadCount && conversation.unreadCount > 0 && (
-                        <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                return (
+                  <button
+                    key={conversation.id}
+                    onClick={() => setSelectedConversationId(conversation.id)}
+                    className={cn(
+                      "w-full p-3 flex items-start gap-3 rounded-xl transition-all text-left group border border-transparent",
+                      isSelected
+                        ? "bg-primary/10 border-primary/20 shadow-sm"
+                        : "hover:bg-muted/50 hover:border-border/50"
+                    )}
+                  >
+                    <div className="relative shrink-0">
+                      <Avatar className="h-12 w-12 border border-border/50">
+                        <AvatarImage src={avatar || undefined} alt={name} className="object-cover" />
+                        <AvatarFallback className="bg-muted text-muted-foreground">
+                          {isWorker ? <User className="h-5 w-5" /> : <Building2 className="h-5 w-5" />}
+                        </AvatarFallback>
+                      </Avatar>
+                      {conversation.unreadCount > 0 && (
+                        <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground ring-2 ring-background">
                           {conversation.unreadCount}
-                        </div>
+                        </span>
                       )}
                     </div>
 
-                    {/* Content */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between mb-1">
-                        <h3 className="font-semibold truncate">{name}</h3>
+                    <div className="flex-1 min-w-0 overflow-hidden">
+                      <div className="flex items-center justify-between gap-2 mb-1">
+                        <span className={cn(
+                          "font-semibold truncate text-sm",
+                          isSelected ? "text-primary" : "text-foreground"
+                        )}>
+                          {name}
+                        </span>
                         {lastMessage && (
-                          <span className="text-xs text-muted-foreground whitespace-nowrap ml-2">
-                            {formatDistanceToNow(new Date(lastMessage.createdAt), {
-                              addSuffix: true,
-                            })}
+                          <span className="text-[10px] text-muted-foreground shrink-0 tabular-nums">
+                            {formatDistanceToNow(new Date(lastMessage.createdAt), { addSuffix: false })}
                           </span>
                         )}
                       </div>
-                      {lastMessage && (
-                        <p className="text-sm text-muted-foreground truncate">
+                      {lastMessage ? (
+                        <p className={cn(
+                          "text-xs truncate",
+                          isSelected ? "text-primary/70" : "text-muted-foreground"
+                        )}>
                           {lastMessage.senderId === otherUser.id ? "" : "You: "}
                           {lastMessage.content}
                         </p>
+                      ) : (
+                        <p className="text-xs text-muted-foreground italic">No messages yet</p>
                       )}
                     </div>
-                  </div>
-                </button>
-              );
-            })
-          )}
-        </div>
+                  </button>
+                );
+              })
+            )}
+          </div>
+        </ScrollArea>
       </div>
 
-      {/* Chat Window */}
-      <div className="flex-1 flex flex-col">
+      {/* Chat Area */}
+      <div
+        className={cn(
+          "flex-1 flex flex-col bg-background",
+          !selectedConversationId ? "hidden md:flex" : "flex",
+          "w-full md:w-auto h-full"
+        )}
+      >
         {selectedConversation ? (
           <ChatWindow
             conversation={selectedConversation}
             onBack={() => setSelectedConversationId(null)}
           />
         ) : (
-          <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground">
-            <MessageSquare className="w-24 h-24 mb-4 opacity-20" />
-            <p className="text-xl">Select a conversation to start messaging</p>
+          <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-muted/5">
+            <div className="max-w-md space-y-4 flex flex-col items-center">
+              <div className="h-20 w-20 rounded-2xl bg-primary/10 flex items-center justify-center transform rotate-3">
+                <MessageSquare className="h-10 w-10 text-primary" />
+              </div>
+              <h2 className="text-2xl font-bold font-spline text-foreground">Your Messages</h2>
+              <p className="text-muted-foreground">
+                Select a conversation from the sidebar to start chatting with institutions or support.
+              </p>
+            </div>
           </div>
         )}
       </div>

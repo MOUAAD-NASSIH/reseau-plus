@@ -32,7 +32,7 @@ export interface Mission {
     createdAt: string;
     // Relations
     institution?: Institution;
-    speciality?: Speciality | null;
+    requiredSpeciality?: Speciality | null;
     domains?: MissionDomain[];
 }
 

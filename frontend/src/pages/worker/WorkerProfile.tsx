@@ -3,17 +3,19 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
     Save,
-    X,
-    Upload,
-    Edit,
-    MoreVertical,
     Menu,
     ChevronRight,
-    Search,
     Verified,
     ToggleLeft,
     Shield,
-    GraduationCap,
+    MapPin,
+    Mail,
+    Phone,
+    Briefcase,
+    Pencil,
+    Loader2,
+    Upload,
+    MoreVertical
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -22,11 +24,16 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Switch } from "@/components/ui/switch";
+import { Separator } from "@/components/ui/separator";
 import {
     useGetWorkerProfileQuery,
     useUpdateWorkerProfileMutation,
     useUploadProfilePictureMutation,
+    useDeleteProfilePictureMutation,
+    useGetWorkerDocumentsQuery,
 } from "@/features/api/endpoints/workerEndpoints";
+import { ProfilePictureUpload } from "@/components/common/ProfilePictureUpload";
 import {
     updateWorkerProfileSchema,
     type UpdateWorkerProfileInput,
@@ -34,22 +41,22 @@ import {
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 
 export default function WorkerProfile() {
+    // API Hooks
     const { data: profileData, isLoading: profileLoading } = useGetWorkerProfileQuery();
+    const { data: documentsData } = useGetWorkerDocumentsQuery();
     const [updateProfile, { isLoading: isUpdating }] = useUpdateWorkerProfileMutation();
     const [uploadProfilePicture, { isLoading: isUploadingPicture }] = useUploadProfilePictureMutation();
+    const [deleteProfilePicture, { isLoading: isDeletingPicture }] = useDeleteProfilePictureMutation();
 
     const worker = profileData?.data;
+    const documents = documentsData?.data || [];
 
-    const [selectedSpecialities, setSelectedSpecialities] = useState<string[]>([
-        "Child Protection",
-        "Family Counseling",
-        "Crisis Intervention",
-    ]);
-    const [newSpeciality, setNewSpeciality] = useState("");
-    const [acceptingMissions, setAcceptingMissions] = useState(true);
+    // Local State
+    const [acceptingMissions, setAcceptingMissions] = useState(true); // TODO: Link to actual availability endpoint if needed
     const [bio, setBio] = useState("");
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+    // Form Setup
     const {
         register,
         handleSubmit,
@@ -85,6 +92,7 @@ export default function WorkerProfile() {
                 gender: worker.gender || null,
             });
             if (worker.bio) setBio(worker.bio);
+            // setAcceptingMissions(worker.isAvailable); // If available in API
         }
     }, [worker, reset]);
 
@@ -97,26 +105,10 @@ export default function WorkerProfile() {
         }
     };
 
-    const handleProfilePictureUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (!file) return;
-
-        // Validate file type
-        if (!file.type.startsWith("image/")) {
-            showErrorToast("Invalid file type", "Please select an image file.");
-            return;
-        }
-
-        // Validate file size (max 5MB)
-        if (file.size > 5 * 1024 * 1024) {
-            showErrorToast("File too large", "Image must be less than 5MB.");
-            return;
-        }
-
+    const handleProfilePictureUpload = async (file: File) => {
+        const formData = new FormData();
+        formData.append("profilePicture", file);
         try {
-            const formData = new FormData();
-            formData.append("profilePicture", file);
-
             await uploadProfilePicture(formData).unwrap();
             showSuccessToast("Profile picture updated", "Your profile picture has been uploaded successfully.");
         } catch (error) {
@@ -124,20 +116,18 @@ export default function WorkerProfile() {
         }
     };
 
-    const handleCancel = () => {
-        reset();
-        if (worker?.bio) setBio(worker.bio);
-    };
-
-    const addSpeciality = () => {
-        if (newSpeciality && !selectedSpecialities.includes(newSpeciality)) {
-            setSelectedSpecialities([...selectedSpecialities, newSpeciality]);
-            setNewSpeciality("");
+    const handleProfilePictureDelete = async () => {
+        try {
+            await deleteProfilePicture().unwrap();
+            showSuccessToast("Profile picture removed", "Your profile picture has been deleted.");
+        } catch (error) {
+            showErrorToast(error, "Failed to delete profile picture");
         }
     };
 
-    const removeSpeciality = (spec: string) => {
-        setSelectedSpecialities(selectedSpecialities.filter((s) => s !== spec));
+    const handleCancel = () => {
+        reset();
+        if (worker?.bio) setBio(worker.bio);
     };
 
     // Calculate profile completion
@@ -159,26 +149,28 @@ export default function WorkerProfile() {
 
     if (profileLoading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="loading-spinner loading-spinner-lg" />
+            <div className="min-h-screen flex items-center justify-center bg-background">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen flex flex-col bg-background">
+        <div className="min-h-screen flex flex-col bg-background text-foreground font-sans">
             {/* Top Navbar */}
-            <header className="flex items-center justify-between h-16 px-6 lg:px-10 border-b border-border bg-card/95 backdrop-blur-sm z-10 shrink-0">
+            <header className="flex items-center justify-between h-16 px-6 lg:px-10 border-b border-border bg-card z-10 shrink-0">
                 <div className="flex items-center gap-4">
                     <button
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                        className="lg:hidden text-foreground"
+                        className="lg:hidden text-foreground hover:text-primary transition-colors"
                     >
                         <Menu className="h-5 w-5" />
                     </button>
-                    <h2 className="text-foreground text-lg font-bold leading-tight tracking-tight">
-                        Worker Portal
-                    </h2>
+                    <div className="flex flex-col">
+                        <h2 className="text-foreground text-lg font-bold leading-tight tracking-tight">
+                            Worker Portal
+                        </h2>
+                    </div>
                 </div>
                 <div className="flex items-center gap-4">
                     <div className="flex gap-2">
@@ -189,16 +181,15 @@ export default function WorkerProfile() {
                             disabled={!isDirty || isUpdating}
                             className="hidden sm:flex"
                         >
-                            <X className="h-4 w-4 mr-2" />
                             Cancel
                         </Button>
                         <Button
                             onClick={handleSubmit(onSubmit)}
                             disabled={!isDirty || isUpdating}
-                            className="btn-glow"
+                            className="bg-primary text-primary-foreground hover:bg-primary/90"
                         >
                             {isUpdating ? (
-                                <div className="loading-spinner loading-spinner-sm mr-2" />
+                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                             ) : (
                                 <Save className="h-4 w-4 mr-2" />
                             )}
@@ -210,15 +201,15 @@ export default function WorkerProfile() {
 
             {/* Scrollable Area */}
             <div className="flex-1 overflow-y-auto p-4 lg:p-10">
-                <div className="flex flex-col gap-8">
+                <div className="max-w-7xl mx-auto flex flex-col gap-8">
                     {/* Page Heading */}
-                    <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-2 text-muted-foreground text-sm font-medium mb-1">
+                    <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-2 text-muted-foreground text-sm font-medium">
                             <span>Profile</span>
                             <ChevronRight className="h-4 w-4" />
                             <span className="text-foreground">Edit</span>
                         </div>
-                        <h1 className="text-3xl lg:text-4xl font-black text-foreground tracking-tight">
+                        <h1 className="text-3xl lg:text-4xl font-black text-foreground tracking-tight mt-1">
                             My Profile
                         </h1>
                         <p className="text-muted-foreground text-base max-w-2xl">
@@ -228,150 +219,78 @@ export default function WorkerProfile() {
                     </div>
 
                     {/* Content Grid */}
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                         {/* Left Column: Profile Card & Status */}
                         <div className="lg:col-span-4 flex flex-col gap-6">
                             {/* Profile Card */}
-                            <Card className="p-6 border border-border flex flex-col items-center text-center relative overflow-hidden group">
-                                <div className="absolute top-0 left-0 w-full h-24 bg-linear-to-b from-primary/20 to-transparent opacity-50"></div>
-                                <div className="relative mt-4 mb-4">
-                                    <div
-                                        className="size-32 rounded-full border-4 border-background shadow-xl bg-cover bg-center bg-no-repeat bg-muted flex items-center justify-center text-4xl font-bold text-foreground"
-                                        style={{
-                                            backgroundImage: worker?.profilePicture
-                                                ? `url(${worker.profilePicture})`
-                                                : undefined,
-                                        }}
-                                    >
-                                        {!worker?.profilePicture && (
-                                            <>{worker?.firstName?.[0]}{worker?.lastName?.[0]}</>
-                                        )}
-                                    </div>
-                                    <input
-                                        type="file"
-                                        id="profilePictureUpload"
-                                        accept="image/*"
-                                        onChange={handleProfilePictureUpload}
-                                        className="hidden"
+                            <Card className="p-0 border border-border bg-card overflow-hidden flex flex-col items-center text-center relative group shadow-sm hover:shadow-md transition-shadow">
+                                <div className="absolute top-0 left-0 w-full h-32 bg-linear-to-b from-primary/10 to-transparent"></div>
+                                <div className="relative mt-8 mb-4">
+                                    <ProfilePictureUpload
+                                        currentImage={worker?.profilePicture}
+                                        name={`${worker?.firstName || ''} ${worker?.lastName || ''}`}
+                                        onUpload={handleProfilePictureUpload}
+                                        onDelete={handleProfilePictureDelete}
+                                        isLoading={isUploadingPicture}
+                                        isDeleting={isDeletingPicture}
+                                        size="xl"
+                                        className="border-4 border-card shadow-xl"
                                     />
-                                    <button
-                                        type="button"
-                                        onClick={() => document.getElementById("profilePictureUpload")?.click()}
-                                        disabled={isUploadingPicture}
-                                        className="absolute bottom-1 right-1 bg-card border border-border p-2 rounded-full text-foreground hover:text-primary hover:border-primary transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                                    >
-                                        {isUploadingPicture ? (
-                                            <div className="loading-spinner loading-spinner-sm" />
-                                        ) : (
-                                            <Edit className="h-4 w-4" />
-                                        )}
-                                    </button>
                                 </div>
-                                <h2 className="text-xl font-bold text-foreground">
-                                    {worker?.firstName} {worker?.lastName}
-                                </h2>
-                                <p className="text-muted-foreground mb-4">
-                                    {worker?.speciality?.name || "Social Worker"}
-                                </p>
 
-                                {/* Label Réseau Badge */}
-                                {worker?.status === "VERIFIED" && (
-                                    <Badge
-                                        variant="outline"
-                                        className="flex items-center gap-2 px-4 py-2 bg-primary/10 border-primary/30 text-primary mb-6"
-                                    >
-                                        <Verified className="h-5 w-5" />
-                                        <span className="text-sm font-bold">
-                                            Label Réseau: Active
-                                        </span>
-                                    </Badge>
-                                )}
-
-                                <div className="w-full flex flex-col gap-3">
-                                    <div className="flex justify-between items-center px-2">
-                                        <span className="text-sm font-medium text-foreground">
-                                            Profile Completion
-                                        </span>
-                                        <span className="text-sm font-bold text-primary">
-                                            {profileCompletion}%
-                                        </span>
-                                    </div>
-                                    <Progress value={profileCompletion} className="h-2" />
-                                    <p className="text-xs text-muted-foreground text-left mt-1">
-                                        {profileCompletion < 100
-                                            ? "Add a professional summary to reach 100%."
-                                            : "Your profile is complete!"}
+                                <div className="px-6 pb-6 w-full flex flex-col items-center">
+                                    <h2 className="text-2xl font-bold text-foreground">
+                                        {worker?.firstName} {worker?.lastName}
+                                    </h2>
+                                    <p className="text-primary font-medium flex items-center gap-2 mt-1">
+                                        {worker?.speciality?.name || "Social Worker"}
                                     </p>
+
+                                    {worker?.status === "VERIFIED" && (
+                                        <Badge className="mt-4 bg-green-500/15 text-green-600 dark:text-green-400 hover:bg-green-500/25 border-green-500/20 px-3 py-1 flex items-center gap-1.5">
+                                            <Verified className="w-3.5 h-3.5 fill-current" />
+                                            <span>Label Réseau: Active</span>
+                                        </Badge>
+                                    )}
+
+                                    <Separator className="my-6" />
+
+                                    <div className="w-full space-y-3">
+                                        <div className="flex justify-between items-center text-sm">
+                                            <span className="font-medium text-muted-foreground">Profile Completion</span>
+                                            <span className="font-bold text-primary">{profileCompletion}%</span>
+                                        </div>
+                                        <Progress value={profileCompletion} className="h-2 bg-muted" />
+                                        <p className="text-xs text-muted-foreground text-start">
+                                            {profileCompletion < 100
+                                                ? "Complete your bio and details to reach 100%."
+                                                : "Your profile is fully optimized!"}
+                                        </p>
+                                    </div>
                                 </div>
                             </Card>
 
                             {/* Availability Card */}
-                            <Card className="p-6 border border-border">
-                                <h3 className="text-foreground font-bold mb-4 flex items-center gap-2">
-                                    <ToggleLeft className="h-5 w-5 text-primary" />
-                                    Availability
-                                </h3>
-                                <div className="flex items-center justify-between mb-2">
-                                    <span className="text-foreground text-sm">
-                                        Accepting New Missions
-                                    </span>
-                                    <label className="relative inline-flex items-center cursor-pointer">
-                                        <input
-                                            type="checkbox"
-                                            checked={acceptingMissions}
-                                            onChange={(e) =>
-                                                setAcceptingMissions(e.target.checked)
-                                            }
-                                            className="sr-only peer"
-                                        />
-                                        <div className="w-11 h-6 bg-muted peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/20 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                                    </label>
-                                </div>
-                                <p className="text-xs text-muted-foreground">
-                                    Turn this off if you are fully booked or on leave.
-                                </p>
-                            </Card>
-
-                            {/* Specializations */}
-                            <Card className="p-6 border border-border">
-                                <h3 className="text-lg font-bold text-foreground mb-1">
-                                    Specializations
-                                </h3>
-                                <p className="text-sm text-muted-foreground mb-6">
-                                    Select the areas where you have verified expertise.
-                                </p>
-                                <div className="flex flex-wrap gap-2 mb-4">
-                                    {selectedSpecialities.map((spec) => (
-                                        <Badge
-                                            key={spec}
-                                            variant="outline"
-                                            className="inline-flex items-center gap-1 px-4 py-2 rounded-full bg-primary/20 text-primary border-primary/30 text-sm font-medium"
-                                        >
-                                            {spec}
-                                            <button
-                                                type="button"
-                                                onClick={() => removeSpeciality(spec)}
-                                                className="hover:text-foreground ml-1"
-                                            >
-                                                <X className="h-3 w-3" />
-                                            </button>
-                                        </Badge>
-                                    ))}
-                                </div>
-                                <div className="relative group">
-                                    <Search className="absolute left-4 top-3 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                                    <Input
-                                        value={newSpeciality}
-                                        onChange={(e) => setNewSpeciality(e.target.value)}
-                                        onKeyPress={(e) => {
-                                            if (e.key === "Enter") {
-                                                e.preventDefault();
-                                                addSpeciality();
-                                            }
-                                        }}
-                                        placeholder="Add a specialization (e.g. Substance Abuse, Elderly Care...)"
-                                        className="w-full bg-muted/50 rounded-full pl-12 pr-4 py-3"
+                            <Card className="p-6 border border-border bg-card shadow-sm">
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2 rounded-full bg-primary/10 text-primary">
+                                            <ToggleLeft className="h-5 w-5" />
+                                        </div>
+                                        <h3 className="font-bold text-foreground">Availability</h3>
+                                    </div>
+                                    <Switch
+                                        checked={acceptingMissions}
+                                        onCheckedChange={setAcceptingMissions}
                                     />
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-sm font-medium text-foreground">
+                                        Accepting New Missions
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                        Turn this off if you are fully booked or on leave.
+                                    </p>
                                 </div>
                             </Card>
                         </div>
@@ -379,218 +298,228 @@ export default function WorkerProfile() {
                         {/* Right Column: Edit Forms */}
                         <div className="lg:col-span-8 flex flex-col gap-6">
                             {/* Personal Info */}
-                            <Card className="p-6 lg:p-8 border border-border">
-                                <div className="flex justify-between items-start mb-6">
-                                    <div>
-                                        <h3 className="text-lg font-bold text-foreground mb-1">
-                                            Personal Information
-                                        </h3>
-                                        <p className="text-sm text-muted-foreground">
-                                            Update your contact details and location.
-                                        </p>
-                                    </div>
-                                    <Button variant="link" className="text-primary text-sm">
-                                        View Public Profile
-                                    </Button>
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                                            Full Name
-                                        </Label>
-                                        <Input
-                                            {...register("firstName")}
-                                            placeholder="Enter your first name"
-                                            className="bg-muted/50"
-                                        />
-                                        {errors.firstName && (
-                                            <p className="form-error">{errors.firstName.message}</p>
-                                        )}
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                                            Job Title
-                                        </Label>
-                                        <Input
-                                            value={worker?.speciality?.name || "Social Worker"}
-                                            disabled
-                                            className="bg-muted/50"
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                                            Email Address
-                                        </Label>
-                                        <div className="relative input-with-icon">
-                                            <svg
-                                                className="absolute left-3 top-3 h-5 w-5 text-muted-foreground"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth={2}
-                                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                                                />
-                                            </svg>
-                                            <Input
-                                                type="email"
-                                                value={worker?.user?.email || ""}
-                                                disabled
-                                                className="pl-10 bg-muted/50"
-                                            />
+                            <Card className="border border-border bg-card shadow-sm">
+                                <div className="p-6 lg:p-8 flex flex-col gap-6">
+                                    <div className="flex justify-between items-start">
+                                        <div>
+                                            <h3 className="text-xl font-bold text-foreground">
+                                                Personal Information
+                                            </h3>
+                                            <p className="text-sm text-muted-foreground mt-1">
+                                                Update your contact details and location.
+                                            </p>
                                         </div>
+                                        <Button variant="ghost" className="text-primary hover:text-primary/80 hover:bg-primary/5">
+                                            View Public Profile
+                                        </Button>
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                                            Phone Number
-                                        </Label>
-                                        <div className="relative input-with-icon">
-                                            <svg
-                                                className="absolute left-3 top-3 h-5 w-5 text-muted-foreground"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth={2}
-                                                    d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="space-y-2">
+                                            <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                                                Full Name
+                                            </Label>
+                                            <div className="relative">
+                                                <Input
+                                                    {...register("firstName")}
+                                                    placeholder="First Name"
+                                                    className="bg-muted/30 focus:bg-background transition-colors"
                                                 />
-                                            </svg>
-                                            <Input
-                                                type="tel"
-                                                placeholder="+1 (555) 012-3456"
-                                                disabled
-                                                className="pl-10 bg-muted/50"
-                                            />
+                                            </div>
+                                            {errors.firstName && (
+                                                <p className="text-xs text-destructive mt-1">{errors.firstName.message}</p>
+                                            )}
                                         </div>
-                                    </div>
-                                    <div className="col-span-1 md:col-span-2 space-y-2">
-                                        <Label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                                            Office Address
-                                        </Label>
-                                        <div className="relative input-with-icon">
-                                            <svg
-                                                className="absolute left-3 top-3 h-5 w-5 text-muted-foreground"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth={2}
-                                                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+
+                                        <div className="space-y-2">
+                                            <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                                                Job Title (Speciality)
+                                            </Label>
+                                            <div className="relative">
+                                                <Briefcase className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                                                <Input
+                                                    value={worker?.speciality?.name || "Social Worker"}
+                                                    disabled
+                                                    className="pl-9 bg-muted/30"
                                                 />
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth={2}
-                                                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                                            </div>
+                                            {/* Note: Speciality is often managed by admin or selection, here just displayed */}
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                                                Email Address
+                                            </Label>
+                                            <div className="relative">
+                                                <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                                                <Input
+                                                    value={worker?.user?.email || ""}
+                                                    disabled
+                                                    className="pl-9 bg-muted/30"
                                                 />
-                                            </svg>
-                                            <Input
-                                                {...register("city")}
-                                                placeholder="123 Community Center Dr, Suite 400, Springfield"
-                                                className="pl-10 bg-muted/50"
-                                            />
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                                                Phone Number
+                                            </Label>
+                                            <div className="relative">
+                                                <Phone className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                                                <Input
+                                                    placeholder="+1 (555) 012-3456"
+                                                    disabled // Assuming phone is not editable here directly or managed elsewhere
+                                                    className="pl-9 bg-muted/30"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="col-span-1 md:col-span-2 space-y-2">
+                                            <Label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                                                Office Address / City
+                                            </Label>
+                                            <div className="relative">
+                                                <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                                                <Input
+                                                    {...register("city")}
+                                                    placeholder="e.g. Springfield"
+                                                    className="pl-9 bg-muted/30 focus:bg-background transition-colors"
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </Card>
 
                             {/* Professional Summary */}
-                            <Card className="p-6 lg:p-8 border border-border">
-                                <h3 className="text-lg font-bold text-foreground mb-1">
-                                    Professional Summary
-                                </h3>
-                                <p className="text-sm text-muted-foreground mb-6">
-                                    Briefly describe your experience and approach to social work.
-                                </p>
-                                <Textarea
-                                    value={bio}
-                                    onChange={(e) => setBio(e.target.value)}
-                                    placeholder="Write a few sentences about yourself..."
-                                    className="w-full h-32 bg-muted/50 resize-none"
-                                    maxLength={500}
-                                />
-                                <div className="flex justify-end mt-2">
-                                    <span className="text-xs text-muted-foreground">
-                                        {bio.length}/500 characters
-                                    </span>
+                            <Card className="border border-border bg-card shadow-sm">
+                                <div className="p-6 lg:p-8">
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="p-2 rounded-full bg-primary/10 text-primary">
+                                            <Pencil className="h-5 w-5" />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-xl font-bold text-foreground">
+                                                Professional Summary
+                                            </h3>
+                                            <p className="text-sm text-muted-foreground">
+                                                Briefly describe your experience and approach to social work.
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="relative">
+                                        <Textarea
+                                            value={bio}
+                                            onChange={(e) => setBio(e.target.value)}
+                                            placeholder="Example: Dedicated Clinical Social Worker with over 8 years of experience in high-impact mental health settings..."
+                                            className="min-h-[150px] bg-muted/30 focus:bg-background resize-y text-base leading-relaxed"
+                                            maxLength={500}
+                                        />
+                                        <div className="absolute bottom-3 right-3 text-xs text-muted-foreground bg-background/80 px-2 py-1 rounded">
+                                            {bio.length}/500
+                                        </div>
+                                    </div>
+                                </div>
+                            </Card>
+
+                            {/* Domains & Skills (Assuming Domains = Areas of Expertise) */}
+                            {/* Note: This section would ideally manage 'Domains' via API */}
+                            {/* For now we show what we have or a placeholder UI for domains management */}
+                            <Card className="border border-border bg-card shadow-sm">
+                                <div className="p-6 lg:p-8">
+                                    <div className="flex justify-between items-center mb-6">
+                                        <div>
+                                            <h3 className="text-xl font-bold text-foreground">
+                                                Domains of Expertise
+                                            </h3>
+                                            <p className="text-sm text-muted-foreground mt-1">
+                                                Areas where you have verified expertise.
+                                            </p>
+                                        </div>
+                                        <Button variant="outline" size="sm" className="hidden">
+                                            + Add Domain
+                                        </Button>
+                                    </div>
+
+                                    <div className="flex flex-wrap gap-2">
+                                        {worker?.domains && worker.domains.length > 0 ? (
+                                            worker.domains.map((wd) => (
+                                                <Badge
+                                                    key={wd.id}
+                                                    variant="secondary"
+                                                    className="px-3 py-1.5 text-sm font-medium bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                                                >
+                                                    {wd.domain?.name || "Unknown Domain"}
+                                                </Badge>
+                                            ))
+                                        ) : (
+                                            <p className="text-sm text-muted-foreground italic">No domains selected yet.</p>
+                                        )}
+                                        {/* Static Example if no data */}
+                                        {(!worker?.domains || worker.domains.length === 0) && (
+                                            <Badge variant="outline" className="border-dashed border-muted-foreground/50 text-muted-foreground cursor-not-allowed opacity-50">
+                                                Add Domain +
+                                            </Badge>
+                                        )}
+                                    </div>
                                 </div>
                             </Card>
 
                             {/* Documents */}
-                            <Card className="p-6 lg:p-8 border border-border">
-                                <div className="flex justify-between items-center mb-6">
-                                    <div>
-                                        <h3 className="text-lg font-bold text-foreground mb-1">
-                                            Documents & Certifications
-                                        </h3>
-                                        <p className="text-sm text-muted-foreground">
-                                            Upload your degrees and licenses for verification.
-                                        </p>
-                                    </div>
-                                    <Button
-                                        variant="outline"
-                                        className="flex items-center gap-2 text-primary bg-primary/10 hover:bg-primary/20 border-primary/30"
-                                    >
-                                        <Upload className="h-4 w-4" />
-                                        Upload
-                                    </Button>
-                                </div>
-                                <div className="flex flex-col gap-3">
-                                    <div className="flex items-center justify-between p-4 bg-muted/50 border border-border rounded-lg group hover:border-primary/50 transition-colors">
-                                        <div className="flex items-center gap-4">
-                                            <div className="size-10 rounded bg-primary/20 flex items-center justify-center text-primary">
-                                                <Shield className="h-5 w-5" />
-                                            </div>
-                                            <div>
-                                                <p className="text-foreground text-sm font-medium">
-                                                    State Social Work License.pdf
-                                                </p>
-                                                <p className="text-xs text-muted-foreground">
-                                                    Verified on Oct 12, 2023
-                                                </p>
-                                            </div>
+                            <Card className="border border-border bg-card shadow-sm">
+                                <div className="p-6 lg:p-8">
+                                    <div className="flex justify-between items-center mb-6">
+                                        <div>
+                                            <h3 className="text-xl font-bold text-foreground">
+                                                Documents & Certifications
+                                            </h3>
+                                            <p className="text-sm text-muted-foreground mt-1">
+                                                Upload your degrees and licenses for verification.
+                                            </p>
                                         </div>
-                                        <button className="text-muted-foreground hover:text-foreground p-2">
-                                            <MoreVertical className="h-5 w-5" />
-                                        </button>
+                                        <Button variant="outline" className="gap-2">
+                                            <Upload className="h-4 w-4" />
+                                            Upload Not Supported
+                                        </Button>
                                     </div>
-                                    <div className="flex items-center justify-between p-4 bg-muted/50 border border-border rounded-lg group hover:border-primary/50 transition-colors">
-                                        <div className="flex items-center gap-4">
-                                            <div className="size-10 rounded bg-primary/20 flex items-center justify-center text-primary">
-                                                <GraduationCap className="h-5 w-5" />
+
+                                    <div className="space-y-3">
+                                        {documents.length > 0 ? (
+                                            documents.map((doc) => (
+                                                <div key={doc.id} className="flex items-center justify-between p-4 bg-muted/30 border border-border rounded-lg hover:border-primary/50 transition-colors group">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="size-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                                                            <Shield className="h-5 w-5" />
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-foreground text-sm font-medium">
+                                                                {doc.name || doc.type}
+                                                            </p>
+                                                            <p className="text-xs text-muted-foreground">
+                                                                {doc.type} • Verified
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    <Button variant="ghost" size="icon">
+                                                        <MoreVertical className="h-4 w-4 text-muted-foreground" />
+                                                    </Button>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <div className="text-center py-8 text-muted-foreground text-sm">
+                                                No documents uploaded yet.
                                             </div>
-                                            <div>
-                                                <p className="text-foreground text-sm font-medium">
-                                                    Master of Social Work Degree.pdf
-                                                </p>
-                                                <p className="text-xs text-muted-foreground">
-                                                    Verified on Sep 05, 2023
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <button className="text-muted-foreground hover:text-foreground p-2">
-                                            <MoreVertical className="h-5 w-5" />
-                                        </button>
+                                        )}
                                     </div>
                                 </div>
                             </Card>
                         </div>
                     </div>
 
-                    {/* Footer spacer */}
                     <div className="h-10"></div>
                 </div>
             </div>
         </div>
     );
 }
-

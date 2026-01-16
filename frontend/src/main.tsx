@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import { ThemeProvider } from "./components/providers/ThemeProvider.tsx";
+import { SocketProvider } from "./socket/SocketContext.tsx";
 import { store } from "./features/store";
 import { Toaster } from "sonner";
 import App from "./App.tsx";
@@ -21,9 +22,11 @@ createRoot(document.getElementById("root")!).render(
       closeButton
     />
     <Provider store={store}>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <App />
-      </ThemeProvider>
+      <SocketProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <App />
+        </ThemeProvider>
+      </SocketProvider>
     </Provider>
   </StrictMode>
 );

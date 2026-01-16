@@ -63,17 +63,17 @@ export default function WorkerAvailability() {
     // Get upcoming missions from assignments
     const upcomingMissions = useMemo(() => {
         if (!assignmentsData?.data) return [];
-        
+
         const now = new Date();
         now.setHours(0, 0, 0, 0);
-        
+
         return assignmentsData.data
             .filter((assignment: any) => {
                 // Only show ACTIVE or ONGOING assignments
                 if (assignment.status !== 'ACTIVE' && assignment.status !== 'ONGOING') {
                     return false;
                 }
-                
+
                 const startDate = new Date(assignment.startDate);
                 return startDate >= now;
             })
@@ -84,7 +84,7 @@ export default function WorkerAvailability() {
             .map((assignment: any) => {
                 const startDate = new Date(assignment.startDate);
                 const endDate = new Date(assignment.endDate);
-                
+
                 return {
                     id: assignment.id,
                     name: assignment.mission?.institution?.name || 'Mission',
@@ -99,10 +99,10 @@ export default function WorkerAvailability() {
     // Helper function to check if a date has availability
     const getAvailabilityForDate = (year: number, month: number, date: number) => {
         if (!availabilitiesData?.data) return null;
-        
+
         const targetDate = new Date(year, month, date);
         targetDate.setHours(0, 0, 0, 0);
-        
+
         return availabilitiesData.data.find((avail: any) => {
             const availStart = new Date(avail.startDate);
             availStart.setHours(0, 0, 0, 0);
@@ -150,13 +150,13 @@ export default function WorkerAvailability() {
             if (availability) {
                 const startDate = new Date(availability.startDate);
                 const endDate = new Date(availability.endDate);
-                
+
                 // Use UTC methods to avoid timezone issues
                 const startHours = String(startDate.getUTCHours()).padStart(2, '0');
                 const startMinutes = String(startDate.getUTCMinutes()).padStart(2, '0');
                 const endHours = String(endDate.getUTCHours()).padStart(2, '0');
                 const endMinutes = String(endDate.getUTCMinutes()).padStart(2, '0');
-                
+
                 day.status = availability.status === "blocked" ? "blocked" : "available";
                 day.timeRange = `${startHours}:${startMinutes}-${endHours}:${endMinutes}`;
             }
@@ -187,17 +187,17 @@ export default function WorkerAvailability() {
         const days: CalendarDay[] = [];
         const today = new Date(currentDate);
         const dayOfWeek = today.getDay();
-        
+
         // Start from Sunday of the current week
         const weekStart = new Date(today);
         weekStart.setDate(today.getDate() - dayOfWeek);
-        
+
         // Generate 7 days for the week
         for (let i = 0; i < 7; i++) {
             const date = new Date(weekStart);
             date.setDate(weekStart.getDate() + i);
             const dayOfWeek = date.getDay();
-            
+
             const day: CalendarDay = {
                 date: date.getDate(),
                 isCurrentMonth: date.getMonth() === currentDate.getMonth(),
@@ -205,27 +205,27 @@ export default function WorkerAvailability() {
                 isToday: date.getDate() === new Date().getDate() && date.getMonth() === new Date().getMonth() && date.getFullYear() === new Date().getFullYear(),
                 isWeekend: dayOfWeek === 0 || dayOfWeek === 6,
             };
-            
+
             // Map actual availability data to calendar days
             const availability = getAvailabilityForDate(date.getFullYear(), date.getMonth(), date.getDate());
             if (availability) {
                 const startDate = new Date(availability.startDate);
                 const endDate = new Date(availability.endDate);
-                
+
                 // Use UTC methods to avoid timezone issues
                 const startHours = String(startDate.getUTCHours()).padStart(2, '0');
                 const startMinutes = String(startDate.getUTCMinutes()).padStart(2, '0');
                 const endHours = String(endDate.getUTCHours()).padStart(2, '0');
                 const endMinutes = String(endDate.getUTCMinutes()).padStart(2, '0');
-                
+
                 day.status = "available";
                 day.timeRange = `${startHours}:${startMinutes}-${endHours}:${endMinutes}`;
             }
             // TODO: Add booked/blocked status from assignments/blocked dates
-            
+
             days.push(day);
         }
-        
+
         return days;
     };
 
@@ -257,7 +257,7 @@ export default function WorkerAvailability() {
 
     const handleDayClick = (day: CalendarDay) => {
         if (!day.isCurrentMonth) return;
-        
+
         // Prevent clicking on weekends
         if (day.isWeekend) {
             showErrorToast(
@@ -266,40 +266,40 @@ export default function WorkerAvailability() {
             );
             return;
         }
-        
+
         // Check if clicking on a date that already has availability
         const existingAvailability = getAvailabilityForDate(
             currentDate.getFullYear(),
             currentDate.getMonth(),
             day.date
         );
-        
+
         // If date has existing availability, select only this date and load its data
         if (existingAvailability) {
             setSelectedDates([day.date]);
             setSelectedAvailability(existingAvailability);
-            
+
             // Load the time range from existing availability
             const startDate = new Date(existingAvailability.startDate);
             const endDate = new Date(existingAvailability.endDate);
-            
+
             const startHours = String(startDate.getUTCHours()).padStart(2, '0');
             const startMinutes = String(startDate.getUTCMinutes()).padStart(2, '0');
             const endHours = String(endDate.getUTCHours()).padStart(2, '0');
             const endMinutes = String(endDate.getUTCMinutes()).padStart(2, '0');
-            
-            setTimeRange({ 
-                start: `${startHours}:${startMinutes}`, 
-                end: `${endHours}:${endMinutes}` 
+
+            setTimeRange({
+                start: `${startHours}:${startMinutes}`,
+                end: `${endHours}:${endMinutes}`
             });
             setAvailabilityStatus(existingAvailability.status === "blocked" ? "blocked" : "available");
             return;
         }
-        
+
         // Handle multi-selection for new availabilities (no existing availability)
         const clickedDate = day.date;
         const isAlreadySelected = selectedDates.includes(clickedDate);
-        
+
         if (isAlreadySelected) {
             // Clicking on an already selected date
             if (selectedDates.length === 1) {
@@ -323,7 +323,7 @@ export default function WorkerAvailability() {
                 const sortedDates = [...selectedDates].sort((a, b) => a - b);
                 const minDate = sortedDates[0];
                 const maxDate = sortedDates[sortedDates.length - 1];
-                
+
                 // Check if clickedDate is adjacent to the range
                 if (clickedDate === minDate - 1 || clickedDate === maxDate + 1) {
                     // Check if the new date would be a weekend
@@ -336,7 +336,7 @@ export default function WorkerAvailability() {
                         );
                         return;
                     }
-                    
+
                     // Valid: adjacent to existing range and not a weekend
                     setSelectedDates([...selectedDates, clickedDate]);
                     setSelectedAvailability(null);
@@ -347,7 +347,7 @@ export default function WorkerAvailability() {
                 }
             }
         }
-        
+
         // Reset to default values for new availability
         setTimeRange({ start: "08:00", end: "17:00" });
         setTimeSlot("allday");
@@ -387,19 +387,19 @@ export default function WorkerAvailability() {
             // Validate that end time is after start time
             const [startHour, startMinute] = timeRange.start.split(':').map(Number);
             const [endHour, endMinute] = timeRange.end.split(':').map(Number);
-            
+
             const tempStart = new Date(0, 0, 0, startHour, startMinute);
             const tempEnd = new Date(0, 0, 0, endHour, endMinute);
-            
+
             if (tempEnd <= tempStart) {
                 showErrorToast("Invalid time range", "End time must be after start time.");
                 return;
             }
-            
+
             // If updating existing availability
             if (selectedAvailability) {
                 const selectedDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), selectedDates[0]);
-                
+
                 const startDate = new Date(Date.UTC(
                     selectedDateTime.getFullYear(),
                     selectedDateTime.getMonth(),
@@ -409,7 +409,7 @@ export default function WorkerAvailability() {
                     0,
                     0
                 ));
-                
+
                 const endDate = new Date(Date.UTC(
                     selectedDateTime.getFullYear(),
                     selectedDateTime.getMonth(),
@@ -419,33 +419,33 @@ export default function WorkerAvailability() {
                     0,
                     0
                 ));
-                
+
                 const availabilityData: CreateAvailabilityInput = {
                     startDate: startDate.toISOString(),
                     endDate: endDate.toISOString(),
                     status: availabilityStatus,
                     isRecurring: false,
                 };
-                
+
                 await addAvailability(availabilityData).unwrap();
-                const message = availabilityStatus === "blocked" 
-                    ? "Your blocking has been updated successfully." 
+                const message = availabilityStatus === "blocked"
+                    ? "Your blocking has been updated successfully."
                     : "Your availability has been updated successfully.";
                 showSuccessToast(availabilityStatus === "blocked" ? "Blocking updated" : "Availability updated", message);
-                
+
                 await refetchAvailabilities();
                 return;
             }
-            
+
             // Create availabilities for all selected dates
             const sortedDates = [...selectedDates].sort((a, b) => a - b);
             let successCount = 0;
             let errorCount = 0;
-            
+
             for (const date of sortedDates) {
                 try {
                     const selectedDateTime = new Date(currentDate.getFullYear(), currentDate.getMonth(), date);
-                    
+
                     const startDate = new Date(Date.UTC(
                         selectedDateTime.getFullYear(),
                         selectedDateTime.getMonth(),
@@ -455,7 +455,7 @@ export default function WorkerAvailability() {
                         0,
                         0
                     ));
-                    
+
                     const endDate = new Date(Date.UTC(
                         selectedDateTime.getFullYear(),
                         selectedDateTime.getMonth(),
@@ -465,14 +465,14 @@ export default function WorkerAvailability() {
                         0,
                         0
                     ));
-                    
+
                     const availabilityData: CreateAvailabilityInput = {
                         startDate: startDate.toISOString(),
                         endDate: endDate.toISOString(),
                         status: availabilityStatus,
                         isRecurring: false,
                     };
-                    
+
                     await addAvailability(availabilityData).unwrap();
                     successCount++;
                 } catch (error) {
@@ -480,24 +480,24 @@ export default function WorkerAvailability() {
                     console.error(`Failed to save availability for ${date}:`, error);
                 }
             }
-            
+
             if (successCount > 0) {
-                const message = availabilityStatus === "blocked" 
-                    ? `${successCount} day(s) blocked successfully.` 
+                const message = availabilityStatus === "blocked"
+                    ? `${successCount} day(s) blocked successfully.`
                     : `${successCount} day(s) marked as available successfully.`;
                 showSuccessToast(
-                    availabilityStatus === "blocked" ? "Blocking saved" : "Availability saved", 
+                    availabilityStatus === "blocked" ? "Blocking saved" : "Availability saved",
                     message
                 );
             }
-            
+
             if (errorCount > 0) {
                 showErrorToast("Partial failure", `Failed to save ${errorCount} date(s). Please try again.`);
             }
-            
+
             // Refetch availabilities to update calendar display
             await refetchAvailabilities();
-            
+
             // Reset selection
             setSelectedDates([new Date().getDate()]);
         } catch (error) {
@@ -514,13 +514,13 @@ export default function WorkerAvailability() {
         try {
             await deleteAvailability(selectedAvailability.id).unwrap();
             showSuccessToast("Availability deleted", "Your availability has been removed.");
-            
+
             // Clear selection and reset form
             setSelectedAvailability(null);
             setSelectedDates([new Date().getDate()]);
             setTimeRange({ start: "08:00", end: "17:00" });
             setTimeSlot("allday");
-            
+
             // Refetch availabilities to update calendar display
             await refetchAvailabilities();
         } catch (error) {
@@ -543,11 +543,11 @@ export default function WorkerAvailability() {
             weekStart.setDate(currentDate.getDate() - dayOfWeek);
             const weekEnd = new Date(weekStart);
             weekEnd.setDate(weekStart.getDate() + 6);
-            
+
             const startMonth = weekStart.toLocaleDateString("en-US", { month: "short" });
             const endMonth = weekEnd.toLocaleDateString("en-US", { month: "short" });
             const year = weekStart.getFullYear();
-            
+
             if (startMonth === endMonth) {
                 return `${startMonth} ${weekStart.getDate()}-${weekEnd.getDate()}, ${year}`;
             } else {
@@ -565,7 +565,7 @@ export default function WorkerAvailability() {
         const sortedDates = [...selectedDates].sort((a, b) => a - b);
         return `${sortedDates.length} consecutive days`;
     }, [currentDate, selectedDates]);
-    
+
     const selectedDateFormatted = useMemo(() => {
         if (selectedDates.length === 0) return "";
         if (selectedDates.length === 1) {
@@ -578,23 +578,24 @@ export default function WorkerAvailability() {
     }, [currentDate, selectedDates]);
 
     return (
-        <div className="flex-1 flex overflow-hidden">
+        <div className="flex-1 flex overflow-hidden bg-background">
             {/* Main Calendar Area */}
-            <main className="flex-1 flex flex-col min-w-0 overflow-y-auto bg-background-dark">
+            <main className="flex-1 flex flex-col min-w-0 overflow-y-auto bg-background">
                 {/* Page Heading & Controls */}
                 <div className="flex flex-col gap-6 p-6 lg:p-10 pb-4">
                     <div className="flex flex-wrap items-center justify-between gap-4">
                         <div className="flex flex-col gap-1">
-                            <h1 className="text-white text-3xl lg:text-4xl font-black leading-tight tracking-[-0.033em]">
+                            <h1 className="text-foreground text-3xl lg:text-4xl font-black leading-tight tracking-[-0.033em]">
                                 My Availability
                             </h1>
-                            <p className="text-text-muted text-base font-normal">
+                            <p className="text-muted-foreground text-base font-normal">
                                 Manage your schedule and mission capacity for upcoming assignments.
                             </p>
                         </div>
                         <div className="flex items-center gap-3">
                             <Button
-                                className="rounded-full h-10 px-6 bg-border-dark hover:bg-[#326747] text-white text-sm font-bold"
+                                variant="outline"
+                                className="rounded-full h-10 px-6 font-bold"
                                 onClick={handleSyncCalendar}
                             >
                                 <RefreshCw className="h-4 w-4 mr-2" />
@@ -606,13 +607,13 @@ export default function WorkerAvailability() {
                     {/* Toolbar */}
                     <div className="flex flex-wrap items-center justify-between gap-4 mt-2">
                         {/* Month Navigation */}
-                        <div className="flex items-center gap-4 bg-surface-dark border border-border-dark rounded-full p-1 pl-4 pr-1">
-                            <span className="text-white text-lg font-bold tabular-nums">{monthName}</span>
+                        <div className="flex items-center gap-4 bg-muted border border-border rounded-full p-1 pl-4 pr-1">
+                            <span className="text-foreground text-lg font-bold tabular-nums">{monthName}</span>
                             <div className="flex gap-1">
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="size-8 rounded-full hover:bg-border-dark text-white"
+                                    className="size-8 rounded-full hover:bg-background text-foreground"
                                     onClick={handlePreviousMonth}
                                 >
                                     <ChevronLeft className="h-5 w-5" />
@@ -620,7 +621,7 @@ export default function WorkerAvailability() {
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="size-8 rounded-full hover:bg-border-dark text-white"
+                                    className="size-8 rounded-full hover:bg-background text-foreground"
                                     onClick={handleNextMonth}
                                 >
                                     <ChevronRight className="h-5 w-5" />
@@ -629,8 +630,8 @@ export default function WorkerAvailability() {
                         </div>
 
                         {/* View Switcher */}
-                        <div className="flex h-10 items-center justify-center rounded-full bg-border-dark p-1">
-                            <label className="flex cursor-pointer h-full items-center justify-center px-6 rounded-full has-checked:bg-surface-darker has-checked:shadow-sm has-checked:text-white text-text-muted text-sm font-medium transition-all">
+                        <div className="flex h-10 items-center justify-center rounded-full bg-muted p-1 border border-border">
+                            <label className="flex cursor-pointer h-full items-center justify-center px-6 rounded-full has-checked:bg-background has-checked:shadow-sm has-checked:text-foreground text-muted-foreground has-checked:font-bold text-sm font-medium transition-all">
                                 <span>Month View</span>
                                 <input
                                     type="radio"
@@ -641,7 +642,7 @@ export default function WorkerAvailability() {
                                     className="hidden"
                                 />
                             </label>
-                            <label className="flex cursor-pointer h-full items-center justify-center px-6 rounded-full has-checked:bg-surface-darker has-checked:shadow-sm has-checked:text-white text-text-muted text-sm font-medium transition-all">
+                            <label className="flex cursor-pointer h-full items-center justify-center px-6 rounded-full has-checked:bg-background has-checked:shadow-sm has-checked:text-foreground text-muted-foreground has-checked:font-bold text-sm font-medium transition-all">
                                 <span>Week View</span>
                                 <input
                                     type="radio"
@@ -658,13 +659,13 @@ export default function WorkerAvailability() {
 
                 {/* Calendar Grid */}
                 <div className="flex-1 px-6 lg:px-10 pb-10">
-                    <div className="w-full h-full min-h-150 flex flex-col rounded-xl overflow-hidden border border-border-dark bg-surface-darker">
+                    <div className="w-full h-full min-h-150 flex flex-col rounded-xl overflow-hidden border border-border bg-card shadow-sm">
                         {/* Days Header */}
-                        <div className="grid grid-cols-7 border-b border-border-dark bg-surface-dark">
+                        <div className="grid grid-cols-7 border-b border-border bg-muted/50">
                             {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
                                 <div
                                     key={day}
-                                    className="py-3 text-center text-xs font-bold uppercase tracking-wider text-text-muted"
+                                    className="py-3 text-center text-xs font-bold uppercase tracking-wider text-muted-foreground"
                                 >
                                     {day}
                                 </div>
@@ -672,38 +673,36 @@ export default function WorkerAvailability() {
                         </div>
 
                         {/* Grid Content */}
-                        <div className={`flex-1 grid grid-cols-7 divide-x divide-y divide-border-dark ${
-                            viewMode === "month" ? "grid-rows-5" : "grid-rows-1"
-                        }`}>
+                        <div className={`flex-1 grid grid-cols-7 divide-x divide-y divide-border ${viewMode === "month" ? "grid-rows-5" : "grid-rows-1"
+                            }`}>
                             {calendarDays.map((day, index) => (
                                 <div
                                     key={index}
                                     onClick={() => !day.isWeekend && handleDayClick(day)}
                                     className={`
                                         group relative p-2 min-h-25 transition-colors
-                                        ${day.isWeekend ? "bg-surface-dark/20 cursor-not-allowed opacity-50" : "cursor-pointer"}
-                                        ${!day.isCurrentMonth ? "bg-surface-dark/30" : day.isWeekend ? "" : "hover:bg-surface-dark"}
-                                        ${day.isSelected && day.isCurrentMonth && day.status !== "blocked" ? "bg-primary/5 ring-1 ring-inset ring-primary" : ""}
-                                        ${day.isSelected && day.isCurrentMonth && day.status === "blocked" ? "bg-red-900/20 ring-1 ring-inset ring-red-600" : ""}
-                                        ${day.status === "blocked" && day.isCurrentMonth && !day.isSelected ? "bg-red-950/40 border border-red-900/30" : ""}
+                                        ${day.isWeekend ? "bg-muted/30 cursor-not-allowed opacity-50" : "cursor-pointer"}
+                                        ${!day.isCurrentMonth ? "bg-muted/20" : day.isWeekend ? "" : "hover:bg-muted/50 bg-card"}
+                                        ${day.isSelected && day.isCurrentMonth && day.status !== "blocked" ? "bg-primary/5 ring-1 ring-inset ring-primary z-10" : ""}
+                                        ${day.isSelected && day.isCurrentMonth && day.status === "blocked" ? "bg-destructive/10 ring-1 ring-inset ring-destructive z-10" : ""}
+                                        ${day.status === "blocked" && day.isCurrentMonth && !day.isSelected ? "bg-destructive/5" : ""}
                                     `}
                                 >
                                     {/* Day Number */}
                                     {day.isSelected && day.isCurrentMonth ? (
-                                        <span className="flex items-center justify-center size-6 rounded-full bg-primary text-background-dark font-bold text-sm">
+                                        <span className="flex items-center justify-center size-6 rounded-full bg-primary text-primary-foreground font-bold text-sm">
                                             {day.date}
                                         </span>
                                     ) : (
                                         <span
-                                            className={`font-medium text-sm p-1 ${
-                                                !day.isCurrentMonth
-                                                    ? "text-text-muted/30"
+                                            className={`font-medium text-sm p-1 ${!day.isCurrentMonth
+                                                    ? "text-muted-foreground/30"
                                                     : day.isWeekend
-                                                    ? "text-text-muted/30 line-through"
-                                                    : day.status === "blocked"
-                                                    ? "text-text-muted/50"
-                                                    : "text-text-muted group-hover:text-white"
-                                            }`}
+                                                        ? "text-muted-foreground/50 line-through"
+                                                        : day.status === "blocked"
+                                                            ? "text-muted-foreground"
+                                                            : "text-muted-foreground group-hover:text-foreground"
+                                                }`}
                                         >
                                             {day.date}
                                         </span>
@@ -711,33 +710,32 @@ export default function WorkerAvailability() {
 
                                     {/* Day Content */}
                                     {day.isCurrentMonth && day.status === "available" && day.timeRange && (
-                                        <div className="mt-1 bg-primary/20 border border-primary/30 rounded px-2 py-1 flex items-center gap-1.5">
+                                        <div className="mt-1 bg-primary/10 border border-primary/20 rounded px-2 py-1 flex items-center gap-1.5">
                                             <div className="size-1.5 rounded-full bg-primary"></div>
                                             <span className="text-xs font-semibold text-primary truncate">
-                                                Available {day.timeRange}
+                                                Avail. {day.timeRange}
                                             </span>
                                         </div>
                                     )}
 
                                     {day.isCurrentMonth && day.status === "booked" && day.mission && (
                                         <div
-                                            className={`mt-1 rounded px-2 py-1 shadow-sm ${
-                                                day.mission.color === "purple"
-                                                    ? "bg-white border-l-4 border-purple-500"
-                                                    : "bg-white"
-                                            }`}
+                                            className={`mt-1 rounded px-2 py-1 shadow-sm border border-border ${day.mission.color === "purple"
+                                                    ? "bg-purple-100 dark:bg-purple-900/30 border-l-4 border-l-purple-500"
+                                                    : "bg-card"
+                                                }`}
                                         >
-                                            <span className="block text-xs font-bold text-background-dark truncate">
+                                            <span className="block text-xs font-bold text-foreground truncate">
                                                 {day.mission.name}
                                             </span>
-                                            <span className="block text-[10px] text-gray-500">{day.mission.time}</span>
+                                            <span className="block text-[10px] text-muted-foreground">{day.mission.time}</span>
                                         </div>
                                     )}
 
                                     {day.isCurrentMonth && day.status === "blocked" && day.timeRange && (
-                                        <div className="mt-1 bg-red-900/30 border border-red-800/50 rounded px-2 py-1 flex items-center gap-1.5">
-                                            <Ban className="size-3 text-red-400" />
-                                            <span className="text-xs font-semibold text-red-400 truncate">
+                                        <div className="mt-1 bg-destructive/10 border border-destructive/20 rounded px-2 py-1 flex items-center gap-1.5">
+                                            <Ban className="size-3 text-destructive" />
+                                            <span className="text-xs font-semibold text-destructive truncate">
                                                 Blocked {day.timeRange}
                                             </span>
                                         </div>
@@ -745,13 +743,13 @@ export default function WorkerAvailability() {
 
                                     {day.isCurrentMonth && day.status === "blocked" && !day.timeRange && (
                                         <div className="mt-1 flex items-center justify-center">
-                                            <Ban className="size-6 text-red-500/70" />
+                                            <Ban className="size-6 text-destructive/40" />
                                         </div>
                                     )}
 
                                     {day.isSelected && !day.status && day.isCurrentMonth && (
                                         <div className="mt-1">
-                                            <p className="text-xs text-text-muted text-center mt-2">No status set</p>
+                                            <p className="text-xs text-muted-foreground text-center mt-2">No status set</p>
                                         </div>
                                     )}
                                 </div>
@@ -762,29 +760,29 @@ export default function WorkerAvailability() {
             </main>
 
             {/* Right Sidebar */}
-            <aside className="w-90 flex-none bg-surface-darker border-l border-border-dark flex flex-col shadow-2xl">
-                <div className="p-6 border-b border-border-dark flex items-center justify-between">
+            <aside className="w-90 flex-none bg-background border-l border-border flex flex-col shadow-xl z-20">
+                <div className="p-6 border-b border-border flex items-center justify-between bg-card">
                     <div>
-                        <h3 className="text-white text-lg font-bold">{selectedDayName}</h3>
+                        <h3 className="text-foreground text-lg font-bold">{selectedDayName}</h3>
                         <p className="text-primary text-sm font-medium">{selectedDateFormatted}</p>
                         {selectedDates.length > 1 && (
-                            <p className="text-text-muted text-xs mt-1">
+                            <p className="text-muted-foreground text-xs mt-1">
                                 {selectedDates.length} consecutive days selected
                             </p>
                         )}
                     </div>
-                    <div className="size-10 rounded-full bg-surface-dark flex items-center justify-center text-white border border-border-dark">
+                    <div className="size-10 rounded-full bg-muted flex items-center justify-center text-foreground border border-border">
                         <Calendar className="h-5 w-5" />
                     </div>
                 </div>
 
-                <div className="p-6 flex-1 overflow-y-auto flex flex-col gap-8">
+                <div className="p-6 flex-1 overflow-y-auto flex flex-col gap-8 bg-card/50">
                     {/* Info Banner for Multi-Selection */}
                     {!selectedAvailability && (
-                        <div className="rounded-lg bg-primary/10 border border-primary/30 p-3">
+                        <div className="rounded-lg bg-primary/10 border border-primary/20 p-3">
                             <div className="flex items-start justify-between gap-2">
                                 <p className="text-xs text-primary font-medium flex-1">
-                                    💡 Tip: Click on multiple consecutive dates to set availability for a range. Dates must be in sequence without gaps.
+                                    💡 Tip: Click on multiple consecutive dates to set availability for a range.
                                 </p>
                                 {selectedDates.length > 1 && (
                                     <button
@@ -797,10 +795,10 @@ export default function WorkerAvailability() {
                             </div>
                         </div>
                     )}
-                    
+
                     {/* Status Selector */}
                     <div className="flex flex-col gap-3">
-                        <label className="text-text-muted text-xs font-bold uppercase tracking-wider">
+                        <label className="text-muted-foreground text-xs font-bold uppercase tracking-wider">
                             Availability Status
                         </label>
                         <div className="grid grid-cols-2 gap-2">
@@ -812,9 +810,9 @@ export default function WorkerAvailability() {
                                     onChange={() => setAvailabilityStatus("available")}
                                     className="peer hidden"
                                 />
-                                <div className="h-20 rounded-xl border-2 border-border-dark bg-surface-dark p-3 flex flex-col items-center justify-center gap-2 peer-checked:border-primary peer-checked:bg-primary/10 transition-all">
-                                    <CheckCircle2 className="h-5 w-5 text-text-muted peer-checked:text-primary group-hover:scale-110 transition-transform" />
-                                    <span className="text-sm font-bold text-white">Available</span>
+                                <div className="h-20 rounded-xl border-2 border-border bg-card p-3 flex flex-col items-center justify-center gap-2 peer-checked:border-primary peer-checked:bg-primary/5 transition-all text-muted-foreground peer-checked:text-foreground">
+                                    <CheckCircle2 className="h-5 w-5 peer-checked:text-primary group-hover:scale-110 transition-transform" />
+                                    <span className="text-sm font-bold">Available</span>
                                 </div>
                             </label>
                             <label className="cursor-pointer group">
@@ -825,9 +823,9 @@ export default function WorkerAvailability() {
                                     onChange={() => setAvailabilityStatus("blocked")}
                                     className="peer hidden"
                                 />
-                                <div className="h-20 rounded-xl border-2 border-border-dark bg-surface-dark p-3 flex flex-col items-center justify-center gap-2 peer-checked:border-red-400 peer-checked:bg-red-400/10 transition-all">
-                                    <Ban className="h-5 w-5 text-text-muted peer-checked:text-red-400 group-hover:scale-110 transition-transform" />
-                                    <span className="text-sm font-bold text-white">Blocked</span>
+                                <div className="h-20 rounded-xl border-2 border-border bg-card p-3 flex flex-col items-center justify-center gap-2 peer-checked:border-destructive peer-checked:bg-destructive/5 transition-all text-muted-foreground peer-checked:text-foreground">
+                                    <Ban className="h-5 w-5 peer-checked:text-destructive group-hover:scale-110 transition-transform" />
+                                    <span className="text-sm font-bold">Blocked</span>
                                 </div>
                             </label>
                         </div>
@@ -836,7 +834,7 @@ export default function WorkerAvailability() {
                     {/* Time Slider Section */}
                     <div className="flex flex-col gap-4">
                         <div className="flex items-center justify-between">
-                            <label className="text-text-muted text-xs font-bold uppercase tracking-wider">
+                            <label className="text-muted-foreground text-xs font-bold uppercase tracking-wider">
                                 Time Slots
                             </label>
                             <button
@@ -849,73 +847,70 @@ export default function WorkerAvailability() {
                                 Reset
                             </button>
                         </div>
-                        <div className="p-4 rounded-xl bg-surface-dark border border-border-dark space-y-4">
+                        <div className="p-4 rounded-xl bg-card border border-border space-y-4">
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="flex flex-col gap-2">
-                                    <label className="text-xs text-text-muted font-medium">Start Time</label>
+                                    <label className="text-xs text-muted-foreground font-medium">Start Time</label>
                                     <Input
                                         type="time"
                                         value={timeRange.start}
                                         onChange={(e) => handleTimeInputChange("start", e.target.value)}
-                                        className="bg-surface-darker border-border-dark text-white"
+                                        className="bg-background border-border"
                                     />
                                 </div>
                                 <div className="flex flex-col gap-2">
-                                    <label className="text-xs text-text-muted font-medium">End Time</label>
+                                    <label className="text-xs text-muted-foreground font-medium">End Time</label>
                                     <Input
                                         type="time"
                                         value={timeRange.end}
                                         onChange={(e) => handleTimeInputChange("end", e.target.value)}
-                                        className="bg-surface-darker border-border-dark text-white"
+                                        className="bg-background border-border"
                                     />
                                 </div>
                             </div>
                             {/* Range Slider Visualization */}
-                            <div className="relative h-2 bg-[#234832] rounded-full w-full">
-                                <div 
+                            <div className="relative h-2 bg-muted rounded-full w-full">
+                                <div
                                     className="absolute top-0 bottom-0 bg-primary rounded-full"
                                     style={{
                                         left: `${startPosition}%`,
                                         right: `${100 - endPosition}%`
                                     }}
                                 ></div>
-                                <div 
-                                    className="absolute top-1/2 -translate-y-1/2 size-4 bg-white rounded-full shadow-lg cursor-pointer hover:scale-110 transition-transform"
+                                <div
+                                    className="absolute top-1/2 -translate-y-1/2 size-4 bg-background border-2 border-primary rounded-full shadow-lg cursor-pointer hover:scale-110 transition-transform"
                                     style={{ left: `${startPosition}%`, transform: 'translate(-50%, -50%)' }}
                                 ></div>
-                                <div 
-                                    className="absolute top-1/2 -translate-y-1/2 size-4 bg-white rounded-full shadow-lg cursor-pointer hover:scale-110 transition-transform"
+                                <div
+                                    className="absolute top-1/2 -translate-y-1/2 size-4 bg-background border-2 border-primary rounded-full shadow-lg cursor-pointer hover:scale-110 transition-transform"
                                     style={{ left: `${endPosition}%`, transform: 'translate(-50%, -50%)' }}
                                 ></div>
                             </div>
                             <div className="flex gap-2 mt-2">
                                 <button
                                     onClick={() => handleTimeSlotChange("morning")}
-                                    className={`flex-1 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-                                        timeSlot === "morning"
-                                            ? "bg-primary text-background-dark font-bold border-primary"
-                                            : "bg-surface-darker text-text-muted hover:text-white border-transparent hover:border-border-dark"
-                                    }`}
+                                    className={`flex-1 py-1.5 rounded-lg text-xs font-medium border transition-all ${timeSlot === "morning"
+                                            ? "bg-primary text-primary-foreground font-bold border-primary"
+                                            : "bg-muted text-muted-foreground hover:text-foreground border-transparent"
+                                        }`}
                                 >
                                     Morning
                                 </button>
                                 <button
                                     onClick={() => handleTimeSlotChange("allday")}
-                                    className={`flex-1 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-                                        timeSlot === "allday"
-                                            ? "bg-primary text-background-dark font-bold border-primary"
-                                            : "bg-surface-darker text-text-muted hover:text-white border-transparent hover:border-border-dark"
-                                    }`}
+                                    className={`flex-1 py-1.5 rounded-lg text-xs font-medium border transition-all ${timeSlot === "allday"
+                                            ? "bg-primary text-primary-foreground font-bold border-primary"
+                                            : "bg-muted text-muted-foreground hover:text-foreground border-transparent"
+                                        }`}
                                 >
                                     All Day
                                 </button>
                                 <button
                                     onClick={() => handleTimeSlotChange("afternoon")}
-                                    className={`flex-1 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-                                        timeSlot === "afternoon"
-                                            ? "bg-primary text-background-dark font-bold border-primary"
-                                            : "bg-surface-darker text-text-muted hover:text-white border-transparent hover:border-border-dark"
-                                    }`}
+                                    className={`flex-1 py-1.5 rounded-lg text-xs font-medium border transition-all ${timeSlot === "afternoon"
+                                            ? "bg-primary text-primary-foreground font-bold border-primary"
+                                            : "bg-muted text-muted-foreground hover:text-foreground border-transparent"
+                                        }`}
                                 >
                                     Afternoon
                                 </button>
@@ -925,43 +920,43 @@ export default function WorkerAvailability() {
 
                     {/* Upcoming Missions */}
                     <div className="flex flex-col gap-3">
-                        <label className="text-text-muted text-xs font-bold uppercase tracking-wider">
+                        <label className="text-muted-foreground text-xs font-bold uppercase tracking-wider">
                             Upcoming Missions
                         </label>
                         {upcomingMissions.length === 0 ? (
-                            <div className="p-6 rounded-xl bg-surface-dark border border-border-dark text-center">
-                                <Calendar className="h-8 w-8 text-text-muted mx-auto mb-2 opacity-50" />
-                                <p className="text-sm text-text-muted">No upcoming missions</p>
-                                <p className="text-xs text-text-muted/70 mt-1">Your confirmed missions will appear here</p>
+                            <div className="p-6 rounded-xl bg-muted/50 border border-border text-center">
+                                <Calendar className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
+                                <p className="text-sm text-foreground">No upcoming missions</p>
+                                <p className="text-xs text-muted-foreground mt-1">Your confirmed missions will appear here</p>
                             </div>
                         ) : (
                             upcomingMissions.map((mission) => (
-                            <div
-                                key={mission.id}
-                                className="flex gap-3 p-3 rounded-xl relative overflow-hidden group cursor-pointer transition-all hover:scale-[1.02] bg-[#234832] text-white border border-[#326747]"
-                            >
-                                <div className="size-10 rounded-full flex items-center justify-center flex-none bg-[#326747]">
-                                    <Stethoscope className="h-5 w-5 text-primary" />
+                                <div
+                                    key={mission.id}
+                                    className="flex gap-3 p-3 rounded-xl relative overflow-hidden group cursor-pointer transition-all hover:scale-[1.02] bg-card border border-border hover:border-primary/50 shadow-sm"
+                                >
+                                    <div className="size-10 rounded-full flex items-center justify-center flex-none bg-primary/10 text-primary">
+                                        <Stethoscope className="h-5 w-5" />
+                                    </div>
+                                    <div className="flex flex-col min-w-0">
+                                        <h4 className="font-bold text-sm truncate text-foreground">{mission.name}</h4>
+                                        <p className="text-xs truncate text-muted-foreground">
+                                            {mission.date} • {mission.timeRange}
+                                        </p>
+                                    </div>
+                                    <button className="ml-auto flex items-center justify-center size-8 rounded-full transition-colors hover:bg-muted text-muted-foreground hover:text-foreground">
+                                        <ArrowRight className="h-4 w-4" />
+                                    </button>
                                 </div>
-                                <div className="flex flex-col min-w-0">
-                                    <h4 className="font-bold text-sm truncate">{mission.name}</h4>
-                                    <p className="text-xs truncate text-text-muted">
-                                        {mission.date} • {mission.timeRange}
-                                    </p>
-                                </div>
-                                <button className="ml-auto flex items-center justify-center size-8 rounded-full transition-colors hover:bg-white/10 text-text-muted hover:text-white">
-                                    <ArrowRight className="h-4 w-4" />
-                                </button>
-                            </div>
-                        )))}
+                            )))}
                     </div>
                 </div>
 
                 {/* Footer Actions */}
-                <div className="p-6 pt-4 border-t border-border-dark bg-surface-darker">
+                <div className="p-6 pt-4 border-t border-border bg-card">
                     {selectedAvailability ? (
                         <div className="space-y-3">
-                            <div className="text-xs text-text-muted text-center mb-2">
+                            <div className="text-xs text-muted-foreground text-center mb-2">
                                 {selectedAvailability.status === "blocked" ? "Blocked" : "Available"} time exists for this day. You can update or remove it.
                             </div>
                             <div className="grid grid-cols-2 gap-3">
@@ -974,11 +969,10 @@ export default function WorkerAvailability() {
                                 </Button>
                                 <Button
                                     onClick={handleSaveAvailability}
-                                    className={`w-full h-12 rounded-full text-base font-bold transition-all ${
-                                        availabilityStatus === "blocked"
-                                            ? "bg-red-600 hover:bg-red-700 text-white shadow-[0_0_15px_rgba(220,38,38,0.2)]"
-                                            : "bg-primary hover:bg-[#20bd5e] text-background-dark shadow-[0_0_15px_rgba(43,238,121,0.2)]"
-                                    }`}
+                                    className={`w-full h-12 rounded-full text-base font-bold transition-all ${availabilityStatus === "blocked"
+                                            ? "bg-destructive hover:bg-destructive/90 text-destructive-foreground shadow-sm"
+                                            : "bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm"
+                                        }`}
                                 >
                                     {availabilityStatus === "blocked" ? "Update to Blocked" : "Update to Available"}
                                 </Button>
@@ -987,11 +981,10 @@ export default function WorkerAvailability() {
                     ) : (
                         <Button
                             onClick={handleSaveAvailability}
-                            className={`w-full h-12 rounded-full text-base font-bold transition-all ${
-                                availabilityStatus === "blocked"
-                                    ? "bg-red-600 hover:bg-red-700 text-white shadow-[0_0_15px_rgba(220,38,38,0.2)]"
-                                    : "bg-primary hover:bg-[#20bd5e] text-background-dark shadow-[0_0_15px_rgba(43,238,121,0.2)]"
-                            }`}
+                            className={`w-full h-12 rounded-full text-base font-bold transition-all ${availabilityStatus === "blocked"
+                                    ? "bg-destructive hover:bg-destructive/90 text-destructive-foreground shadow-sm"
+                                    : "bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm"
+                                }`}
                         >
                             {availabilityStatus === "blocked" ? "Save Blocking" : "Save Availability"}
                         </Button>

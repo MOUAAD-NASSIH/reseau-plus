@@ -10,12 +10,16 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Label } from "@/components/ui/label";
+import { ProfilePictureUpload } from "@/components/common/ProfilePictureUpload";
 import { useGetCurrentUserQuery } from "@/features/api/endpoints/authEndpoints";
-import { useGetAdminDashboardQuery } from "@/features/api/endpoints/adminEndpoints";
+import { useGetAdminDashboardQuery, useUploadAdminProfilePictureMutation, useDeleteAdminProfilePictureMutation } from "@/features/api/endpoints/adminEndpoints";
+import { showSuccessToast, showErrorToast } from "@/lib/toast";
 
 export default function AdminProfile() {
     const { data: userData, isLoading: userLoading } = useGetCurrentUserQuery();
     const { data: dashboardData, isLoading: dashboardLoading } = useGetAdminDashboardQuery();
+    const [uploadProfilePicture, { isLoading: isUploading }] = useUploadAdminProfilePictureMutation();
+    const [deleteProfilePicture, { isLoading: isDeleting }] = useDeleteAdminProfilePictureMutation();
 
     const user = userData?.data?.user;
     const stats = dashboardData?.data;
@@ -71,6 +75,42 @@ export default function AdminProfile() {
         return "ACTIVE";
     };
 
+    // Get profile picture URL
+    const getProfilePicture = () => {
+        if (!user) return null;
+        if ("profilePicture" in user) {
+            return user.profilePicture as string | null;
+        }
+        return null;
+    };
+
+    // Handle profile picture upload
+    const handleUpload = async (file: File) => {
+        const formData = new FormData();
+        formData.append("profilePicture", file);
+
+        try {
+            await uploadProfilePicture(formData).unwrap();
+            showSuccessToast("Profile picture uploaded successfully");
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : "Failed to upload profile picture";
+            showErrorToast(error, errorMessage);
+            throw error;
+        }
+    };
+
+    // Handle profile picture delete
+    const handleDelete = async () => {
+        try {
+            await deleteProfilePicture().unwrap();
+            showSuccessToast("Profile picture deleted successfully");
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : "Failed to delete profile picture";
+            showErrorToast(error, errorMessage);
+            throw error;
+        }
+    };
+
     return (
         <div className="space-y-6">
             {/* Profile Card */}
@@ -93,6 +133,19 @@ export default function AdminProfile() {
                         </div>
                     ) : (
                         <div className="space-y-6">
+                            {/* Profile Picture Upload */}
+                            <div className="flex justify-center pb-4 border-b">
+                                <ProfilePictureUpload
+                                    currentImage={getProfilePicture()}
+                                    name={getEmail()}
+                                    onUpload={handleUpload}
+                                    onDelete={handleDelete}
+                                    isLoading={isUploading}
+                                    isDeleting={isDeleting}
+                                    size="xl"
+                                />
+                            </div>
+
                             {/* Email */}
                             <div className="space-y-1">
                                 <Label className="text-muted-foreground flex items-center gap-1">

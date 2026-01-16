@@ -14,12 +14,15 @@ import {
     AlertCircle,
     Trash2,
     ExternalLink,
+    Filter
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/common/EmptyState";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
     useGetNotificationsQuery,
     useMarkAsReadMutation,
@@ -63,9 +66,6 @@ const getNotificationRedirectUrl = (type: NotificationType, role: string): strin
     }
 };
 
-/**
- * Render icon for notification type
- */
 function NotificationIcon({ type, className }: { type: NotificationType; className?: string }) {
     const iconClass = className || "h-5 w-5";
     switch (type) {
@@ -93,30 +93,52 @@ function NotificationIcon({ type, className }: { type: NotificationType; classNa
     }
 }
 
-/**
- * Get color class for notification type
- */
-function getNotificationColor(type: NotificationType): string {
+function getNotificationStyles(type: NotificationType) {
     switch (type) {
         case "APPLICATION_ACCEPTED":
         case "ASSIGNMENT_COMPLETED":
         case "PAYMENT_RECEIVED":
         case "WORKER_VERIFIED":
         case "DOCUMENT_APPROVED":
-            return "text-success bg-success/10";
+            return {
+                bg: "bg-emerald-50 dark:bg-emerald-950/20",
+                border: "border-emerald-200 dark:border-emerald-900/50",
+                iconBg: "bg-emerald-100 dark:bg-emerald-900/40",
+                iconColor: "text-emerald-600 dark:text-emerald-400"
+            };
         case "APPLICATION_REJECTED":
         case "ASSIGNMENT_CANCELLED":
         case "PAYMENT_FAILED":
         case "WORKER_REJECTED":
         case "DOCUMENT_REJECTED":
-            return "text-destructive bg-destructive/10";
+            return {
+                bg: "bg-red-50 dark:bg-red-950/20",
+                border: "border-red-200 dark:border-red-900/50",
+                iconBg: "bg-red-100 dark:bg-red-900/40",
+                iconColor: "text-red-600 dark:text-red-400"
+            };
         case "APPLICATION_SUBMITTED":
         case "ASSIGNMENT_CREATED":
-            return "text-info bg-info/10";
+            return {
+                bg: "bg-blue-50 dark:bg-blue-950/20",
+                border: "border-blue-200 dark:border-blue-900/50",
+                iconBg: "bg-blue-100 dark:bg-blue-900/40",
+                iconColor: "text-blue-600 dark:text-blue-400"
+            };
         case "REVIEW_RECEIVED":
-            return "text-warning bg-warning/10";
+            return {
+                bg: "bg-yellow-50 dark:bg-yellow-950/20",
+                border: "border-yellow-200 dark:border-yellow-900/50",
+                iconBg: "bg-yellow-100 dark:bg-yellow-900/40",
+                iconColor: "text-yellow-600 dark:text-yellow-400"
+            };
         default:
-            return "text-muted-foreground bg-muted";
+            return {
+                bg: "bg-card",
+                border: "border-border",
+                iconBg: "bg-muted",
+                iconColor: "text-muted-foreground"
+            };
     }
 }
 
@@ -139,86 +161,115 @@ function NotificationCard({
     isDeleting,
     userRole,
 }: NotificationCardProps) {
-    const colorClass = getNotificationColor(notification.type);
+    const styles = getNotificationStyles(notification.type);
     const redirectUrl = getNotificationRedirectUrl(notification.type, userRole);
 
     const handleClick = () => {
-        // Mark as read if not already read
         if (!notification.isRead) {
             onMarkAsRead(notification.id);
         }
-        // Navigate to the relevant page
         onNavigate(notification);
     };
 
     return (
-        <Card
-            className={cn(
-                !notification.isRead && "border-primary/50 bg-primary/5",
-                redirectUrl && "cursor-pointer hover:bg-accent/50 transition-colors"
-            )}
+        <div
             onClick={redirectUrl ? handleClick : undefined}
+            className={cn(
+                "group relative overflow-hidden rounded-xl border p-4 transition-all duration-300",
+                styles.bg,
+                styles.border,
+                redirectUrl ? "cursor-pointer hover:shadow-md hover:scale-[1.01]" : "",
+                !notification.isRead ? "shadow-sm ring-1 ring-primary/20" : "opacity-80 hover:opacity-100"
+            )}
         >
-            <CardContent className="p-4">
-                <div className="flex items-start gap-4">
-                    <div className={cn("p-2 rounded-full shrink-0", colorClass)}>
+            <div className="flex gap-4">
+                {/* Icon */}
+                <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-full", styles.iconBg)}>
+                    <div className={styles.iconColor}>
                         <NotificationIcon type={notification.type} />
                     </div>
-                    <div className="flex-1 min-w-0">
-                        <p className={cn("text-sm", !notification.isRead && "font-medium")}>
+                </div>
+
+                {/* Content */}
+                <div className="flex-1 space-y-1">
+                    <div className="flex items-start justify-between gap-4">
+                        <p className={cn("text-sm", !notification.isRead ? "font-bold text-foreground" : "font-medium text-foreground/80")}>
                             {notification.message}
                         </p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                            {formatDistanceToNow(new Date(notification.createdAt), {
-                                addSuffix: true,
-                            })}
-                        </p>
+                        <span className="text-[10px] text-muted-foreground whitespace-nowrap shrink-0">
+                            {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
+                        </span>
                     </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                        {redirectUrl && (
-                            <ExternalLink className="h-4 w-4 text-muted-foreground" />
-                        )}
-                        {!notification.isRead && (
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    onMarkAsRead(notification.id);
-                                }}
-                                disabled={isMarkingAsRead}
-                                title="Mark as read"
-                                aria-label="Mark notification as read"
-                            >
-                                {isMarkingAsRead ? (
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                ) : (
-                                    <Check className="h-4 w-4" />
-                                )}
-                            </Button>
-                        )}
+
+                    {!notification.isRead && (
+                        <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                            New
+                        </span>
+                    )}
+                </div>
+
+                {/* Actions */}
+                <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity absolute right-2 top-2 sm:static sm:opacity-100">
+                    {!notification.isRead && (
                         <Button
                             variant="ghost"
                             size="icon"
+                            className="h-8 w-8 hover:bg-background/50 rounded-full"
                             onClick={(e) => {
                                 e.stopPropagation();
-                                onDelete(notification.id);
+                                onMarkAsRead(notification.id);
                             }}
-                            disabled={isDeleting}
-                            title="Delete notification"
-                            aria-label="Delete notification"
-                            className="text-muted-foreground hover:text-destructive"
+                            disabled={isMarkingAsRead}
                         >
-                            {isDeleting ? (
+                            {isMarkingAsRead ? (
                                 <Loader2 className="h-4 w-4 animate-spin" />
                             ) : (
-                                <Trash2 className="h-4 w-4" />
+                                <Check className="h-4 w-4 text-primary" />
                             )}
+                            <span className="sr-only">Mark as read</span>
                         </Button>
+                    )}
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 hover:bg-background/50 rounded-full text-muted-foreground hover:text-destructive"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onDelete(notification.id);
+                        }}
+                        disabled={isDeleting}
+                    >
+                        {isDeleting ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                            <Trash2 className="h-4 w-4" />
+                        )}
+                        <span className="sr-only">Delete</span>
+                    </Button>
+                </div>
+            </div>
+
+            {/* Unread Indicator Dot */}
+            {!notification.isRead && (
+                <div className="absolute top-4 right-4 h-2 w-2 rounded-full bg-primary animate-pulse sm:hidden" />
+            )}
+        </div>
+    );
+}
+
+function NotificationsSkeleton() {
+    return (
+        <div className="space-y-4">
+            {[1, 2, 3].map((i) => (
+                <div key={i} className="flex gap-4 p-4 rounded-xl bg-muted/20 animate-pulse border border-border/50">
+                    <div className="h-10 w-10 rounded-full bg-muted/40 shrink-0" />
+                    <div className="flex-1 space-y-2">
+                        <div className="h-4 w-3/4 rounded bg-muted/40" />
+                        <div className="h-3 w-1/4 rounded bg-muted/40" />
                     </div>
                 </div>
-            </CardContent>
-        </Card>
+            ))}
+        </div>
     );
 }
 
@@ -272,168 +323,107 @@ export default function WorkerNotifications() {
     };
 
     return (
-        <div className="space-y-6">
-            {/* Summary Cards */}
-            <div className="grid gap-4 md:grid-cols-3">
-                <Card>
-                    <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm text-muted-foreground">
-                                    Total Notifications
-                                </p>
-                                <p className="text-2xl font-bold">{notifications.length}</p>
-                            </div>
-                            <div className="p-2 rounded-lg bg-primary/10">
-                                <Bell className="h-5 w-5 text-primary" />
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm text-muted-foreground">Unread</p>
-                                <p className="text-2xl font-bold">
-                                    {unreadNotifications.length}
-                                </p>
-                            </div>
-                            <div className="p-2 rounded-lg bg-info/10">
-                                <AlertCircle className="h-5 w-5 text-info" />
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm text-muted-foreground">Read</p>
-                                <p className="text-2xl font-bold">
-                                    {notifications.length - unreadNotifications.length}
-                                </p>
-                            </div>
-                            <div className="p-2 rounded-lg bg-success/10">
-                                <CheckCheck className="h-5 w-5 text-success" />
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
+        <div className="max-w-4xl mx-auto space-y-8 pb-12">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="p-4">
+                    <h1 className="text-3xl font-black font-spline tracking-tight flex items-center gap-3">
+                        <Bell className="h-8 w-8 text-primary" />
+                        Notifications
+                    </h1>
+                    <p className="text-muted-foreground mt-1">
+                        Stay updated on your missions, applications, and payments
+                    </p>
+                </div>
+                {unreadNotifications.length > 0 && (
+                    <Button
+                        onClick={handleMarkAllAsRead}
+                        disabled={isMarkingAllAsRead}
+                        className="rounded-full shadow-lg shadow-primary/20"
+                    >
+                        {isMarkingAllAsRead ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                            <CheckCheck className="mr-2 h-4 w-4" />
+                        )}
+                        Mark all as read
+                    </Button>
+                )}
             </div>
 
-            {/* Notifications List */}
-            <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-                    <div>
-                        <CardTitle>Notifications</CardTitle>
-                        <CardDescription>
-                            Stay updated with your activity on the platform
-                        </CardDescription>
-                    </div>
-                    {unreadNotifications.length > 0 && (
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={handleMarkAllAsRead}
-                            disabled={isMarkingAllAsRead}
-                        >
-                            {isMarkingAllAsRead ? (
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            ) : (
-                                <CheckCheck className="mr-2 h-4 w-4" />
+            <Tabs
+                value={activeTab}
+                onValueChange={(v) => setActiveTab(v as "all" | "unread")}
+                className="space-y-6"
+            >
+                <div className="flex items-center justify-between">
+                    <TabsList className="bg-muted/50 rounded-full h-11 p-1">
+                        <TabsTrigger value="all" className="rounded-full px-6 h-full transition-all">
+                            All Notifications
+                            <Badge variant="secondary" className="ml-2 bg-background/50 text-foreground text-xs">{notifications.length}</Badge>
+                        </TabsTrigger>
+                        <TabsTrigger value="unread" className="rounded-full px-6 h-full transition-all">
+                            Unread
+                            {unreadNotifications.length > 0 && (
+                                <Badge variant="destructive" className="ml-2 text-xs">{unreadNotifications.length}</Badge>
                             )}
-                            Mark all as read
-                        </Button>
-                    )}
-                </CardHeader>
-                <CardContent>
-                    <Tabs
-                        value={activeTab}
-                        onValueChange={(v) => setActiveTab(v as "all" | "unread")}
-                    >
-                        <TabsList className="mb-4">
-                            <TabsTrigger value="all">
-                                All ({notifications.length})
-                            </TabsTrigger>
-                            <TabsTrigger value="unread">
-                                Unread ({unreadNotifications.length})
-                            </TabsTrigger>
-                        </TabsList>
+                        </TabsTrigger>
+                    </TabsList>
+                </div>
 
-                        <TabsContent value="all" className="space-y-3 mt-0">
-                            {isLoading ? (
-                                <NotificationsSkeleton />
-                            ) : displayedNotifications.length === 0 ? (
-                                <EmptyState
-                                    icon={Bell}
-                                    title="No notifications"
-                                    description="You're all caught up! New notifications will appear here."
+                <TabsContent value="all" className="space-y-4 mt-0 min-h-[300px]">
+                    {isLoading ? (
+                        <NotificationsSkeleton />
+                    ) : displayedNotifications.length === 0 ? (
+                        <EmptyState
+                            icon={Bell}
+                            title="No notifications"
+                            description="You're all caught up! Important updates will appear here."
+                        />
+                    ) : (
+                        <div className="space-y-3">
+                            {displayedNotifications.map((notification) => (
+                                <NotificationCard
+                                    key={notification.id}
+                                    notification={notification}
+                                    onMarkAsRead={handleMarkAsRead}
+                                    onDelete={handleDelete}
+                                    onNavigate={handleNotificationClick}
+                                    isMarkingAsRead={markingId === notification.id}
+                                    isDeleting={deletingId === notification.id}
+                                    userRole={userRole}
                                 />
-                            ) : (
-                                displayedNotifications.map((notification) => (
-                                    <NotificationCard
-                                        key={notification.id}
-                                        notification={notification}
-                                        onMarkAsRead={handleMarkAsRead}
-                                        onDelete={handleDelete}
-                                        onNavigate={handleNotificationClick}
-                                        isMarkingAsRead={markingId === notification.id}
-                                        isDeleting={deletingId === notification.id}
-                                        userRole={userRole}
-                                    />
-                                ))
-                            )}
-                        </TabsContent>
-
-                        <TabsContent value="unread" className="space-y-3 mt-0">
-                            {isLoading ? (
-                                <NotificationsSkeleton />
-                            ) : unreadNotifications.length === 0 ? (
-                                <EmptyState
-                                    icon={CheckCheck}
-                                    title="No unread notifications"
-                                    description="You've read all your notifications."
-                                />
-                            ) : (
-                                unreadNotifications.map((notification) => (
-                                    <NotificationCard
-                                        key={notification.id}
-                                        notification={notification}
-                                        onMarkAsRead={handleMarkAsRead}
-                                        onDelete={handleDelete}
-                                        onNavigate={handleNotificationClick}
-                                        isMarkingAsRead={markingId === notification.id}
-                                        isDeleting={deletingId === notification.id}
-                                        userRole={userRole}
-                                    />
-                                ))
-                            )}
-                        </TabsContent>
-                    </Tabs>
-                </CardContent>
-            </Card>
-        </div>
-    );
-}
-
-function NotificationsSkeleton() {
-    return (
-        <div className="space-y-3">
-            {[1, 2, 3, 4, 5].map((i) => (
-                <Card key={i}>
-                    <CardContent className="p-4">
-                        <div className="flex items-start gap-4">
-                            <Skeleton className="h-9 w-9 rounded-full" />
-                            <div className="flex-1 space-y-2">
-                                <Skeleton className="h-4 w-3/4" />
-                                <Skeleton className="h-3 w-1/4" />
-                            </div>
+                            ))}
                         </div>
-                    </CardContent>
-                </Card>
-            ))}
+                    )}
+                </TabsContent>
+
+                <TabsContent value="unread" className="space-y-4 mt-0 min-h-[300px]">
+                    {isLoading ? (
+                        <NotificationsSkeleton />
+                    ) : unreadNotifications.length === 0 ? (
+                        <EmptyState
+                            icon={CheckCheck}
+                            title="No unread notifications"
+                            description="Great job! You've read all your notifications."
+                        />
+                    ) : (
+                        <div className="space-y-3">
+                            {unreadNotifications.map((notification) => (
+                                <NotificationCard
+                                    key={notification.id}
+                                    notification={notification}
+                                    onMarkAsRead={handleMarkAsRead}
+                                    onDelete={handleDelete}
+                                    onNavigate={handleNotificationClick}
+                                    isMarkingAsRead={markingId === notification.id}
+                                    isDeleting={deletingId === notification.id}
+                                    userRole={userRole}
+                                />
+                            ))}
+                        </div>
+                    )}
+                </TabsContent>
+            </Tabs>
         </div>
     );
 }
-

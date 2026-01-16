@@ -6,9 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ProfilePictureUpload } from "@/components/common/ProfilePictureUpload";
 import {
     useGetInstitutionProfileQuery,
     useUpdateInstitutionProfileMutation,
+    useUploadInstitutionLogoMutation,
+    useDeleteInstitutionLogoMutation,
 } from "@/features/api/endpoints/institutionEndpoints";
 import { updateInstitutionProfileSchema, type UpdateInstitutionProfileInput } from "@/features/validation/institutionSchemas";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
@@ -16,6 +19,8 @@ import { showSuccessToast, showErrorToast } from "@/lib/toast";
 export default function InstitutionProfile() {
     const { data: profileData, isLoading } = useGetInstitutionProfileQuery();
     const [updateProfile] = useUpdateInstitutionProfileMutation();
+    const [uploadLogo, { isLoading: isUploadingLogo }] = useUploadInstitutionLogoMutation();
+    const [deleteLogo, { isLoading: isDeletingLogo }] = useDeleteInstitutionLogoMutation();
 
     const institution = profileData?.data;
 
@@ -55,6 +60,28 @@ export default function InstitutionProfile() {
         }
     };
 
+    const handleLogoUpload = async (file: File) => {
+        try {
+            const formData = new FormData();
+            formData.append('logo', file);
+            await uploadLogo(formData).unwrap();
+            showSuccessToast("Logo updated", "Your institution logo has been uploaded successfully.");
+        } catch (error) {
+            showErrorToast(error, "Failed to upload logo");
+            throw error;
+        }
+    };
+
+    const handleLogoDelete = async () => {
+        try {
+            await deleteLogo().unwrap();
+            showSuccessToast("Logo deleted", "Your institution logo has been removed.");
+        } catch (error) {
+            showErrorToast(error, "Failed to delete logo");
+            throw error;
+        }
+    };
+
     if (isLoading) {
         return (
             <Card>
@@ -84,6 +111,20 @@ export default function InstitutionProfile() {
             </CardHeader>
             <CardContent>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                    {/* Logo Upload Section */}
+                    <div className="flex flex-col items-center pb-6 border-b">
+                        <Label className="mb-4 text-sm font-medium">Institution Logo</Label>
+                        <ProfilePictureUpload
+                            currentImage={institution?.logo}
+                            name={institution?.institutionName || 'Institution'}
+                            onUpload={handleLogoUpload}
+                            onDelete={handleLogoDelete}
+                            isLoading={isUploadingLogo}
+                            isDeleting={isDeletingLogo}
+                            size="xl"
+                        />
+                    </div>
+
                     <div className="grid gap-4 md:grid-cols-2">
                         {/* Institution Name */}
                         <div className="space-y-2 md:col-span-2">
@@ -193,4 +234,3 @@ export default function InstitutionProfile() {
         </Card>
     );
 }
-

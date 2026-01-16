@@ -1,8 +1,27 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { prisma } from "../lib/prisma";
 import { AuthenticatedRequest } from "../middleware/authMiddleware";
+import { socketEmitter } from "../socket/emitter";
+import type { MessagePayload } from "../types/socket.types";
 
-// Get or create conversation between two users
+const userSelectWithProfile = {
+    id: true,
+    email: true,
+    profilePicture: true,
+    worker: {
+        select: {
+            firstName: true,
+            lastName: true
+        }
+    },
+    institution: {
+        select: {
+            institutionName: true,
+            logo: true
+        }
+    }
+};
+
 export const getOrCreateConversation = async (req: AuthenticatedRequest, res: Response) => {
     try {
         const userId = req.user!.userId;
@@ -13,9 +32,8 @@ export const getOrCreateConversation = async (req: AuthenticatedRequest, res: Re
             return res.status(400).json({ success: false, message: "Invalid user ID" });
         }
 
-        // Check if conversation already exists
         const participantIds = [userId, otherUserIdInt].sort();
-        
+
         let conversation = await prisma.conversation.findFirst({
             where: {
                 AND: [
@@ -28,50 +46,13 @@ export const getOrCreateConversation = async (req: AuthenticatedRequest, res: Re
                     orderBy: { createdAt: "desc" },
                     take: 50,
                     include: {
-                        sender: {
-                            select: {
-                                id: true,
-                                email: true,
-                                worker: {
-                                    select: {
-                                        firstName: true,
-                                        lastName: true,
-                                        profilePicture: true
-                                    }
-                                },
-                                institution: {
-                                    select: {
-                                        institutionName: true,
-                                        logo: true
-                                    }
-                                }
-                            }
-                        },
-                        receiver: {
-                            select: {
-                                id: true,
-                                email: true,
-                                worker: {
-                                    select: {
-                                        firstName: true,
-                                        lastName: true,
-                                        profilePicture: true
-                                    }
-                                },
-                                institution: {
-                                    select: {
-                                        institutionName: true,
-                                        logo: true
-                                    }
-                                }
-                            }
-                        }
+                        sender: { select: userSelectWithProfile },
+                        receiver: { select: userSelectWithProfile }
                     }
                 }
             }
         });
 
-        // Create new conversation if doesn't exist
         if (!conversation) {
             conversation = await prisma.conversation.create({
                 data: {
@@ -80,76 +61,23 @@ export const getOrCreateConversation = async (req: AuthenticatedRequest, res: Re
                 include: {
                     messages: {
                         include: {
-                            sender: {
-                                select: {
-                                    id: true,
-                                    email: true,
-                                    worker: {
-                                        select: {
-                                            firstName: true,
-                                            lastName: true,
-                                            profilePicture: true
-                                        }
-                                    },
-                                    institution: {
-                                        select: {
-                                            institutionName: true,
-                                            logo: true
-                                        }
-                                    }
-                                }
-                            },
-                            receiver: {
-                                select: {
-                                    id: true,
-                                    email: true,
-                                    worker: {
-                                        select: {
-                                            firstName: true,
-                                            lastName: true,
-                                            profilePicture: true
-                                        }
-                                    },
-                                    institution: {
-                                        select: {
-                                            institutionName: true,
-                                            logo: true
-                                        }
-                                    }
-                                }
-                            }
+                            sender: { select: userSelectWithProfile },
+                            receiver: { select: userSelectWithProfile }
                         }
                     }
                 }
             });
         }
 
-        // Get the other user's info
         const otherParticipantId = participantIds.find(id => id !== userId);
         const otherUser = await prisma.user.findUnique({
             where: { id: otherParticipantId },
-            select: {
-                id: true,
-                email: true,
-                worker: {
-                    select: {
-                        firstName: true,
-                        lastName: true,
-                        profilePicture: true
-                    }
-                },
-                institution: {
-                    select: {
-                        institutionName: true,
-                        logo: true
-                    }
-                }
-            }
+            select: userSelectWithProfile
         });
 
-        return res.status(200).json({ 
-            success: true, 
-            data: { ...conversation, otherUser } 
+        return res.status(200).json({
+            success: true,
+            data: { ...conversation, otherUser }
         });
     } catch (error) {
         console.error("Error getting/creating conversation:", error);
@@ -157,7 +85,7 @@ export const getOrCreateConversation = async (req: AuthenticatedRequest, res: Re
     }
 };
 
-// Get all conversations for current user
+
 export const getMyConversations = async (req: AuthenticatedRequest, res: Response) => {
     try {
         const userId = req.user!.userId;
@@ -171,59 +99,23 @@ export const getMyConversations = async (req: AuthenticatedRequest, res: Respons
             include: {
                 messages: {
                     orderBy: { createdAt: "desc" },
-                    take: 1, // Only get the last message
+                    take: 1,
                     include: {
-                        sender: {
-                            select: {
-                                id: true,
-                                email: true,
-                                worker: {
-                                    select: {
-                                        firstName: true,
-                                        lastName: true,
-                                        profilePicture: true
-                                    }
-                                },
-                                institution: {
-                                    select: {
-                                        institutionName: true,
-                                        logo: true
-                                    }
-                                }
-                            }
-                        }
+                        sender: { select: userSelectWithProfile }
                     }
                 }
             },
             orderBy: { lastMessageAt: "desc" }
         });
 
-        // Get other participant info for each conversation
         const conversationsWithParticipants = await Promise.all(
             conversations.map(async (conv) => {
                 const otherUserId = conv.participantIds.find(id => id !== userId);
                 const otherUser = await prisma.user.findUnique({
                     where: { id: otherUserId },
-                    select: {
-                        id: true,
-                        email: true,
-                        worker: {
-                            select: {
-                                firstName: true,
-                                lastName: true,
-                                profilePicture: true
-                            }
-                        },
-                        institution: {
-                            select: {
-                                institutionName: true,
-                                logo: true
-                            }
-                        }
-                    }
+                    select: userSelectWithProfile
                 });
 
-                // Count unread messages
                 const unreadCount = await prisma.message.count({
                     where: {
                         conversationId: conv.id,
@@ -249,19 +141,15 @@ export const getMyConversations = async (req: AuthenticatedRequest, res: Respons
     }
 };
 
-// Send a message
 export const sendMessage = async (req: AuthenticatedRequest, res: Response) => {
     try {
         const userId = req.user!.userId;
         const { conversationId, content, receiverId } = req.body;
 
-        console.log("Send message request:", { userId, conversationId, content, receiverId });
-
         if (!conversationId || !content || !receiverId) {
             return res.status(400).json({ success: false, message: "Missing required fields" });
         }
 
-        // Verify conversation exists and user is participant
         const conversation = await prisma.conversation.findFirst({
             where: {
                 id: conversationId,
@@ -275,67 +163,63 @@ export const sendMessage = async (req: AuthenticatedRequest, res: Response) => {
             return res.status(404).json({ success: false, message: "Conversation not found" });
         }
 
-        // Create message
+        const receiverIdInt = parseInt(receiverId);
+        if (!conversation.participantIds.includes(receiverIdInt)) {
+            return res.status(403).json({
+                success: false,
+                message: "Receiver is not a participant in this conversation"
+            });
+        }
+
         const message = await prisma.message.create({
             data: {
                 conversationId,
                 senderId: userId,
-                receiverId: parseInt(receiverId),
+                receiverId: receiverIdInt,
                 content,
                 status: "SENT"
             },
             include: {
-                sender: {
-                    select: {
-                        id: true,
-                        email: true,
-                        worker: {
-                            select: {
-                                firstName: true,
-                                lastName: true,
-                                profilePicture: true
-                            }
-                        },
-                        institution: {
-                            select: {
-                                institutionName: true,
-                                logo: true
-                            }
-                        }
-                    }
-                },
-                receiver: {
-                    select: {
-                        id: true,
-                        email: true,
-                        worker: {
-                            select: {
-                                firstName: true,
-                                lastName: true,
-                                profilePicture: true
-                            }
-                        },
-                        institution: {
-                            select: {
-                                institutionName: true,
-                                logo: true
-                            }
-                        }
-                    }
-                }
+                sender: { select: userSelectWithProfile },
+                receiver: { select: userSelectWithProfile }
             }
         });
 
-        // Update conversation's lastMessageAt
         await prisma.conversation.update({
             where: { id: conversationId },
             data: { lastMessageAt: new Date() }
         });
 
-        // Create notification for receiver
+        const messagePayload: MessagePayload = {
+            id: message.id,
+            conversationId: message.conversationId,
+            senderId: message.senderId,
+            receiverId: message.receiverId,
+            content: message.content,
+            status: message.status,
+            createdAt: message.createdAt.toISOString(),
+            updatedAt: message.updatedAt.toISOString(),
+            sender: {
+                id: message.sender.id,
+                email: message.sender.email,
+                profilePicture: message.sender.profilePicture,
+                worker: message.sender.worker ? {
+                    firstName: message.sender.worker.firstName,
+                    lastName: message.sender.worker.lastName,
+                } : undefined,
+                institution: message.sender.institution ? {
+                    institutionName: message.sender.institution.institutionName,
+                    logo: message.sender.institution.logo,
+                } : undefined,
+            },
+        };
+
+        socketEmitter.emitMessage(conversationId, messagePayload);
+        socketEmitter.emitToUser(receiverIdInt, 'message', messagePayload);
+
         await prisma.notification.create({
             data: {
-                userId: parseInt(receiverId),
+                userId: receiverIdInt,
                 type: "MESSAGE",
                 message: `You have a new message`,
                 isRead: false
@@ -349,43 +233,20 @@ export const sendMessage = async (req: AuthenticatedRequest, res: Response) => {
     }
 };
 
-// Mark messages as read
+
 export const markMessagesAsRead = async (req: AuthenticatedRequest, res: Response) => {
     try {
         const userId = req.user!.userId;
         const { conversationId } = req.params;
+        const conversationIdInt = parseInt(conversationId);
 
-        await prisma.message.updateMany({
-            where: {
-                conversationId: parseInt(conversationId),
-                receiverId: userId,
-                status: {
-                    not: "READ"
-                }
-            },
-            data: {
-                status: "READ"
-            }
-        });
+        if (!conversationIdInt || isNaN(conversationIdInt)) {
+            return res.status(400).json({ success: false, message: "Invalid conversation ID" });
+        }
 
-        return res.status(200).json({ success: true, message: "Messages marked as read" });
-    } catch (error) {
-        console.error("Error marking messages as read:", error);
-        return res.status(500).json({ success: false, message: "Failed to mark messages as read" });
-    }
-};
-
-// Get messages for a conversation
-export const getConversationMessages = async (req: AuthenticatedRequest, res: Response) => {
-    try {
-        const userId = req.user!.userId;
-        const { conversationId } = req.params;
-        const { limit = 50, before } = req.query;
-
-        // Verify user is participant
         const conversation = await prisma.conversation.findFirst({
             where: {
-                id: parseInt(conversationId),
+                id: conversationIdInt,
                 participantIds: {
                     has: userId
                 }
@@ -396,58 +257,94 @@ export const getConversationMessages = async (req: AuthenticatedRequest, res: Re
             return res.status(404).json({ success: false, message: "Conversation not found" });
         }
 
-        const messages = await prisma.message.findMany({
+        const result = await prisma.message.updateMany({
             where: {
-                conversationId: parseInt(conversationId),
-                ...(before && { createdAt: { lt: new Date(before as string) } })
-            },
-            include: {
-                sender: {
-                    select: {
-                        id: true,
-                        email: true,
-                        worker: {
-                            select: {
-                                firstName: true,
-                                lastName: true,
-                                profilePicture: true
-                            }
-                        },
-                        institution: {
-                            select: {
-                                institutionName: true,
-                                logo: true
-                            }
-                        }
-                    }
-                },
-                receiver: {
-                    select: {
-                        id: true,
-                        email: true,
-                        worker: {
-                            select: {
-                                firstName: true,
-                                lastName: true,
-                                profilePicture: true
-                            }
-                        },
-                        institution: {
-                            select: {
-                                institutionName: true,
-                                logo: true
-                            }
-                        }
-                    }
+                conversationId: conversationIdInt,
+                receiverId: userId,
+                status: {
+                    not: "READ"
                 }
             },
-            orderBy: { createdAt: "desc" },
-            take: parseInt(limit as string)
+            data: {
+                status: "READ"
+            }
         });
 
-        return res.status(200).json({ success: true, data: messages.reverse() });
+        if (result.count > 0) {
+            socketEmitter.emitMessageRead(conversationIdInt, {
+                conversationId: conversationIdInt,
+                readBy: userId,
+                readAt: new Date().toISOString()
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: { markedAsRead: result.count }
+        });
     } catch (error) {
-        console.error("Error getting messages:", error);
+        console.error("Error marking messages as read:", error);
+        return res.status(500).json({ success: false, message: "Failed to mark messages as read" });
+    }
+};
+
+export const getConversationMessages = async (req: AuthenticatedRequest, res: Response) => {
+    try {
+        const userId = req.user!.userId;
+        const { conversationId } = req.params;
+        const conversationIdInt = parseInt(conversationId);
+
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 50;
+        const skip = (page - 1) * limit;
+
+        if (!conversationIdInt || isNaN(conversationIdInt)) {
+            return res.status(400).json({ success: false, message: "Invalid conversation ID" });
+        }
+
+        const conversation = await prisma.conversation.findFirst({
+            where: {
+                id: conversationIdInt,
+                participantIds: {
+                    has: userId
+                }
+            }
+        });
+
+        if (!conversation) {
+            return res.status(404).json({ success: false, message: "Conversation not found" });
+        }
+
+        const [messages, total] = await Promise.all([
+            prisma.message.findMany({
+                where: { conversationId: conversationIdInt },
+                orderBy: { createdAt: "desc" },
+                skip,
+                take: limit,
+                include: {
+                    sender: { select: userSelectWithProfile },
+                    receiver: { select: userSelectWithProfile }
+                }
+            }),
+            prisma.message.count({
+                where: { conversationId: conversationIdInt }
+            })
+        ]);
+
+        return res.status(200).json({
+            success: true,
+            data: {
+                messages: messages.reverse(),
+                pagination: {
+                    page,
+                    limit,
+                    total,
+                    totalPages: Math.ceil(total / limit)
+                }
+            }
+        });
+    } catch (error) {
+        console.error("Error getting conversation messages:", error);
         return res.status(500).json({ success: false, message: "Failed to get messages" });
     }
 };

@@ -126,10 +126,10 @@ function MissionDetailsDialog({ mission, open, onOpenChange }: MissionDetailsDia
                             <Label className="text-muted-foreground">Budget</Label>
                             <p className="font-medium">{formatBudget(mission.budget)}</p>
                         </div>
-                        {mission.speciality && (
+                        {mission.requiredSpeciality && (
                             <div className="space-y-1">
                                 <Label className="text-muted-foreground">Required Speciality</Label>
-                                <p className="font-medium">{mission.speciality.name}</p>
+                                <p className="font-medium">{mission.requiredSpeciality.name}</p>
                             </div>
                         )}
                     </div>

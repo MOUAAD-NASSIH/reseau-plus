@@ -4,17 +4,18 @@
 
 import { prisma } from "../lib/prisma";
 import { NotificationType, NotificationFilters, NotificationListResult } from "../types/notification.types";
-import { PaginationMeta } from "../types/api.types";
+import { socketEmitter } from "../socket/emitter";
+import type { NotificationPayload } from "../types/socket.types";
 
 /**
- * Create a new notification
+ * Create a new notification and emit socket event
  */
 export const createNotification = async (
     userId: number,
     type: NotificationType | string,
     message: string
 ) => {
-    return await prisma.notification.create({
+    const notification = await prisma.notification.create({
         data: {
             userId,
             type,
@@ -22,6 +23,19 @@ export const createNotification = async (
             // isRead defaults to false per Prisma schema
         }
     });
+
+    // Emit socket event for real-time notification
+    const payload: NotificationPayload = {
+        id: notification.id,
+        userId: notification.userId,
+        type: notification.type,
+        message: notification.message,
+        isRead: notification.isRead,
+        createdAt: notification.createdAt.toISOString(),
+    };
+    socketEmitter.emitNotification(userId, payload);
+
+    return notification;
 };
 
 /**
@@ -74,7 +88,7 @@ export const getNotifications = async (
 };
 
 /**
- * Get all notifications for a user (legacy method for backward compatibility)
+ * Get all notifications for a user
  */
 export const getMyNotifications = async (userId: number) => {
     return await prisma.notification.findMany({

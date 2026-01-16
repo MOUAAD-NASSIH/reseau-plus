@@ -4,7 +4,6 @@ import {
     Menu,
     X,
     LogOut,
-    User,
     ChevronDown,
     ChevronLeft,
     type LucideIcon,
@@ -13,6 +12,8 @@ import Logo from "@/assets/Logo";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
 import { NotificationBell } from "@/components/common/NotificationBell";
+import { UserAvatar } from "@/components/ui/avatar";
+import { ConnectionStatusIndicator } from "@/components/common/ConnectionStatusIndicator";
 import { Button } from "@/components/ui/button";
 import { useAppDispatch, useAppSelector } from "@/features/hooks";
 import { logout } from "@/features/slices/authSlice";
@@ -37,8 +38,8 @@ interface DashboardLayoutProps {
 
 /**
  * API response structure from /auth/me endpoint:
- * - Workers: { userId, email, role: 'worker', workerId, worker: { firstName, lastName, ... } }
- * - Institutions: { userId, email, role: 'institution', institutionId, institution: { institutionName, ... } }
+ * - Workers: { userId, email, role: 'worker', workerId, worker: { firstName, lastName, profilePicture, ... } }
+ * - Institutions: { userId, email, role: 'institution', institutionId, institution: { institutionName, logo, ... } }
  * - Admins: { userId, email, role: 'admin' }
  */
 interface ApiUser {
@@ -48,14 +49,12 @@ interface ApiUser {
     worker?: {
         firstName?: string;
         lastName?: string;
+        profilePicture?: string | null;
     };
     institution?: {
         institutionName?: string;
+        logo?: string | null;
     };
-    // Legacy structure support
-    firstName?: string;
-    lastName?: string;
-    institutionName?: string;
 }
 
 export default function DashboardLayout({
@@ -98,20 +97,15 @@ export default function DashboardLayout({
 
         const apiUser = user as ApiUser;
 
-        // Handle API response format (nested worker/institution objects)
-        if (apiUser.role === "worker") {
-            const firstName = apiUser.worker?.firstName || apiUser.firstName;
-            const lastName = apiUser.worker?.lastName || apiUser.lastName;
+        if (apiUser.role === "worker" && apiUser.worker) {
+            const { firstName, lastName } = apiUser.worker;
             if (firstName && lastName) {
                 return `${firstName} ${lastName}`;
             }
         }
 
-        if (apiUser.role === "institution") {
-            const institutionName = apiUser.institution?.institutionName || apiUser.institutionName;
-            if (institutionName) {
-                return institutionName;
-            }
+        if (apiUser.role === "institution" && apiUser.institution?.institutionName) {
+            return apiUser.institution.institutionName;
         }
 
         return apiUser.email || "User";
@@ -127,6 +121,22 @@ export default function DashboardLayout({
         if (apiUser.role === "admin") return "Admin";
 
         return "";
+    };
+
+    const getUserProfilePicture = (): string | null => {
+        if (!user) return null;
+
+        const apiUser = user as ApiUser;
+
+        if (apiUser.role === "worker") {
+            return apiUser.worker?.profilePicture || null;
+        }
+
+        if (apiUser.role === "institution") {
+            return apiUser.institution?.logo || null;
+        }
+
+        return null;
     };
 
     // Check if a nav item is active (exact match or child route)
@@ -359,9 +369,12 @@ export default function DashboardLayout({
                                     )}
                                     onClick={() => setUserMenuOpen(!userMenuOpen)}
                                 >
-                                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center ring-2 ring-primary/20">
-                                        <User className="h-4 w-4 text-primary" />
-                                    </div>
+                                    <UserAvatar
+                                        src={getUserProfilePicture()}
+                                        name={getUserDisplayName()}
+                                        size="sm"
+                                        className="ring-2 ring-primary/20"
+                                    />
                                     <div className="hidden md:block text-left">
                                         <p className="text-sm font-medium leading-tight">{getUserDisplayName()}</p>
                                         <p className="text-xs text-muted-foreground">{getUserRole()}</p>
@@ -410,6 +423,9 @@ export default function DashboardLayout({
                 {/* Page content */}
                 <main className="p-4 md:p-6 lg:p-8">{children}</main>
             </div>
+
+            {/* Connection status indicator - shows when socket connection fails repeatedly */}
+            <ConnectionStatusIndicator />
         </div>
     );
 }

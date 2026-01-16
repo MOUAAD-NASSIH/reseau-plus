@@ -22,6 +22,8 @@ export const TAG_TYPES = [
     "Specialities",
     "Admin",
     "Auth",
+    "Conversations",
+    "Messages",
 ] as const;
 
 export type TagType = (typeof TAG_TYPES)[number];

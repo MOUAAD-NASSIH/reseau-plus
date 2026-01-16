@@ -66,6 +66,14 @@ export interface PendingDocumentsFilters {
 }
 
 /**
+ * Profile picture upload response
+ */
+export interface ProfilePictureUploadResponse {
+    url: string;
+    publicId: string;
+}
+
+/**
  * Admin API endpoints injected into the main API slice
  */
 export const adminApi = api.injectEndpoints({
@@ -213,6 +221,37 @@ export const adminApi = api.injectEndpoints({
                 { type: "Workers", id: "LIST" },
             ],
         }),
+
+        /**
+         * Upload admin profile picture
+         * POST /api/profile/admin/picture
+         */
+        uploadAdminProfilePicture: builder.mutation<ApiResponse<ProfilePictureUploadResponse>, FormData>({
+            query: (formData) => ({
+                url: "/profile/admin/picture",
+                method: "POST",
+                data: formData,
+            }),
+            invalidatesTags: [
+                { type: "Admin", id: "PROFILE" },
+                { type: "Auth", id: "ME" },
+            ],
+        }),
+
+        /**
+         * Delete admin profile picture
+         * DELETE /api/profile/admin/picture
+         */
+        deleteAdminProfilePicture: builder.mutation<ApiResponse<void>, void>({
+            query: () => ({
+                url: "/profile/admin/picture",
+                method: "DELETE",
+            }),
+            invalidatesTags: [
+                { type: "Admin", id: "PROFILE" },
+                { type: "Auth", id: "ME" },
+            ],
+        }),
     }),
 });
 
@@ -229,5 +268,7 @@ export const {
     useRejectWorkerMutation,
     useReviewDocumentMutation,
     useUpdateUserStatusMutation,
+    useUploadAdminProfilePictureMutation,
+    useDeleteAdminProfilePictureMutation,
 } = adminApi;
 
