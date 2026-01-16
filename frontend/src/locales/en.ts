@@ -19,7 +19,33 @@ export const en = {
                 UPPERCASE: "At least one uppercase letter",
                 NUMBER: "At least one number",
                 SPECIAL: "At least one special character"
-            }
+            },
+            SUCCESS: "Success",
+            STATUS_UPDATED: "Status Updated",
+            STATUS_UPDATED_DESC: "The status has been updated successfully.",
+            ERROR: "Error",
+            FAILED_TO_UPDATE: "Failed to update. Please try again.",
+            BACK_TO_MISSIONS: "Back to Missions",
+            CANCEL: "Cancel",
+            SAVE: "Save",
+            SAVING: "Saving...",
+            DELETE: "Delete",
+            CONFIRM: "Confirm",
+            PAID: "Paid",
+            ANONYMOUS: "Anonymous",
+            COMPLETED_MISSION: "Completed Mission",
+            MISSION: "Mission",
+            PENDING: "Pending",
+            COMPLETED: "Completed",
+            FAILED: "Failed",
+            REMOTE: "Remote",
+            CURRENCY: "MAD",
+            DETAILS: "Details",
+            VIEW_DETAILS: "View details",
+            SOCIAL_SERVICE: "Social Service",
+            SOCIAL_WORKER: "Social Worker",
+            WORKER: "Worker",
+            N_A: "N/A"
         },
         NAV: {
             FEATURES: "Features",
@@ -400,6 +426,755 @@ export const en = {
                 GO_HOME: "Go Home",
                 SIGN_IN: "Sign In"
             }
+        },
+        INSTITUTION_DASHBOARD: {
+            WELCOME: "Welcome back, {{name}} 👋",
+            SUBTITLE: "Here's what's happening with your missions today.",
+            STATS: {
+                ACTIVE_MISSIONS: "Active Missions",
+                PENDING_APPLICANTS: "Pending Applicants",
+                OPEN_MISSIONS: "Open Missions",
+                ASSIGNED_MISSIONS: "Assigned Missions",
+                TOTAL_PAYMENTS: "Total Payments",
+                ONGOING_MISSIONS: "Ongoing Missions",
+                DUE_IN_7_DAYS: "Due in 7 days",
+                LAST_30_DAYS: "Last 30 days",
+                CLOSED_MISSIONS: "Closed Missions",
+                CANCELLED_MISSIONS: "Cancelled Missions"
+            },
+            SECTIONS: {
+                RECENT_MISSIONS: "Recent Missions",
+                RECENT_ACTIVITY: "Recent Activity",
+                QUICK_ACTIONS: "Quick Actions",
+                VIEW_ALL: "View all",
+                MISSION_DISTRIBUTION: "Mission Status Distribution",
+                TOP_MISSIONS: "Top Missions by Applicants"
+            },
+            ACTIONS: {
+                CREATE_MISSION: "Create New Mission",
+                VIEW_APPLICANTS: "View Applicants",
+                INVITE_WORKFORCE: "Invite Workforce",
+                RECRUITING: "recruiting",
+                AWAITING_APPLICANTS: "Awaiting applicants",
+                TOTAL_ASSIGNMENTS: "total assignments",
+                LIFETIME_TOTAL: "Lifetime total",
+                MISSION_NAME: "Mission Name",
+                POSTED: "Posted {{date}}",
+                REMOTE: "Remote",
+                NO_APPLICANTS: "No applicants"
+            },
+            EMPTY_STATES: {
+                NO_MISSIONS: "No missions yet",
+                NO_ACTIVITY: "No recent activity",
+                NO_DATA: "No data available"
+            }
+        },
+        CREATE_MISSION: {
+            HEADER: {
+                TITLE: "Create New Mission",
+                SUBTITLE: "Define the scope, logistics, and requirements for your new mission assignment."
+            },
+            SECTIONS: {
+                DETAILS: "Mission Details",
+                LOGISTICS: "Logistics & Requirements",
+                CRITERIA: "Criteria & Requirements"
+            },
+            DETAILS: {
+                TITLE_LABEL: "Mission Title",
+                TITLE_PLACEHOLDER: "e.g. Family Support Intervention for Reintegration",
+                DESCRIPTION_LABEL: "Description",
+                DESCRIPTION_PLACEHOLDER: "Detailed mission objectives and background..."
+            },
+            LOGISTICS: {
+                START_DATE_LABEL: "Start Date",
+                END_DATE_LABEL: "End Date",
+                LOCATION_LABEL: "Location",
+                LOCATION_PLACEHOLDER: "City, Zip Code, or Address",
+                BUDGET_LABEL: "Total Budget",
+                BUDGET_PLACEHOLDER: "0.00"
+            },
+            REQUIREMENTS: {
+                SPECIALITY_LABEL: "Required Specialty",
+                SPECIALITY_PLACEHOLDER: "Select a specialty",
+                URGENCY_LABEL: "Urgency Level",
+                URGENCY_PLACEHOLDER: "Select urgency",
+                URGENCY_LOW: "Low",
+                URGENCY_MEDIUM: "Medium",
+                URGENCY_HIGH: "High",
+                DOMAINS_LABEL: "Domain Tags",
+                DOMAINS_PLACEHOLDER: "Add tag..."
+            },
+            ACTIONS: {
+                CANCEL: "Cancel",
+                SAVE_DRAFT: "Save Draft",
+                SUBMIT: "Submit Mission",
+                SUBMITTING: "Creating...",
+                PUBLISH_MISSION: "Publish Mission",
+                STATUS_LABEL: "Status:",
+                DRAFT: "Draft",
+                VISIBILITY_LABEL: "Visibility:",
+                PUBLIC: "Public"
+            }
+        },
+        EDIT_MISSION: {
+            HEADER: {
+                TITLE: "Edit Mission",
+                SUBTITLE: "Update the details and requirements of your mission assignment."
+            },
+            SECTIONS: {
+                DETAILS: "Mission Details",
+                LOGISTICS: "Logistics",
+                CRITERIA: "Criteria"
+            },
+            ACTIONS: {
+                SAVE: "Save Changes",
+                SAVING: "Saving...",
+                CANCEL: "Cancel",
+                STATUS_LABEL: "Mission Status"
+            },
+            MESSAGES: {
+                SUCCESS: "Mission updated",
+                SUCCESS_DESC: "Your mission has been updated successfully.",
+                ERROR: "Failed to update mission",
+                NOT_FOUND: "Mission Not Found",
+                NOT_FOUND_DESC: "The mission you are trying to edit doesn't exist or has been removed.",
+                SYNC_NOTICE: "Changes are synchronized immediately with active workers."
+            }
+        },
+        MY_MISSIONS: {
+            TITLE: "My Missions",
+            SUBTITLE: "Manage and track all your posted missions",
+            CREATE_NEW: "Create Mission",
+            SEARCH_PLACEHOLDER: "Search missions by title or ID...",
+            FILTER: {
+                STATUS_LABEL: "Status:",
+                STATUS_ALL: "All",
+                STATUS_OPEN: "Open",
+                STATUS_ONGOING: "Ongoing",
+                STATUS_CLOSED: "Closed",
+                DOMAIN_LABEL: "Domain:",
+                DOMAIN_ALL: "All Domains"
+            },
+            EMPTY: {
+                TITLE: "No missions found",
+                DESCRIPTION: "No missions match your current filters. Try changing your search terms or clearing filters."
+            },
+            CARD: {
+                APPLICANTS: "Applicants",
+                BUDGET: "Budget",
+                VIEW_APPLICANTS: "View Applicants",
+                VIEW_DETAILS: "View Details",
+                EDIT: "Edit",
+                DELETE: "Delete",
+                POSTED: "Posted {{date}}",
+                ACTIVE_HIRING: "Active Hiring"
+            },
+            ACTIONS: {
+                DELETE: "Delete Mission",
+                CLEAR_FILTER: "Clear Filters"
+            },
+            MESSAGES: {
+                DELETE_SUCCESS: "Mission deleted successfully",
+                DELETE_ERROR: "Failed to delete mission"
+            },
+            TABLE: {
+                TITLE: "Title",
+                STATUS: "Status",
+                DATES: "Dates",
+                BUDGET: "Budget",
+                URGENCY: "Urgency",
+                ACTIONS: "Actions"
+            }
+        },
+        MISSION_APPLICANTS: {
+            TITLE: "Mission Applicants",
+            BACK_TO_MISSIONS: "Back to Missions",
+            APPLICANTS_COUNT: "{{count}} applicant",
+            APPLICANTS_COUNT_plural: "{{count}} applicants",
+            STATS: {
+                TOTAL: "Total Applicants",
+                PENDING: "Pending Review",
+                ACCEPTED: "Accepted",
+                ALL_APPLICATIONS: "All applications",
+                NEEDS_ACTION: "Needs action",
+                ASSIGNED_WORKERS: "Assigned workers"
+            },
+            FILTER: {
+                LABEL: "Filter by status",
+                ALL: "All Statuses",
+                SUBMITTED: "Submitted",
+                ACCEPTED: "Accepted",
+                REJECTED: "Rejected",
+                SPECIALTY: "Specialty",
+                ALL_SPECIALTIES: "All Specialties",
+                EXPERIENCE: "Experience",
+                YEARS: "{{count}} year",
+                YEARS_plural: "{{count}} years",
+                EXPERIENCE_VAL: "{{min}}-{{max}}+ yrs"
+            },
+            TABLE: {
+                APPLICANT: "Applicant",
+                LOCATION: "Location",
+                EXPERIENCE: "Experience",
+                APPLIED: "Applied",
+                STATUS: "Status",
+                ACTIONS: "Actions",
+                YEARS: "{{count}} year",
+                YEARS_plural: "{{count}} years"
+            },
+            ACTIONS: {
+                CLEAR_FILTER: "Clear Filter",
+                VIEW_PROFILE: "View Profile",
+                REJECT: "Reject",
+                ACCEPT: "Accept Worker",
+                INVITE: "Invite Worker"
+            },
+            DIALOG: {
+                TITLE: "Applicant Profile",
+                DESCRIPTION: "Review the worker's qualifications and experience",
+                SPECIALITY: "Speciality",
+                EXPERIENCE: "EXPERIENCE",
+                LOCATION: "LOCATION",
+                APPLIED: "APPLIED",
+                BIO: "BIO",
+                DOMAINS: "DOMAINS",
+                REJECT_APPLICATION: "Reject Application",
+                ACCEPT_APPLICATION: "Accept Application"
+            },
+            CARD: {
+                TITLE: "Applicants",
+                DESCRIPTION: "Review and manage applications for this mission",
+                EXCELLENT_MATCH: "Excellent Match"
+            },
+            EMPTY: {
+                TITLE: "No applicants yet",
+                DESCRIPTION: "No workers have applied to this mission yet.",
+                DESCRIPTION_FILTERED: "No applicants match the selected filter."
+            },
+            MESSAGES: {
+                NOT_FOUND: "Mission not found",
+                ACCEPT_SUCCESS: "Application accepted",
+                ACCEPT_SUCCESS_DESC: "The worker has been assigned to this mission.",
+                ACCEPT_ERROR: "Failed to accept application. Please try again.",
+                REJECT_SUCCESS: "Application rejected",
+                REJECT_SUCCESS_DESC: "The application has been rejected.",
+                REJECT_ERROR: "Failed to reject application. Please try again.",
+                SUBMIT_SUCCESS: "Review submitted",
+                SUBMIT_ERROR: "Failed to submit review. Please try again."
+            },
+            SEARCH_PLACEHOLDER: "Search applicants...",
+            PAGINATION: {
+                SHOWING: "Showing {{start}} to {{end}} of {{total}} results"
+            }
+        },
+        MISSION_DETAILS: {
+            TITLE: "Mission Details",
+            MISSION_CONTROL: "Mission Control",
+            SHARE: "Share",
+            EDIT_MISSION: "Edit Mission",
+            TOTAL_BUDGET: "Total Budget",
+            MISSION_TIMELINE: "Mission Timeline",
+            MISSION_TIMELINE_DAYS: "{{count}} Days duration",
+            APPLICANTS: "Applicants",
+            ACTIVE: "Active",
+            TOTAL_ACROSS_STATUSES: "{{count}} total across all statuses",
+            DESCRIPTION: "Description",
+            NO_DESCRIPTION: "No description provided.",
+            TECHNICAL_REQUIREMENTS: "Technical Requirements",
+            REQUIRED: "(Required)",
+            SPECIALIZATION_DESC: "specialization: Focused on {{name}} excellence and professional contribution.",
+            LOCATION: "Location",
+            URGENCY_LEVEL: "Urgency Level",
+            PRIORITY: "{{priority}} Priority",
+            MISSION_DOMAINS: "Mission Domains",
+            NO_DOMAINS: "No domains specified",
+            POSTED_BY: "POSTED BY",
+            VIEW_INSTITUTION_PROFILE: "View Institution Profile",
+            TOP_APPLICANTS: "Top Applicants",
+            VIEW_ALL_APPLICANTS: "View All Applicants ({{count}})",
+            APPLICANT: "APPLICANT",
+            COMPATIBILITY: "COMPATIBILITY",
+            ACTIONS: "ACTIONS",
+            SHORTLIST: "Shortlist",
+            VIEW_PROFILE: "View Profile",
+            RATING: "Rating",
+            MESSAGES: {
+                NOT_FOUND: "Mission not found",
+                LINK_COPIED: "Mission link has been copied to your clipboard."
+            },
+            BACK_TO_MISSIONS: "Back to Missions"
+        },
+        INSTITUTION_ASSIGNMENTS: {
+            TITLE: "Mission Assignments",
+            DESCRIPTION: "Manage and track your workforce deployments and mission status.",
+            ACTIONS: {
+                NEW: "New Assignment"
+            },
+            STATS: {
+                TOTAL: "Total Assignments",
+                ACTIVE: "Active Missions",
+                COMPLETED: "Completed Missions",
+                PENDING_REVIEW: "Pending Review"
+            },
+            FILTER: {
+                LABEL: "Filter Assignments",
+                SEARCH_WORKER: "Search Worker",
+                SEARCH_PLACEHOLDER: "Search by name, email...",
+                STATUS: "Status",
+                STATUS_ALL: "All Statuses",
+                MISSION_TYPE: "Mission Type",
+                MISSION_TYPE_ALL: "All Missions",
+                CLEAR: "Clear Filters"
+            },
+            TABLE: {
+                COLUMNS: {
+                    WORKER: "WORKER",
+                    MISSION: "MISSION TITLE",
+                    STATUS: "STATUS",
+                    DATES: "DATES",
+                    PAYMENT: "PAYMENT",
+                    ACTIONS: "ACTIONS"
+                },
+                DAYS: "{{count}} Day",
+                DAYS_plural: "{{count}} Days",
+                PAYMENT_STATUS: {
+                    PENDING: "Pending",
+                    PAID: "Paid",
+                    PROCESSING: "Processing",
+                    SCHEDULED: "Scheduled"
+                },
+                EMPTY_STATE: {
+                    TITLE: "No assignments found",
+                    DESCRIPTION: "You don't have any assignments yet or no matches for your current filters."
+                },
+                STATUS: {
+                    ACTIVE: "Active",
+                    ONGOING: "Ongoing",
+                    COMPLETED: "Completed",
+                    CANCELLED: "Cancelled",
+                    PENDING: "Pending"
+                }
+            }
+        },
+        ASSIGNED_MISSION_VIEW: {
+            HEADER: {
+                ASSIGNMENT_ID: "Assignment #{{id}}",
+                CREATED_ON: "Created {{date}}",
+                EXPORT: "Export",
+                EDIT: "Edit",
+                PROCESS_PAYMENT: "Process Payment",
+                NOT_FOUND: "Assignment not found"
+            },
+            TIMELINE: {
+                TITLE: "Mission Timeline",
+                ASSIGNED: "Worker Assigned",
+                ASSIGNED_DESC: "Worker has been assigned to the mission.",
+                ONGOING: "Mission Ongoing",
+                ONGOING_DESC: "Mission is currently in progress.",
+                COMPLETED: "Completed",
+                COMPLETED_DESC: "Mission has been marked as finished.",
+                CANCELLED: "Cancelled",
+                CANCELLED_DESC: "Mission has been cancelled."
+            },
+            WORK_LOGS: {
+                TITLE: "Work Logs",
+                VIEW_ALL: "View All History",
+                STATUS_CHANGE: "Status changed to {{status}}",
+                ASSIGNED: "Assignment created",
+                ASSIGNED_DESC: "The assignment was initialized on {{date}}."
+            },
+            REVIEW_COMPLETION: {
+                TITLE: "Review Completion",
+                DESCRIPTION: "Please verify the deliverables before releasing payment.",
+                REQUEST_REVISION: "Request Revision",
+                VALIDATE_COMPLETION: "Validate Completion"
+            },
+            MISSION_OVERVIEW: {
+                TITLE: "Mission Overview",
+                LOCATION: "LOCATION",
+                PAYOUT: "PAYOUT",
+                DURATION: "DURATION",
+                DAYS: "{{count}} Day",
+                DAYS_plural: "{{count}} Days",
+                INSTRUCTIONS: "INSTRUCTIONS"
+            },
+            PAYMENT_STATUS: {
+                TITLE: "Payment Status",
+                TOTAL_AMOUNT: "Total Amount",
+                WORKER_AMOUNT: "Worker Amount",
+                PLATFORM_FEE: "Platform Fee",
+                PAID_ON: "Paid On",
+                NO_PAYMENT: "No payment has been made yet.",
+                COMPLETE_FOR_PAYMENT: "Complete the assignment to enable payment."
+            },
+            WORKER_PROFILE: {
+                TITLE: "Worker Profile",
+                ASSIGNED_ON: "Assigned On",
+                RELIABILITY: "Reliability Score: {{score}}%",
+                MESSAGE: "Message",
+                PROFILE: "Profile"
+            }
+        },
+        FINANCIAL: {
+            TITLE: "Financial Overview",
+            SUBTITLE: "Manage payments, invoices, and mission budgets.",
+            EXPORT: "Export Report",
+            KPI: {
+                TOTAL_PAID: "Total Paid",
+                PENDING_INVOICES: "Pending Invoices",
+                ACTIVE_MISSIONS: "Active Missions",
+                AWAITING_PAYMENT: "Awaiting Payment",
+                INVOICES_COUNT: "{{count}} Invoice",
+                INVOICES_COUNT_plural: "{{count}} Invoices",
+                AWAITING_APPROVAL: "awaiting approval",
+                AWAITING_APPROVAL_plural: "awaiting approval",
+                VS_LAST_MONTH: "vs last month"
+            },
+            TABLE: {
+                COLUMNS: {
+                    STATUS: "STATUS",
+                    MISSION: "MISSION NAME",
+                    WORKER: "WORKER",
+                    DATE: "DATE",
+                    AMOUNT: "AMOUNT",
+                    RECEIPT: "RECEIPT"
+                },
+                SEARCH_PLACEHOLDER: "Search by mission or worker name...",
+                FILTER: {
+                    DATE: "Date",
+                    STATUS: "Status",
+                    MISSION: "Mission",
+                    ALL: "All"
+                },
+                EMPTY: {
+                    TITLE: "No payments yet",
+                    DESCRIPTION: "You haven't made any payments to workers yet."
+                }
+            },
+            AWAITING_SECTION: {
+                TITLE: "Missions Awaiting Payment",
+                SUB: "mission awaiting payment",
+                SUB_plural: "missions awaiting payment",
+                PAY_NOW: "Pay Now"
+            },
+            EMPTY: {
+                TITLE: "No payments yet",
+                DESCRIPTION: "You haven't made any payments to workers yet."
+            }
+        },
+        REVIEWS: {
+            TITLE: "Reviews & Ratings",
+            SUBTITLE: "Manage feedback and performance insights from your missions",
+            EXPORT: "Export Report",
+            SUMMARY: {
+                OVERALL_SCORE: "OVERALL SCORE",
+                RATING_BREAKDOWN: "RATING BREAKDOWN",
+                TOTAL_REVIEWS: "Total Reviews",
+                POSITIVE_RATE: "Positive Rate",
+                POSITIVE_DESC: "of workers recommend your institution",
+                VS_LAST_30_DAYS: "vs last 30 days",
+                THIS_WEEK: "this week",
+                BREAKDOWN: "RATING BREAKDOWN",
+            },
+            TABS: {
+                RECEIVED: "Received",
+                WRITTEN: "Written"
+            },
+            FEED: {
+                SORT: "Sorted by",
+                NEWEST: "Newest First",
+                OLDEST: "Oldest First",
+                HIGHEST: "Highest Rating",
+                LOWEST: "Lowest Rating",
+                LOAD_MORE: "Load More Reviews",
+                REPLY: "Reply",
+                REPORT: "Report",
+                EMPTY_RECEIVED: "No reviews received yet",
+                EMPTY_RECEIVED_DESC: "You haven't received any reviews from workers yet.",
+                EMPTY_WRITTEN: "No reviews written yet",
+                EMPTY_WRITTEN_DESC: "You haven't written any reviews for workers yet.",
+                NO_COMMENT: "No comment provided.",
+                SEARCH_PLACEHOLDER: "Search reviews..."
+            },
+            PENDING: {
+                TITLE: "Workers to Review",
+                SUBTITLE: "Leave a review for workers who completed missions",
+                BUTTON: "Review",
+                DIALOG_DESC: "Share your experience working with {{name}}. Your feedback helps maintain service quality.",
+                COMMENT_LABEL: "Comments / Experience",
+                COMMENT_OPTIONAL: "Optional",
+                COMMENT_PLACEHOLDER: "Describe the worker's performance, punctuality, and professional attitude...",
+                SUBMITTING: "Submitting..."
+            }
+        },
+        INSTITUTION_PROFILE: {
+            TITLE: "Institution Profile",
+            SUBTITLE: "Update your institution's information. This information will be visible to workers.",
+            SECTIONS: {
+                ORGANIZATION: "Organization Details",
+                ACCOUNT: "Account Information"
+            },
+            BADGES: {
+                PUBLIC: "Public Profile"
+            },
+            FIELDS: {
+                LOGO: {
+                    LABEL: "Institution Logo",
+                    DESCRIPTION: "Upload your institution logo. Recommended size is 256x256px. Supported formats: JPG, PNG.",
+                    UPLOAD: "Upload new",
+                    REMOVE: "Remove"
+                },
+                NAME: "Institution Name",
+                REGISTRATION_NUMBER: "Registration Number / Tax ID",
+                WEBSITE: "Website URL",
+                EMAIL: "Primary Email",
+                PHONE: "Phone Number",
+                ADDRESS: "Street Address",
+                ADDRESS_LINE2: "Street Address (Optional)",
+                CITY: "City",
+                STATE: "State/Prov",
+                ZIP: "Zip/Postal"
+            },
+            ACTIONS: {
+                CANCEL: "Cancel",
+                SAVE: "Save Changes",
+                SAVING: "Saving..."
+            }
+        },
+        NOTIFICATIONS: {
+            TITLE: "Notifications",
+            SUBTITLE: "Stay updated with your latest activities and alerts.",
+            TABS: {
+                ALL: "All",
+                UNREAD: "Unread",
+                MISSIONS: "Missions",
+                PAYMENTS: "Payments",
+                SYSTEM: "System"
+            },
+            EMPTY: {
+                TITLE: "You're all caught up!",
+                SUBTITLE: "No notifications to display in this category."
+            },
+            ACTIONS: {
+                MARK_ALL_READ: "Mark all as read"
+            }
+        },
+        ADMIN_DASHBOARD: {
+            TITLE: "Ecosystem Overview",
+            SUBTITLE: "Real-time performance monitoring and platform metrics.",
+            ACTIONS: {
+                EXPORT_REPORT: "Export Report"
+            },
+            KPI: {
+                TOTAL_REVENUE: "Total Revenue",
+                ACTIVE_INSTITUTIONS: "Active Institutions",
+                TOTAL_WORKERS: "Total Workers",
+                MISSIONS_FILLED: "Active Missions",
+                GLOBAL_FOOTPRINT: "GLOBAL FOOTPRINT",
+                VERIFICATION_RATE: "Verification rate {{rate}}%",
+                REVENUE_SUBTITLE: "From {{count}} payments",
+                MISSIONS_COUNT: "Total {{count}} missions"
+            },
+            GROWTH: {
+                TITLE: "Platform Growth",
+                SUBTITLE: "Consecutive growth, monthly trends",
+                ACTUAL: "Actual",
+                TARGET: "Target"
+            },
+            HEALTH: {
+                TITLE: "System Health",
+                API_LATENCY: "Main API Cluster",
+                UPTIME: "Uptime (30d)",
+                ACTIVE_ALERTS: "Active Alerts ({{count}})",
+                ALERT_HIGH_LOAD: "High load on EU-West cluster",
+                ALERT_HIGH_LOAD_DESC: "CPU usage at 85%. Auto-scaling triggered. Financial impact minimal.",
+                ALERT_BACKUP: "Database backup in progress",
+                ALERT_BACKUP_DESC: "Scheduled maintenance. ETA 15 minutes. No user impact."
+            },
+            INSTITUTIONS: {
+                TITLE: "Top Performing Institutions",
+                VIEW_ALL: "View all",
+                INSTITUTION: "Institution",
+                GROWTH: "Growth",
+                REVENUE: "Revenue",
+                FULFILLMENT: "Fulfillment"
+            },
+            ALERTS: {
+                TITLE: "Priority Support",
+                ACTIVE: "active",
+                VIEW_ALL: "View all"
+            },
+            PENDING_WORKERS: {
+                TITLE: "Pending Validations",
+                AWAITING: "awaiting validation",
+                VIEW_ALL: "View all",
+                EMPTY: "No pending validations found",
+                VALIDATE: "Validate",
+                REJECT: "Reject"
+            },
+            PENDING_DOCS: {
+                TITLE: "Pending Documents",
+                AWAITING: "documents to review",
+                VIEW_ALL: "View all",
+                EMPTY: "No pending documents found",
+                APPROVE: "Approve",
+                REJECT: "Reject",
+                TYPE_ID: "ID Card",
+                TYPE_DIPLOMA: "Diploma",
+                TYPE_LICENSE: "Professional License",
+                TYPE_CERTIFICATE: "Certificate"
+            },
+        },
+        ADMIN_VALIDATION: {
+                WORKERS: {
+                    TITLE: "Worker Validations",
+                    SUBTITLE: "Review and approve new worker registrations",
+                    SEARCH_PLACEHOLDER: "Search by name, email...",
+                    STATUS_FILTER: "Status",
+                    ALL_STATUSES: "All Statuses",
+                    EMPTY_TITLE: "No pending validations",
+                    EMPTY_DESC: "All worker registrations have been processed.",
+                    GRID_VIEW: "Card View",
+                    TABLE_VIEW: "Table View",
+                    REVIEW_APPLICATION: "Review Application",
+                    VIEW_DETAILS: "View Details",
+                    STATS: {
+                        PENDING: "Pending Validations",
+                        TOTAL: "Total Workers",
+                        VERIFIED: "Verified Workers",
+                        REJECTED: "Rejected Registrations"
+                    },
+                    SPECIALITY_LABEL: "Speciality",
+                    DOCUMENTS_SECTION: "Verification Documents",
+                    BIO_SECTION: "Worker Biography",
+                    APPROVE: "Approve",
+                    REJECT: "Reject",
+                    UPLOADED: "Uploaded",
+                    DOC_TYPES: {
+                        ID_CARD: "ID Card",
+                        DIPLOMA: "Diploma",
+                        LICENSE: "Professional License",
+                        CERTIFICATE: "Certificate",
+                        CV: "Resume/CV"
+                    },
+                    TABLE: {
+                        WORKER: "Worker",
+                        LOCATION: "Location",
+                        DOCS: "Docs",
+                        REGISTERED: "Registered",
+                        STATUS: "Status",
+                        ACTIONS: "Actions"
+                    },
+                    DIALOG: {
+                        TITLE: "Review Worker",
+                        SUBTITLE: "Verify worker details and documents",
+                        APPROVE_BTN: "Approve Worker",
+                        REJECT_BTN: "Reject Worker",
+                        CONFIRM_REJECT: "Confirm Rejection",
+                        REJECT_REASON: "Reason for rejection",
+                        CANCEL: "Cancel",
+                        DOCUMENTS_SECTION: "Documents",
+                        BIO_SECTION: "Bio"
+                    }
+                },
+                DOCUMENTS: {
+                    TITLE: "Document Validations",
+                    SUBTITLE: "Review and verify uploaded worker documents",
+                    SEARCH_PLACEHOLDER: "Search by worker name...",
+                    TYPE_FILTER: "Document Type",
+                    ALL_TYPES: "All Types",
+                    EMPTY_TITLE: "No pending documents",
+                    EMPTY_DESC: "All uploaded documents have been reviewed.",
+                    CARD: {
+                        WORKER_ID: "Worker",
+                        UPLOADED: "Uploaded",
+                        VIEW: "View",
+                        DOWNLOAD: "Download",
+                        APPROVE: "Approve",
+                        REJECT: "Reject"
+                    },
+                    DIALOG: {
+                        TITLE: "Review Document",
+                        SUBTITLE: "Verify document authenticity",
+                        PREVIOUS_COMMENT: "Previous Comment",
+                        REJECT_COMMENT: "Rejection Reason"
+                }
+            },
+        },
+        ADMIN_LOGS: {
+            TITLE: "Admin Action Audit",
+            SUBTITLE: "Traceability and transparency for all administrative operations.",
+            FILTERS: {
+                TITLE: "Auditing Filters",
+                SEARCH_PLACEHOLDER: "Search by ID, admin, target user, or details...",
+                ACTION_TYPE: "Action Type",
+                ALL_ACTIONS: "All Actions",
+                CLEAR: "Clear Filters",
+                FOUND: "{{count}} log(s) found"
+            },
+            LIST: {
+                TITLE: "System Logs",
+                COLUMNS: {
+                    ID: "ID",
+                    ACTION: "ACTION",
+                    ADMIN: "ADMIN",
+                    TARGET: "TARGET USER",
+                    DETAILS: "DETAILS",
+                    DATE: "DATE",
+                    ACTIONS: "ACTIONS"
+                },
+                VIEW: "View",
+                EMPTY: "No logs found",
+                EMPTY_DESC: "No logs match the current filters. Try adjusting your search criteria.",
+                EMPTY_GENERIC: "There are no admin action logs yet."
+            },
+            STATS: {
+                TOTAL_ACTIONS: "TOTAL ACTIONS",
+                TOTAL_DESC: "Aggregated platform audit logs",
+                TODAY: "RECORDED TODAY",
+                YESTERDAY: "Yesterday",
+                LAST_7_DAYS: "LAST 7 DAYS",
+                WEEKLY_TREND: "Activity trend over a week",
+                MOST_FREQUENT: "MOST FREQUENT",
+                COMMON_TASK: "Most repeated admin action"
+            },
+            DIALOG: {
+                TITLE: "Log Entry Details",
+                SUBTITLE: "Full context for admin action #{{id}}",
+                ADMIN_ID: "Admin ID",
+                TARGET_USER: "Target User ID",
+                DETAILS: "Details",
+                CREATED_AT: "Timestamp"
+            }
+        },
+        ADMIN_PROFILE: {
+            TITLE: "Admin Profile",
+            SUBTITLE: "Manage your administrative account and view platform status",
+            SECTIONS: {
+                ACCOUNT_INFO: "Account Information",
+                PLATFORM_OVERVIEW: "Platform Overview",
+                SETTINGS: "Account Settings"
+            },
+            FIELDS: {
+                EMAIL: "Email Address",
+                ROLE: "Role",
+                STATUS: "Status",
+                MEMBER_SINCE: "Member Since"
+            },
+            STATS: {
+                TOTAL_WORKERS: "Total Workers",
+                PENDING_WORKERS: "Pending Workers",
+                TOTAL_INSTITUTIONS: "Total Institutions",
+                TOTAL_MISSIONS: "Total Missions",
+                ACTIVE_MISSIONS: "Active Missions",
+                TOTAL_PAYMENTS: "Total Payments",
+                PENDING_PAYMENTS: "Pending Payments"
+            },
+            BADGES: {
+                ADMIN: "Admin",
+                ACTIVE: "Active"
+            },
+            SETTINGS_DESC: "Account settings and password management are handled through the main settings panel. Contact the system administrator for account-related changes."
         }
     }
 };

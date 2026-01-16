@@ -5,6 +5,8 @@
 
 import type { Worker, Institution } from './auth.types';
 import type { Mission } from './mission.types';
+import type { Review } from './review.types';
+import type { Payment } from './payment.types';
 
 // ENUMS / STATUS TYPES
 
@@ -28,6 +30,8 @@ export interface MissionAssignment {
     mission?: Mission;
     worker?: Worker;
     institution?: Institution;
+    reviews?: Review[];
+    payments?: Payment[];
 }
 
 // INPUT INTERFACES

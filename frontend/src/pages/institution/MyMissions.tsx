@@ -1,288 +1,135 @@
-import { useState, useMemo, useCallback } from "react";
-import { Link } from "react-router";
-import type { ColumnDef } from "@tanstack/react-table";
-import { PlusCircle, Edit, Users, Eye, Trash2, Briefcase } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState, useMemo } from "react";
+import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { StatusBadge } from "@/components/common/StatusBadge";
-import { DataTable, DataTableColumnHeader } from "@/components/common/DataTable";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { useGetMyMissionsQuery, useDeleteMissionMutation } from "@/features/api/endpoints/missionEndpoints";
-import type { Mission, MissionStatus, Urgency } from "@/types/mission.types";
-import { showSuccessToast, showErrorToast } from "@/lib/toast";
+import { MissionSkeletonList } from "@/components/common/missions/MissionSkeletonList";
 
-function getUrgencyBadge(urgency: Urgency) {
-    const colors: Record<Urgency, string> = {
-        HIGH: "bg-destructive text-destructive-foreground",
-        MEDIUM: "bg-warning text-warning-foreground",
-        LOW: "bg-success text-success-foreground",
-    };
-    return <Badge className={colors[urgency]}>{urgency}</Badge>;
-}
+import { PaginationControls } from "@/components/common/PaginationControls";
+
+import { useMyMissions } from "@/features/hooks/InstitutionHooks/useMyMissions";
+import { MissionsHeader } from "@/components/institution/my-missions/MissionsHeader";
+import { MissionsFilter } from "@/components/institution/my-missions/MissionsFilter";
+import { MissionCard } from "@/components/institution/my-missions/MissionCard";
 
 export default function MyMissions() {
-    const [statusFilter, setStatusFilter] = useState<MissionStatus | "ALL">("ALL");
+  const {
+    t,
+    view,
+    setView,
+    search,
+    setSearch,
+    statusFilter,
+    setStatusFilter,
+    domainFilter,
+    setDomainFilter,
+    isMissionsLoading,
+    missions, // These are now filtered missions
+    domains,
+    handleDelete,
+  } = useMyMissions();
 
-    const { data: missionsData, isLoading } = useGetMyMissionsQuery(
-        statusFilter !== "ALL" ? { status: statusFilter } : undefined
-    );
-    const [deleteMission] = useDeleteMissionMutation();
+  // Client-side Pagination State
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(9);
 
-    const missions = missionsData?.data || [];
+  // Filter change handler wrapper to reset page
+  const handleFilterChange = (setter: any, value: any) => {
+    setter(value);
+    setPage(1);
+  };
 
-    const handleDelete = useCallback(async (id: number) => {
-        try {
-            await deleteMission(id).unwrap();
-            showSuccessToast("Mission deleted", "The mission has been deleted successfully.");
-        } catch (error) {
-            showErrorToast(error, "Failed to delete mission. Please try again.");
-        }
-    }, [deleteMission]);
+  // Calculate Pagination
+  const totalItems = missions.length;
+  const totalPages = Math.ceil(totalItems / pageSize);
 
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString();
-    };
+  const paginatedMissions = useMemo(() => {
+    const startIndex = (page - 1) * pageSize;
+    return missions.slice(startIndex, startIndex + pageSize);
+  }, [missions, page, pageSize]);
 
-    const formatBudget = (budget: number | null | undefined) => {
-        if (!budget) return "-";
-        return new Intl.NumberFormat("fr-MA", {
-            style: "currency",
-            currency: "MAD",
-        }).format(budget);
-    };
+  return (
+    <div className="space-y-6 pb-10 animate-in fade-in duration-500">
+      {/* Header */}
+      <MissionsHeader />
 
-    // Column definitions for DataTable
-    const columns: ColumnDef<Mission>[] = useMemo(
-        () => [
-            {
-                accessorKey: "title",
-                header: ({ column }) => (
-                    <DataTableColumnHeader column={column} title="Title" />
-                ),
-                cell: ({ row }) => {
-                    const mission = row.original;
-                    return (
-                        <div className="min-w-0">
-                            <p className="font-medium truncate max-w-[200px]">
-                                {mission.title}
-                            </p>
-                            {mission.location && (
-                                <p className="text-xs text-muted-foreground truncate">
-                                    {mission.location}
-                                </p>
-                            )}
-                        </div>
-                    );
-                },
-            },
-            {
-                accessorKey: "status",
-                header: ({ column }) => (
-                    <DataTableColumnHeader column={column} title="Status" />
-                ),
-                cell: ({ row }) => <StatusBadge status={row.getValue("status")} />,
-                filterFn: (row, id, value) => value.includes(row.getValue(id)),
-            },
-            {
-                accessorKey: "startDate",
-                header: ({ column }) => (
-                    <DataTableColumnHeader column={column} title="Dates" />
-                ),
-                cell: ({ row }) => {
-                    const mission = row.original;
-                    return (
-                        <div className="text-sm">
-                            <p>{formatDate(mission.startDate)}</p>
-                            <p className="text-muted-foreground">
-                                to {formatDate(mission.endDate)}
-                            </p>
-                        </div>
-                    );
-                },
-            },
-            {
-                accessorKey: "budget",
-                header: ({ column }) => (
-                    <DataTableColumnHeader column={column} title="Budget" />
-                ),
-                cell: ({ row }) => formatBudget(row.getValue("budget") as number | null),
-            },
-            {
-                accessorKey: "urgency",
-                header: ({ column }) => (
-                    <DataTableColumnHeader column={column} title="Urgency" />
-                ),
-                cell: ({ row }) => getUrgencyBadge(row.getValue("urgency") as Urgency),
-                filterFn: (row, id, value) => value.includes(row.getValue(id)),
-            },
-            {
-                id: "actions",
-                header: "Actions",
-                cell: ({ row }) => {
-                    const mission = row.original;
-                    return (
-                        <div className="flex justify-end gap-2">
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                asChild
-                                title="View details"
-                                aria-label="View mission details"
-                            >
-                                <Link to={`/institution/missions/${mission.id}`}>
-                                    <Eye className="h-4 w-4" />
-                                </Link>
-                            </Button>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                asChild
-                                title="View applicants"
-                                aria-label="View mission applicants"
-                            >
-                                <Link to={`/institution/missions/${mission.id}/applicants`}>
-                                    <Users className="h-4 w-4" />
-                                </Link>
-                            </Button>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                asChild
-                                title="Edit mission"
-                                aria-label="Edit mission"
-                            >
-                                <Link to={`/institution/missions/${mission.id}/edit`}>
-                                    <Edit className="h-4 w-4" />
-                                </Link>
-                            </Button>
-                            <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        title="Delete mission"
-                                        aria-label="Delete mission"
-                                        className="text-destructive hover:text-destructive"
-                                    >
-                                        <Trash2 className="h-4 w-4" />
-                                    </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                        <AlertDialogTitle>Delete Mission</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                            Are you sure you want to delete "{mission.title}"? This action cannot be undone.
-                                        </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <AlertDialogFooter>
-                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                        <AlertDialogAction
-                                            onClick={() => handleDelete(mission.id)}
-                                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                        >
-                                            Delete
-                                        </AlertDialogAction>
-                                    </AlertDialogFooter>
-                                </AlertDialogContent>
-                            </AlertDialog>
-                        </div>
-                    );
-                },
-                enableSorting: false,
-            },
-        ],
-        [handleDelete]
-    );
+      {/* Filter Bar */}
+      <MissionsFilter
+        search={search}
+        setSearch={(v) => handleFilterChange(setSearch, v)}
+        statusFilter={statusFilter}
+        setStatusFilter={(v) => handleFilterChange(setStatusFilter, v)}
+        domainFilter={domainFilter}
+        setDomainFilter={(v) => handleFilterChange(setDomainFilter, v)}
+        view={view}
+        setView={setView}
+        domains={domains}
+      />
 
-    return (
-        <div className="space-y-6">
-            {/* Header with actions */}
-            <div className="flex flex-col sm:flex-row justify-between gap-4">
-                <div className="flex items-center gap-4">
-                    <Select
-                        value={statusFilter}
-                        onValueChange={(value) => setStatusFilter(value as MissionStatus | "ALL")}
-                    >
-                        <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Filter by status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="ALL">All Statuses</SelectItem>
-                            <SelectItem value="OPEN">Open</SelectItem>
-                            <SelectItem value="ONGOING">Ongoing</SelectItem>
-                            <SelectItem value="CLOSED">Closed</SelectItem>
-                            <SelectItem value="CANCELLED">Cancelled</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-                <Button asChild>
-                    <Link to="/institution/missions/create">
-                        <PlusCircle className="mr-2 h-4 w-4" />
-                        Create Mission
-                    </Link>
-                </Button>
+      {/* Content */}
+      {isMissionsLoading ? (
+        <MissionSkeletonList view={view === "list" ? "table" : "grid"} />
+      ) : (
+        <>
+          {missions.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-24 text-center space-y-4 border-2 border-dashed border-border/40 rounded-xl bg-muted/5">
+              <div className="p-6 rounded-full bg-muted/30 ring-1 ring-border/50">
+                <Search className="h-10 w-10 text-muted-foreground/50" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-xl font-semibold">
+                  {t("MY_MISSIONS.EMPTY.TITLE")}
+                </h3>
+                <p className="text-muted-foreground max-w-sm mx-auto">
+                  {t("MY_MISSIONS.EMPTY.DESCRIPTION")}
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                className="mt-4"
+                onClick={() => {
+                  handleFilterChange(setSearch, "");
+                  handleFilterChange(setStatusFilter, "ALL");
+                  handleFilterChange(setDomainFilter, "ALL");
+                }}
+              >
+                {t("MY_MISSIONS.ACTIONS.CLEAR_FILTER")}
+              </Button>
             </div>
+          ) : (
+            <div className="space-y-6">
+              <div
+                className={
+                  view === "grid"
+                    ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                    : "flex flex-col gap-4"
+                }
+              >
+                {paginatedMissions.map((mission) => (
+                  <MissionCard
+                    key={mission.id}
+                    mission={mission}
+                    view={view}
+                    onDelete={handleDelete}
+                  />
+                ))}
+              </div>
 
-            {/* Missions Table */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Briefcase className="h-5 w-5" />
-                        Missions
-                        {!isLoading && (
-                            <Badge variant="secondary" className="ml-2">
-                                {missions.length}
-                            </Badge>
-                        )}
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <DataTable
-                        columns={columns}
-                        data={missions}
-                        isLoading={isLoading}
-                        enableSorting={true}
-                        enableGlobalFilter={true}
-                        globalFilterPlaceholder="Search missions..."
-                        enablePagination={true}
-                        pageSize={10}
-                        emptyIcon={Briefcase}
-                        emptyTitle="No missions found"
-                        emptyDescription={
-                            statusFilter !== "ALL"
-                                ? "No missions match the selected filter. Try changing the filter or create a new mission."
-                                : "You haven't created any missions yet. Create your first mission to start finding workers."
-                        }
-                        emptyAction={
-                            <Button asChild>
-                                <Link to="/institution/missions/create">
-                                    <PlusCircle className="mr-2 h-4 w-4" />
-                                    Create Mission
-                                </Link>
-                            </Button>
-                        }
-                    />
-                </CardContent>
-            </Card>
-        </div>
-    );
+              {/* Pagination */}
+              {totalItems > 0 && (
+                <div className="border-t pt-4">
+                  <PaginationControls
+                    currentPage={page}
+                    totalPages={totalPages}
+                    pageSize={pageSize}
+                    setPageSize={setPageSize}
+                    setPage={setPage}
+                    totalItems={totalItems}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
 }
-

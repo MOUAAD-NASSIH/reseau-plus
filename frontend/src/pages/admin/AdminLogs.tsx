@@ -1,13 +1,12 @@
-import { useState, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import {
-    FileText,
-    Search,
-    Filter,
-    Calendar,
-    User,
-    Eye,
-    X,
-    Activity,
+  FileText,
+  Search,
+  X,
+  Calendar,
+  User,
+  Eye,
+  ShieldCheck,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -16,394 +15,515 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/common/EmptyState";
 import { Badge } from "@/components/ui/badge";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import {
-    useGetAdminLogsQuery,
-    type AdminLog,
-} from "@/features/api/endpoints/adminEndpoints";
+import { useAdminLogs } from "@/features/hooks/AdminHooks/useAdminLogs";
+import { AdminLogsStats } from "@/components/admin/logs/AdminLogsStats";
+import { type AdminLog } from "@/features/api/endpoints/adminEndpoints";
+import { format } from "date-fns";
+import { fr, enUS } from "date-fns/locale";
 
-// Action type badge colors
+// Action type badge colors with premium palette
 const actionTypeColors: Record<string, string> = {
-    VERIFY_WORKER: "bg-success/10 text-success",
-    REJECT_WORKER: "bg-destructive/10 text-destructive",
-    APPROVE_DOCUMENT: "bg-info/10 text-info",
-    REJECT_DOCUMENT: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400",
-    UPDATE_USER_STATUS: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400",
-    CREATE_DOMAIN: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-400",
-    UPDATE_DOMAIN: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-400",
-    DELETE_DOMAIN: "bg-destructive/10 text-destructive",
-    CREATE_SPECIALITY: "bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-400",
-    UPDATE_SPECIALITY: "bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-400",
-    DELETE_SPECIALITY: "bg-destructive/10 text-destructive",
-};
-
-// Get unique action types from logs
-const getUniqueActionTypes = (logs: AdminLog[]): string[] => {
-    const types = new Set(logs.map((log) => log.actionType));
-    return Array.from(types).sort();
+  VERIFY_WORKER: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
+  REJECT_WORKER: "bg-rose-500/10 text-rose-500 border-rose-500/20",
+  APPROVE_DOCUMENT: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+  REJECT_DOCUMENT: "bg-amber-500/10 text-amber-500 border-amber-500/20",
+  UPDATE_USER_STATUS: "bg-purple-500/10 text-purple-500 border-purple-500/20",
+  CREATE_DOMAIN: "bg-cyan-500/10 text-cyan-500 border-cyan-500/20",
+  UPDATE_DOMAIN: "bg-cyan-500/10 text-cyan-500 border-cyan-500/20",
+  DELETE_DOMAIN: "bg-rose-500/10 text-rose-500 border-rose-500/20",
 };
 
 interface LogDetailsDialogProps {
-    log: AdminLog | null;
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
+  log: AdminLog | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 function LogDetailsDialog({ log, open, onOpenChange }: LogDetailsDialogProps) {
-    if (!log) return null;
+  const { t, i18n } = useTranslation();
+  if (!log) return null;
 
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString("fr-FR", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-        });
-    };
+  const dateLocale = i18n.language === "fr" ? fr : enUS;
 
-    return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-lg max-h-[80vh] overflow-y-auto">
-                <DialogHeader>
-                    <DialogTitle className="flex items-center gap-2">
-                        <FileText className="h-5 w-5" />
-                        Log Details
-                    </DialogTitle>
-                    <DialogDescription>
-                        Admin action log #{log.id}
-                    </DialogDescription>
-                </DialogHeader>
+  const getTargetName = () => {
+    if (!log.targetUser) return null;
+    if (log.targetUser.worker) {
+      return `${log.targetUser.worker.firstName} ${log.targetUser.worker.lastName}`;
+    }
+    if (log.targetUser.institution) {
+      return log.targetUser.institution.institutionName;
+    }
+    return log.targetUser.email;
+  };
 
-                <div className="space-y-6">
-                    {/* Action Type */}
-                    <div className="flex items-center gap-3">
-                        <Badge className={actionTypeColors[log.actionType] || "bg-gray-100 text-gray-800"}>
-                            {log.actionType.replace(/_/g, " ")}
-                        </Badge>
-                    </div>
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl bg-card/95 backdrop-blur-3xl border-border/40 shadow-2xl rounded-[2.5rem] p-0 overflow-hidden">
+        <div className="bg-primary/5 p-8 border-b border-border/40">
+          <DialogHeader>
+            <div className="flex items-center gap-4 mb-2">
+              <div className="h-14 w-14 bg-primary text-primary-foreground rounded-2xl flex items-center justify-center shadow-lg shadow-primary/20">
+                <FileText className="h-7 w-7" />
+              </div>
+              <div className="space-y-1">
+                <Badge
+                  variant="outline"
+                  className={`font-black tracking-widest text-[10px] uppercase py-1 px-3 ${
+                    actionTypeColors[log.actionType] ||
+                    "bg-muted/30 text-muted-foreground border-border/40"
+                  }`}
+                >
+                  {log.actionType.replace(/_/g, " ")}
+                </Badge>
+                <DialogTitle className="text-2xl font-black tracking-tight">
+                  {t("ADMIN_LOGS.DIALOG.TITLE")}
+                </DialogTitle>
+              </div>
+            </div>
+            <DialogDescription className="font-bold text-muted-foreground/60 uppercase tracking-widest text-[10px]">
+              {t("ADMIN_LOGS.DIALOG.SUBTITLE", { id: log.id })}
+            </DialogDescription>
+          </DialogHeader>
+        </div>
 
-                    {/* Admin Info */}
-                    <div className="space-y-1">
-                        <Label className="text-muted-foreground flex items-center gap-1">
-                            <User className="h-3 w-3" />
-                            Admin ID
-                        </Label>
-                        <p className="font-medium">{log.adminId}</p>
-                    </div>
-
-                    {/* Target User */}
-                    {log.targetUserId && (
-                        <div className="space-y-1">
-                            <Label className="text-muted-foreground flex items-center gap-1">
-                                <User className="h-3 w-3" />
-                                Target User ID
-                            </Label>
-                            <p className="font-medium">{log.targetUserId}</p>
-                        </div>
-                    )}
-
-                    {/* Details */}
-                    {log.details && (
-                        <div className="space-y-2">
-                            <Label className="text-muted-foreground flex items-center gap-1">
-                                <FileText className="h-3 w-3" />
-                                Details
-                            </Label>
-                            <p className="text-sm bg-muted/50 p-3 rounded-lg whitespace-pre-wrap">
-                                {log.details}
-                            </p>
-                        </div>
-                    )}
-
-                    {/* Date */}
-                    <div className="space-y-1">
-                        <Label className="text-muted-foreground flex items-center gap-1">
-                            <Calendar className="h-3 w-3" />
-                            Created At
-                        </Label>
-                        <p className="font-medium">{formatDate(log.createdAt)}</p>
-                    </div>
-
-                    {/* Metadata */}
-                    <div className="text-xs text-muted-foreground border-t pt-4">
-                        <p>Log ID: {log.id}</p>
-                    </div>
+        <div className="p-8 space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* ADMIN INFO */}
+            <div className="p-6 rounded-3xl bg-muted/30 border border-border/40 space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-8 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <ShieldCheck className="h-4 w-4 text-primary" />
                 </div>
-            </DialogContent>
-        </Dialog>
-    );
+                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60">
+                  {t("ADMIN_LOGS.DIALOG.ADMIN_ID")}
+                </Label>
+              </div>
+              <div>
+                <p
+                  className="font-black text-lg tracking-tight truncate"
+                  title={log.admin?.email}
+                >
+                  {log.admin?.email.split("@")[0]}
+                </p>
+                <p className="text-[10px] font-bold text-muted-foreground opacity-50 font-mono italic">
+                  ID: #{log.adminId}
+                </p>
+              </div>
+            </div>
+
+            {/* TARGET INFO */}
+            {log.targetUserId && (
+              <div className="p-6 rounded-3xl bg-muted/30 border border-border/40 space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-8 w-8 rounded-xl bg-amber-500/10 flex items-center justify-center">
+                    <User className="h-4 w-4 text-amber-500" />
+                  </div>
+                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60">
+                    {t("ADMIN_LOGS.DIALOG.TARGET_USER")}
+                  </Label>
+                </div>
+                <div>
+                  <p className="font-black text-lg tracking-tight truncate">
+                    {getTargetName()}
+                  </p>
+                  <p className="text-[10px] font-bold text-muted-foreground opacity-50 font-mono italic">
+                    ID: #{log.targetUserId}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* DETAILS BOX */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="h-8 w-8 rounded-xl bg-blue-500/10 flex items-center justify-center">
+                <Search className="h-4 w-4 text-blue-500" />
+              </div>
+              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60">
+                {t("ADMIN_LOGS.DIALOG.DETAILS")}
+              </Label>
+            </div>
+            <div className="bg-muted/30 border border-border/40 p-6 rounded-[2rem] relative overflow-hidden group">
+              <div className="absolute top-0 right-0 h-32 w-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl" />
+              <p className="text-sm font-semibold leading-relaxed text-foreground/80 whitespace-pre-wrap relative z-10">
+                {log.details ||
+                  "No additional context provided for this action."}
+              </p>
+            </div>
+          </div>
+
+          {/* METADATA */}
+          <div className="flex items-center justify-between pt-6 border-t border-border/40">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                <Calendar className="h-5 w-5 text-purple-500" />
+              </div>
+              <div>
+                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60 block">
+                  {t("ADMIN_LOGS.DIALOG.CREATED_AT")}
+                </Label>
+                <span className="text-sm font-bold opacity-80">
+                  {format(new Date(log.createdAt), "PPP p", {
+                    locale: dateLocale,
+                  })}
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge
+                variant="outline"
+                className="font-mono text-[10px] opacity-40"
+              >
+                LOG_ID_{log.id.toString().padStart(6, "0")}
+              </Badge>
+            </div>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
 }
 
 export default function AdminLogs() {
-    const [searchQuery, setSearchQuery] = useState("");
-    const [actionTypeFilter, setActionTypeFilter] = useState<string>("ALL");
-    const [selectedLog, setSelectedLog] = useState<AdminLog | null>(null);
-    const [dialogOpen, setDialogOpen] = useState(false);
+  const { t, i18n } = useTranslation();
+  const {
+    logs,
+    isLoading,
+    searchQuery,
+    setSearchQuery,
+    actionTypeFilter,
+    setActionTypeFilter,
+    selectedLog,
+    dialogOpen,
+    setDialogOpen,
+    actionTypes,
+    stats,
+    handleViewLog,
+    clearFilters,
+    hasActiveFilters,
+    dateFilter,
+    setDateFilter,
+  } = useAdminLogs();
 
-    // Fetch data
-    const { data: logsData, isLoading: logsLoading } = useGetAdminLogsQuery(
-        actionTypeFilter !== "ALL" ? { actionType: actionTypeFilter } : undefined
-    );
+  const dateLocale = i18n.language === "fr" ? fr : enUS;
 
-    const logs = useMemo(() => logsData?.data || [], [logsData?.data]);
+  return (
+    <div className="space-y-8 pb-8 animate-in fade-in duration-700 font-spline">
+      {/* Header Section */}
+      <div className="flex flex-col gap-2">
+        <h1 className="text-4xl font-black tracking-tight text-foreground sm:text-5xl">
+          {t("ADMIN_LOGS.TITLE")}
+        </h1>
+        <p className="text-lg text-muted-foreground font-medium max-w-2xl opacity-70">
+          {t("ADMIN_LOGS.SUBTITLE")}
+        </p>
+      </div>
 
-    // Get unique action types for filter dropdown
-    const actionTypes = useMemo(() => getUniqueActionTypes(logs), [logs]);
+      {/* Stats Overview */}
+      <AdminLogsStats stats={stats} isLoading={isLoading} />
 
-    // Filter logs by search query
-    const filteredLogs = useMemo(() => {
-        if (!searchQuery.trim()) return logs;
+      {/* Filters Section */}
+      <Card className="border-border/40 shadow-xl shadow-primary/5 bg-card/60 backdrop-blur-xl rounded-[2rem] overflow-hidden">
+        <CardContent className="p-6">
+          <div className="flex flex-row items-center gap-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground opacity-40" />
+              <Input
+                placeholder={t("ADMIN_LOGS.FILTERS.SEARCH_PLACEHOLDER")}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-12 h-14 bg-muted/30 border-border/40 rounded-2xl focus-visible:ring-primary/20 font-bold text-base"
+              />
+            </div>
 
-        const query = searchQuery.toLowerCase();
-        return logs.filter(
-            (log) =>
-                log.id.toString().includes(query) ||
-                log.adminId.toString().includes(query) ||
-                log.targetUserId?.toString().includes(query) ||
-                log.actionType.toLowerCase().includes(query) ||
-                log.details?.toLowerCase().includes(query)
-        );
-    }, [logs, searchQuery]);
+            <Select
+              value={actionTypeFilter}
+              onValueChange={setActionTypeFilter}
+            >
+              <SelectTrigger className="w-[200px] h-14 bg-muted/30 border-border/40 rounded-2xl font-black uppercase text-[10px] tracking-widest">
+                <SelectValue
+                  placeholder={t("ADMIN_LOGS.FILTERS.ACTION_TYPE")}
+                />
+              </SelectTrigger>
+              <SelectContent className="rounded-2xl border-border/40">
+                <SelectItem
+                  value="ALL"
+                  className="font-black uppercase text-[10px] tracking-widest"
+                >
+                  {t("ADMIN_LOGS.FILTERS.ALL_ACTIONS")}
+                </SelectItem>
+                {actionTypes.map((type) => (
+                  <SelectItem
+                    key={type}
+                    value={type}
+                    className="font-bold uppercase text-[10px] tracking-widest"
+                  >
+                    {type.replace(/_/g, " ")}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-    const handleViewLog = (log: AdminLog) => {
-        setSelectedLog(log);
-        setDialogOpen(true);
-    };
+            <Select value={dateFilter} onValueChange={setDateFilter}>
+              <SelectTrigger className="w-[180px] h-14 bg-muted/30 border-border/40 rounded-2xl font-black uppercase text-[10px] tracking-widest">
+                <SelectValue placeholder="Period" />
+              </SelectTrigger>
+              <SelectContent className="rounded-2xl border-border/40">
+                <SelectItem
+                  value="ALL"
+                  className="font-black uppercase text-[10px] tracking-widest"
+                >
+                  All Time
+                </SelectItem>
+                <SelectItem
+                  value="TODAY"
+                  className="font-black uppercase text-[10px] tracking-widest"
+                >
+                  Today
+                </SelectItem>
+                <SelectItem
+                  value="YESTERDAY"
+                  className="font-black uppercase text-[10px] tracking-widest"
+                >
+                  Yesterday
+                </SelectItem>
+                <SelectItem
+                  value="LAST_7_DAYS"
+                  className="font-black uppercase text-[10px] tracking-widest"
+                >
+                  Last 7 Days
+                </SelectItem>
+                <SelectItem
+                  value="LAST_30_DAYS"
+                  className="font-black uppercase text-[10px] tracking-widest"
+                >
+                  Last 30 Days
+                </SelectItem>
+              </SelectContent>
+            </Select>
 
-    const clearFilters = () => {
-        setSearchQuery("");
-        setActionTypeFilter("ALL");
-    };
+            {hasActiveFilters && (
+              <Button
+                variant="outline"
+                onClick={clearFilters}
+                size="icon"
+                className="h-14 w-14 min-w-[3.5rem] rounded-2xl border-border/40 bg-muted/30 hover:bg-primary/5 hover:text-primary transition-all group"
+                title={t("ADMIN_LOGS.FILTERS.CLEAR")}
+              >
+                <X className="h-5 w-5 group-hover:rotate-90 transition-transform duration-300" />
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
 
-    const hasActiveFilters = searchQuery || actionTypeFilter !== "ALL";
+      {/* Logs Table Section */}
+      <Card className="border-border/40 shadow-2xl shadow-primary/5 bg-card/60 backdrop-blur-xl rounded-[2.5rem] overflow-hidden border-t-0">
+        <CardHeader className="p-8 pb-4 border-b border-border/40 bg-muted/20">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="h-10 w-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                <FileText className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <CardTitle className="text-xl font-black tracking-tight tracking-tight">
+                  {t("ADMIN_LOGS.LIST.TITLE")}
+                </CardTitle>
+                <p className="text-xs font-bold text-muted-foreground opacity-60 uppercase tracking-widest mt-0.5">
+                  {t("ADMIN_LOGS.FILTERS.FOUND", { count: logs.length })}
+                </p>
+              </div>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="p-0">
+          {isLoading ? (
+            <div className="p-8 space-y-4">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <Skeleton key={i} className="h-16 w-full rounded-2xl" />
+              ))}
+            </div>
+          ) : logs.length === 0 ? (
+            <div className="py-20 px-4">
+              <EmptyState
+                icon={FileText}
+                title={t("ADMIN_LOGS.LIST.EMPTY")}
+                description={
+                  hasActiveFilters
+                    ? t("ADMIN_LOGS.LIST.EMPTY_DESC")
+                    : t("ADMIN_LOGS.LIST.EMPTY_GENERIC")
+                }
+                action={
+                  hasActiveFilters ? (
+                    <Button
+                      variant="outline"
+                      onClick={clearFilters}
+                      className="rounded-2xl px-8 h-12 font-black uppercase tracking-widest text-[10px]"
+                    >
+                      {t("ADMIN_LOGS.FILTERS.CLEAR")}
+                    </Button>
+                  ) : undefined
+                }
+              />
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader className="bg-muted/10">
+                  <TableRow className="border-border/40 hover:bg-transparent">
+                    <TableHead className="w-[100px] pl-8 text-[10px] font-black uppercase tracking-widest">
+                      {t("ADMIN_LOGS.LIST.COLUMNS.ID")}
+                    </TableHead>
+                    <TableHead className="text-[10px] font-black uppercase tracking-widest">
+                      {t("ADMIN_LOGS.LIST.COLUMNS.ACTION")}
+                    </TableHead>
+                    <TableHead className="text-[10px] font-black uppercase tracking-widest">
+                      {t("ADMIN_LOGS.LIST.COLUMNS.ADMIN")}
+                    </TableHead>
+                    <TableHead className="text-[10px] font-black uppercase tracking-widest">
+                      {t("ADMIN_LOGS.LIST.COLUMNS.TARGET")}
+                    </TableHead>
+                    <TableHead className="text-[10px] font-black uppercase tracking-widest">
+                      {t("ADMIN_LOGS.LIST.COLUMNS.DATE")}
+                    </TableHead>
+                    <TableHead className="text-right pr-8 text-[10px] font-black uppercase tracking-widest">
+                      {t("ADMIN_LOGS.LIST.COLUMNS.ACTIONS")}
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {logs.map((log) => {
+                    const getTargetName = () => {
+                      if (!log.targetUser) return null;
+                      if (log.targetUser.worker) {
+                        return `${log.targetUser.worker.firstName} ${log.targetUser.worker.lastName}`;
+                      }
+                      if (log.targetUser.institution) {
+                        return log.targetUser.institution.institutionName;
+                      }
+                      return log.targetUser.email;
+                    };
 
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString("fr-FR", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-        });
-    };
-
-    return (
-        <div className="space-y-6">
-            {/* Summary Card */}
-            <Card>
-                <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">
-                        Total Log Entries
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="flex items-center gap-2">
-                        <Activity className="h-4 w-4 text-info" />
-                        <span className="text-2xl font-bold">{logs.length}</span>
-                    </div>
-                </CardContent>
-            </Card>
-
-            {/* Filters */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-lg">
-                        <Filter className="h-5 w-5" />
-                        Filters
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                        {/* Search */}
-                        <div className="relative lg:col-span-2">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                            <Input
-                                placeholder="Search by ID, admin, target user, or details..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="pl-9"
-                            />
-                        </div>
-
-                        {/* Action Type Filter */}
-                        <Select
-                            value={actionTypeFilter}
-                            onValueChange={setActionTypeFilter}
-                        >
-                            <SelectTrigger>
-                                <SelectValue placeholder="Action Type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="ALL">All Actions</SelectItem>
-                                {actionTypes.map((type) => (
-                                    <SelectItem key={type} value={type}>
-                                        {type.replace(/_/g, " ")}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-
-                    {/* Clear Filters */}
-                    {hasActiveFilters && (
-                        <div className="mt-4 flex items-center gap-2">
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={clearFilters}
-                                className="text-muted-foreground"
-                            >
-                                <X className="h-4 w-4 mr-1" />
-                                Clear filters
-                            </Button>
-                            <span className="text-sm text-muted-foreground">
-                                {filteredLogs.length} log(s) found
+                    return (
+                      <TableRow
+                        key={log.id}
+                        className="group border-border/40 hover:bg-primary/[0.04] transition-all duration-300"
+                      >
+                        <TableCell className="pl-8 font-mono text-xs font-bold opacity-40">
+                          #{log.id.toString().padStart(4, "0")}
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant="outline"
+                            className={`font-black tracking-widest text-[9px] uppercase px-2 py-0.5 whitespace-nowrap shadow-sm ${
+                              actionTypeColors[log.actionType] ||
+                              "bg-muted/30 text-muted-foreground border-border/40"
+                            }`}
+                          >
+                            {log.actionType.replace(/_/g, " ")}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-3">
+                            <div className="h-8 w-8 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
+                              <ShieldCheck className="h-4 w-4 text-primary" />
+                            </div>
+                            <div className="flex flex-col">
+                              <span
+                                className="font-bold text-sm tracking-tight text-foreground truncate max-w-[120px]"
+                                title={log.admin?.email}
+                              >
+                                {log.admin?.email.split("@")[0]}
+                              </span>
+                              <span className="text-[9px] font-mono opacity-40 font-bold uppercase tracking-tighter">
+                                ID: #{log.adminId}
+                              </span>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {log.targetUserId ? (
+                            <div className="flex items-center gap-3">
+                              <div className="h-8 w-8 rounded-xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20">
+                                <User className="h-4 w-4 text-amber-500" />
+                              </div>
+                              <div className="flex flex-col">
+                                <span className="font-bold text-sm tracking-tight text-foreground truncate max-w-[120px]">
+                                  {getTargetName()}
+                                </span>
+                                <span className="text-[9px] font-mono opacity-40 font-bold uppercase tracking-tighter">
+                                  ID: #{log.targetUserId}
+                                </span>
+                              </div>
+                            </div>
+                          ) : (
+                            <span className="text-muted-foreground opacity-20 font-black text-[10px] tracking-widest px-2">
+                              —
                             </span>
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex flex-col">
+                            <span className="text-[11px] font-black tracking-tight">
+                              {format(new Date(log.createdAt), "dd MMM yyyy", {
+                                locale: dateLocale,
+                              })}
+                            </span>
+                            <span className="text-[9px] font-bold text-muted-foreground opacity-50 uppercase tracking-widest">
+                              {format(new Date(log.createdAt), "HH:mm")}
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="pr-8 text-right">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleViewLog(log)}
+                            className="rounded-xl h-10 px-4 font-black text-[10px] uppercase tracking-widest bg-muted/30 border border-border/40 hover:bg-primary/10 hover:text-primary hover:border-primary/20 transition-all duration-300 shadow-sm"
+                          >
+                            <Eye className="h-3.5 w-3.5 mr-2" />
+                            {t("ADMIN_LOGS.LIST.VIEW")}
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
-            {/* Logs Table */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <FileText className="h-5 w-5" />
-                        Admin Action Logs
-                        {!logsLoading && (
-                            <Badge variant="secondary" className="ml-2">
-                                {filteredLogs.length}
-                            </Badge>
-                        )}
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    {logsLoading ? (
-                        <div className="space-y-3">
-                            {[1, 2, 3, 4, 5].map((i) => (
-                                <Skeleton key={i} className="h-16 w-full" />
-                            ))}
-                        </div>
-                    ) : filteredLogs.length === 0 ? (
-                        <EmptyState
-                            icon={FileText}
-                            title="No logs found"
-                            description={
-                                hasActiveFilters
-                                    ? "No logs match the current filters. Try adjusting your search criteria."
-                                    : "There are no admin action logs yet."
-                            }
-                            action={
-                                hasActiveFilters ? (
-                                    <Button variant="outline" onClick={clearFilters}>
-                                        Clear filters
-                                    </Button>
-                                ) : undefined
-                            }
-                        />
-                    ) : (
-                        <div className="overflow-x-auto">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>ID</TableHead>
-                                        <TableHead>Action</TableHead>
-                                        <TableHead>Admin ID</TableHead>
-                                        <TableHead>Target User</TableHead>
-                                        <TableHead>Details</TableHead>
-                                        <TableHead>Date</TableHead>
-                                        <TableHead className="text-right">Actions</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {filteredLogs.map((log) => (
-                                        <TableRow key={log.id}>
-                                            <TableCell>
-                                                <span className="font-mono text-sm">#{log.id}</span>
-                                            </TableCell>
-                                            <TableCell>
-                                                <Badge className={actionTypeColors[log.actionType] || "bg-gray-100 text-gray-800"}>
-                                                    {log.actionType.replace(/_/g, " ")}
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className="flex items-center gap-1">
-                                                    <User className="h-3 w-3 text-muted-foreground" />
-                                                    {log.adminId}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                {log.targetUserId ? (
-                                                    <div className="flex items-center gap-1">
-                                                        <User className="h-3 w-3 text-muted-foreground" />
-                                                        {log.targetUserId}
-                                                    </div>
-                                                ) : (
-                                                    <span className="text-muted-foreground">-</span>
-                                                )}
-                                            </TableCell>
-                                            <TableCell>
-                                                <p className="truncate max-w-[200px] text-sm text-muted-foreground">
-                                                    {log.details || "-"}
-                                                </p>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className="flex items-center gap-1 text-sm">
-                                                    <Calendar className="h-3 w-3 text-muted-foreground" />
-                                                    {formatDate(log.createdAt)}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className="flex justify-end">
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        onClick={() => handleViewLog(log)}
-                                                    >
-                                                        <Eye className="h-4 w-4 mr-1" />
-                                                        View
-                                                    </Button>
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
-
-            {/* Log Details Dialog */}
-            <LogDetailsDialog
-                log={selectedLog}
-                open={dialogOpen}
-                onOpenChange={setDialogOpen}
-            />
-        </div>
-    );
+      {/* Log Details Dialog */}
+      <LogDetailsDialog
+        log={selectedLog}
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+      />
+    </div>
+  );
 }
-

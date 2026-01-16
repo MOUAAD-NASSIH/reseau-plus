@@ -19,7 +19,33 @@ export const fr = {
                 UPPERCASE: "Au moins une lettre majuscule",
                 NUMBER: "Au moins un chiffre",
                 SPECIAL: "Au moins un caractère spécial"
-            }
+            },
+            SUCCESS: "Succès",
+            STATUS_UPDATED: "Statut Mis à Jour",
+            STATUS_UPDATED_DESC: "Le statut a été mis à jour avec succès.",
+            ERROR: "Erreur",
+            FAILED_TO_UPDATE: "Échec de la mise à jour. Veuillez réessayer.",
+            BACK_TO_MISSIONS: "Retour aux Missions",
+            CANCEL: "Annuler",
+            SAVE: "Enregistrer",
+            SAVING: "Enregistrement...",
+            DELETE: "Supprimer",
+            CONFIRM: "Confirmer",
+            PAID: "Payé",
+            ANONYMOUS: "Anonyme",
+            COMPLETED_MISSION: "Mission terminée",
+            MISSION: "Mission",
+            PENDING: "En attente",
+            COMPLETED: "Terminé",
+            FAILED: "Échoué",
+            REMOTE: "À distance",
+            CURRENCY: "MAD",
+            DETAILS: "Détails",
+            VIEW_DETAILS: "Voir les détails",
+            SOCIAL_SERVICE: "Service Social",
+            SOCIAL_WORKER: "Travailleur Social",
+            WORKER: "Intervenant",
+            N_A: "N/D"
         },
         NAV: {
             FEATURES: "Fonctionnalités",
@@ -400,6 +426,756 @@ export const fr = {
                 GO_HOME: "Accueil",
                 SIGN_IN: "Se Connecter"
             }
+        },
+        INSTITUTION_DASHBOARD: {
+            WELCOME: "Bon retour, {{name}}",
+            SUBTITLE: "Voici ce qui se passe avec vos missions aujourd'hui.",
+            STATS: {
+                ACTIVE_MISSIONS: "Missions actives",
+                PENDING_APPLICANTS: "Candidats en attente",
+                OPEN_MISSIONS: "Missions ouvertes",
+                ASSIGNED_MISSIONS: "Missions attribuées",
+                TOTAL_PAYMENTS: "Total des paiements",
+                ONGOING_MISSIONS: "Missions en cours",
+                DUE_IN_7_DAYS: "À payer dans 7 jours",
+                LAST_30_DAYS: "30 derniers jours",
+                CLOSED_MISSIONS: "Missions Clôturées",
+                CANCELLED_MISSIONS: "Missions Annulées",
+                RATING: "Évaluation"
+            },
+            SECTIONS: {
+                RECENT_MISSIONS: "Missions récentes",
+                RECENT_ACTIVITY: "Activité récente",
+                QUICK_ACTIONS: "Actions rapides",
+                VIEW_ALL: "Voir tout",
+                MISSION_DISTRIBUTION: "Répartition des missions",
+                TOP_MISSIONS: "Missions les plus demandées"
+            },
+            ACTIONS: {
+                CREATE_MISSION: "Créer une mission",
+                VIEW_APPLICANTS: "Voir les candidats",
+                INVITE_WORKFORCE: "Inviter des travailleurs",
+                RECRUITING: "en recrutement",
+                AWAITING_APPLICANTS: "En attente de candidats",
+                TOTAL_ASSIGNMENTS: "affectations au total",
+                LIFETIME_TOTAL: "Total cumulé",
+                MISSION_NAME: "Nom de la Mission",
+                POSTED: "Publié le {{date}}",
+                REMOTE: "À distance",
+                NO_APPLICANTS: "Aucun candidat"
+            },
+            EMPTY_STATES: {
+                NO_MISSIONS: "Aucune mission créée pour le moment.",
+                NO_ACTIVITY: "Aucune activité récente.",
+                NO_DATA: "Aucune donnée disponible"
+            }
+        },
+        CREATE_MISSION: {
+            HEADER: {
+                TITLE: "Créer une Nouvelle Mission",
+                SUBTITLE: "Définissez la portée, la logistique et les exigences de votre nouvelle mission."
+            },
+            SECTIONS: {
+                DETAILS: "Détails de la Mission",
+                LOGISTICS: "Logistique & Exigences",
+                CRITERIA: "Critères & Prérequis"
+            },
+            DETAILS: {
+                TITLE_LABEL: "Titre de la Mission",
+                TITLE_PLACEHOLDER: "ex. Intervention de soutien familial...",
+                DESCRIPTION_LABEL: "Description",
+                DESCRIPTION_PLACEHOLDER: "Objectifs détaillés de la mission et contexte..."
+            },
+            LOGISTICS: {
+                START_DATE_LABEL: "Date de Début",
+                END_DATE_LABEL: "Date de Fin",
+                LOCATION_LABEL: "Lieu",
+                LOCATION_PLACEHOLDER: "Ville, Code Postal ou Adresse",
+                BUDGET_LABEL: "Budget Total",
+                BUDGET_PLACEHOLDER: "0.00"
+            },
+            REQUIREMENTS: {
+                SPECIALITY_LABEL: "Spécialité Requise",
+                SPECIALITY_PLACEHOLDER: "Sélectionnez une spécialité",
+                URGENCY_LABEL: "Niveau d'Urgence",
+                URGENCY_PLACEHOLDER: "Sélectionnez l'urgence",
+                URGENCY_LOW: "Faible",
+                URGENCY_MEDIUM: "Moyen",
+                URGENCY_HIGH: "Élevé",
+                DOMAINS_LABEL: "Tags de Domaine",
+                DOMAINS_PLACEHOLDER: "Ajouter un tag..."
+            },
+            ACTIONS: {
+                CANCEL: "Annuler",
+                SAVE_DRAFT: "Brouillon",
+                SUBMIT: "Publier la Mission",
+                SUBMITTING: "Création...",
+                PUBLISH_MISSION: "Publier la Mission",
+                STATUS_LABEL: "Statut :",
+                DRAFT: "Brouillon",
+                VISIBILITY_LABEL: "Visibilité :",
+                PUBLIC: "Public"
+            }
+        },
+        EDIT_MISSION: {
+            HEADER: {
+                TITLE: "Modifier la Mission",
+                SUBTITLE: "Mettez à jour les détails et les exigences de votre mission."
+            },
+            SECTIONS: {
+                DETAILS: "Détails de la Mission",
+                LOGISTICS: "Logistique",
+                CRITERIA: "Critères"
+            },
+            ACTIONS: {
+                SAVE: "Enregistrer les modifications",
+                SAVING: "Enregistrement...",
+                CANCEL: "Annuler",
+                STATUS_LABEL: "Statut de la Mission"
+            },
+            MESSAGES: {
+                SUCCESS: "Mission mise à jour",
+                SUCCESS_DESC: "Votre mission a été mise à jour avec succès.",
+                ERROR: "Échec de la mise à jour de la mission",
+                NOT_FOUND: "Mission Non Trouvée",
+                NOT_FOUND_DESC: "La mission que vous essayez de modifier n'existe pas ou a été supprimée.",
+                SYNC_NOTICE: "Les modifications sont synchronisées immédiatement avec les intervenants actifs."
+            }
+        },
+        MY_MISSIONS: {
+            TITLE: "Mes Missions",
+            SUBTITLE: "Gérez et suivez toutes vos missions publiées",
+            CREATE_NEW: "Créer une Mission",
+            SEARCH_PLACEHOLDER: "Rechercher des missions par titre ou ID...",
+            FILTER: {
+                STATUS_LABEL: "Statut :",
+                STATUS_ALL: "Tout",
+                STATUS_OPEN: "Ouvert",
+                STATUS_ONGOING: "En cours",
+                STATUS_CLOSED: "Fermé",
+                DOMAIN_LABEL: "Domaine :",
+                DOMAIN_ALL: "Tous les Domaines"
+            },
+            EMPTY: {
+                TITLE: "Aucune mission trouvée",
+                DESCRIPTION: "Aucune mission ne correspond à vos filtres actuels. Essayez de modifier vos termes de recherche ou d'effacer les filtres."
+            },
+            CARD: {
+                APPLICANTS: "Candidats",
+                BUDGET: "Budget",
+                VIEW_APPLICANTS: "Voir les Candidats",
+                VIEW_DETAILS: "Voir les Détails",
+                EDIT: "Modifier",
+                DELETE: "Supprimer",
+                POSTED: "Publié le {{date}}",
+                ACTIVE_HIRING: "Recrutement Actif"
+            },
+            ACTIONS: {
+                DELETE: "Supprimer la Mission",
+                CLEAR_FILTER: "Effacer les Filtres"
+            },
+            MESSAGES: {
+                DELETE_SUCCESS: "Mission supprimée avec succès",
+                DELETE_ERROR: "Échec de la suppression de la mission"
+            },
+            TABLE: {
+                TITLE: "Titre",
+                STATUS: "Statut",
+                DATES: "Dates",
+                BUDGET: "Budget",
+                URGENCY: "Urgence",
+                ACTIONS: "Actions"
+            }
+        },
+        MISSION_APPLICANTS: {
+            TITLE: "Candidats à la Mission",
+            BACK_TO_MISSIONS: "Retour aux Missions",
+            APPLICANTS_COUNT: "{{count}} candidat",
+            APPLICANTS_COUNT_plural: "{{count}} candidats",
+            STATS: {
+                TOTAL: "Total Candidats",
+                PENDING: "À Examiner",
+                ACCEPTED: "Acceptés",
+                ALL_APPLICATIONS: "Toutes les candidatures",
+                NEEDS_ACTION: "Action requise",
+                ASSIGNED_WORKERS: "Travailleurs assignés"
+            },
+            FILTER: {
+                LABEL: "Filtrer par statut",
+                ALL: "Tous les Statuts",
+                SUBMITTED: "Soumis",
+                ACCEPTED: "Acceptés",
+                REJECTED: "Rejetés",
+                SPECIALTY: "Spécialité",
+                ALL_SPECIALTIES: "Toutes les Spécialités",
+                EXPERIENCE: "Expérience",
+                YEARS: "{{count}} an",
+                YEARS_plural: "{{count}} ans",
+                EXPERIENCE_VAL: "{{min}}-{{max}}+ ans"
+            },
+            TABLE: {
+                APPLICANT: "Candidat",
+                LOCATION: "Localisation",
+                EXPERIENCE: "Expérience",
+                APPLIED: "Postulé",
+                STATUS: "Statut",
+                ACTIONS: "Actions",
+                YEARS: "{{count}} an",
+                YEARS_plural: "{{count}} ans"
+            },
+            ACTIONS: {
+                CLEAR_FILTER: "Effacer les Filtres",
+                VIEW_PROFILE: "Voir le Profil",
+                REJECT: "Rejeter",
+                ACCEPT: "Accepter le Travailleur",
+                INVITE: "Inviter un Travailleur"
+            },
+            DIALOG: {
+                TITLE: "Profil du Candidat",
+                DESCRIPTION: "Examinez les qualifications et l'expérience du travailleur",
+                SPECIALITY: "Spécialité",
+                EXPERIENCE: "EXPÉRIENCE",
+                LOCATION: "EMPLACEMENT",
+                APPLIED: "POSTULÉ LE",
+                BIO: "BIOGRAPHIE",
+                DOMAINS: "DOMAINES",
+                REJECT_APPLICATION: "Rejeter la Candidature",
+                ACCEPT_APPLICATION: "Accepter la Candidature"
+            },
+            CARD: {
+                TITLE: "Candidats",
+                DESCRIPTION: "Examinez et gérez les candidatures pour cette mission",
+                EXCELLENT_MATCH: "Excellent Match"
+            },
+            EMPTY: {
+                TITLE: "Aucun candidat pour le moment",
+                DESCRIPTION: "Aucun travailleur n'a postulé à cette mission pour le moment.",
+                DESCRIPTION_FILTERED: "Aucun candidat ne correspond au filtre sélectionné."
+            },
+            MESSAGES: {
+                NOT_FOUND: "Mission introuvable",
+                ACCEPT_SUCCESS: "Candidature acceptée",
+                ACCEPT_SUCCESS_DESC: "Le travailleur a été assigné à cette mission.",
+                ACCEPT_ERROR: "Échec de l'acceptation de la candidature. Veuillez réessayer.",
+                REJECT_SUCCESS: "Candidature rejetée",
+                REJECT_SUCCESS_DESC: "La candidature a été rejetée.",
+                REJECT_ERROR: "Échec du rejet de la candidature. Veuillez réessayer.",
+                SUBMIT_SUCCESS: "Avis soumis",
+                SUBMIT_ERROR: "Échec de la soumission de l'avis. Veuillez réessayer."
+            },
+            SEARCH_PLACEHOLDER: "Rechercher des candidats...",
+            PAGINATION: {
+                SHOWING: "Affichage de {{start}} à {{end}} sur {{total}} résultats"
+            }
+        },
+        MISSION_DETAILS: {
+            TITLE: "Détails de la Mission",
+            MISSION_CONTROL: "Contrôle de Mission",
+            SHARE: "Partager",
+            EDIT_MISSION: "Modifier la Mission",
+            TOTAL_BUDGET: "Budget Total",
+            MISSION_TIMELINE: "Calendrier de la Mission",
+            MISSION_TIMELINE_DAYS: "{{count}} Jours de durée",
+            APPLICANTS: "Candidats",
+            ACTIVE: "Actifs",
+            TOTAL_ACROSS_STATUSES: "{{count}} au total pour tous les statuts",
+            DESCRIPTION: "Description",
+            NO_DESCRIPTION: "Aucune description fournie.",
+            TECHNICAL_REQUIREMENTS: "Exigences Techniques",
+            REQUIRED: "(Requis)",
+            SPECIALIZATION_DESC: "spécialisation : Axée sur l'excellence en {{name}} et la contribution professionnelle.",
+            LOCATION: "Localisation",
+            URGENCY_LEVEL: "Niveau d'Urgence",
+            PRIORITY: "Priorité {{priority}}",
+            MISSION_DOMAINS: "Domaines de la Mission",
+            NO_DOMAINS: "Aucun domaine spécifié",
+            POSTED_BY: "PUBLIÉ PAR",
+            VIEW_INSTITUTION_PROFILE: "Voir le Profil de l'Institution",
+            TOP_APPLICANTS: "Meilleurs Candidats",
+            VIEW_ALL_APPLICANTS: "Voir tous les candidats ({{count}})",
+            APPLICANT: "CANDIDAT",
+            COMPATIBILITY: "COMPATIBILITÉ",
+            ACTIONS: "ACTIONS",
+            SHORTLIST: "Présélection",
+            VIEW_PROFILE: "Voir le Profil",
+            RATING: "Évaluation",
+            MESSAGES: {
+                NOT_FOUND: "Mission introuvable",
+                LINK_COPIED: "Le lien de la mission a été copié dans le presse-papiers."
+            },
+            BACK_TO_MISSIONS: "Retour aux Missions"
+        },
+        INSTITUTION_ASSIGNMENTS: {
+            TITLE: "Affectations de Mission",
+            DESCRIPTION: "Gérez et suivez vos déploiements de personnel et l'état des missions.",
+            ACTIONS: {
+                NEW: "Nouvelle Affectation"
+            },
+            STATS: {
+                TOTAL: "Total Affectations",
+                ACTIVE: "Missions Actives",
+                COMPLETED: "Missions Terminées",
+                PENDING_REVIEW: "En Attente d'Avis"
+            },
+            FILTER: {
+                LABEL: "Filtrer les Affectations",
+                SEARCH_WORKER: "Rechercher Travailleur",
+                SEARCH_PLACEHOLDER: "Nom, email...",
+                STATUS: "Statut",
+                STATUS_ALL: "Tous les Statuts",
+                MISSION_TYPE: "Type de Mission",
+                MISSION_TYPE_ALL: "Toutes les Missions",
+                CLEAR: "Effacer les Filtres"
+            },
+            TABLE: {
+                COLUMNS: {
+                    WORKER: "TRAVAILLEUR",
+                    MISSION: "TITRE DE LA MISSION",
+                    STATUS: "STATUT",
+                    DATES: "DATES",
+                    PAYMENT: "PAIEMENT",
+                    ACTIONS: "ACTIONS"
+                },
+                DAYS: "{{count}} Jour",
+                DAYS_plural: "{{count}} Jours",
+                PAYMENT_STATUS: {
+                    PENDING: "En attente",
+                    PAID: "Payé",
+                    PROCESSING: "En cours",
+                    SCHEDULED: "Programmé"
+                },
+                EMPTY_STATE: {
+                    TITLE: "Aucune affectation trouvée",
+                    DESCRIPTION: "Vous n'avez pas encore d'affectations ou aucun résultat pour vos filtres actuels."
+                },
+                STATUS: {
+                    ACTIVE: "Actif",
+                    ONGOING: "En cours",
+                    COMPLETED: "Terminé",
+                    CANCELLED: "Annulé",
+                    PENDING: "En attente"
+                }
+            }
+        },
+        ASSIGNED_MISSION_VIEW: {
+            HEADER: {
+                ASSIGNMENT_ID: "Affectation #{{id}}",
+                CREATED_ON: "Créée le {{date}}",
+                EXPORT: "Exporter",
+                EDIT: "Modifier",
+                PROCESS_PAYMENT: "Procéder au Paiement",
+                NOT_FOUND: "Affectation introuvable"
+            },
+            TIMELINE: {
+                TITLE: "Chronologie de la Mission",
+                ASSIGNED: "Travailleur Assigné",
+                ASSIGNED_DESC: "Le travailleur a été assigné à la mission.",
+                ONGOING: "Mission en Cours",
+                ONGOING_DESC: "La mission est actuellement en cours.",
+                COMPLETED: "Terminée",
+                COMPLETED_DESC: "La mission a été marquée comme terminée.",
+                CANCELLED: "Annulée",
+                CANCELLED_DESC: "La mission a été annulée."
+            },
+            WORK_LOGS: {
+                TITLE: "Journaux de Travail",
+                VIEW_ALL: "Voir tout l'historique",
+                STATUS_CHANGE: "Statut changé en {{status}}",
+                ASSIGNED: "Affectation créée",
+                ASSIGNED_DESC: "L'affectation a été initialisée le {{date}}."
+            },
+            REVIEW_COMPLETION: {
+                TITLE: "Révision de la Mission",
+                DESCRIPTION: "Veuillez vérifier les livrables avant de libérer le paiement.",
+                REQUEST_REVISION: "Demander une Révision",
+                VALIDATE_COMPLETION: "Valider la Clôture"
+            },
+            MISSION_OVERVIEW: {
+                TITLE: "Aperçu de la Mission",
+                LOCATION: "EMPLACEMENT",
+                PAYOUT: "PAIEMENT",
+                DURATION: "DURÉE",
+                DAYS: "{{count}} Jour",
+                DAYS_plural: "{{count}} Jours",
+                INSTRUCTIONS: "INSTRUCTIONS"
+            },
+            PAYMENT_STATUS: {
+                TITLE: "Statut du Paiement",
+                TOTAL_AMOUNT: "Montant Total",
+                WORKER_AMOUNT: "Montant Intervenant",
+                PLATFORM_FEE: "Frais de Plateforme",
+                PAID_ON: "Payé le",
+                NO_PAYMENT: "Aucun paiement n'a encore été effectué.",
+                COMPLETE_FOR_PAYMENT: "Terminez la mission pour activer le paiement."
+            },
+            WORKER_PROFILE: {
+                TITLE: "Profil de l'Intervenant",
+                ASSIGNED_ON: "Assigné le",
+                RELIABILITY: "Score de Fiabilité : {{score}}%",
+                MESSAGE: "Message",
+                PROFILE: "Profil"
+            }
+        },
+        FINANCIAL: {
+            TITLE: "Aperçu Financier",
+            SUBTITLE: "Gérez les paiements, les factures et les budgets des missions.",
+            EXPORT: "Exporter le Rapport",
+            KPI: {
+                TOTAL_PAID: "Total Payé",
+                PENDING_INVOICES: "Factures en Attente",
+                ACTIVE_MISSIONS: "Missions Actives",
+                AWAITING_PAYMENT: "En Attente de Paiement",
+                INVOICES_COUNT: "{{count}} Facture",
+                INVOICES_COUNT_plural: "{{count}} Factures",
+                AWAITING_APPROVAL: "en attente d'approbation",
+                AWAITING_APPROVAL_plural: "en attente d'approbation",
+                VS_LAST_MONTH: "vs mois dernier"
+            },
+            TABLE: {
+                COLUMNS: {
+                    STATUS: "STATUT",
+                    MISSION: "NOM DE LA MISSION",
+                    WORKER: "INTERVENANT",
+                    DATE: "DATE",
+                    AMOUNT: "MONTANT",
+                    RECEIPT: "REÇU"
+                },
+                SEARCH_PLACEHOLDER: "Rechercher par mission ou intervenant...",
+                FILTER: {
+                    DATE: "Date",
+                    STATUS: "Statut",
+                    MISSION: "Mission",
+                    ALL: "Tous"
+                },
+                EMPTY: {
+                    TITLE: "Aucun paiement pour le moment",
+                    DESCRIPTION: "Vous n'avez encore effectué aucun paiement aux intervenants."
+                }
+            },
+            AWAITING_SECTION: {
+                TITLE: "Missions en Attente de Paiement",
+                SUB: "mission en attente de paiement",
+                SUB_plural: "missions en attente de paiement",
+                PAY_NOW: "Payer Maintenant"
+            },
+            EMPTY: {
+                TITLE: "Aucun paiement pour le moment",
+                DESCRIPTION: "Vous n'avez pas encore effectué de paiements aux travailleurs."
+            },
+        },
+        REVIEWS: {
+            TITLE: "Avis & Évaluations",
+            SUBTITLE: "Gérez les retours et les informations de performance de vos missions",
+            EXPORT: "Exporter le Rapport",
+            SUMMARY: {
+                OVERALL_SCORE: "NOTE GLOBALE",
+                RATING_BREAKDOWN: "RÉPARTITION DES NOTES",
+                TOTAL_REVIEWS: "Total des Avis",
+                POSITIVE_RATE: "Taux Positif",
+                POSITIVE_DESC: "des travailleurs recommandent votre établissement",
+                VS_LAST_30_DAYS: "vs 30 derniers jours",
+                THIS_WEEK: "cette semaine",
+                BREAKDOWN: "RÉPARTITION DES NOTES",
+            },
+            TABS: {
+                RECEIVED: "Reçus",
+                WRITTEN: "Rédigés"
+            },
+            FEED: {
+                SORT: "Trié par",
+                NEWEST: "Plus Récents",
+                OLDEST: "Plus Anciens",
+                HIGHEST: "Meilleure Note",
+                LOWEST: "Moins Bonne Note",
+                LOAD_MORE: "Charger plus d'avis",
+                REPLY: "Répondre",
+                REPORT: "Signaler",
+                EMPTY_RECEIVED: "Aucun avis reçu pour le moment",
+                EMPTY_RECEIVED_DESC: "Vous n'avez pas encore reçu d'avis des travailleurs.",
+                EMPTY_WRITTEN: "Aucun avis rédigé pour le moment",
+                EMPTY_WRITTEN_DESC: "Vous n'avez pas encore rédigé d'avis pour les travailleurs.",
+                NO_COMMENT: "Aucun commentaire fourni.",
+                SEARCH_PLACEHOLDER: "Rechercher des avis..."
+            },
+            PENDING: {
+                TITLE: "Intervenants à évaluer",
+                SUBTITLE: "Laissez un avis pour les intervenants ayant terminé des missions",
+                BUTTON: "Évaluer",
+                DIALOG_DESC: "Partagez votre expérience de travail avec {{name}}. Votre feedback aide à maintenir la qualité du service.",
+                COMMENT_LABEL: "Commentaires / Expérience",
+                COMMENT_OPTIONAL: "Optionnel",
+                COMMENT_PLACEHOLDER: "Décrivez la performance, la ponctualité et l'attitude professionnelle de l'intervenant...",
+                SUBMITTING: "Envoi..."
+            }
+        },
+        INSTITUTION_PROFILE: {
+            TITLE: "Profil de l'Institution",
+            SUBTITLE: "Mettez à jour les informations de votre institution. Ces informations seront visibles par les intervenants.",
+            SECTIONS: {
+                ORGANIZATION: "Détails de l'Organisation",
+                ACCOUNT: "Informations du Compte"
+            },
+            BADGES: {
+                PUBLIC: "Profil Public"
+            },
+            FIELDS: {
+                LOGO: {
+                    LABEL: "Logo de l'Institution",
+                    DESCRIPTION: "Téléchargez le logo de votre institution. Taille recommandée : 256x256px. Formats supportés : JPG, PNG.",
+                    UPLOAD: "Télécharger",
+                    REMOVE: "Supprimer"
+                },
+                NAME: "Nom de l'Institution",
+                REGISTRATION_NUMBER: "Numéro d'Enregistrement / IF",
+                WEBSITE: "URL du Site Web",
+                EMAIL: "Email Principal",
+                PHONE: "Numéro de Téléphone",
+                ADDRESS: "Adresse",
+                ADDRESS_LINE2: "Complément d'Adresse (Optionnel)",
+                CITY: "Ville",
+                STATE: "État/Province",
+                ZIP: "Code Postal"
+            },
+            ACTIONS: {
+                CANCEL: "Annuler",
+                SAVE: "Enregistrer",
+                SAVING: "Enregistrement..."
+            }
+        },
+        NOTIFICATIONS: {
+            TITLE: "Notifications",
+            SUBTITLE: "Restez informé de vos dernières activités et alertes.",
+            TABS: {
+                ALL: "Toutes",
+                UNREAD: "Non lues",
+                MISSIONS: "Missions",
+                PAYMENTS: "Paiements",
+                SYSTEM: "Système"
+            },
+            EMPTY: {
+                TITLE: "Vous êtes à jour !",
+                SUBTITLE: "Aucune notification à afficher dans cette catégorie."
+            },
+            ACTIONS: {
+                MARK_ALL_READ: "Tout marquer comme lu"
+            }
+        },
+        ADMIN_DASHBOARD: {
+            TITLE: "Vue d'ensemble de l'écosystème",
+            SUBTITLE: "Surveillance des performances en temps réel et métriques de la plateforme.",
+            ACTIONS: {
+                EXPORT_REPORT: "Exporter le rapport"
+            },
+            KPI: {
+                TOTAL_REVENUE: "Revenu Total",
+                ACTIVE_INSTITUTIONS: "Établissements Actifs",
+                TOTAL_WORKERS: "Total Intervenants",
+                MISSIONS_FILLED: "Missions Actives",
+                GLOBAL_FOOTPRINT: "EMPREINTE MONDIALE",
+                VERIFICATION_RATE: "Taux de vérification {{rate}}%",
+                REVENUE_SUBTITLE: "Sur {{count}} paiements",
+                MISSIONS_COUNT: "Total {{count}} missions"
+            },
+            GROWTH: {
+                TITLE: "Croissance de la Plateforme",
+                SUBTITLE: "Croissance consécutive, tendances mensuelles",
+                ACTUAL: "Réel",
+                TARGET: "Objectif"
+            },
+            HEALTH: {
+                TITLE: "Santé du Système",
+                API_LATENCY: "Cluster API Principal",
+                UPTIME: "Disponibilité (30j)",
+                ACTIVE_ALERTS: "Alertes Actives ({{count}})",
+                ALERT_HIGH_LOAD: "Charge élevée sur le cluster EU-Ouest",
+                ALERT_HIGH_LOAD_DESC: "Utilisation CPU à 85%. Mise à l'échelle automatique déclenchée. Impact financier minimal.",
+                ALERT_BACKUP: "Sauvegarde de la base de données en cours",
+                ALERT_BACKUP_DESC: "Maintenance programmée. ETA 15 minutes. Aucun impact utilisateur."
+            },
+            INSTITUTIONS: {
+                TITLE: "Établissements les Plus Performants",
+                VIEW_ALL: "Voir tout",
+                INSTITUTION: "Établissement",
+                GROWTH: "Croissance",
+                REVENUE: "Revenu",
+                FULFILLMENT: "Taux de réalisation"
+            },
+            ALERTS: {
+                TITLE: "Support Prioritaire",
+                ACTIVE: "actives",
+                VIEW_ALL: "Voir tout"
+            },
+            PENDING_WORKERS: {
+                TITLE: "Validations en attente",
+                AWAITING: "en attente de validation",
+                VIEW_ALL: "Voir tout",
+                EMPTY: "Aucune validation en attente",
+                VALIDATE: "Valider",
+                REJECT: "Rejeter"
+            },
+            PENDING_DOCS: {
+                TITLE: "Documents en attente",
+                AWAITING: "documents à examiner",
+                VIEW_ALL: "Voir tout",
+                EMPTY: "Aucun document en attente",
+                APPROVE: "Approuver",
+                REJECT: "Rejeter",
+                TYPE_ID: "Carte d'identité",
+                TYPE_DIPLOMA: "Diplôme",
+                TYPE_LICENSE: "Licence professionnelle",
+                TYPE_CERTIFICATE: "Certificat"
+            },
+        },
+        ADMIN_VALIDATION: {
+                WORKERS: {
+                    TITLE: "Validations Intervenants",
+                    SUBTITLE: "Examiner et approuver les nouvelles inscriptions",
+                    SEARCH_PLACEHOLDER: "Nom, email...",
+                    STATUS_FILTER: "Statut",
+                    ALL_STATUSES: "Tous",
+                    EMPTY_TITLE: "Aucune validation en attente",
+                    EMPTY_DESC: "Toutes les inscriptions ont été traitées.",
+                    GRID_VIEW: "Vue Grille",
+                    TABLE_VIEW: "Vue Tableau",
+                    REVIEW_APPLICATION: "Examiner la Candidature",
+                    VIEW_DETAILS: "Voir les Détails",
+                    STATS: {
+                        PENDING: "Validations en Attente",
+                        TOTAL: "Total Intervenants",
+                        VERIFIED: "Intervenants Vérifiés",
+                        REJECTED: "Inscriptions Rejetées"
+                    },
+                    SPECIALITY_LABEL: "Spécialité",
+                    DOCUMENTS_SECTION: "Documents de Vérification",
+                    BIO_SECTION: "Biographie de l'Intervenant",
+                    APPROVE: "Approuver",
+                    REJECT: "Rejeter",
+                    UPLOADED: "Téléchargé le",
+                    DOC_TYPES: {
+                        ID_CARD: "Carte d'Identité",
+                        DIPLOMA: "Diplôme",
+                        LICENSE: "Licence Professionnelle",
+                        CERTIFICATE: "Certificat",
+                        CV: "CV/Résumé"
+                    },
+                    TABLE: {
+                        WORKER: "Intervenant",
+                        LOCATION: "Lieu",
+                        DOCS: "Docs",
+                        REGISTERED: "Inscrit le",
+                        STATUS: "Statut",
+                        ACTIONS: "Actions"
+                    },
+                    DIALOG: {
+                        TITLE: "Examiner le Profil",
+                        SUBTITLE: "Vérifier les détails et documents",
+                        APPROVE_BTN: "Approuver",
+                        REJECT_BTN: "Rejeter",
+                        CONFIRM_REJECT: "Confirmer le Rejet",
+                        REJECT_REASON: "Raison du rejet",
+                        CANCEL: "Annuler",
+                        DOCUMENTS_SECTION: "Documents",
+                        BIO_SECTION: "Biographie"
+                    }
+                },
+                DOCUMENTS: {
+                    TITLE: "Validations Documents",
+                    SUBTITLE: "Examiner et vérifier les documents téléchargés",
+                    SEARCH_PLACEHOLDER: "Nom de l'intervenant...",
+                    TYPE_FILTER: "Type de Document",
+                    ALL_TYPES: "Tous",
+                    EMPTY_TITLE: "Aucun document en attente",
+                    EMPTY_DESC: "Tous les documents ont été examinés.",
+                    CARD: {
+                        WORKER_ID: "Intervenant",
+                        UPLOADED: "Téléchargé le",
+                        VIEW: "Voir",
+                        DOWNLOAD: "Télécharger",
+                        APPROVE: "Approuver",
+                        REJECT: "Rejeter"
+                    },
+                    DIALOG: {
+                        TITLE: "Examiner le Document",
+                        SUBTITLE: "Vérifier l'authenticité du document",
+                        PREVIOUS_COMMENT: "Commentaire précédent",
+                        REJECT_COMMENT: "Raison du rejet"
+                }
+            },
+        },
+        ADMIN_LOGS: {
+            TITLE: "Audit des Actions Admin",
+            SUBTITLE: "Traçabilité et transparence pour toutes les opérations administratives.",
+            FILTERS: {
+                TITLE: "Filtres d'Audit",
+                SEARCH_PLACEHOLDER: "Rechercher par ID, admin, utilisateur cible ou détails...",
+                ACTION_TYPE: "Type d'Action",
+                ALL_ACTIONS: "Toute les Actions",
+                CLEAR: "Effacer les Filtres",
+                FOUND: "{{count}} journal(aux) trouvé(s)"
+            },
+            LIST: {
+                TITLE: "Journaux Système",
+                COLUMNS: {
+                    ID: "ID",
+                    ACTION: "ACTION",
+                    ADMIN: "ADMIN",
+                    TARGET: "UTILISATEUR CIBLE",
+                    DETAILS: "DÉTAILS",
+                    DATE: "DATE",
+                    ACTIONS: "ACTIONS"
+                },
+                VIEW: "Voir",
+                EMPTY: "Aucun journal trouvé",
+                EMPTY_DESC: "Aucun journal ne correspond aux filtres actuels. Essayez d'ajuster vos critères de recherche.",
+                EMPTY_GENERIC: "Il n'y a pas encore de journaux d'actions administratives."
+            },
+            STATS: {
+                TOTAL_ACTIONS: "ACTIONS TOTALES",
+                TOTAL_DESC: "Journaux d'audit agrégés de la plateforme",
+                TODAY: "ENREGISTRÉ AUJOURD'HUI",
+                YESTERDAY: "Hier",
+                LAST_7_DAYS: "7 DERNIERS JOURS",
+                WEEKLY_TREND: "Tendance d'activité sur une semaine",
+                MOST_FREQUENT: "PLUS FRÉQUENT",
+                COMMON_TASK: "Action admin la plus répétée"
+            },
+            DIALOG: {
+                TITLE: "Détails de l'Entrée du Journal",
+                SUBTITLE: "Contexte complet pour l'action admin #{{id}}",
+                ADMIN_ID: "ID de l'Admin",
+                TARGET_USER: "ID de l'Utilisateur Cible",
+                DETAILS: "Détails",
+                CREATED_AT: "Horodatage"
+            }
+        },
+        ADMIN_PROFILE: {
+            TITLE: "Profil Administrateur",
+            SUBTITLE: "Gérez votre compte administratif et consultez l'état de la plateforme",
+            SECTIONS: {
+                ACCOUNT_INFO: "Informations du Compte",
+                PLATFORM_OVERVIEW: "Aperçu de la Plateforme",
+                SETTINGS: "Paramètres du Compte"
+            },
+            FIELDS: {
+                EMAIL: "Adresse Email",
+                ROLE: "Rôle",
+                STATUS: "Statut",
+                MEMBER_SINCE: "Membre depuis"
+            },
+            STATS: {
+                TOTAL_WORKERS: "Total Travailleurs",
+                PENDING_WORKERS: "Travailleurs en attente",
+                TOTAL_INSTITUTIONS: "Total Établissements",
+                TOTAL_MISSIONS: "Total Missions",
+                ACTIVE_MISSIONS: "Missions actives",
+                TOTAL_PAYMENTS: "Total Paiements",
+                PENDING_PAYMENTS: "Paiements en attente"
+            },
+            BADGES: {
+                ADMIN: "Admin",
+                ACTIVE: "Actif"
+            },
+            SETTINGS_DESC: "La gestion du compte et des mots de passe se fait via le panneau de configuration principal. Contactez l'administrateur système pour toute modification liée au compte."
         }
     }
 };

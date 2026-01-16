@@ -1,19 +1,13 @@
-import {
-    User,
-    Mail,
-    Shield,
-    Calendar,
-    Settings,
-    Activity,
-} from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { useTranslation } from "react-i18next";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Label } from "@/components/ui/label";
 import { useGetCurrentUserQuery } from "@/features/api/endpoints/authEndpoints";
 import { useGetAdminDashboardQuery } from "@/features/api/endpoints/adminEndpoints";
+import { AdminProfileHeader } from "@/components/admin/profile/AdminProfileHeader";
+import { AdminProfileCard } from "@/components/admin/profile/AdminProfileCard";
 
 export default function AdminProfile() {
+    const { t } = useTranslation();
     const { data: userData, isLoading: userLoading } = useGetCurrentUserQuery();
     const { data: dashboardData, isLoading: dashboardLoading } = useGetAdminDashboardQuery();
 
@@ -22,14 +16,13 @@ export default function AdminProfile() {
 
     const formatDate = (dateString?: string) => {
         if (!dateString) return "Unknown";
-        return new Date(dateString).toLocaleDateString("fr-FR", {
+        return new Date(dateString).toLocaleDateString(undefined, {
             year: "numeric",
             month: "long",
             day: "numeric",
         });
     };
 
-    // Get role name from user
     const getRoleName = () => {
         if (!user) return "Unknown";
         if ("role" in user && user.role) {
@@ -41,7 +34,6 @@ export default function AdminProfile() {
         return "admin";
     };
 
-    // Get email from user
     const getEmail = () => {
         if (!user) return "Unknown";
         if ("email" in user) {
@@ -53,7 +45,6 @@ export default function AdminProfile() {
         return "Unknown";
     };
 
-    // Get created date
     const getCreatedAt = () => {
         if (!user) return undefined;
         if ("createdAt" in user) {
@@ -62,7 +53,6 @@ export default function AdminProfile() {
         return undefined;
     };
 
-    // Get status
     const getStatus = () => {
         if (!user) return "Unknown";
         if ("status" in user) {
@@ -71,152 +61,61 @@ export default function AdminProfile() {
         return "ACTIVE";
     };
 
-    return (
-        <div className="space-y-6">
-            {/* Profile Card */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <User className="h-5 w-5" />
-                        Profile Information
-                    </CardTitle>
-                    <CardDescription>
-                        Your admin account details
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    {userLoading ? (
-                        <div className="space-y-4">
-                            <Skeleton className="h-6 w-48" />
-                            <Skeleton className="h-6 w-64" />
-                            <Skeleton className="h-6 w-32" />
-                        </div>
-                    ) : (
-                        <div className="space-y-6">
-                            {/* Email */}
-                            <div className="space-y-1">
-                                <Label className="text-muted-foreground flex items-center gap-1">
-                                    <Mail className="h-3 w-3" />
-                                    Email
-                                </Label>
-                                <p className="font-medium text-lg">{getEmail()}</p>
-                            </div>
-
-                            {/* Role */}
-                            <div className="space-y-1">
-                                <Label className="text-muted-foreground flex items-center gap-1">
-                                    <Shield className="h-3 w-3" />
-                                    Role
-                                </Label>
-                                <div>
-                                    <Badge variant="default" className="capitalize">
-                                        {getRoleName()}
-                                    </Badge>
+    if (userLoading || dashboardLoading) {
+        return (
+            <div className="max-w-4xl mx-auto space-y-6 pb-12 font-spline">
+                <Skeleton className="h-10 w-64" />
+                <Card className="border-border/40 shadow-xl rounded-[2rem]">
+                    <CardHeader className="flex flex-row items-center justify-between pb-2">
+                        <Skeleton className="h-6 w-48" />
+                        <Skeleton className="h-6 w-24" />
+                    </CardHeader>
+                    <CardContent className="space-y-8 pt-6">
+                        <div className="flex items-center gap-6">
+                            <Skeleton className="h-24 w-24 rounded-full" />
+                            <div className="space-y-2">
+                                <Skeleton className="h-8 w-48" />
+                                <div className="flex gap-2">
+                                    <Skeleton className="h-6 w-20" />
+                                    <Skeleton className="h-6 w-20" />
                                 </div>
                             </div>
-
-                            {/* Status */}
-                            <div className="space-y-1">
-                                <Label className="text-muted-foreground flex items-center gap-1">
-                                    <Activity className="h-3 w-3" />
-                                    Status
-                                </Label>
-                                <div>
-                                    <Badge
-                                        variant={getStatus() === "ACTIVE" ? "default" : "destructive"}
-                                        className="capitalize"
-                                    >
-                                        {getStatus()}
-                                    </Badge>
-                                </div>
-                            </div>
-
-                            {/* Member Since */}
-                            <div className="space-y-1">
-                                <Label className="text-muted-foreground flex items-center gap-1">
-                                    <Calendar className="h-3 w-3" />
-                                    Member Since
-                                </Label>
-                                <p className="font-medium">{formatDate(getCreatedAt())}</p>
-                            </div>
                         </div>
-                    )}
-                </CardContent>
-            </Card>
-
-            {/* Admin Stats Card */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Settings className="h-5 w-5" />
-                        Platform Overview
-                    </CardTitle>
-                    <CardDescription>
-                        Quick stats about the platform you manage
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    {dashboardLoading ? (
-                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                            {[1, 2, 3, 4].map((i) => (
-                                <Skeleton key={i} className="h-20 w-full" />
+                        <div className="grid gap-6 md:grid-cols-2 bg-muted/10 p-6 rounded-3xl border border-border/40">
+                            {[1, 2].map((i) => (
+                                <div key={i} className="space-y-2">
+                                    <Skeleton className="h-4 w-24" />
+                                    <Skeleton className="h-12 w-full rounded-xl" />
+                                </div>
                             ))}
                         </div>
-                    ) : stats ? (
-                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                            <div className="bg-muted/50 p-4 rounded-lg">
-                                <p className="text-sm text-muted-foreground">Total Workers</p>
-                                <p className="text-2xl font-bold">{stats.totalWorkers}</p>
-                                <p className="text-xs text-muted-foreground">
-                                    {stats.pendingWorkers} pending verification
-                                </p>
-                            </div>
-                            <div className="bg-muted/50 p-4 rounded-lg">
-                                <p className="text-sm text-muted-foreground">Total Institutions</p>
-                                <p className="text-2xl font-bold">{stats.totalInstitutions}</p>
-                            </div>
-                            <div className="bg-muted/50 p-4 rounded-lg">
-                                <p className="text-sm text-muted-foreground">Total Missions</p>
-                                <p className="text-2xl font-bold">{stats.totalMissions}</p>
-                                <p className="text-xs text-muted-foreground">
-                                    {stats.activeMissions} active
-                                </p>
-                            </div>
-                            <div className="bg-muted/50 p-4 rounded-lg">
-                                <p className="text-sm text-muted-foreground">Total Payments</p>
-                                <p className="text-2xl font-bold">{stats.totalPayments}</p>
-                                <p className="text-xs text-muted-foreground">
-                                    {stats.pendingPayments} pending
-                                </p>
-                            </div>
+                        <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
+                            {[1, 2, 3, 4].map((i) => (
+                                <Skeleton key={i} className="h-24 w-full rounded-2xl" />
+                            ))}
                         </div>
-                    ) : (
-                        <p className="text-muted-foreground">Unable to load platform stats</p>
-                    )}
-                </CardContent>
-            </Card>
+                    </CardContent>
+                </Card>
+            </div>
+        );
+    }
 
-            {/* Settings Info Card */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <Settings className="h-5 w-5" />
-                        Account Settings
-                    </CardTitle>
-                    <CardDescription>
-                        Manage your account preferences
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="text-sm text-muted-foreground">
-                        <p>
-                            Account settings and password management are handled through the main settings panel.
-                            Contact the system administrator for account-related changes.
-                        </p>
-                    </div>
-                </CardContent>
-            </Card>
+    return (
+        <div className="max-w-4xl mx-auto space-y-8 pb-12 font-spline animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <AdminProfileHeader t={t} />
+
+            <AdminProfileCard
+                user={user}
+                stats={stats}
+                t={t}
+                formatDate={formatDate}
+                getRoleName={getRoleName}
+                getEmail={getEmail}
+                getCreatedAt={getCreatedAt}
+                getStatus={getStatus}
+            />
         </div>
     );
 }
+
 

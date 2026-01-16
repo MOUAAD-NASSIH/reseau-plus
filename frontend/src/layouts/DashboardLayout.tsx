@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { useAppDispatch, useAppSelector } from "@/features/hooks";
 import { logout } from "@/features/slices/authSlice";
 import { useLogoutMutation } from "@/features/api/endpoints/authEndpoints";
+import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 
 // Key for persisting sidebar collapsed state
 const SIDEBAR_COLLAPSED_KEY = "sidebar-collapsed";
@@ -329,6 +330,7 @@ export default function DashboardLayout({
                         {/* Right side - notifications, theme, user menu */}
                         <div className="flex items-center gap-1 md:gap-2">
                             {/* Notification bell */}
+                            <LanguageSwitcher />
                             <NotificationBell />
 
                             {/* Theme toggle */}
