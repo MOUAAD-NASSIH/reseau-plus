@@ -224,7 +224,7 @@ export default function SpecialitiesManagement() {
                                 <Briefcase className="h-5 w-5 text-primary" />
                             </div>
                             <div className="min-w-0">
-                                <p className="font-medium">{speciality.name}</p>
+                                <p className="font-medium text-foreground">{speciality.name}</p>
                             </div>
                         </div>
                     );
@@ -257,6 +257,7 @@ export default function SpecialitiesManagement() {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => handleEditClick(speciality)}
+                                className="hover:text-primary hover:bg-primary/10"
                             >
                                 <Pencil className="h-4 w-4" />
                             </Button>
@@ -264,8 +265,9 @@ export default function SpecialitiesManagement() {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => handleDeleteClick(speciality)}
+                                className="hover:text-destructive hover:bg-destructive/10 text-muted-foreground"
                             >
-                                <Trash2 className="h-4 w-4 text-destructive" />
+                                <Trash2 className="h-4 w-4" />
                             </Button>
                         </div>
                     );
@@ -277,24 +279,40 @@ export default function SpecialitiesManagement() {
     );
 
     return (
-        <div className="space-y-6">
-            <Card>
-                <CardHeader className="flex flex-row items-center justify-between">
-                    <CardTitle className="flex items-center gap-2">
-                        <Briefcase className="h-5 w-5" />
+        <div className="space-y-8 pb-8 font-spline">
+             {/* Header */}
+             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div className="space-y-1">
+                    <h1 className="text-4xl font-extrabold tracking-tight text-foreground lg:text-5xl font-spline">
                         Specialities
+                    </h1>
+                    <p className="text-muted-foreground text-lg max-w-[600px]">
+                        Manage worker specialities and expertise areas.
+                    </p>
+                </div>
+                <div className="flex items-center gap-3">
+                   <Button onClick={handleCreateClick} className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20">
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add Speciality
+                    </Button>
+                </div>
+            </div>
+
+            <Card className="border-border/40 shadow-2xl bg-card/60 backdrop-blur-xl overflow-hidden">
+                <CardHeader className="flex flex-row items-center justify-between pb-3 bg-muted/20 border-b border-border/40">
+                    <CardTitle className="text-lg font-bold tracking-tight flex items-center gap-2">
+                        <div className="p-2 bg-primary/10 rounded-lg">
+                            <Briefcase className="h-5 w-5 text-primary" />
+                        </div>
+                        Speciality List
                         {!isLoading && (
-                            <Badge variant="secondary" className="ml-2">
+                            <Badge variant="secondary" className="ml-2 bg-background/50 backdrop-blur-sm border-border/50">
                                 {specialities.length}
                             </Badge>
                         )}
                     </CardTitle>
-                    <Button onClick={handleCreateClick}>
-                        <Plus className="mr-2 h-4 w-4" />
-                        Add Speciality
-                    </Button>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-0">
                     <DataTable
                         columns={columns}
                         data={specialities}
@@ -308,7 +326,7 @@ export default function SpecialitiesManagement() {
                         emptyTitle="No specialities yet"
                         emptyDescription="Create your first speciality to get started"
                         emptyAction={
-                            <Button onClick={handleCreateClick}>
+                            <Button onClick={handleCreateClick} variant="outline" className="mt-4">
                                 <Plus className="mr-2 h-4 w-4" />
                                 Add Speciality
                             </Button>
@@ -316,7 +334,6 @@ export default function SpecialitiesManagement() {
                     />
                 </CardContent>
             </Card>
-
 
             {/* Form Dialog */}
             <SpecialityFormDialog

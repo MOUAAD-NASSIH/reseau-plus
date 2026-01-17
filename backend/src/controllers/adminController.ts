@@ -120,8 +120,9 @@ export const getPendingDocuments = asyncHandler(
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 10;
         const type = req.query.type as string | undefined;
+        const status = req.query.status as string | undefined;
 
-        const result = await adminService.getPendingDocuments(page, limit, type);
+        const result = await adminService.getPendingDocuments(page, limit, type, status);
         res.json({
             success: true,
             data: result.documents,

@@ -120,7 +120,9 @@ export const getAssignmentById = async (id: number) => {
         include: {
             mission: true,
             worker: { include: { user: true, speciality: true } },
-            institution: { include: { user: true } }
+            institution: { include: { user: true } },
+            reviews: true,
+            payments: true
         }
     });
 
@@ -154,7 +156,8 @@ export const getWorkerAssignments = async (workerId: number, filters?: Assignmen
         include: {
             mission: {
                 include: { institution: true }
-            }
+            },
+            payments: true
         },
         orderBy: { assignedAt: 'desc' }
     });
@@ -182,7 +185,8 @@ export const getInstitutionAssignments = async (institutionId: number, filters?:
         where,
         include: {
             mission: true,
-            worker: { include: { user: true, speciality: true } }
+            worker: { include: { user: true, speciality: true } },
+            payments: true
         },
         orderBy: { assignedAt: 'desc' }
     });

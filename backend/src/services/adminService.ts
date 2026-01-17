@@ -83,7 +83,14 @@ export const getAdminLogs = async (
             where,
             include: {
                 admin: { select: { id: true, email: true } },
-                targetUser: { select: { id: true, email: true } },
+                targetUser: { 
+                    select: { 
+                        id: true, 
+                        email: true,
+                        worker: { select: { firstName: true, lastName: true } },
+                        institution: { select: { institutionName: true } }
+                    } 
+                },
                 targetDocument: { select: { id: true, type: true, workerId: true } },
                 targetReview: { select: { id: true, rating: true } },
                 targetMission: { select: { id: true, title: true } },
@@ -148,6 +155,12 @@ export const getAdminStats = async (): Promise<DashboardStats> => {
         prisma.missionAssignment.count({ where: { status: "COMPLETED" } }),
         prisma.review.count(),
         prisma.payment.aggregate({
+            where: {
+                OR: [
+                    { status: "COMPLETED" },
+                    { stripePaymentId: { not: null } }
+                ]
+            },
             _count: true,
             _sum: { platformFee: true, amountTotal: true, workerAmount: true },
         }),
@@ -316,12 +329,21 @@ export const verifyWorker = async (
 export const getPendingDocuments = async (
     page = 1,
     limit = 10,
-    type?: string
+    type?: string,
+    status?: string
 ) => {
     const skip = (page - 1) * limit;
-    const where: any = { status: "PENDING" };
+    const where: any = {};
 
-    if (type) {
+    if (status && status === 'ALL') {
+        // No status filter
+    } else if (status) {
+        where.status = status;
+    } else {
+        where.status = "PENDING";
+    }
+
+    if (type && type !== 'all') {
         where.type = type;
     }
 
@@ -501,7 +523,6 @@ export const updateUserStatus = async (
  */
 export const getPaymentSummary = async (dateRange?: DateRange) => {
     const where: any = {};
-
     if (dateRange) {
         where.createdAt = {
             gte: new Date(dateRange.startDate),
@@ -509,9 +530,17 @@ export const getPaymentSummary = async (dateRange?: DateRange) => {
         };
     }
 
+    const effectiveWhere = {
+        ...where,
+        OR: [
+            { status: "COMPLETED" },
+            { stripePaymentId: { not: null } }
+        ]
+    };
+
     const [summary, statusBreakdown, recentPayments] = await Promise.all([
         prisma.payment.aggregate({
-            where,
+            where: effectiveWhere,
             _count: true,
             _sum: {
                 amountTotal: true,
@@ -521,7 +550,7 @@ export const getPaymentSummary = async (dateRange?: DateRange) => {
         }),
         prisma.payment.groupBy({
             by: ["status"],
-            where,
+            where: effectiveWhere,
             _count: true,
             _sum: { amountTotal: true },
         }),

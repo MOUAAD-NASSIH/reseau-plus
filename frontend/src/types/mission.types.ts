@@ -34,6 +34,10 @@ export interface Mission {
     institution?: Institution;
     requiredSpeciality?: Speciality | null;
     domains?: MissionDomain[];
+    _count?: {
+        applications: number;
+        assignments: number;
+    };
 }
 
 /**

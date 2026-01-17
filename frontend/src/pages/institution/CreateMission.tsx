@@ -1,279 +1,103 @@
-import { useNavigate } from "react-router";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { ArrowLeft, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useCreateMissionMutation } from "@/features/api/endpoints/missionEndpoints";
-import { useGetDomainsQuery, useGetSpecialitiesQuery } from "@/features/api/endpoints/domainEndpoints";
-import { createMissionSchema, type CreateMissionInput } from "@/features/validation/missionSchemas";
-import { showSuccessToast, showErrorToast } from "@/lib/toast";
+import { Card, CardContent } from "@/components/ui/card";
+import { MissionDetailsForm } from "@/components/institution/mission-form/MissionDetailsForm";
+import { MissionLogisticsForm } from "@/components/institution/mission-form/MissionLogisticsForm";
+import { MissionRequirementsForm } from "@/components/institution/mission-form/MissionRequirementsForm";
+import { useCreateMission } from "@/features/hooks/InstitutionHooks/useCreateMission";
 
 export default function CreateMission() {
-    const navigate = useNavigate();
-    const [createMission, { isLoading: isCreating }] = useCreateMissionMutation();
-    const { data: domainsData, isLoading: domainsLoading } = useGetDomainsQuery();
-    const { data: specialitiesData, isLoading: specialitiesLoading } = useGetSpecialitiesQuery();
+  const { form, onSubmit, isCreating, t, navigate } = useCreateMission();
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+  } = form;
 
-    const domains = domainsData?.data || [];
-    const specialities = specialitiesData?.data || [];
+  return (
+    <div className="max-w-5xl mx-auto pb-12 space-y-8 animate-in fade-in duration-500">
+      {/* Header / Breadcrumb */}
+      <div className="flex flex-col gap-2">
+        <Button
+          variant="ghost"
+          className="w-fit pl-0 hover:bg-transparent hover:text-primary text-muted-foreground"
+          onClick={() => navigate("/institution/missions")}
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          {t("COMMON.BACK_TO_MISSIONS")}
+        </Button>
+        <div className="flex justify-between items-start">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">
+              {t("CREATE_MISSION.HEADER.TITLE")}
+            </h1>
+            <p className="text-muted-foreground text-lg mt-1">
+              {t("CREATE_MISSION.HEADER.SUBTITLE")}
+            </p>
+          </div>
+        </div>
+      </div>
 
-    const {
-        register,
-        handleSubmit,
-        setValue,
-        watch,
-        formState: { errors, isSubmitting },
-    } = useForm<CreateMissionInput>({
-        resolver: zodResolver(createMissionSchema),
-        defaultValues: {
-            title: "",
-            description: "",
-            startDate: "",
-            endDate: "",
-            location: "",
-            urgency: "MEDIUM",
-            domainIds: [],
-        },
-    });
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="grid gap-8 lg:grid-cols-3"
+      >
+        {/* Left Column: Mission Details & Logistics */}
+        <div className="lg:col-span-2 space-y-8">
+          {/* Details Section */}
+          <MissionDetailsForm form={form} />
 
-    const selectedDomains = watch("domainIds") || [];
-    const selectedUrgency = watch("urgency");
+          {/* Logistics Section */}
+          <MissionLogisticsForm form={form} />
+        </div>
 
-    const handleDomainToggle = (domainId: number) => {
-        const current = selectedDomains;
-        const updated = current.includes(domainId)
-            ? current.filter((id) => id !== domainId)
-            : [...current, domainId];
-        setValue("domainIds", updated, { shouldValidate: true });
-    };
+        {/* Right Column: Requirements & Actions */}
+        <div className="lg:col-span-1 space-y-8">
+          {/* Requirements Section */}
+          <MissionRequirementsForm form={form} />
 
-    const onSubmit = async (data: CreateMissionInput) => {
-        try {
-            await createMission(data).unwrap();
-            showSuccessToast("Mission created", "Your mission has been created successfully.");
-            navigate("/institution/missions");
-        } catch (error) {
-            showErrorToast(error, "Failed to create mission. Please try again.");
-        }
-    };
-
-    return (
-        <Card>
-            <CardHeader>
-                <CardTitle>Create New Mission</CardTitle>
-                <CardDescription>
-                    Fill in the details below to create a new mission. Workers will be able to apply once published.
-                </CardDescription>
-            </CardHeader>
-            <CardContent>
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                    {/* Basic Information */}
-                    <div className="space-y-4">
-                        <h3 className="text-sm font-medium">Basic Information</h3>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="title">Mission Title *</Label>
-                            <Input
-                                id="title"
-                                {...register("title")}
-                                placeholder="Enter mission title"
-                            />
-                            {errors.title && (
-                                <p className="text-sm text-destructive">{errors.title.message}</p>
-                            )}
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="description">Description</Label>
-                            <Textarea
-                                id="description"
-                                {...register("description")}
-                                placeholder="Describe the mission requirements and responsibilities"
-                                rows={4}
-                            />
-                            {errors.description && (
-                                <p className="text-sm text-destructive">{errors.description.message}</p>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Schedule */}
-                    <div className="space-y-4">
-                        <h3 className="text-sm font-medium">Schedule</h3>
-
-                        <div className="grid gap-4 md:grid-cols-2">
-                            <div className="space-y-2">
-                                <Label htmlFor="startDate">Start Date *</Label>
-                                <Input
-                                    id="startDate"
-                                    type="date"
-                                    {...register("startDate")}
-                                />
-                                {errors.startDate && (
-                                    <p className="text-sm text-destructive">{errors.startDate.message}</p>
-                                )}
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="endDate">End Date *</Label>
-                                <Input
-                                    id="endDate"
-                                    type="date"
-                                    {...register("endDate")}
-                                />
-                                {errors.endDate && (
-                                    <p className="text-sm text-destructive">{errors.endDate.message}</p>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Location & Budget */}
-                    <div className="space-y-4">
-                        <h3 className="text-sm font-medium">Location & Budget</h3>
-
-                        <div className="grid gap-4 md:grid-cols-2">
-                            <div className="space-y-2">
-                                <Label htmlFor="location">Location</Label>
-                                <Input
-                                    id="location"
-                                    {...register("location")}
-                                    placeholder="Enter mission location"
-                                />
-                                {errors.location && (
-                                    <p className="text-sm text-destructive">{errors.location.message}</p>
-                                )}
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="budget">Budget (MAD)</Label>
-                                <Input
-                                    id="budget"
-                                    type="number"
-                                    step="0.01"
-                                    {...register("budget", { valueAsNumber: true })}
-                                    placeholder="Enter budget amount"
-                                />
-                                {errors.budget && (
-                                    <p className="text-sm text-destructive">{errors.budget.message}</p>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Requirements */}
-                    <div className="space-y-4">
-                        <h3 className="text-sm font-medium">Requirements</h3>
-
-                        <div className="grid gap-4 md:grid-cols-2">
-                            <div className="space-y-2">
-                                <Label htmlFor="urgency">Urgency Level</Label>
-                                <Select
-                                    value={selectedUrgency}
-                                    onValueChange={(value) => setValue("urgency", value as "HIGH" | "MEDIUM" | "LOW")}
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select urgency" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="LOW">Low</SelectItem>
-                                        <SelectItem value="MEDIUM">Medium</SelectItem>
-                                        <SelectItem value="HIGH">High</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                {errors.urgency && (
-                                    <p className="text-sm text-destructive">{errors.urgency.message}</p>
-                                )}
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="requiredSpecialityId">Required Speciality</Label>
-                                {specialitiesLoading ? (
-                                    <Skeleton className="h-10 w-full" />
-                                ) : (
-                                    <Select
-                                        onValueChange={(value) => setValue("requiredSpecialityId", parseInt(value))}
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select speciality (optional)" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {specialities.map((speciality) => (
-                                                <SelectItem key={speciality.id} value={speciality.id.toString()}>
-                                                    {speciality.name}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                )}
-                                {errors.requiredSpecialityId && (
-                                    <p className="text-sm text-destructive">{errors.requiredSpecialityId.message}</p>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Domains */}
-                        <div className="space-y-2">
-                            <Label>Domains (optional)</Label>
-                            {domainsLoading ? (
-                                <div className="flex gap-2">
-                                    {[1, 2, 3].map((i) => (
-                                        <Skeleton key={i} className="h-6 w-24" />
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="flex flex-wrap gap-4 pt-2">
-                                    {domains.map((domain) => (
-                                        <div key={domain.id} className="flex items-center space-x-2">
-                                            <Checkbox
-                                                id={`domain-${domain.id}`}
-                                                checked={selectedDomains.includes(domain.id)}
-                                                onCheckedChange={() => handleDomainToggle(domain.id)}
-                                            />
-                                            <Label
-                                                htmlFor={`domain-${domain.id}`}
-                                                className="text-sm font-normal cursor-pointer"
-                                            >
-                                                {domain.name}
-                                            </Label>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                            {errors.domainIds && (
-                                <p className="text-sm text-destructive">{errors.domainIds.message}</p>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Submit Buttons */}
-                    <div className="flex justify-end gap-3 pt-4 border-t">
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => navigate("/institution/missions")}
-                        >
-                            Cancel
-                        </Button>
-                        <Button type="submit" disabled={isSubmitting || isCreating}>
-                            {isSubmitting || isCreating ? "Creating..." : "Create Mission"}
-                        </Button>
-                    </div>
-                </form>
+          {/* Actions Card */}
+          <Card className="border shadow-md bg-card sticky top-6">
+            <CardContent className="p-6 space-y-4">
+              <h3 className="font-semibold text-sm uppercase text-muted-foreground tracking-wider">
+                Publish Mission
+              </h3>
+              <div className="space-y-2 text-sm text-muted-foreground">
+                <p className="flex justify-between">
+                  Status:{" "}
+                  <span className="text-orange-500 font-medium">Draft</span>
+                </p>
+                <p className="flex justify-between">
+                  Visibility: <span className="font-medium">Public</span>
+                </p>
+              </div>
+              <div className="pt-4 flex flex-col gap-3">
+                <Button
+                  type="submit"
+                  className="w-full h-12 text-md shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all font-semibold"
+                  disabled={isSubmitting || isCreating}
+                >
+                  {isSubmitting || isCreating ? (
+                    t("CREATE_MISSION.ACTIONS.SUBMITTING")
+                  ) : (
+                    <>
+                      <Save className="mr-2 h-4 w-4" />
+                      {t("CREATE_MISSION.ACTIONS.SUBMIT")}
+                    </>
+                  )}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full bg-transparent hover:bg-muted border-dashed"
+                  onClick={() => navigate("/institution/missions")}
+                >
+                  {t("CREATE_MISSION.ACTIONS.CANCEL")}
+                </Button>
+              </div>
             </CardContent>
-        </Card>
-    );
+          </Card>
+        </div>
+      </form>
+    </div>
+  );
 }
-

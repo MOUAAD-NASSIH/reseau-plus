@@ -4,6 +4,7 @@
  */
 
 import type { User } from './auth.types';
+import type { MissionAssignment } from './assignment.types';
 
 // ENTITY INTERFACES
 
@@ -22,6 +23,7 @@ export interface Review {
     // Relations
     reviewer?: User;
     reviewee?: User;
+    missionAssignment?: MissionAssignment;
 }
 
 // INPUT INTERFACES

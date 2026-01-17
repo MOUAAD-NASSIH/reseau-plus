@@ -284,7 +284,7 @@ export const notifyPaymentReceived = async (
     return await createNotification(
         worker.userId,
         'PAYMENT_RECEIVED',
-        `You have received a payment of €${amount.toFixed(2)} for mission "${missionTitle}".`
+        `You have received a payment of ${amount.toFixed(2)} MAD for mission "${missionTitle}".`
     );
 };
 

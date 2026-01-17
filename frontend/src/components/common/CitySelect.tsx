@@ -10,6 +10,7 @@ interface CitySelectProps {
     value?: string;
     onChange: (value: string) => void;
     placeholder?: string;
+    className?: string;
 }
 
 interface CitiesApiResponse {
@@ -21,7 +22,7 @@ interface CitiesApiResponse {
 // Cache for cities data to avoid refetching
 let citiesCache: string[] | null = null;
 
-export function CitySelect({ value, onChange, placeholder = "Select a city" }: CitySelectProps) {
+export function CitySelect({ value, onChange, placeholder = "Select a city", className }: CitySelectProps) {
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState("");
     const [cities, setCities] = useState<string[]>(citiesCache || []);
@@ -81,14 +82,14 @@ export function CitySelect({ value, onChange, placeholder = "Select a city" }: C
     };
 
     if (isLoading) {
-        return <Skeleton className="h-12 w-full" />;
+        return <Skeleton className={cn("h-12 w-full", className)} />;
     }
 
     if (isError || !cities.length) {
         return (
             <Button
                 variant="outline"
-                className="h-12 w-full justify-between text-muted-foreground"
+                className={cn("h-12 w-full justify-between text-muted-foreground", className)}
                 disabled
             >
                 Failed to load cities
@@ -104,7 +105,7 @@ export function CitySelect({ value, onChange, placeholder = "Select a city" }: C
                 variant="outline"
                 role="combobox"
                 aria-expanded={open}
-                className="h-12 w-full justify-between"
+                className={cn("h-12 w-full justify-between", className)}
                 onClick={() => setOpen(!open)}
             >
                 <span className={cn(!value && "text-muted-foreground")}>

@@ -352,9 +352,24 @@ export const getStatusCounts = async (institutionId: number) => {
         _count: { status: true }
     });
 
-    return counts.reduce((acc, curr) => {
-        acc[curr.status] = curr._count.status;
-        return acc;
-    }, {} as Record<MissionStatus, number>);
+    const stats = {
+        total: 0,
+        open: 0,
+        ongoing: 0,
+        closed: 0,
+        cancelled: 0
+    };
+
+    counts.forEach(curr => {
+        const lowerStatus = curr.status.toLowerCase();
+        if (lowerStatus === 'open') stats.open = curr._count.status;
+        else if (lowerStatus === 'ongoing') stats.ongoing = curr._count.status;
+        else if (lowerStatus === 'closed') stats.closed = curr._count.status;
+        else if (lowerStatus === 'cancelled') stats.cancelled = curr._count.status;
+    });
+
+    stats.total = stats.open + stats.ongoing + stats.closed + stats.cancelled;
+
+    return stats;
 };
 

@@ -1,28 +1,20 @@
 import { useState, useMemo, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
-import type { ColumnDef } from "@tanstack/react-table";
 import {
     ClipboardList,
-    Filter,
     Calendar,
     User,
     Building2,
     Briefcase,
-    Eye,
-    X,
+    ListTodo,
+    Clock,
+    CheckCircle2,
+    XCircle,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { StatusBadge } from "@/components/common/StatusBadge";
-import { DataTable, DataTableColumnHeader } from "@/components/common/DataTable";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 import {
     Dialog,
     DialogContent,
@@ -33,6 +25,9 @@ import {
 import { Label } from "@/components/ui/label";
 import { useGetAllAssignmentsQuery } from "@/features/api/endpoints/assignmentEndpoints";
 import type { MissionAssignment, AssignmentStatus } from "@/types/assignment.types";
+
+import { AdminAssignmentsFilter } from "@/components/admin/assignments/AdminAssignmentsFilter";
+import { AdminAssignmentsTable } from "@/components/admin/assignments/AdminAssignmentsTable";
 
 interface AssignmentDetailsDialogProps {
     assignment: MissionAssignment | null;
@@ -53,7 +48,7 @@ function AssignmentDetailsDialog({ assignment, open, onOpenChange }: AssignmentD
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+            <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto rounded-2xl">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                         <ClipboardList className="h-5 w-5" />
@@ -143,230 +138,147 @@ function AssignmentDetailsDialog({ assignment, open, onOpenChange }: AssignmentD
                             </div>
                         )}
                     </div>
-
-                    {/* Metadata */}
-                    <div className="text-xs text-muted-foreground border-t pt-4">
-                        <p>Assignment ID: {assignment.id}</p>
-                        <p>Mission ID: {assignment.missionId}</p>
-                        <p>Worker ID: {assignment.workerId}</p>
-                    </div>
                 </div>
             </DialogContent>
         </Dialog>
     );
 }
 
+interface StatCardProps {
+    title: string;
+    value: number;
+    icon: any;
+    isLoading: boolean;
+    color: string;
+    bg: string;
+}
+
+function StatCard({ title, value, icon: Icon, isLoading, color, bg }: StatCardProps) {
+    return (
+        <Card className="border-border/40 shadow-xl shadow-primary/5 bg-card/60 backdrop-blur-xl group hover:shadow-2xl transition-all duration-300 rounded-2xl overflow-hidden hover:-translate-y-1">
+            <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                    <div className="space-y-1.5 min-w-0">
+                        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-60 truncate">
+                            {title}
+                        </p>
+                        {isLoading ? (
+                            <Skeleton className="h-9 w-12 rounded-lg" />
+                        ) : (
+                            <p className="text-3xl font-black tracking-tight">{value}</p>
+                        )}
+                    </div>
+                    <div className={`h-12 w-12 rounded-2xl ${bg} ${color} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-sm shadow-black/5`}>
+                        <Icon className="h-6 w-6" />
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+    );
+}
+
 export default function AssignmentsOverview() {
+    const { t } = useTranslation();
     const [statusFilter, setStatusFilter] = useState<AssignmentStatus | "ALL">("ALL");
+    const [searchQuery, setSearchQuery] = useState("");
     const [selectedAssignment, setSelectedAssignment] = useState<MissionAssignment | null>(null);
     const [dialogOpen, setDialogOpen] = useState(false);
 
-    // Fetch data
-    const { data: assignmentsData, isLoading: assignmentsLoading } = useGetAllAssignmentsQuery(
-        statusFilter !== "ALL" ? { status: statusFilter } : undefined
-    );
+    // Fetch data (using client-side filtering logic for now to match current hook structure if API supports it later)
+    const { data: assignmentsData, isLoading: assignmentsLoading } = useGetAllAssignmentsQuery();
 
     const assignments = assignmentsData?.data || [];
+
+    // Filter Logic
+    const filteredAssignments = useMemo(() => {
+        return assignments.filter((a) => {
+            const matchesStatus = statusFilter === "ALL" || a.status === statusFilter;
+            const matchesSearch = searchQuery === "" || 
+                `${a.worker?.firstName} ${a.worker?.lastName}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                a.mission?.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                a.institution?.institutionName.toLowerCase().includes(searchQuery.toLowerCase());
+            
+            return matchesStatus && matchesSearch;
+        });
+    }, [assignments, statusFilter, searchQuery]);
+
+    // Stats Logic
+    const stats = useMemo(() => {
+        return {
+            total: assignments.length,
+            active: assignments.filter((a) => a.status === "ACTIVE").length,
+            completed: assignments.filter((a) => a.status === "COMPLETED").length,
+            cancelled: assignments.filter((a) => a.status === "CANCELLED").length,
+        };
+    }, [assignments]);
 
     const handleViewAssignment = useCallback((assignment: MissionAssignment) => {
         setSelectedAssignment(assignment);
         setDialogOpen(true);
     }, []);
 
-    // Column definitions for DataTable
-    const columns: ColumnDef<MissionAssignment>[] = useMemo(
-        () => [
-            {
-                accessorKey: "worker.firstName",
-                header: ({ column }) => (
-                    <DataTableColumnHeader column={column} title="Worker" />
-                ),
-                cell: ({ row }) => {
-                    const assignment = row.original;
-                    return (
-                        <div className="flex items-center gap-2">
-                            <User className="h-4 w-4 text-muted-foreground" />
-                            <div className="min-w-0">
-                                <p className="font-medium truncate max-w-[150px]">
-                                    {assignment.worker?.firstName} {assignment.worker?.lastName}
-                                </p>
-                                <p className="text-xs text-muted-foreground truncate max-w-[150px]">
-                                    {assignment.worker?.user?.email}
-                                </p>
-                            </div>
-                        </div>
-                    );
-                },
-                accessorFn: (row) => `${row.worker?.firstName || ""} ${row.worker?.lastName || ""}`,
-            },
-            {
-                accessorKey: "mission.title",
-                header: ({ column }) => (
-                    <DataTableColumnHeader column={column} title="Mission" />
-                ),
-                cell: ({ row }) => {
-                    const mission = row.original.mission;
-                    return (
-                        <div className="flex items-center gap-2">
-                            <Briefcase className="h-4 w-4 text-muted-foreground" />
-                            <span className="truncate max-w-[150px]">
-                                {mission?.title || "Unknown"}
-                            </span>
-                        </div>
-                    );
-                },
-                accessorFn: (row) => row.mission?.title || "",
-            },
-            {
-                accessorKey: "institution.institutionName",
-                header: ({ column }) => (
-                    <DataTableColumnHeader column={column} title="Institution" />
-                ),
-                cell: ({ row }) => {
-                    const institution = row.original.institution;
-                    return (
-                        <div className="flex items-center gap-2">
-                            <Building2 className="h-4 w-4 text-muted-foreground" />
-                            <span className="truncate max-w-[150px]">
-                                {institution?.institutionName || "Unknown"}
-                            </span>
-                        </div>
-                    );
-                },
-                accessorFn: (row) => row.institution?.institutionName || "",
-            },
-            {
-                accessorKey: "status",
-                header: ({ column }) => (
-                    <DataTableColumnHeader column={column} title="Status" />
-                ),
-                cell: ({ row }) => <StatusBadge status={row.getValue("status")} />,
-                filterFn: (row, id, value) => value.includes(row.getValue(id)),
-            },
-            {
-                accessorKey: "assignedAt",
-                header: ({ column }) => (
-                    <DataTableColumnHeader column={column} title="Assigned At" />
-                ),
-                cell: ({ row }) => (
-                    <div className="flex items-center gap-1 text-sm">
-                        <Calendar className="h-3 w-3 text-muted-foreground" />
-                        {format(new Date(row.getValue("assignedAt")), "MMM d, yyyy")}
-                    </div>
-                ),
-            },
-            {
-                id: "actions",
-                header: "Actions",
-                cell: ({ row }) => {
-                    const assignment = row.original;
-                    return (
-                        <div className="flex justify-end">
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleViewAssignment(assignment)}
-                            >
-                                <Eye className="h-4 w-4 mr-1" />
-                                View
-                            </Button>
-                        </div>
-                    );
-                },
-                enableSorting: false,
-            },
-        ],
-        [handleViewAssignment]
-    );
-
     return (
-        <div className="space-y-6">
-            {/* Filters */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-lg">
-                        <Filter className="h-5 w-5" />
-                        Filters
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="flex items-center gap-4">
-                        {/* Status Filter */}
-                        <div className="space-y-2 w-full md:w-64">
-                            <label className="text-sm font-medium">Status</label>
-                            <Select
-                                value={statusFilter}
-                                onValueChange={(value) => setStatusFilter(value as AssignmentStatus | "ALL")}
-                            >
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Status" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="ALL">All Statuses</SelectItem>
-                                    <SelectItem value="ACTIVE">Active</SelectItem>
-                                    <SelectItem value="ONGOING">Ongoing</SelectItem>
-                                    <SelectItem value="COMPLETED">Completed</SelectItem>
-                                    <SelectItem value="CANCELLED">Cancelled</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
+        <div className="space-y-6 animate-in fade-in duration-500 font-spline">
+            {/* Page Header */}
+            <div className="space-y-2">
+                <h1 className="text-4xl font-extrabold tracking-tight text-foreground lg:text-5xl">
+                    {t("INSTITUTION_ASSIGNMENTS.TITLE", "Assignments")}
+                </h1>
+                <p className="text-muted-foreground text-lg max-w-[700px]">
+                    {t("INSTITUTION_ASSIGNMENTS.DESCRIPTION", "Manage and track all mission assignments across the platform.")}
+                </p>
+            </div>
 
-                        {/* Clear Filters */}
-                        {statusFilter !== "ALL" && (
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => setStatusFilter("ALL")}
-                                className="text-muted-foreground mt-6"
-                            >
-                                <X className="h-4 w-4 mr-1" />
-                                Clear filter
-                            </Button>
-                        )}
-                    </div>
-                </CardContent>
-            </Card>
+             {/* Stats Overview */}
+             <div className="grid gap-4 md:grid-cols-4">
+                <StatCard 
+                    title={t("INSTITUTION_ASSIGNMENTS.STATS.TOTAL", "Total Assignments")} 
+                    value={stats.total} 
+                    icon={ListTodo} 
+                    isLoading={assignmentsLoading} 
+                    color="text-primary"
+                    bg="bg-primary/5"
+                />
+                <StatCard 
+                    title={t("INSTITUTION_ASSIGNMENTS.STATS.ACTIVE", "Active")} 
+                    value={stats.active} 
+                    icon={Clock} 
+                    isLoading={assignmentsLoading} 
+                    color="text-blue-500"
+                    bg="bg-blue-500/5"
+                />
+                <StatCard 
+                    title={t("INSTITUTION_ASSIGNMENTS.STATS.COMPLETED", "Completed")} 
+                    value={stats.completed} 
+                    icon={CheckCircle2} 
+                    isLoading={assignmentsLoading} 
+                    color="text-emerald-500"
+                    bg="bg-emerald-500/5"
+                />
+                <StatCard 
+                    title={t("INSTITUTION_ASSIGNMENTS.STATS.CANCELLED", "Cancelled")} 
+                    value={stats.cancelled} 
+                    icon={XCircle} 
+                    isLoading={assignmentsLoading} 
+                    color="text-rose-500"
+                    bg="bg-rose-500/5"
+                />
+            </div>
 
-            {/* Assignments Table */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <ClipboardList className="h-5 w-5" />
-                        All Assignments
-                        {!assignmentsLoading && (
-                            <Badge variant="secondary" className="ml-2">
-                                {assignments.length}
-                            </Badge>
-                        )}
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <DataTable
-                        columns={columns}
-                        data={assignments}
-                        isLoading={assignmentsLoading}
-                        enableSorting={true}
-                        enableGlobalFilter={true}
-                        globalFilterPlaceholder="Search by worker, mission, or institution..."
-                        enablePagination={true}
-                        pageSize={10}
-                        emptyIcon={ClipboardList}
-                        emptyTitle="No assignments found"
-                        emptyDescription={
-                            statusFilter !== "ALL"
-                                ? "No assignments match the current filters. Try adjusting your search criteria."
-                                : "There are no assignments in the system yet."
-                        }
-                        emptyAction={
-                            statusFilter !== "ALL" ? (
-                                <Button variant="outline" onClick={() => setStatusFilter("ALL")}>
-                                    Clear filter
-                                </Button>
-                            ) : undefined
-                        }
-                    />
-                </CardContent>
-            </Card>
+            {/* Filter Section */}
+            <AdminAssignmentsFilter 
+                statusFilter={statusFilter} 
+                onStatusChange={setStatusFilter}
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+            />
+
+            {/* Table Section */}
+            <AdminAssignmentsTable
+                data={filteredAssignments}
+                isLoading={assignmentsLoading}
+                onViewAssignment={handleViewAssignment}
+            />
 
             {/* Assignment Details Dialog */}
             <AssignmentDetailsDialog
@@ -377,4 +289,3 @@ export default function AssignmentsOverview() {
         </div>
     );
 }
-

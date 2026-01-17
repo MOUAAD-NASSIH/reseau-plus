@@ -23,6 +23,7 @@ export interface User {
     role: Role;
     status: UserStatus;
     createdAt: string;
+    profilePicture?: string | null;
 }
 
 // Worker Profile
@@ -45,6 +46,7 @@ export interface Worker {
     birthDate?: string | null;
     gender?: string | null;
     createdAt: string;
+    profilePicture?: string | null;
     // Relations
     user?: User;
     speciality?: Speciality | null;
@@ -65,6 +67,7 @@ export interface Institution {
     latitude?: number | null;
     longitude?: number | null;
     createdAt: string;
+    profilePicture?: string | null;
     // Relations
     user?: User;
 }
@@ -96,6 +99,7 @@ export interface WorkerDocument {
     adminComment?: string | null;
     uploadedAt: string;
     reviewedAt?: string | null;
+    worker?: Worker;
 }
 
 export interface WorkerExperience {

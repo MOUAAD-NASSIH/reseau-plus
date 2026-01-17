@@ -20,8 +20,8 @@ import ForgotPasswordPage from "@/pages/auth/ForgotPasswordPage";
 import ResetPasswordPage from "@/pages/auth/ResetPasswordPage";
 
 // Registration Pages
-import WorkerRegisterPage from "@/components/worker/WorkerRegisterPage";
-import InstitutionRegisterPage from "@/components/institution/InstitutionRegisterPage";
+import WorkerRegisterPage from "@/components/worker/Register/WorkerRegisterPage";
+import InstitutionRegisterPage from "@/components/institution/auth/InstitutionRegisterPage";
 
 // Worker Pages
 import WorkerDashboard from "@/pages/worker/WorkerDashboard";
@@ -131,7 +131,10 @@ const App = () => {
           element={
             <ProtectedRoute>
               <RoleGuard allowedRoles={["worker"]} fallbackPath="/unauthorized">
-                <WorkerLayout title="Dashboard" description="Overview of your activity and quick actions">
+                <WorkerLayout
+                  title="Dashboard"
+                  description="Overview of your activity and quick actions"
+                >
                   <WorkerDashboard />
                 </WorkerLayout>
               </RoleGuard>
@@ -143,7 +146,10 @@ const App = () => {
           element={
             <ProtectedRoute>
               <RoleGuard allowedRoles={["worker"]} fallbackPath="/unauthorized">
-                <WorkerLayout title="Profile" description="Manage your personal and professional information">
+                <WorkerLayout
+                  title="Profile"
+                  description="Manage your personal and professional information"
+                >
                   <WorkerProfile />
                 </WorkerLayout>
               </RoleGuard>
@@ -155,7 +161,10 @@ const App = () => {
           element={
             <ProtectedRoute>
               <RoleGuard allowedRoles={["worker"]} fallbackPath="/unauthorized">
-                <WorkerLayout title="Documents" description="Upload and manage your verification documents">
+                <WorkerLayout
+                  title="Documents"
+                  description="Upload and manage your verification documents"
+                >
                   <WorkerDocuments />
                 </WorkerLayout>
               </RoleGuard>
@@ -168,7 +177,10 @@ const App = () => {
             <ProtectedRoute>
               <RoleGuard allowedRoles={["worker"]} fallbackPath="/unauthorized">
                 <WorkerVerifiedGuard>
-                  <WorkerLayout title="Availability" description="Set your available dates for missions">
+                  <WorkerLayout
+                    title="Availability"
+                    description="Set your available dates for missions"
+                  >
                     <WorkerAvailability />
                   </WorkerLayout>
                 </WorkerVerifiedGuard>
@@ -182,7 +194,10 @@ const App = () => {
             <ProtectedRoute>
               <RoleGuard allowedRoles={["worker"]} fallbackPath="/unauthorized">
                 <WorkerVerifiedGuard>
-                  <WorkerLayout title="Available Missions" description="Browse and apply for open missions">
+                  <WorkerLayout
+                    title="Available Missions"
+                    description="Browse and apply for open missions"
+                  >
                     <AvailableMissions />
                   </WorkerLayout>
                 </WorkerVerifiedGuard>
@@ -196,7 +211,10 @@ const App = () => {
             <ProtectedRoute>
               <RoleGuard allowedRoles={["worker"]} fallbackPath="/unauthorized">
                 <WorkerVerifiedGuard>
-                  <WorkerLayout title="Mission Details" description="View mission information and apply">
+                  <WorkerLayout
+                    title="Mission Details"
+                    description="View mission information and apply"
+                  >
                     <MissionDetails />
                   </WorkerLayout>
                 </WorkerVerifiedGuard>
@@ -210,7 +228,10 @@ const App = () => {
             <ProtectedRoute>
               <RoleGuard allowedRoles={["worker"]} fallbackPath="/unauthorized">
                 <WorkerVerifiedGuard>
-                  <WorkerLayout title="My Applications" description="Track your mission applications">
+                  <WorkerLayout
+                    title="My Applications"
+                    description="Track your mission applications"
+                  >
                     <MyApplications />
                   </WorkerLayout>
                 </WorkerVerifiedGuard>
@@ -224,7 +245,10 @@ const App = () => {
             <ProtectedRoute>
               <RoleGuard allowedRoles={["worker"]} fallbackPath="/unauthorized">
                 <WorkerVerifiedGuard>
-                  <WorkerLayout title="Assigned Missions" description="View your current and past assignments">
+                  <WorkerLayout
+                    title="Assigned Missions"
+                    description="View your current and past assignments"
+                  >
                     <AssignedMissions />
                   </WorkerLayout>
                 </WorkerVerifiedGuard>
@@ -252,7 +276,10 @@ const App = () => {
             <ProtectedRoute>
               <RoleGuard allowedRoles={["worker"]} fallbackPath="/unauthorized">
                 <WorkerVerifiedGuard>
-                  <WorkerLayout title="Reviews" description="View and write reviews for completed missions">
+                  <WorkerLayout
+                    title="Reviews"
+                    description="View and write reviews for completed missions"
+                  >
                     <WorkerReviews />
                   </WorkerLayout>
                 </WorkerVerifiedGuard>
@@ -279,7 +306,10 @@ const App = () => {
           element={
             <ProtectedRoute>
               <RoleGuard allowedRoles={["worker"]} fallbackPath="/unauthorized">
-                <WorkerLayout title="Notifications" description="Stay updated with your activity">
+                <WorkerLayout
+                  title="Notifications"
+                  description="Stay updated with your activity"
+                >
                   <WorkerNotifications />
                 </WorkerLayout>
               </RoleGuard>
@@ -291,7 +321,10 @@ const App = () => {
           element={
             <ProtectedRoute>
               <RoleGuard allowedRoles={["worker"]} fallbackPath="/unauthorized">
-                <WorkerLayout title="Pending Approval" description="Your account is awaiting verification">
+                <WorkerLayout
+                  title="Pending Approval"
+                  description="Your account is awaiting verification"
+                >
                   <PendingApproval />
                 </WorkerLayout>
               </RoleGuard>
@@ -308,7 +341,10 @@ const App = () => {
                 allowedRoles={["institution"]}
                 fallbackPath="/unauthorized"
               >
-                <InstitutionLayout title="Dashboard" description="Overview of your missions and activity">
+                <InstitutionLayout
+                  title="Dashboard"
+                  description="Overview of your missions and activity"
+                >
                   <InstitutionDashboard />
                 </InstitutionLayout>
               </RoleGuard>
@@ -323,7 +359,10 @@ const App = () => {
                 allowedRoles={["institution"]}
                 fallbackPath="/unauthorized"
               >
-                <InstitutionLayout title="Profile" description="Manage your institution information">
+                <InstitutionLayout
+                  title="Profile"
+                  description="Manage your institution information"
+                >
                   <InstitutionProfile />
                 </InstitutionLayout>
               </RoleGuard>
@@ -338,7 +377,10 @@ const App = () => {
                 allowedRoles={["institution"]}
                 fallbackPath="/unauthorized"
               >
-                <InstitutionLayout title="Create Mission" description="Post a new mission for social workers">
+                <InstitutionLayout
+                  title="Create Mission"
+                  description="Post a new mission for social workers"
+                >
                   <CreateMission />
                 </InstitutionLayout>
               </RoleGuard>
@@ -353,7 +395,10 @@ const App = () => {
                 allowedRoles={["institution"]}
                 fallbackPath="/unauthorized"
               >
-                <InstitutionLayout title="Edit Mission" description="Update mission details">
+                <InstitutionLayout
+                  title="Edit Mission"
+                  description="Update mission details"
+                >
                   <EditMission />
                 </InstitutionLayout>
               </RoleGuard>
@@ -368,7 +413,10 @@ const App = () => {
                 allowedRoles={["institution"]}
                 fallbackPath="/unauthorized"
               >
-                <InstitutionLayout title="My Missions" description="Manage your posted missions">
+                <InstitutionLayout
+                  title="My Missions"
+                  description="Manage your posted missions"
+                >
                   <MyMissions />
                 </InstitutionLayout>
               </RoleGuard>
@@ -383,7 +431,10 @@ const App = () => {
                 allowedRoles={["institution"]}
                 fallbackPath="/unauthorized"
               >
-                <InstitutionLayout title="Mission Details" description="View mission information">
+                <InstitutionLayout
+                  title="Mission Details"
+                  description="View mission information"
+                >
                   <InstitutionMissionDetails />
                 </InstitutionLayout>
               </RoleGuard>
@@ -398,7 +449,10 @@ const App = () => {
                 allowedRoles={["institution"]}
                 fallbackPath="/unauthorized"
               >
-                <InstitutionLayout title="Mission Applicants" description="Review and manage applicants">
+                <InstitutionLayout
+                  title="Mission Applicants"
+                  description="Review and manage applicants"
+                >
                   <MissionApplicants />
                 </InstitutionLayout>
               </RoleGuard>
@@ -413,7 +467,10 @@ const App = () => {
                 allowedRoles={["institution"]}
                 fallbackPath="/unauthorized"
               >
-                <InstitutionLayout title="Assignments" description="Manage your mission assignments">
+                <InstitutionLayout
+                  title="Assignments"
+                  description="Manage your mission assignments"
+                >
                   <InstitutionAssignments />
                 </InstitutionLayout>
               </RoleGuard>
@@ -428,7 +485,10 @@ const App = () => {
                 allowedRoles={["institution"]}
                 fallbackPath="/unauthorized"
               >
-                <InstitutionLayout title="Assignment Details" description="View assignment information">
+                <InstitutionLayout
+                  title="Assignment Details"
+                  description="View assignment information"
+                >
                   <AssignedMissionView />
                 </InstitutionLayout>
               </RoleGuard>
@@ -443,7 +503,10 @@ const App = () => {
                 allowedRoles={["institution"]}
                 fallbackPath="/unauthorized"
               >
-                <InstitutionLayout title="Payment" description="Complete payment for assignment">
+                <InstitutionLayout
+                  title="Payment"
+                  description="Complete payment for assignment"
+                >
                   <PaymentPage />
                 </InstitutionLayout>
               </RoleGuard>
@@ -462,7 +525,10 @@ const App = () => {
                 allowedRoles={["institution"]}
                 fallbackPath="/unauthorized"
               >
-                <InstitutionLayout title="Payment History" description="View your payment transactions">
+                <InstitutionLayout
+                  title="Payment History"
+                  description="View your payment transactions"
+                >
                   <PaymentHistory />
                 </InstitutionLayout>
               </RoleGuard>
@@ -477,7 +543,10 @@ const App = () => {
                 allowedRoles={["institution"]}
                 fallbackPath="/unauthorized"
               >
-                <InstitutionLayout title="Reviews" description="View and write reviews">
+                <InstitutionLayout
+                  title="Reviews"
+                  description="View and write reviews"
+                >
                   <InstitutionReviews />
                 </InstitutionLayout>
               </RoleGuard>
@@ -507,7 +576,10 @@ const App = () => {
                 allowedRoles={["institution"]}
                 fallbackPath="/unauthorized"
               >
-                <InstitutionLayout title="Notifications" description="Stay updated with your activity">
+                <InstitutionLayout
+                  title="Notifications"
+                  description="Stay updated with your activity"
+                >
                   <InstitutionNotifications />
                 </InstitutionLayout>
               </RoleGuard>
@@ -521,7 +593,10 @@ const App = () => {
           element={
             <ProtectedRoute>
               <RoleGuard allowedRoles={["admin"]} fallbackPath="/unauthorized">
-                <AdminLayout title="Dashboard" description="Platform overview and key metrics">
+                <AdminLayout
+                  title="Dashboard"
+                  description="Platform overview and key metrics"
+                >
                   <AdminDashboard />
                 </AdminLayout>
               </RoleGuard>
@@ -533,7 +608,10 @@ const App = () => {
           element={
             <ProtectedRoute>
               <RoleGuard allowedRoles={["admin"]} fallbackPath="/unauthorized">
-                <AdminLayout title="Profile" description="Manage your admin account">
+                <AdminLayout
+                  title="Profile"
+                  description="Manage your admin account"
+                >
                   <AdminProfile />
                 </AdminLayout>
               </RoleGuard>
@@ -545,7 +623,10 @@ const App = () => {
           element={
             <ProtectedRoute>
               <RoleGuard allowedRoles={["admin"]} fallbackPath="/unauthorized">
-                <AdminLayout title="Workers Validation" description="Review and verify worker accounts">
+                <AdminLayout
+                  title="Workers Validation"
+                  description="Review and verify worker accounts"
+                >
                   <WorkersValidation />
                 </AdminLayout>
               </RoleGuard>
@@ -557,7 +638,10 @@ const App = () => {
           element={
             <ProtectedRoute>
               <RoleGuard allowedRoles={["admin"]} fallbackPath="/unauthorized">
-                <AdminLayout title="Documents Validation" description="Review and approve worker documents">
+                <AdminLayout
+                  title="Documents Validation"
+                  description="Review and approve worker documents"
+                >
                   <DocumentsValidation />
                 </AdminLayout>
               </RoleGuard>
@@ -569,7 +653,10 @@ const App = () => {
           element={
             <ProtectedRoute>
               <RoleGuard allowedRoles={["admin"]} fallbackPath="/unauthorized">
-                <AdminLayout title="Domains Management" description="Manage work domains and categories">
+                <AdminLayout
+                  title="Domains Management"
+                  description="Manage work domains and categories"
+                >
                   <DomainsManagement />
                 </AdminLayout>
               </RoleGuard>
@@ -581,7 +668,10 @@ const App = () => {
           element={
             <ProtectedRoute>
               <RoleGuard allowedRoles={["admin"]} fallbackPath="/unauthorized">
-                <AdminLayout title="Specialities Management" description="Manage worker specialities">
+                <AdminLayout
+                  title="Specialities Management"
+                  description="Manage worker specialities"
+                >
                   <SpecialitiesManagement />
                 </AdminLayout>
               </RoleGuard>
@@ -593,7 +683,10 @@ const App = () => {
           element={
             <ProtectedRoute>
               <RoleGuard allowedRoles={["admin"]} fallbackPath="/unauthorized">
-                <AdminLayout title="Missions Overview" description="View all platform missions">
+                <AdminLayout
+                  title="Missions Overview"
+                  description="View all platform missions"
+                >
                   <MissionsOverview />
                 </AdminLayout>
               </RoleGuard>
@@ -605,7 +698,10 @@ const App = () => {
           element={
             <ProtectedRoute>
               <RoleGuard allowedRoles={["admin"]} fallbackPath="/unauthorized">
-                <AdminLayout title="Assignments Overview" description="View all mission assignments">
+                <AdminLayout
+                  title="Assignments Overview"
+                  description="View all mission assignments"
+                >
                   <AssignmentsOverview />
                 </AdminLayout>
               </RoleGuard>
@@ -617,7 +713,10 @@ const App = () => {
           element={
             <ProtectedRoute>
               <RoleGuard allowedRoles={["admin"]} fallbackPath="/unauthorized">
-                <AdminLayout title="Payments Overview" description="View all payment transactions">
+                <AdminLayout
+                  title="Payments Overview"
+                  description="View all payment transactions"
+                >
                   <PaymentsOverview />
                 </AdminLayout>
               </RoleGuard>
@@ -629,7 +728,10 @@ const App = () => {
           element={
             <ProtectedRoute>
               <RoleGuard allowedRoles={["admin"]} fallbackPath="/unauthorized">
-                <AdminLayout title="Reviews Overview" description="View all platform reviews">
+                <AdminLayout
+                  title="Reviews Overview"
+                  description="View all platform reviews"
+                >
                   <ReviewsOverview />
                 </AdminLayout>
               </RoleGuard>
@@ -641,7 +743,10 @@ const App = () => {
           element={
             <ProtectedRoute>
               <RoleGuard allowedRoles={["admin"]} fallbackPath="/unauthorized">
-                <AdminLayout title="Admin Logs" description="View admin activity history">
+                <AdminLayout
+                  title="Admin Logs"
+                  description="View admin activity history"
+                >
                   <AdminLogs />
                 </AdminLayout>
               </RoleGuard>
@@ -658,4 +763,3 @@ const App = () => {
 };
 
 export default App;
-

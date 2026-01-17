@@ -13,14 +13,26 @@ import type { Worker, WorkerDocument, DocumentStatus, UserStatus } from "@/types
  * Admin dashboard statistics
  */
 export interface AdminDashboardStats {
-    totalWorkers: number;
-    pendingWorkers: number;
-    verifiedWorkers: number;
+    activeAssignments: number;
+    activeMissions: number;
+    cancelledMissions: number;
+    completedAssignments: number;
+    completedMissions: number;
+    ongoingMissions: number;
+    pendingDocuments: number;
+    pendingVerifications: number;
+    totalAssignments: number;
     totalInstitutions: number;
     totalMissions: number;
-    activeMissions: number;
+    totalPaymentAmount: number;
     totalPayments: number;
-    pendingPayments: number;
+    totalRevenue: number;
+    totalReviews: number;
+    totalUsers: number;
+    totalWorkerPayouts: number;
+    totalWorkers: number;
+    userStatusBreakdown: { status: string; count: number }[];
+    workerStatusBreakdown: { status: string; count: number }[];
 }
 
 /**
@@ -33,6 +45,25 @@ export interface AdminLog {
     targetUserId?: number | null;
     details?: string | null;
     createdAt: string;
+    // Joined relations
+    admin?: {
+        id: number;
+        email: string;
+    };
+    targetUser?: {
+        id: number;
+        email: string;
+        worker?: { firstName: string; lastName: string };
+        institution?: { institutionName: string };
+    } | null;
+    targetDocument?: {
+        id: number;
+        type: string;
+    } | null;
+    targetMission?: {
+        id: number;
+        title: string;
+    } | null;
 }
 
 /**
@@ -61,6 +92,7 @@ export interface PendingWorkersFilters {
  */
 export interface PendingDocumentsFilters {
     type?: string;
+    status?: string;
     page?: number;
     limit?: number;
 }

@@ -3,14 +3,14 @@ import StepNavigation from "@/components/auth/StepNavigation";
 import { useRegisterStepper } from "@/components/auth/useRegisterStepper";
 
 import { institutionSteps } from "@/components/institution/institutionRegister.steps";
-import { isInstitutionStepValid } from "@/components/institution/institutionRegister.validation";
+import { isInstitutionStepValid } from "@/components/institution/auth/institutionRegister.validation";
 import { useInstitutionRegisterStore } from "@/components/institution/institutionRegister.store";
 
-import StepAccount from "@/components/institution/steps/StepAccount";
-import StepInstitutionInfo from "@/components/institution/steps/StepInstitutionInfo";
-import StepConfirm from "@/components/institution/steps/StepConfirm";
+import StepAccount from "@/components/institution/auth/steps/StepAccount";
+import StepInstitutionInfo from "@/components/institution/auth/steps/StepInstitutionInfo";
+import StepConfirm from "@/components/institution/auth/steps/StepConfirm";
 
-import { submitInstitutionRegistration } from "@/components/institution/submitInstitutionRegistration";
+import { submitInstitutionRegistration } from "@/components/institution/auth/submitInstitutionRegistration";
 import { useNavigate } from "react-router";
 import { useState } from "react";
 import { useAppDispatch } from "@/features/hooks";

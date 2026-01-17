@@ -52,6 +52,7 @@ export const findAll = async (filters?: WorkerFilters, page = 1, limit = 10) => 
                     }
                 },
                 speciality: true,
+                documents: { orderBy: { uploadedAt: 'desc' } },
                 domains: {
                     include: { domain: true }
                 }
@@ -60,6 +61,12 @@ export const findAll = async (filters?: WorkerFilters, page = 1, limit = 10) => 
         }),
         prisma.worker.count({ where })
     ]);
+
+    if (workers.length > 0) {
+        console.log(`[findAll] Found ${workers.length} workers. First worker docs: ${workers[0].documents?.length || 0}`);
+    } else {
+        console.log('[findAll] No workers found matching filters');
+    }
 
     return {
         workers,

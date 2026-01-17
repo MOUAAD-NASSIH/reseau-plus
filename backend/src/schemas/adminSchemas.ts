@@ -140,6 +140,7 @@ export const pendingWorkersFilterSchema = z.object({
 export const pendingDocumentsFilterSchema = z.object({
     query: z.object({
         type: documentTypeEnum.optional(),
+        status: z.enum(['PENDING', 'APPROVED', 'REJECTED', 'ALL']).optional(),
         page: z.coerce.number().int().min(1).default(1),
         limit: z.coerce.number().int().min(1).max(100).default(10),
     }),

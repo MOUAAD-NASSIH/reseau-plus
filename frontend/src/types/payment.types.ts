@@ -11,6 +11,9 @@ export type PaymentStatus = 'PENDING' | 'COMPLETED' | 'FAILED';
 // ENTITY INTERFACES
 
 
+import type { Worker, Institution } from './auth.types';
+import type { MissionAssignment } from './assignment.types';
+
 /**
  * Payment entity
  */
@@ -26,6 +29,11 @@ export interface Payment {
     status: PaymentStatus;
     paidAt?: string | null;
     createdAt: string;
+
+    // Relations
+    missionAssignment?: MissionAssignment;
+    institution?: Institution;
+    worker?: Worker;
 }
 
 // INPUT INTERFACES
