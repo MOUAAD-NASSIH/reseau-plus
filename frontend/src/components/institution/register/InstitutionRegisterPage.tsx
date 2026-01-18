@@ -13,8 +13,6 @@ import StepConfirm from "./steps/StepConfirm";
 
 import { submitInstitutionRegistration } from "./submitInstitutionRegistration";
 import { useState } from "react";
-import { useAppDispatch } from "@/features/hooks";
-import { getMe } from "@/features/slices/authSlice";
 import { showErrorToast } from "@/lib/toast";
 import axios from "axios";
 
@@ -30,7 +28,6 @@ export default function InstitutionRegisterPage() {
 
   const canProceed = isInstitutionStepValid(currentStep, data);
 
-  const dispatch = useAppDispatch();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [backendError, setBackendError] = useState<string | null>(null);
   const [isRegistrationComplete, setIsRegistrationComplete] = useState(false);
@@ -54,7 +51,6 @@ export default function InstitutionRegisterPage() {
 
       localStorage.setItem("auth_token", res.data.data.token);
 
-      dispatch(getMe());
       reset();
 
       // Show success animation instead of navigating immediately

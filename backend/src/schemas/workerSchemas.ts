@@ -40,6 +40,7 @@ export const updateWorkerProfileSchema = z.object({
         longitude: longitudeSchema.optional().nullable(),
         birthDate: z.coerce.date().optional().nullable(),
         gender: safeStringSchema.max(20).optional().nullable(),
+        domainIds: z.array(z.number().int().positive()).optional(),
     }),
 });
 

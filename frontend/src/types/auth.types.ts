@@ -46,7 +46,6 @@ export interface Worker {
     birthDate?: string | null;
     gender?: string | null;
     createdAt: string;
-    profilePicture?: string | null;
     // Relations
     user?: User;
     speciality?: Speciality | null;
@@ -96,6 +95,7 @@ export interface WorkerDocument {
     type: string; // DIPLOMA, CV, ID, OTHER
     fileUrl: string;
     status: DocumentStatus;
+    title?: string;
     adminComment?: string | null;
     uploadedAt: string;
     reviewedAt?: string | null;
@@ -253,6 +253,7 @@ export interface UpdateWorkerInput {
     longitude?: number | null;
     birthDate?: string | null;
     gender?: string | null;
+    domainIds?: number[] | null;
 }
 
 /**
@@ -275,6 +276,7 @@ export interface WorkerFilters {
 export interface DocumentUploadInput {
     type: DocumentType;
     file: File;
+    title?: string;
 }
 
 // ENHANCED INSTITUTION TYPES

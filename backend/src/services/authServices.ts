@@ -370,6 +370,7 @@ export const login = async (
 
 /**
  * Get current user with profile data
+ * Returns user with profilePicture at the user level for consistency
  */
 export const getMe = async (userId: number) => {
     const user = await prisma.user.findUnique({

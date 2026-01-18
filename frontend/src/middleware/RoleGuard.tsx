@@ -1,7 +1,5 @@
 import { Navigate } from "react-router";
-import { useSelector } from "react-redux";
 import type { UserRole } from "@/types/auth.types";
-import type { RootState } from "@/features/store";
 import { useGetCurrentUserQuery } from "@/features/api/endpoints/authEndpoints";
 
 interface RoleGuardProps {
@@ -29,11 +27,12 @@ interface ApiUser {
 /**
  * Extracts the user role from the authenticated user object.
  */
-function getUserRole(user: RootState["auth"]["user"]): UserRole | null {
+function getUserRole(user: any): UserRole | null {
   if (!user) return null;
-
-  const apiUser = user as ApiUser;
-  return apiUser.role || null;
+  // Handle both direct role string and nested role object
+  if (typeof user.role === 'string') return user.role as UserRole;
+  if (user.role?.name) return user.role.name as UserRole;
+  return null;
 }
 
 export default function RoleGuard({
@@ -41,25 +40,19 @@ export default function RoleGuard({
   children,
   fallbackPath = "/",
 }: RoleGuardProps) {
-  const user = useSelector((state: RootState) => state.auth.user);
   const hasToken = !!localStorage.getItem("auth_token");
 
-  // Also check RTK Query data in case Redux state hasn't been updated yet
-  const { data: currentUserData, isLoading, isFetching } = useGetCurrentUserQuery(undefined, {
+  // Get user data from RTK Query (single source of truth)
+  const { data: currentUserData, isLoading } = useGetCurrentUserQuery(undefined, {
     skip: !hasToken,
   });
 
-  // Try to get role from Redux state first, then from RTK Query data
-  let userRole = getUserRole(user);
-
-  // If no role from Redux, try RTK Query data
-  if (!userRole && currentUserData?.data?.user) {
-    userRole = getUserRole(currentUserData.data.user);
-  }
+  const user = currentUserData?.data?.user;
+  const userRole = getUserRole(user);
 
   // Show loading state while fetching user data (if we have a token but no role yet)
   // This prevents premature redirect to unauthorized page
-  if (hasToken && !userRole && (isLoading || isFetching)) {
+  if (hasToken && !userRole && isLoading) {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />

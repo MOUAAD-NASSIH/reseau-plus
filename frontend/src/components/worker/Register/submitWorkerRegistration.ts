@@ -28,6 +28,9 @@ export async function submitWorkerRegistration(data: WorkerRegisterData) {
 
   data.documents?.forEach((doc) => {
     formData.append(`document_${doc.type}`, doc.file);
+    if (doc.title) {
+      formData.append(`document_title_${doc.type}`, doc.title);
+    }
   });
 
   return axiosInstance.post("/auth/register/worker", formData);

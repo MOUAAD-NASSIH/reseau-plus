@@ -2,19 +2,17 @@ import RegisterLayout from "@/components/auth/RegisterLayout";
 import StepNavigation from "@/components/auth/StepNavigation";
 import { useRegisterStepper } from "@/components/auth/useRegisterStepper";
 
-import { institutionSteps } from "@/components/institution/institutionRegister.steps";
-import { isInstitutionStepValid } from "@/components/institution/auth/institutionRegister.validation";
-import { useInstitutionRegisterStore } from "@/components/institution/institutionRegister.store";
+import { institutionSteps } from "@/components/institution/register/institutionRegister.steps";
+import { isInstitutionStepValid } from "@/components/institution/register/institutionRegister.validation";
+import { useInstitutionRegisterStore } from "@/components/institution/register/institutionRegister.store";
 
-import StepAccount from "@/components/institution/auth/steps/StepAccount";
-import StepInstitutionInfo from "@/components/institution/auth/steps/StepInstitutionInfo";
-import StepConfirm from "@/components/institution/auth/steps/StepConfirm";
+import StepAccount from "@/components/institution/register/steps/StepAccount";
+import StepInstitutionInfo from "@/components/institution/register/steps/StepInstitutionInfo";
+import StepConfirm from "@/components/institution/register/steps/StepConfirm";
 
-import { submitInstitutionRegistration } from "@/components/institution/auth/submitInstitutionRegistration";
+import { submitInstitutionRegistration } from "@/components/institution/register/submitInstitutionRegistration";
 import { useNavigate } from "react-router";
 import { useState } from "react";
-import { useAppDispatch } from "@/features/hooks";
-import { getMe } from "@/features/slices/authSlice";
 
 const stepComponents = [StepAccount, StepInstitutionInfo, StepConfirm];
 
@@ -30,7 +28,6 @@ export default function InstitutionRegisterPage() {
   const canProceed = isInstitutionStepValid(currentStep, data);
 
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleNext() {
@@ -43,9 +40,8 @@ export default function InstitutionRegisterPage() {
       setIsSubmitting(true);
       const res = await submitInstitutionRegistration(data);
       localStorage.setItem("auth_token", res.data.data.token);
-      dispatch(getMe());
       reset();
-      navigate("/dashboard");
+      navigate("/institution"); // Navigate to institution dashboard
     } finally {
       setIsSubmitting(false);
     }

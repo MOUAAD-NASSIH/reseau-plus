@@ -15,9 +15,7 @@ import { NotificationBell } from "@/components/common/NotificationBell";
 import { UserAvatar } from "@/components/ui/avatar";
 import { ConnectionStatusIndicator } from "@/components/common/ConnectionStatusIndicator";
 import { Button } from "@/components/ui/button";
-import { useAppDispatch, useAppSelector } from "@/features/hooks";
-import { logout } from "@/features/slices/authSlice";
-import { useLogoutMutation } from "@/features/api/endpoints/authEndpoints";
+import { useGetCurrentUserQuery, useLogoutMutation } from "@/features/api/endpoints/authEndpoints";
 
 // Key for persisting sidebar collapsed state
 const SIDEBAR_COLLAPSED_KEY = "sidebar-collapsed";
@@ -75,8 +73,11 @@ export default function DashboardLayout({
     const [userMenuOpen, setUserMenuOpen] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
-    const dispatch = useAppDispatch();
-    const user = useAppSelector((s) => s.auth.user);
+
+    // Get user data from RTK Query (single source of truth)
+    const { data: userData } = useGetCurrentUserQuery();
+    const user = userData?.data?.user;
+
     const [logoutMutation] = useLogoutMutation();
 
     // Persist sidebar collapsed state to localStorage
@@ -87,8 +88,6 @@ export default function DashboardLayout({
     const handleLogout = async () => {
         // Use RTK Query logout mutation which clears cache
         await logoutMutation();
-        // Also dispatch Redux logout action for UI state
-        dispatch(logout());
         navigate("/login");
     };
 
@@ -126,14 +125,26 @@ export default function DashboardLayout({
     const getUserProfilePicture = (): string | null => {
         if (!user) return null;
 
-        const apiUser = user as ApiUser;
+        const apiUser = user as any;
 
-        if (apiUser.role === "worker") {
-            return apiUser.worker?.profilePicture || null;
+        // Check for profilePicture at the user level
+        if (apiUser.profilePicture) {
+            return apiUser.profilePicture;
         }
 
-        if (apiUser.role === "institution") {
-            return apiUser.institution?.logo || null;
+        // Check nested user object (from /workers/me endpoint)
+        if (apiUser.user?.profilePicture) {
+            return apiUser.user.profilePicture;
+        }
+
+        // Fallback to nested worker object
+        if (apiUser.role === "worker" && apiUser.worker?.profilePicture) {
+            return apiUser.worker.profilePicture;
+        }
+
+        // Institution logo
+        if (apiUser.role === "institution" && apiUser.institution?.logo) {
+            return apiUser.institution.logo;
         }
 
         return null;

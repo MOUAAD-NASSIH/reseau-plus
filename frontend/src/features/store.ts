@@ -1,15 +1,13 @@
 /**
  * Redux Store Configuration
- * Integrates RTK Query API slice and auth slice for state management.
+ * Integrates RTK Query API slice for state management.
  */
 
 import { configureStore } from "@reduxjs/toolkit";
 import { api } from "./api/api";
-import authReducer from "./slices/authSlice";
 
 export const store = configureStore({
   reducer: {
-    auth: authReducer,
     [api.reducerPath]: api.reducer,
   },
   middleware: (getDefaultMiddleware) =>

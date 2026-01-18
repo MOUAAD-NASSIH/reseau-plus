@@ -29,7 +29,7 @@ export interface ProfilePictureUploadProps {
     /** Additional CSS classes */
     className?: string;
     /** Size of the avatar preview */
-    size?: "md" | "lg" | "xl";
+    size?: "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl";
 }
 
 /**
@@ -172,127 +172,93 @@ export function ProfilePictureUpload({
     const hasPreview = !!previewUrl;
 
     return (
-        <div className={cn("flex flex-col items-center gap-4", className)}>
-            {/* Avatar with overlay */}
-            <div className="relative group">
+        <div className={cn("flex flex-col items-center gap-2", className)}>
+            <div className="relative group p-1 rounded-full border-2 border-dashed border-muted-foreground/20 hover:border-primary/50 transition-colors">
+                {/* Avatar */}
                 <UserAvatar
                     src={displayImage}
                     name={name}
                     size={size}
                     className={cn(
-                        "transition-opacity",
+                        "transition-opacity duration-300 ring-4 ring-background",
                         isProcessing && "opacity-50"
                     )}
                 />
 
-                {/* Overlay for changing picture */}
+                {/* Edit Button (Bottom Right) */}
                 {!hasPreview && !isProcessing && (
                     <button
                         type="button"
                         onClick={triggerFileSelect}
-                        className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                        className="absolute bottom-1 right-1 p-2 bg-primary text-primary-foreground rounded-full shadow-lg hover:bg-primary/90 transition-all hover:scale-105 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                         aria-label="Change profile picture"
                     >
-                        <Camera className="h-6 w-6 text-white" />
+                        <Camera className="h-4 w-4" />
                     </button>
                 )}
 
-                {/* Loading overlay */}
+                {/* Loading Overlay */}
                 {isProcessing && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full">
-                        <Loader2 className="h-6 w-6 text-white animate-spin" />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full backdrop-blur-sm z-20">
+                        <Loader2 className="h-8 w-8 text-white animate-spin" />
+                    </div>
+                )}
+
+                {/* Preview Actions Overlay */}
+                {hasPreview && !isProcessing && (
+                    <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/60 rounded-full backdrop-blur-sm z-20 animate-in fade-in zoom-in-95 duration-200">
+                        <Button
+                            type="button"
+                            size="icon"
+                            variant="default"
+                            className="h-9 w-9 rounded-full bg-green-600 hover:bg-green-700 text-white border-none"
+                            onClick={handleUpload}
+                            title="Save"
+                        >
+                            <Upload className="h-4 w-4" />
+                        </Button>
+                        <Button
+                            type="button"
+                            size="icon"
+                            variant="destructive"
+                            className="h-9 w-9 rounded-full"
+                            onClick={handleCancel}
+                            title="Cancel"
+                        >
+                            <X className="h-4 w-4" />
+                        </Button>
                     </div>
                 )}
             </div>
 
-            {/* Hidden file input */}
+            {/* Hidden Input */}
             <input
                 ref={fileInputRef}
                 type="file"
                 accept={ALLOWED_MIME_TYPES.join(",")}
                 onChange={handleFileSelect}
                 className="hidden"
-                aria-label="Select profile picture"
             />
 
-            {/* Action buttons */}
-            <div className="flex flex-col items-center gap-2">
-                {hasPreview ? (
-                    // Preview mode - show confirm/cancel
-                    <div className="flex items-center gap-2">
-                        <Button
-                            type="button"
-                            size="sm"
-                            onClick={handleUpload}
-                            disabled={isProcessing}
-                        >
-                            {isLoading ? (
-                                <>
-                                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                    Uploading...
-                                </>
-                            ) : (
-                                <>
-                                    <Upload className="h-4 w-4 mr-2" />
-                                    Save
-                                </>
-                            )}
-                        </Button>
-                        <Button
-                            type="button"
-                            size="sm"
-                            variant="outline"
-                            onClick={handleCancel}
-                            disabled={isProcessing}
-                        >
-                            <X className="h-4 w-4 mr-2" />
-                            Cancel
-                        </Button>
-                    </div>
-                ) : (
-                    // Normal mode - show upload/delete
-                    <div className="flex items-center gap-2">
-                        <Button
-                            type="button"
-                            size="sm"
-                            variant="outline"
-                            onClick={triggerFileSelect}
-                            disabled={isProcessing}
-                        >
-                            <Upload className="h-4 w-4 mr-2" />
-                            {currentImage ? "Change" : "Upload"}
-                        </Button>
-                        {currentImage && onDelete && (
-                            <Button
-                                type="button"
-                                size="sm"
-                                variant="ghost"
-                                onClick={handleDelete}
-                                disabled={isProcessing}
-                                className="text-destructive hover:text-destructive"
-                            >
-                                {isDeleting ? (
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                ) : (
-                                    <X className="h-4 w-4" />
-                                )}
-                            </Button>
-                        )}
-                    </div>
-                )}
-
-                {/* Helper text */}
-                <p className="text-xs text-muted-foreground text-center">
-                    JPEG, PNG, or WebP. Max 5MB.
+            {/* Error Message */}
+            {error && (
+                <p className="text-sm text-destructive font-medium animate-in slide-in-from-top-1">
+                    {error}
                 </p>
+            )}
 
-                {/* Error message */}
-                {error && (
-                    <p className="text-sm text-destructive text-center" role="alert">
-                        {error}
-                    </p>
-                )}
-            </div>
+            {/* Delete Option (only if image exists and not in preview) */}
+            {currentImage && !hasPreview && !isProcessing && onDelete && (
+                <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="text-destructive hover:text-destructive bg-destructive/10 hover:bg-destructive/10 text-xs h-7"
+                    onClick={handleDelete}
+                >
+                    Remove photo
+                </Button>
+            )}
         </div>
     );
 }

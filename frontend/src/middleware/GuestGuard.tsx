@@ -1,10 +1,6 @@
 import { Navigate, useLocation } from "react-router";
-import { useSelector, useDispatch } from "react-redux";
-import { useEffect } from "react";
-import type { RootState, AppDispatch } from "@/features/store";
 import type { UserRole } from "@/types/auth.types";
 import { useGetCurrentUserQuery } from "@/features/api/endpoints/authEndpoints";
-import { setUser } from "@/features/slices/authSlice";
 
 interface GuestGuardProps {
     children: React.ReactNode;
@@ -30,21 +26,19 @@ interface ApiUser {
 /**
  * Extracts the user role from the authenticated user object.
  */
-function getUserRole(user: RootState["auth"]["user"]): UserRole | null {
+function getUserRole(user: ApiUser | null | undefined): UserRole | null {
     if (!user) return null;
 
-    const apiUser = user as ApiUser;
-
-    if (typeof apiUser.role === "string") {
-        return apiUser.role as UserRole;
+    if (typeof user.role === "string") {
+        return user.role as UserRole;
     }
 
-    if (apiUser.role && typeof apiUser.role === "object" && "name" in apiUser.role) {
-        return apiUser.role.name;
+    if (user.role && typeof user.role === "object" && "name" in user.role) {
+        return user.role.name;
     }
 
-    if (apiUser.user?.role?.name) {
-        return apiUser.user.role.name;
+    if (user.user?.role?.name) {
+        return user.user.role.name;
     }
 
     return null;
@@ -71,11 +65,7 @@ function getDashboardPath(role: UserRole | null): string {
  * Redirects authenticated users to their appropriate dashboard.
  */
 export default function GuestGuard({ children }: GuestGuardProps) {
-    const dispatch = useDispatch<AppDispatch>();
     const location = useLocation();
-    const { isAuthenticated, user } = useSelector(
-        (state: RootState) => state.auth
-    );
 
     // Check if token exists
     const hasToken = !!localStorage.getItem("auth_token");
@@ -85,13 +75,7 @@ export default function GuestGuard({ children }: GuestGuardProps) {
         skip: !hasToken,
     });
 
-    // Update auth state when user data is fetched
-    useEffect(() => {
-        if (data?.data?.user) {
-            // Dispatch action to update auth state with user data
-            dispatch(setUser(data.data.user));
-        }
-    }, [data, dispatch]);
+    const user = data?.data?.user;
 
     // Show loading state during validation
     if (hasToken && isLoading) {
@@ -106,19 +90,8 @@ export default function GuestGuard({ children }: GuestGuardProps) {
     const from = (location.state as { from?: Location })?.from;
 
     // If user is authenticated, redirect to their dashboard or the original location
-    if (isAuthenticated && user) {
+    if (user) {
         const userRole = getUserRole(user);
-        // If we have a saved location, redirect there (unless it's the login page)
-        if (from && from.pathname !== "/login") {
-            return <Navigate to={from.pathname} replace />;
-        }
-        const dashboardPath = getDashboardPath(userRole);
-        return <Navigate to={dashboardPath} replace />;
-    }
-
-    // Also check RTK Query data for authenticated user
-    if (data?.data?.user) {
-        const userRole = getUserRole(data.data.user);
         // If we have a saved location, redirect there (unless it's the login page)
         if (from && from.pathname !== "/login") {
             return <Navigate to={from.pathname} replace />;

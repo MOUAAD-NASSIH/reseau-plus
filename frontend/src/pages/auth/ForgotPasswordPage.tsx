@@ -16,7 +16,7 @@ import { AnimatedButton } from "@/components/ui/animated-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { showErrorToast } from "@/lib/toast";
-import { authService } from "@/features/services/authServices";
+import { useForgotPasswordMutation } from "@/features/api/endpoints/authEndpoints";
 import { staggerContainer, fadeUpItem, shouldReduceMotion } from "@/lib/animations";
 
 export default function ForgotPasswordPage() {
@@ -24,6 +24,8 @@ export default function ForgotPasswordPage() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [submittedEmail, setSubmittedEmail] = useState("");
   const reduceMotion = shouldReduceMotion();
+
+  const [forgotPassword] = useForgotPasswordMutation();
 
   const form = useForm<ForgotPasswordSchema>({
     resolver: zodResolver(forgotPasswordSchema),
@@ -41,7 +43,7 @@ export default function ForgotPasswordPage() {
 
   async function onSubmit(data: ForgotPasswordSchema) {
     try {
-      await authService.forgotPassword(data);
+      await forgotPassword(data).unwrap();
       setSubmittedEmail(data.email);
       setIsSuccess(true);
     } catch (error) {

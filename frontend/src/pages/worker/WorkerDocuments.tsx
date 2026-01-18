@@ -1,8 +1,6 @@
 import { useState, useRef } from "react";
 import {
     Upload,
-    Download,
-    MoreVertical,
     Lock,
     FolderOpen,
     CheckCircle2,
@@ -11,8 +9,10 @@ import {
     Calendar,
     CloudUpload,
     FileText,
-    Menu,
     X,
+    GraduationCap,
+    IdCard,
+    ExternalLink,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -44,11 +44,10 @@ import type { DocumentType } from "@/types/auth.types";
 export default function WorkerDocuments() {
     const { data: documentsData, isLoading } = useGetWorkerDocumentsQuery();
     const [uploadDocument, { isLoading: isUploading }] = useUploadDocumentMutation();
-    const [searchTerm, setSearchTerm] = useState("");
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [documentType, setDocumentType] = useState<DocumentType>("DIPLOMA");
+    const [documentTitle, setDocumentTitle] = useState("");
     const [dragActive, setDragActive] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -73,7 +72,7 @@ export default function WorkerDocuments() {
         e.preventDefault();
         e.stopPropagation();
         setDragActive(false);
-        
+
         if (e.dataTransfer.files && e.dataTransfer.files[0]) {
             handleFileSelection(e.dataTransfer.files[0]);
         }
@@ -109,20 +108,51 @@ export default function WorkerDocuments() {
             await uploadDocument({
                 type: documentType,
                 file: selectedFile,
+                title: documentTitle,
             }).unwrap();
 
             showSuccessToast("Document uploaded", "Your document has been uploaded successfully and is pending review");
 
             setIsUploadDialogOpen(false);
             setSelectedFile(null);
+            setDocumentTitle("");
             setDocumentType("DIPLOMA");
-        } catch (error: any) {
+        } catch (error) {
             showErrorToast(error, "Failed to upload document");
         }
     };
 
     const triggerFileInput = () => {
         fileInputRef.current?.click();
+    };
+
+    const getDocumentIcon = (type: string) => {
+        switch (type) {
+            case "DIPLOMA":
+                return <GraduationCap className="h-7 w-7" />;
+            case "ID":
+                return <IdCard className="h-7 w-7" />;
+            case "CV":
+            default:
+                return <FileText className="h-7 w-7" />;
+        }
+    };
+
+    const getDocumentIconColor = (type: string) => {
+        switch (type) {
+            case "DIPLOMA":
+                return "bg-primary/10 text-primary";
+            case "ID":
+                return "bg-blue-500/10 text-blue-400";
+            case "CV":
+            default:
+                return "bg-purple-500/10 text-purple-400";
+        }
+    };
+
+    const handleViewDocument = (fileUrl: string) => {
+        // Simply open the Cloudinary URL in a new tab
+        window.open(fileUrl, '_blank');
     };
 
     const getStatusBadge = (status: string) => {
@@ -149,7 +179,7 @@ export default function WorkerDocuments() {
                 return (
                     <Badge
                         variant="outline"
-                        className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-red-500/10 text-red-400 text-xs font-bold border-red-500/20"
+                        className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-destructive/10 text-destructive text-xs font-bold border-destructive/20"
                     >
                         <AlertCircle className="h-3.5 w-3.5" /> Rejected
                     </Badge>
@@ -169,47 +199,9 @@ export default function WorkerDocuments() {
 
     return (
         <div className="min-h-screen flex flex-col bg-background">
-            {/* Top Navbar */}
-            <header className="flex items-center justify-between h-16 px-6 lg:px-10 border-b border-border bg-card/95 backdrop-blur-sm z-10 shrink-0">
-                <div className="flex items-center gap-4">
-                    <button
-                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                        className="lg:hidden text-foreground"
-                    >
-                        <Menu className="h-5 w-5" />
-                    </button>
-                    <h2 className="text-foreground text-lg font-bold leading-tight tracking-tight">
-                        Worker Portal
-                    </h2>
-                </div>
-                <div className="flex items-center gap-4">
-                    <div className="relative hidden lg:block">
-                        <svg
-                            className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                            />
-                        </svg>
-                        <Input
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            placeholder="Search documents..."
-                            className="pl-10 pr-4 w-64 bg-muted/50"
-                        />
-                    </div>
-                </div>
-            </header>
-
             {/* Main Content */}
-            <div className="flex-1 overflow-y-auto p-4 lg:p-10">
-                <div className="flex flex-col gap-8 pb-20">
+            <div className="flex-1 overflow-y-auto sm:p-4">
+                <div className="flex flex-col gap-8">
                     {/* Page Heading */}
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                         <div className="flex flex-col gap-2 max-w-2xl">
@@ -217,7 +209,7 @@ export default function WorkerDocuments() {
                                 <Lock className="h-4 w-4" />
                                 <span>Encrypted & Secure Storage</span>
                             </div>
-                            <h1 className="text-foreground text-3xl md:text-4xl font-bold leading-tight tracking-tight">
+                            <h1 className="text-foreground font-spline text-3xl md:text-4xl font-bold leading-tight tracking-tight">
                                 My Professional Documents
                             </h1>
                             <p className="text-muted-foreground text-base md:text-lg font-normal">
@@ -227,7 +219,7 @@ export default function WorkerDocuments() {
                         </div>
                         <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
                             <DialogTrigger asChild>
-                                <Button 
+                                <Button
                                     className="flex shrink-0 items-center gap-2 btn-glow"
                                     onClick={() => setIsUploadDialogOpen(true)}
                                 >
@@ -247,7 +239,13 @@ export default function WorkerDocuments() {
                                         <Label htmlFor="documentType">Document Type</Label>
                                         <Select
                                             value={documentType}
-                                            onValueChange={(value) => setDocumentType(value as DocumentType)}
+                                            onValueChange={(value) => {
+                                                setDocumentType(value as DocumentType);
+                                                // Clear title if switching away from DIPLOMA
+                                                if (value !== "DIPLOMA") {
+                                                    setDocumentTitle("");
+                                                }
+                                            }}
                                         >
                                             <SelectTrigger id="documentType">
                                                 <SelectValue placeholder="Select document type" />
@@ -260,6 +258,21 @@ export default function WorkerDocuments() {
                                             </SelectContent>
                                         </Select>
                                     </div>
+
+                                    {documentType === "DIPLOMA" && (
+                                        <div className="space-y-2">
+                                            <Label htmlFor="documentTitle">
+                                                Document Title
+                                            </Label>
+                                            <Input
+                                                id="documentTitle"
+                                                placeholder="e.g. Master in Management"
+                                                value={documentTitle}
+                                                className="placeholder:opacity-40"
+                                                onChange={(e) => setDocumentTitle(e.target.value)}
+                                            />
+                                        </div>
+                                    )}
 
                                     <div className="space-y-2">
                                         <Label>File</Label>
@@ -308,6 +321,7 @@ export default function WorkerDocuments() {
                                         onClick={() => {
                                             setIsUploadDialogOpen(false);
                                             setSelectedFile(null);
+                                            setDocumentTitle("");
                                         }}
                                     >
                                         Cancel
@@ -353,17 +367,17 @@ export default function WorkerDocuments() {
                             <p className="text-muted-foreground text-sm mt-2">Ready for mission matching</p>
                         </Card>
 
-                        <Card className="flex flex-col gap-1 rounded-2xl p-6 border border-red-900/50 relative overflow-hidden group hover:border-red-500/50 transition-colors">
+                        <Card className="flex flex-col gap-1 rounded-2xl p-6 border border-destructive/50 relative overflow-hidden group hover:border-destructive/50 transition-colors">
                             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                                <AlertCircle className="h-20 w-20 text-red-400" />
+                                <AlertCircle className="h-20 w-20 text-destructive" />
                             </div>
-                            <p className="text-red-300 text-sm font-medium uppercase tracking-wider">
+                            <p className="text-destructive text-sm font-medium uppercase tracking-wider">
                                 Action Required
                             </p>
                             <p className="text-foreground tracking-tight text-3xl font-bold">{rejectedDocs}</p>
                             {rejectedDocs > 0 && (
                                 <div className="flex items-center gap-1 mt-2">
-                                    <span className="text-red-300 text-sm font-medium bg-red-900/30 px-2 py-0.5 rounded-full">
+                                    <span className="text-destructive text-sm font-medium bg-destructive/30 px-2 py-0.5 rounded-full">
                                         Check rejected items
                                     </span>
                                 </div>
@@ -386,9 +400,8 @@ export default function WorkerDocuments() {
                             onDragLeave={handleDrag}
                             onDragOver={handleDrag}
                             onDrop={handleDrop}
-                            className={`flex flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed ${
-                                dragActive ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"
-                            } bg-card/30 px-6 py-10 transition-colors cursor-pointer group`}
+                            className={`flex flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed ${dragActive ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"
+                                } bg-card/30 px-6 py-10 transition-colors cursor-pointer group`}
                         >
                             <div className="size-16 rounded-full bg-card flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                                 <CloudUpload className="h-8 w-8 text-primary" />
@@ -421,68 +434,68 @@ export default function WorkerDocuments() {
                                 documents.map((doc) => (
                                     <Card
                                         key={doc.id}
-                                        className={`flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 rounded-2xl border hover:bg-muted/50 transition-colors relative overflow-hidden ${
-                                            doc.status === "REJECTED"
-                                                ? "border-red-900/30"
-                                                : "border-border"
-                                        }`}
+                                        className={`group flex flex-col sm:flex-row items-start gap-4 p-4 rounded-2xl border hover:border-primary/30 hover:shadow-md transition-all relative overflow-hidden ${doc.status === "REJECTED"
+                                            ? "border-destructive/30 bg-destructive/5"
+                                            : "border-border"
+                                            }`}
                                     >
                                         {doc.status === "REJECTED" && (
-                                            <div className="absolute left-0 top-0 bottom-0 w-1 bg-red-500"></div>
+                                            <div className="absolute left-0 top-0 bottom-0 w-1 bg-destructive"></div>
                                         )}
-                                        <div
-                                            className={`size-12 shrink-0 rounded-xl bg-red-500/10 flex items-center justify-center text-red-400 ${
-                                                doc.status === "REJECTED" ? "ml-2" : ""
-                                            }`}
-                                        >
-                                            <FileText className="h-7 w-7" />
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-3 mb-1">
-                                                <h4 className="text-foreground font-bold text-base truncate">
-                                                    {doc.type}
-                                                </h4>
-                                                <span className="hidden sm:inline-flex">
-                                                    {getStatusBadge(doc.status)}
-                                                </span>
-                                            </div>
-                                            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
-                                                <span className="flex items-center gap-1">
-                                                    <Calendar className="h-4 w-4" />
-                                                    {new Date(doc.uploadedAt).toLocaleDateString()}
-                                                </span>
-                                                <span className="hidden sm:inline">•</span>
-                                                <span>2.4 MB</span>
-                                            </div>
-                                            {doc.adminComment && (
-                                                <p className="text-sm text-red-300 font-medium mt-1">
-                                                    Reason: {doc.adminComment}
-                                                </p>
-                                            )}
-                                            <div className="mt-2 sm:hidden">{getStatusBadge(doc.status)}</div>
-                                        </div>
-                                        <div className="flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0 justify-end">
-                                            {doc.status === "REJECTED" ? (
-                                                <Button className="bg-red-500 text-white hover:bg-red-600 w-full sm:w-auto">
-                                                    Re-upload
-                                                </Button>
-                                            ) : (
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="rounded-full"
-                                                    title="Download"
-                                                >
-                                                    <Download className="h-5 w-5" />
-                                                </Button>
-                                            )}
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                className="rounded-full"
-                                                title="More options"
+
+                                        {/* Document Icon */}
+                                        <div className="flex gap-3 items-start w-full sm:w-auto">
+                                            <div
+                                                className={`size-20 shrink-0 rounded-xl ${getDocumentIconColor(
+                                                    doc.type
+                                                )} flex items-center justify-center border border-border/50`}
                                             >
-                                                <MoreVertical className="h-5 w-5" />
+                                                {getDocumentIcon(doc.type)}
+                                            </div>
+
+                                            {/* Document Info */}
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                                                    <h4 className="text-foreground font-bold text-base">
+                                                        {doc.type}
+                                                    </h4>
+                                                    {doc.title && (
+                                                        <span className="text-sm text-muted-foreground font-medium truncate max-w-[200px]">
+                                                            - {doc.title}
+                                                        </span>
+                                                    )}
+                                                    <span className="hidden sm:inline-flex">
+                                                        {getStatusBadge(doc.status)}
+                                                    </span>
+                                                </div>
+                                                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
+                                                    <span className="flex items-center gap-1">
+                                                        <Calendar className="h-4 w-4" />
+                                                        {new Date(doc.uploadedAt).toLocaleDateString()}
+                                                    </span>
+                                                </div>
+                                                {doc.adminComment && (
+                                                    <div className="mt-2 p-2 rounded-lg bg-destructive/10 border border-destructive/20">
+                                                        <p className="text-sm text-destructive font-medium">
+                                                            <AlertCircle className="h-4 w-4 inline mr-1" />
+                                                            Reason: {doc.adminComment}
+                                                        </p>
+                                                    </div>
+                                                )}
+                                                <div className="mt-2 sm:hidden">{getStatusBadge(doc.status)}</div>
+                                            </div>
+                                        </div>
+
+                                        {/* Action Button */}
+                                        <div className="flex items-center gap-2 w-full sm:w-auto sm:ml-auto">
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => handleViewDocument(doc.fileUrl)}
+                                                className="gap-2 flex-1 sm:flex-initial"
+                                            >
+                                                <ExternalLink className="h-4 w-4" />
+                                                <span className="sm:inline">View</span>
                                             </Button>
                                         </div>
                                     </Card>

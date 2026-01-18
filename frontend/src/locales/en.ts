@@ -381,6 +381,7 @@ export const en = {
                     SECURE_UPLOAD_DESC: "Your documents are encrypted and only accessible by our verification team.",
                     DIPLOMA_TITLE: "Diploma or Certification",
                     DIPLOMA_DESC: "Upload your highest relevant degree or professional certificate.",
+                    TITLE_PLACEHOLDER: "e.g. Master of Social Work",
                     ID_TITLE: "Identity Document",
                     ID_DESC: "Government issued ID (Passport, Driver's License, or National ID).",
                     CV_TITLE: "Curriculum Vitae",

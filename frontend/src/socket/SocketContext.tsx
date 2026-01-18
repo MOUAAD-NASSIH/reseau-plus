@@ -13,7 +13,6 @@ import {
     type ReactNode,
 } from 'react';
 import { socketManager, type ConnectionState } from './socketManager';
-import { useAppSelector } from '../features/hooks';
 
 interface SocketContextValue {
     isConnected: boolean;
@@ -33,8 +32,8 @@ export function SocketProvider({ children }: SocketProviderProps) {
     const [connectionState, setConnectionState] = useState<ConnectionState>('disconnected');
     const [connectionError, setConnectionError] = useState<Error | null>(null);
 
-    // Get auth state from Redux
-    const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+    // Check if user is authenticated by token presence
+    const isAuthenticated = !!localStorage.getItem('auth_token');
 
     const connect = useCallback(() => {
         const token = localStorage.getItem('auth_token');

@@ -19,8 +19,11 @@ export function LanguageSwitcher() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full border border-transparent hover:border-border/40 hover:bg-muted/50 transition-all">
+                <Button variant="ghost" size="sm" className="h-9 gap-2 rounded-full border border-transparent hover:border-border/40 hover:bg-muted/50 transition-all px-2 md:px-3">
                     <Globe className="h-4 w-4 text-muted-foreground" />
+                    <span className="hidden md:inline-block text-sm font-medium text-muted-foreground">
+                        {i18n.language === 'fr' ? 'Français' : 'English'}
+                    </span>
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[150px]">

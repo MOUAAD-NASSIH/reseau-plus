@@ -2,14 +2,13 @@ import { Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ShieldAlert, Home, LogIn } from "lucide-react";
-import { useSelector } from "react-redux";
-import type { RootState } from "@/features/store";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import { shouldReduceMotion, fadeUpItem } from "@/lib/animations";
 
 export default function Unauthorized() {
-    const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+    // Check if user is authenticated by token presence
+    const isAuthenticated = !!localStorage.getItem("auth_token");
     const { t } = useTranslation();
     const reduceMotion = shouldReduceMotion();
 

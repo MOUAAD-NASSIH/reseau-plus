@@ -21,7 +21,7 @@ import ResetPasswordPage from "@/pages/auth/ResetPasswordPage";
 
 // Registration Pages
 import WorkerRegisterPage from "@/components/worker/Register/WorkerRegisterPage";
-import InstitutionRegisterPage from "@/components/institution/auth/InstitutionRegisterPage";
+import InstitutionRegisterPage from "@/components/institution/register/InstitutionRegisterPage";
 
 // Worker Pages
 import WorkerDashboard from "@/pages/worker/WorkerDashboard";

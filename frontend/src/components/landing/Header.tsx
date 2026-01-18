@@ -20,7 +20,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
-import { useAppSelector } from "@/features/hooks";
+import { useGetCurrentUserQuery } from "@/features/api/endpoints/authEndpoints";
 
 const DashboardButton = ({
     className,
@@ -43,7 +43,13 @@ export function Header() {
     const [scrolled, setScrolled] = useState(false);
     const location = useLocation();
     const { t } = useTranslation();
-    const { isAuthenticated, user } = useAppSelector((state) => state.auth);
+
+    // Get user data from RTK Query
+    const { data: userData } = useGetCurrentUserQuery(undefined, {
+        skip: !localStorage.getItem("auth_token"),
+    });
+    const user = userData?.data?.user;
+    const isAuthenticated = !!user;
 
     // Handle scroll effect
     useEffect(() => {

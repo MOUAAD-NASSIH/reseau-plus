@@ -23,7 +23,7 @@ import {
     useMarkAllAsReadMutation,
 } from "@/features/api/endpoints/notificationEndpoints";
 import type { Notification, NotificationType } from "@/types/notification.types";
-import { useAppSelector } from "@/features/hooks";
+import { useGetCurrentUserQuery } from "@/features/api/endpoints/authEndpoints";
 import { useNotificationSocket } from "@/socket/hooks/useNotificationSocket";
 
 interface ApiUser {
@@ -162,7 +162,11 @@ function NotificationSkeleton() {
 
 export function NotificationBell() {
     const navigate = useNavigate();
-    const user = useAppSelector((s) => s.auth.user);
+
+    // Get user from RTK Query
+    const { data: userData } = useGetCurrentUserQuery();
+    const user = userData?.data?.user;
+
     const [markingId, setMarkingId] = useState<number | null>(null);
     const [isOpen, setIsOpen] = useState(false);
     const previousUnreadCount = useRef<number>(0);

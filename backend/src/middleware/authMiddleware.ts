@@ -62,7 +62,8 @@ export const protect = asyncHandler(async (req: Request, res: Response, next: Ne
     const authUser: AuthenticatedUser = {
         userId: user.id,
         email: user.email,
-        role: user.role.name as RoleType
+        role: user.role.name as RoleType,
+        profilePicture: user.profilePicture
     };
 
     // Attach profile data based on role

@@ -95,6 +95,7 @@ export interface UpdateWorkerInput {
     longitude?: number | null;
     birthDate?: Date | string | null;
     gender?: string | null;
+    domainIds?: number[];
 }
 
 /**

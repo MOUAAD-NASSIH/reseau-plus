@@ -186,6 +186,7 @@ model WorkerDocument {
   id           Int            @id @default(autoincrement())
   workerId     Int            @map("worker_id")
   type         String         @db.VarChar(50) // DIPLOMA, CV, ID, OTHER
+  title        String?        @db.VarChar(255) // Optional title for the document (e.g. specific diploma name)
   fileUrl      String         @map("file_url") @db.VarChar(500)
   status       DocumentStatus @default(PENDING)
   adminComment String?        @map("admin_comment") @db.Text

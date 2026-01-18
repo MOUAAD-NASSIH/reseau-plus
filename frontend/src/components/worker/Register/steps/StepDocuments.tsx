@@ -15,19 +15,21 @@ import { useTranslation } from "react-i18next";
 
 import { useWorkerRegisterStore } from "../workerRegister.store";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   shouldReduceMotion,
   staggerContainer,
   fadeUpItem,
 } from "@/lib/animations";
 import { cn } from "@/lib/utils";
+import { Label } from "@/components/ui/label";
 
 interface DocumentType {
   id: "DIPLOMA" | "CV" | "ID";
   titleKey: string;
   descKey: string;
   formatsKey: string;
-  icon: any;
+  icon: React.ElementType;
   required: boolean;
 }
 
@@ -91,6 +93,15 @@ export default function StepDocuments() {
     if (inputRefs[type].current) {
       inputRefs[type].current!.value = "";
     }
+  };
+
+  const handleTitleChange = (type: "DIPLOMA" | "CV" | "ID", title: string) => {
+    const docIndex = documents.findIndex((d) => d.type === type);
+    if (docIndex === -1) return;
+
+    const newDocs = [...documents];
+    newDocs[docIndex] = { ...newDocs[docIndex], title };
+    updateData({ documents: newDocs });
   };
 
   const reduceMotion = shouldReduceMotion();
@@ -161,7 +172,7 @@ export default function StepDocuments() {
                     className={cn(
                       "h-7 w-7 sm:h-8 sm:w-8",
                       uploadedDoc &&
-                        "animate-in zoom-in spin-in-[360deg] duration-500"
+                      "animate-in zoom-in spin-in-[360deg] duration-500"
                     )}
                   />
                 </div>
@@ -202,6 +213,18 @@ export default function StepDocuments() {
                       <AlertCircle className="h-3 w-3" />
                       {t(docType.formatsKey)}
                     </p>
+                  )}
+
+                  {uploadedDoc && docType.id === "DIPLOMA" && (
+                    <div className="mt-3 animate-in fade-in slide-in-from-top-1">
+                      <Label htmlFor="title">Title</Label>
+                      <Input
+                        placeholder={t("AUTH.REGISTER_WORKER.STEP_DOCUMENTS.TITLE_PLACEHOLDER", { defaultValue: "Document Title (Optional)" })}
+                        value={uploadedDoc.title || ""}
+                        onChange={(e) => handleTitleChange(docType.id, e.target.value)}
+                        className="text-sm placeholder:opacity-40"
+                      />
+                    </div>
                   )}
                 </div>
 

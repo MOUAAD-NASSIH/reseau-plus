@@ -381,6 +381,7 @@ export const fr = {
                     SECURE_UPLOAD_DESC: "Vos documents sont cryptés et ne sont accessibles que par notre équipe de vérification.",
                     DIPLOMA_TITLE: "Diplôme ou Certification",
                     DIPLOMA_DESC: "Téléchargez votre diplôme ou certificat professionnel le plus élevé.",
+                    TITLE_PLACEHOLDER: "e.g. Master en Social Work",
                     ID_TITLE: "Pièce d'Identité",
                     ID_DESC: "Pièce d'identité délivrée par le gouvernement (Passeport, Permis de conduire ou CNI).",
                     CV_TITLE: "Curriculum Vitae",
@@ -1027,78 +1028,78 @@ export const fr = {
             },
         },
         ADMIN_VALIDATION: {
-                WORKERS: {
-                    TITLE: "Validations Intervenants",
-                    SUBTITLE: "Examiner et approuver les nouvelles inscriptions",
-                    SEARCH_PLACEHOLDER: "Nom, email...",
-                    STATUS_FILTER: "Statut",
-                    ALL_STATUSES: "Tous",
-                    EMPTY_TITLE: "Aucune validation en attente",
-                    EMPTY_DESC: "Toutes les inscriptions ont été traitées.",
-                    GRID_VIEW: "Vue Grille",
-                    TABLE_VIEW: "Vue Tableau",
-                    REVIEW_APPLICATION: "Examiner la Candidature",
-                    VIEW_DETAILS: "Voir les Détails",
-                    STATS: {
-                        PENDING: "Validations en Attente",
-                        TOTAL: "Total Intervenants",
-                        VERIFIED: "Intervenants Vérifiés",
-                        REJECTED: "Inscriptions Rejetées"
-                    },
-                    SPECIALITY_LABEL: "Spécialité",
-                    DOCUMENTS_SECTION: "Documents de Vérification",
-                    BIO_SECTION: "Biographie de l'Intervenant",
-                    APPROVE: "Approuver",
-                    REJECT: "Rejeter",
-                    UPLOADED: "Téléchargé le",
-                    DOC_TYPES: {
-                        ID_CARD: "Carte d'Identité",
-                        DIPLOMA: "Diplôme",
-                        LICENSE: "Licence Professionnelle",
-                        CERTIFICATE: "Certificat",
-                        CV: "CV/Résumé"
-                    },
-                    TABLE: {
-                        WORKER: "Intervenant",
-                        LOCATION: "Lieu",
-                        DOCS: "Docs",
-                        REGISTERED: "Inscrit le",
-                        STATUS: "Statut",
-                        ACTIONS: "Actions"
-                    },
-                    DIALOG: {
-                        TITLE: "Examiner le Profil",
-                        SUBTITLE: "Vérifier les détails et documents",
-                        APPROVE_BTN: "Approuver",
-                        REJECT_BTN: "Rejeter",
-                        CONFIRM_REJECT: "Confirmer le Rejet",
-                        REJECT_REASON: "Raison du rejet",
-                        CANCEL: "Annuler",
-                        DOCUMENTS_SECTION: "Documents",
-                        BIO_SECTION: "Biographie"
-                    }
+            WORKERS: {
+                TITLE: "Validations Intervenants",
+                SUBTITLE: "Examiner et approuver les nouvelles inscriptions",
+                SEARCH_PLACEHOLDER: "Nom, email...",
+                STATUS_FILTER: "Statut",
+                ALL_STATUSES: "Tous",
+                EMPTY_TITLE: "Aucune validation en attente",
+                EMPTY_DESC: "Toutes les inscriptions ont été traitées.",
+                GRID_VIEW: "Vue Grille",
+                TABLE_VIEW: "Vue Tableau",
+                REVIEW_APPLICATION: "Examiner la Candidature",
+                VIEW_DETAILS: "Voir les Détails",
+                STATS: {
+                    PENDING: "Validations en Attente",
+                    TOTAL: "Total Intervenants",
+                    VERIFIED: "Intervenants Vérifiés",
+                    REJECTED: "Inscriptions Rejetées"
                 },
-                DOCUMENTS: {
-                    TITLE: "Validations Documents",
-                    SUBTITLE: "Examiner et vérifier les documents téléchargés",
-                    SEARCH_PLACEHOLDER: "Nom de l'intervenant...",
-                    TYPE_FILTER: "Type de Document",
-                    ALL_TYPES: "Tous",
-                    EMPTY_TITLE: "Aucun document en attente",
-                    EMPTY_DESC: "Tous les documents ont été examinés.",
-                    CARD: {
-                        WORKER_ID: "Intervenant",
-                        UPLOADED: "Téléchargé le",
-                        VIEW: "Voir",
-                        DOWNLOAD: "Télécharger",
-                        APPROVE: "Approuver",
-                        REJECT: "Rejeter"
-                    },
-                    DIALOG: {
-                        TITLE: "Examiner le Document",
-                        SUBTITLE: "Vérifier l'authenticité du document",
-                        PREVIOUS_COMMENT: "Commentaire précédent",
-                        REJECT_COMMENT: "Raison du rejet"
+                SPECIALITY_LABEL: "Spécialité",
+                DOCUMENTS_SECTION: "Documents de Vérification",
+                BIO_SECTION: "Biographie de l'Intervenant",
+                APPROVE: "Approuver",
+                REJECT: "Rejeter",
+                UPLOADED: "Téléchargé le",
+                DOC_TYPES: {
+                    ID_CARD: "Carte d'Identité",
+                    DIPLOMA: "Diplôme",
+                    LICENSE: "Licence Professionnelle",
+                    CERTIFICATE: "Certificat",
+                    CV: "CV/Résumé"
+                },
+                TABLE: {
+                    WORKER: "Intervenant",
+                    LOCATION: "Lieu",
+                    DOCS: "Docs",
+                    REGISTERED: "Inscrit le",
+                    STATUS: "Statut",
+                    ACTIONS: "Actions"
+                },
+                DIALOG: {
+                    TITLE: "Examiner le Profil",
+                    SUBTITLE: "Vérifier les détails et documents",
+                    APPROVE_BTN: "Approuver",
+                    REJECT_BTN: "Rejeter",
+                    CONFIRM_REJECT: "Confirmer le Rejet",
+                    REJECT_REASON: "Raison du rejet",
+                    CANCEL: "Annuler",
+                    DOCUMENTS_SECTION: "Documents",
+                    BIO_SECTION: "Biographie"
+                }
+            },
+            DOCUMENTS: {
+                TITLE: "Validations Documents",
+                SUBTITLE: "Examiner et vérifier les documents téléchargés",
+                SEARCH_PLACEHOLDER: "Nom de l'intervenant...",
+                TYPE_FILTER: "Type de Document",
+                ALL_TYPES: "Tous",
+                EMPTY_TITLE: "Aucun document en attente",
+                EMPTY_DESC: "Tous les documents ont été examinés.",
+                CARD: {
+                    WORKER_ID: "Intervenant",
+                    UPLOADED: "Téléchargé le",
+                    VIEW: "Voir",
+                    DOWNLOAD: "Télécharger",
+                    APPROVE: "Approuver",
+                    REJECT: "Rejeter"
+                },
+                DIALOG: {
+                    TITLE: "Examiner le Document",
+                    SUBTITLE: "Vérifier l'authenticité du document",
+                    PREVIOUS_COMMENT: "Commentaire précédent",
+                    REJECT_COMMENT: "Raison du rejet"
                 }
             },
         },

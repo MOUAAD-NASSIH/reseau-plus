@@ -125,7 +125,8 @@ export const updateWorker = asyncHandler(async (req: Request, res: Response) => 
         latitude,
         longitude,
         birthDate,
-        gender
+        gender,
+        domainIds
     } = req.body;
 
     const worker = await workerService.updateByUserId(userId, {
@@ -140,7 +141,8 @@ export const updateWorker = asyncHandler(async (req: Request, res: Response) => 
         latitude: latitude !== undefined ? (latitude === null ? null : Number(latitude)) : undefined,
         longitude: longitude !== undefined ? (longitude === null ? null : Number(longitude)) : undefined,
         birthDate: birthDate !== undefined ? (birthDate === null ? null : birthDate) : undefined,
-        gender
+        gender,
+        domainIds
     });
 
     res.json({
@@ -177,7 +179,7 @@ export const uploadDocument = asyncHandler(async (req: Request, res: Response) =
         return;
     }
 
-    const { type } = req.body;
+    const { type, title } = req.body;
 
     const worker = await prisma.worker.findUnique({ where: { userId } });
     if (!worker) {
@@ -188,7 +190,7 @@ export const uploadDocument = asyncHandler(async (req: Request, res: Response) =
         return;
     }
 
-    const document = await workerService.uploadDocument(worker.id, file, type);
+    const document = await workerService.uploadDocument(worker.id, file, type, title);
 
     res.status(201).json({
         success: true,

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useNavigate } from "react-router";
 import { formatDistanceToNow } from "date-fns";
 import {
@@ -11,18 +10,12 @@ import {
     DollarSign,
     Star,
     FileText,
-    AlertCircle,
     Trash2,
-    ExternalLink,
-    Filter
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/common/EmptyState";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
     useGetNotificationsQuery,
     useMarkAsReadMutation,
@@ -31,7 +24,8 @@ import {
 } from "@/features/api/endpoints/notificationEndpoints";
 import type { Notification, NotificationType } from "@/types/notification.types";
 import { cn } from "@/lib/utils";
-import { useAppSelector } from "@/features/hooks";
+import { useGetCurrentUserQuery } from "@/features/api/endpoints/authEndpoints";
+import { useState } from "react";
 
 /**
  * Get the redirect URL based on notification type and user role
@@ -275,7 +269,11 @@ function NotificationsSkeleton() {
 
 export default function WorkerNotifications() {
     const navigate = useNavigate();
-    const user = useAppSelector((s) => s.auth.user);
+
+    // Get user from RTK Query
+    const { data: userData } = useGetCurrentUserQuery();
+    const user = userData?.data?.user;
+
     const [activeTab, setActiveTab] = useState<"all" | "unread">("all");
     const [markingId, setMarkingId] = useState<number | null>(null);
     const [deletingId, setDeletingId] = useState<number | null>(null);

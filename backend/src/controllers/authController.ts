@@ -149,10 +149,15 @@ const registerWorker = asyncHandler(async (req: Request, res: Response) => {
                     ? file.fieldname.replace('document_', '').toUpperCase()
                     : 'OTHER';
 
+                // Extract title from body (format: document_title_TYPE)
+                const titleKey = `document_title_${docType}`;
+                const title = req.body[titleKey] || undefined; // multer puts text fields in body
+
                 return prisma.workerDocument.create({
                     data: {
                         workerId: worker.id,
                         type: docType,
+                        title,
                         fileUrl: file.path,
                         status: 'PENDING'
                     }

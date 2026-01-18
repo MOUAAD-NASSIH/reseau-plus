@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -10,13 +10,18 @@ import {
     Ban,
     ArrowRight,
     Stethoscope,
-    Users,
 } from "lucide-react";
 import {
     useGetWorkerAvailabilitiesQuery,
     useAddAvailabilityMutation,
     useDeleteAvailabilityMutation,
 } from "@/features/api/endpoints/workerEndpoints";
+import {
+    Sheet,
+    SheetContent,
+    SheetHeader,
+    SheetTitle,
+} from "@/components/ui/sheet";
 import { useGetMyAssignmentsQuery } from "@/features/api/endpoints/assignmentEndpoints";
 import type { CreateAvailabilityInput } from "@/features/validation/workerSchemas";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
@@ -59,6 +64,24 @@ export default function WorkerAvailability() {
     const [timeSlot, setTimeSlot] = useState<"morning" | "allday" | "afternoon">("allday");
     const [timeRange, setTimeRange] = useState({ start: "08:00", end: "17:00" });
     const [selectedAvailability, setSelectedAvailability] = useState<any>(null);
+    const [isSheetOpen, setIsSheetOpen] = useState(false);
+
+    // Close sheet when switching to desktop view
+    useEffect(() => {
+        const mediaQuery = window.matchMedia("(min-width: 1024px)");
+        const handleChange = (e: MediaQueryListEvent | MediaQueryList) => {
+            if (e.matches) {
+                setIsSheetOpen(false);
+            }
+        };
+
+        // Initial check
+        handleChange(mediaQuery);
+
+        // Listen for changes
+        mediaQuery.addEventListener("change", handleChange);
+        return () => mediaQuery.removeEventListener("change", handleChange);
+    }, []);
 
     // Get upcoming missions from assignments
     const upcomingMissions = useMemo(() => {
@@ -352,6 +375,11 @@ export default function WorkerAvailability() {
         setTimeRange({ start: "08:00", end: "17:00" });
         setTimeSlot("allday");
         setAvailabilityStatus("available");
+
+        // Only open sheet on mobile devices (below lg breakpoint)
+        if (window.matchMedia("(max-width: 1023px)").matches) {
+            setIsSheetOpen(true);
+        }
     };
 
     const handleTimeSlotChange = (slot: "morning" | "allday" | "afternoon") => {
@@ -370,17 +398,6 @@ export default function WorkerAvailability() {
         // Reset preset selection when manually changing time
         setTimeSlot("allday");
     };
-
-    // Calculate slider position based on time (assuming 24-hour day, 00:00 to 24:00)
-    const getSliderPosition = (time: string): number => {
-        const [hours, minutes] = time.split(":").map(Number);
-        const totalMinutes = hours * 60 + minutes;
-        // Map 0-24 hours to 0-100%
-        return (totalMinutes / (24 * 60)) * 100;
-    };
-
-    const startPosition = useMemo(() => getSliderPosition(timeRange.start), [timeRange.start]);
-    const endPosition = useMemo(() => getSliderPosition(timeRange.end), [timeRange.end]);
 
     const handleSaveAvailability = async () => {
         try {
@@ -577,16 +594,221 @@ export default function WorkerAvailability() {
         return `${firstDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })} - ${lastDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`;
     }, [currentDate, selectedDates]);
 
+    const renderAvailabilityForm = () => (
+        <div className="flex flex-col h-full bg-card/50">
+            <div className="p-6 border-b border-border flex items-center justify-between bg-card">
+                <div>
+                    <h3 className="text-foreground text-lg font-bold">{selectedDayName}</h3>
+                    <p className="text-primary text-sm font-medium">{selectedDateFormatted}</p>
+                    {selectedDates.length > 1 && (
+                        <p className="text-muted-foreground text-xs mt-1">
+                            {selectedDates.length} consecutive days selected
+                        </p>
+                    )}
+                </div>
+                <div className="size-10 rounded-full bg-muted flex items-center justify-center text-foreground border border-border">
+                    <Calendar className="h-5 w-5" />
+                </div>
+            </div>
+
+            <div className="p-6 flex-1 overflow-y-auto flex flex-col gap-8">
+                {/* Info Banner for Multi-Selection */}
+                {!selectedAvailability && (
+                    <div className="rounded-lg bg-primary/10 border border-primary/20 p-3">
+                        <div className="flex items-start justify-between gap-2">
+                            <p className="text-xs text-primary font-medium flex-1">
+                                💡 Tip: Click on multiple consecutive dates to set availability for range.
+                            </p>
+                            {selectedDates.length > 1 && (
+                                <button
+                                    onClick={() => setSelectedDates([selectedDates[0]])}
+                                    className="text-xs text-primary hover:text-primary/80 font-bold underline whitespace-nowrap"
+                                >
+                                    Clear
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {/* Status Selector */}
+                <div className="flex flex-col gap-3">
+                    <label className="text-muted-foreground text-xs font-bold uppercase tracking-wider">
+                        Availability Status
+                    </label>
+                    <div className="grid grid-cols-2 gap-3">
+                        <button
+                            onClick={() => setAvailabilityStatus("available")}
+                            className={`
+                                relative p-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center gap-2
+                                ${availabilityStatus === "available"
+                                    ? "border-primary bg-primary/5 shadow-sm"
+                                    : "border-border bg-card hover:border-primary/50 hover:bg-muted/50"}
+                            `}
+                        >
+                            {availabilityStatus === "available" && (
+                                <div className="absolute top-2 right-2">
+                                    <CheckCircle2 className="h-4 w-4 text-primary fill-primary/20" />
+                                </div>
+                            )}
+                            <div className={`p-2 rounded-full ${availabilityStatus === "available" ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"}`}>
+                                <Stethoscope className="h-5 w-5" />
+                            </div>
+                            <span className={`font-bold text-sm ${availabilityStatus === "available" ? "text-foreground" : "text-muted-foreground"}`}>Available</span>
+                        </button>
+
+                        <button
+                            onClick={() => setAvailabilityStatus("blocked")}
+                            className={`
+                                relative p-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center gap-2
+                                ${availabilityStatus === "blocked"
+                                    ? "border-destructive bg-destructive/5 shadow-sm"
+                                    : "border-border bg-card hover:border-destructive/50 hover:bg-muted/50"}
+                            `}
+                        >
+                            {availabilityStatus === "blocked" && (
+                                <div className="absolute top-2 right-2">
+                                    <CheckCircle2 className="h-4 w-4 text-destructive fill-destructive/20" />
+                                </div>
+                            )}
+                            <div className={`p-2 rounded-full ${availabilityStatus === "blocked" ? "bg-destructive/20 text-destructive" : "bg-muted text-muted-foreground"}`}>
+                                <Ban className="h-5 w-5" />
+                            </div>
+                            <span className={`font-bold text-sm ${availabilityStatus === "blocked" ? "text-foreground" : "text-muted-foreground"}`}>Blocked</span>
+                        </button>
+                    </div>
+                </div>
+
+                {availabilityStatus === "available" && (
+                    <div className="space-y-6 animate-in fade-in slide-in-from-top-4 duration-300">
+                        {/* Working Hours */}
+                        <div className="flex flex-col gap-4">
+                            <label className="text-muted-foreground text-xs font-bold uppercase tracking-wider">
+                                Time Slot
+                            </label>
+
+                            {/* Preset Slots */}
+                            <div className="flex p-1 bg-muted/50 rounded-lg border border-border">
+                                <button
+                                    onClick={() => handleTimeSlotChange("morning")}
+                                    className={`flex-1 py-2 px-3 text-xs font-bold rounded-md transition-all ${timeSlot === "morning" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                                >
+                                    Morning
+                                </button>
+                                <button
+                                    onClick={() => handleTimeSlotChange("allday")}
+                                    className={`flex-1 py-2 px-3 text-xs font-bold rounded-md transition-all ${timeSlot === "allday" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                                >
+                                    All Day
+                                </button>
+                                <button
+                                    onClick={() => handleTimeSlotChange("afternoon")}
+                                    className={`flex-1 py-2 px-3 text-xs font-bold rounded-md transition-all ${timeSlot === "afternoon" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                                >
+                                    Afternoon
+                                </button>
+                            </div>
+
+                            {/* Time Range Inputs */}
+                            <div className="flex items-center gap-2">
+                                <div className="flex-1 space-y-1.5">
+                                    <label className="text-[10px] font-semibold text-muted-foreground uppercase">Start</label>
+                                    <Input
+                                        type="time"
+                                        value={timeRange.start}
+                                        onChange={(e) => handleTimeInputChange("start", e.target.value)}
+                                        className="h-11 bg-background border-border hover:border-primary/50 focus:border-primary focus:ring-primary/20 font-mono text-base"
+                                    />
+                                </div>
+                                <div className="pt-6 text-muted-foreground">
+                                    <ArrowRight className="h-4 w-4" />
+                                </div>
+                                <div className="flex-1 space-y-1.5">
+                                    <label className="text-[10px] font-semibold text-muted-foreground uppercase">End</label>
+                                    <Input
+                                        type="time"
+                                        value={timeRange.end}
+                                        onChange={(e) => handleTimeInputChange("end", e.target.value)}
+                                        className="h-11 bg-background border-border hover:border-primary/50 focus:border-primary focus:ring-primary/20 font-mono text-base"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Upcoming Missions */}
+                <div className="mt-6 flex flex-col gap-3">
+                    <label className="text-muted-foreground text-xs font-bold uppercase tracking-wider">
+                        Upcoming Missions
+                    </label>
+                    {upcomingMissions.length === 0 ? (
+                        <div className="p-6 rounded-xl bg-muted/50 border border-border text-center">
+                            <Calendar className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
+                            <p className="text-sm text-foreground">No upcoming missions</p>
+                            <p className="text-xs text-muted-foreground mt-1">Your confirmed missions will appear here</p>
+                        </div>
+                    ) : (
+                        upcomingMissions.map((mission) => (
+                            <div
+                                key={mission.id}
+                                className="flex gap-3 p-3 rounded-xl relative overflow-hidden group cursor-pointer transition-all hover:scale-[1.02] bg-card border border-border hover:border-primary/50 shadow-sm"
+                            >
+                                <div className="size-10 rounded-full flex items-center justify-center flex-none bg-primary/10 text-primary">
+                                    <Stethoscope className="h-5 w-5" />
+                                </div>
+                                <div className="flex flex-col min-w-0">
+                                    <h4 className="font-bold text-sm truncate text-foreground">{mission.name}</h4>
+                                    <p className="text-xs truncate text-muted-foreground">
+                                        {mission.date} • {mission.timeRange}
+                                    </p>
+                                </div>
+                                <button className="ml-auto flex items-center justify-center size-8 rounded-full transition-colors hover:bg-muted text-muted-foreground hover:text-foreground">
+                                    <ArrowRight className="h-4 w-4" />
+                                </button>
+                            </div>
+                        )))}
+                </div>
+
+                {/* Footer Actions */}
+                <div className="mt-auto pt-6 space-y-3">
+                    <Button
+                        onClick={handleSaveAvailability}
+                        className={`w-full h-12 font-bold text-base shadow-sm ${availabilityStatus === "blocked"
+                            ? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            : "bg-primary text-primary-foreground hover:bg-primary/90"
+                            }`}
+                    >
+                        {selectedAvailability
+                            ? (availabilityStatus === "blocked" ? "Update Blocked Status" : "Update Availability")
+                            : (availabilityStatus === "blocked" ? "Block Selected Days" : "Set Availability")
+                        }
+                    </Button>
+
+                    {selectedAvailability && (
+                        <Button
+                            variant="ghost"
+                            onClick={handleDeleteAvailability}
+                            className="w-full h-11 text-destructive hover:text-destructive hover:bg-destructive/10 font-bold"
+                        >
+                            Remove {availabilityStatus === "blocked" ? "Blocking" : "Availability"}
+                        </Button>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+
     return (
         <div className="flex-1 flex overflow-hidden bg-background">
             {/* Main Calendar Area */}
             <main className="flex-1 flex flex-col min-w-0 overflow-y-auto bg-background">
                 {/* Page Heading & Controls */}
-                <div className="flex flex-col gap-6 p-6 lg:p-10 pb-4">
+                <div className="flex flex-col gap-6 sm:p-6 lg:p-10 pb-4">
                     <div className="flex flex-wrap items-center justify-between gap-4">
                         <div className="flex flex-col gap-1">
-                            <h1 className="text-foreground text-3xl lg:text-4xl font-black leading-tight tracking-[-0.033em]">
-                                My Availability
+                            <h1 className="text-foreground font-spline text-3xl lg:text-4xl font-bold leading-tight tracking-tight">
+                                My Availabilities
                             </h1>
                             <p className="text-muted-foreground text-base font-normal">
                                 Manage your schedule and mission capacity for upcoming assignments.
@@ -658,7 +880,7 @@ export default function WorkerAvailability() {
                 </div>
 
                 {/* Calendar Grid */}
-                <div className="flex-1 px-6 lg:px-10 pb-10">
+                <div className="flex-1 sm:px-6 lg:px-10 pb-10">
                     <div className="w-full h-full min-h-150 flex flex-col rounded-xl overflow-hidden border border-border bg-card shadow-sm">
                         {/* Days Header */}
                         <div className="grid grid-cols-7 border-b border-border bg-muted/50">
@@ -696,12 +918,12 @@ export default function WorkerAvailability() {
                                     ) : (
                                         <span
                                             className={`font-medium text-sm p-1 ${!day.isCurrentMonth
-                                                    ? "text-muted-foreground/30"
-                                                    : day.isWeekend
-                                                        ? "text-muted-foreground/50 line-through"
-                                                        : day.status === "blocked"
-                                                            ? "text-muted-foreground"
-                                                            : "text-muted-foreground group-hover:text-foreground"
+                                                ? "text-muted-foreground/30"
+                                                : day.isWeekend
+                                                    ? "text-muted-foreground/50 line-through"
+                                                    : day.status === "blocked"
+                                                        ? "text-muted-foreground"
+                                                        : "text-muted-foreground group-hover:text-foreground"
                                                 }`}
                                         >
                                             {day.date}
@@ -721,8 +943,8 @@ export default function WorkerAvailability() {
                                     {day.isCurrentMonth && day.status === "booked" && day.mission && (
                                         <div
                                             className={`mt-1 rounded px-2 py-1 shadow-sm border border-border ${day.mission.color === "purple"
-                                                    ? "bg-purple-100 dark:bg-purple-900/30 border-l-4 border-l-purple-500"
-                                                    : "bg-card"
+                                                ? "bg-purple-100 dark:bg-purple-900/30 border-l-4 border-l-purple-500"
+                                                : "bg-card"
                                                 }`}
                                         >
                                             <span className="block text-xs font-bold text-foreground truncate">
@@ -759,239 +981,20 @@ export default function WorkerAvailability() {
                 </div>
             </main>
 
-            {/* Right Sidebar */}
-            <aside className="w-90 flex-none bg-background border-l border-border flex flex-col shadow-xl z-20">
-                <div className="p-6 border-b border-border flex items-center justify-between bg-card">
-                    <div>
-                        <h3 className="text-foreground text-lg font-bold">{selectedDayName}</h3>
-                        <p className="text-primary text-sm font-medium">{selectedDateFormatted}</p>
-                        {selectedDates.length > 1 && (
-                            <p className="text-muted-foreground text-xs mt-1">
-                                {selectedDates.length} consecutive days selected
-                            </p>
-                        )}
-                    </div>
-                    <div className="size-10 rounded-full bg-muted flex items-center justify-center text-foreground border border-border">
-                        <Calendar className="h-5 w-5" />
-                    </div>
-                </div>
+            {/* Mobile Sheet for Editing */}
+            <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
+                <SheetContent side="bottom" className="h-[85vh] p-0 rounded-t-3xl border-t border-border focus:outline-none">
+                    <SheetHeader className="sr-only">
+                        <SheetTitle>Edit Availability</SheetTitle>
+                    </SheetHeader>
+                    {renderAvailabilityForm()}
+                </SheetContent>
+            </Sheet>
 
-                <div className="p-6 flex-1 overflow-y-auto flex flex-col gap-8 bg-card/50">
-                    {/* Info Banner for Multi-Selection */}
-                    {!selectedAvailability && (
-                        <div className="rounded-lg bg-primary/10 border border-primary/20 p-3">
-                            <div className="flex items-start justify-between gap-2">
-                                <p className="text-xs text-primary font-medium flex-1">
-                                    💡 Tip: Click on multiple consecutive dates to set availability for a range.
-                                </p>
-                                {selectedDates.length > 1 && (
-                                    <button
-                                        onClick={() => setSelectedDates([selectedDates[0]])}
-                                        className="text-xs text-primary hover:text-primary/80 font-bold underline whitespace-nowrap"
-                                    >
-                                        Clear
-                                    </button>
-                                )}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Status Selector */}
-                    <div className="flex flex-col gap-3">
-                        <label className="text-muted-foreground text-xs font-bold uppercase tracking-wider">
-                            Availability Status
-                        </label>
-                        <div className="grid grid-cols-2 gap-2">
-                            <label className="cursor-pointer group">
-                                <input
-                                    type="radio"
-                                    name="status"
-                                    checked={availabilityStatus === "available"}
-                                    onChange={() => setAvailabilityStatus("available")}
-                                    className="peer hidden"
-                                />
-                                <div className="h-20 rounded-xl border-2 border-border bg-card p-3 flex flex-col items-center justify-center gap-2 peer-checked:border-primary peer-checked:bg-primary/5 transition-all text-muted-foreground peer-checked:text-foreground">
-                                    <CheckCircle2 className="h-5 w-5 peer-checked:text-primary group-hover:scale-110 transition-transform" />
-                                    <span className="text-sm font-bold">Available</span>
-                                </div>
-                            </label>
-                            <label className="cursor-pointer group">
-                                <input
-                                    type="radio"
-                                    name="status"
-                                    checked={availabilityStatus === "blocked"}
-                                    onChange={() => setAvailabilityStatus("blocked")}
-                                    className="peer hidden"
-                                />
-                                <div className="h-20 rounded-xl border-2 border-border bg-card p-3 flex flex-col items-center justify-center gap-2 peer-checked:border-destructive peer-checked:bg-destructive/5 transition-all text-muted-foreground peer-checked:text-foreground">
-                                    <Ban className="h-5 w-5 peer-checked:text-destructive group-hover:scale-110 transition-transform" />
-                                    <span className="text-sm font-bold">Blocked</span>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-
-                    {/* Time Slider Section */}
-                    <div className="flex flex-col gap-4">
-                        <div className="flex items-center justify-between">
-                            <label className="text-muted-foreground text-xs font-bold uppercase tracking-wider">
-                                Time Slots
-                            </label>
-                            <button
-                                className="text-primary text-xs font-bold hover:underline"
-                                onClick={() => {
-                                    setTimeRange({ start: "08:00", end: "17:00" });
-                                    setTimeSlot("allday");
-                                }}
-                            >
-                                Reset
-                            </button>
-                        </div>
-                        <div className="p-4 rounded-xl bg-card border border-border space-y-4">
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="flex flex-col gap-2">
-                                    <label className="text-xs text-muted-foreground font-medium">Start Time</label>
-                                    <Input
-                                        type="time"
-                                        value={timeRange.start}
-                                        onChange={(e) => handleTimeInputChange("start", e.target.value)}
-                                        className="bg-background border-border"
-                                    />
-                                </div>
-                                <div className="flex flex-col gap-2">
-                                    <label className="text-xs text-muted-foreground font-medium">End Time</label>
-                                    <Input
-                                        type="time"
-                                        value={timeRange.end}
-                                        onChange={(e) => handleTimeInputChange("end", e.target.value)}
-                                        className="bg-background border-border"
-                                    />
-                                </div>
-                            </div>
-                            {/* Range Slider Visualization */}
-                            <div className="relative h-2 bg-muted rounded-full w-full">
-                                <div
-                                    className="absolute top-0 bottom-0 bg-primary rounded-full"
-                                    style={{
-                                        left: `${startPosition}%`,
-                                        right: `${100 - endPosition}%`
-                                    }}
-                                ></div>
-                                <div
-                                    className="absolute top-1/2 -translate-y-1/2 size-4 bg-background border-2 border-primary rounded-full shadow-lg cursor-pointer hover:scale-110 transition-transform"
-                                    style={{ left: `${startPosition}%`, transform: 'translate(-50%, -50%)' }}
-                                ></div>
-                                <div
-                                    className="absolute top-1/2 -translate-y-1/2 size-4 bg-background border-2 border-primary rounded-full shadow-lg cursor-pointer hover:scale-110 transition-transform"
-                                    style={{ left: `${endPosition}%`, transform: 'translate(-50%, -50%)' }}
-                                ></div>
-                            </div>
-                            <div className="flex gap-2 mt-2">
-                                <button
-                                    onClick={() => handleTimeSlotChange("morning")}
-                                    className={`flex-1 py-1.5 rounded-lg text-xs font-medium border transition-all ${timeSlot === "morning"
-                                            ? "bg-primary text-primary-foreground font-bold border-primary"
-                                            : "bg-muted text-muted-foreground hover:text-foreground border-transparent"
-                                        }`}
-                                >
-                                    Morning
-                                </button>
-                                <button
-                                    onClick={() => handleTimeSlotChange("allday")}
-                                    className={`flex-1 py-1.5 rounded-lg text-xs font-medium border transition-all ${timeSlot === "allday"
-                                            ? "bg-primary text-primary-foreground font-bold border-primary"
-                                            : "bg-muted text-muted-foreground hover:text-foreground border-transparent"
-                                        }`}
-                                >
-                                    All Day
-                                </button>
-                                <button
-                                    onClick={() => handleTimeSlotChange("afternoon")}
-                                    className={`flex-1 py-1.5 rounded-lg text-xs font-medium border transition-all ${timeSlot === "afternoon"
-                                            ? "bg-primary text-primary-foreground font-bold border-primary"
-                                            : "bg-muted text-muted-foreground hover:text-foreground border-transparent"
-                                        }`}
-                                >
-                                    Afternoon
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Upcoming Missions */}
-                    <div className="flex flex-col gap-3">
-                        <label className="text-muted-foreground text-xs font-bold uppercase tracking-wider">
-                            Upcoming Missions
-                        </label>
-                        {upcomingMissions.length === 0 ? (
-                            <div className="p-6 rounded-xl bg-muted/50 border border-border text-center">
-                                <Calendar className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
-                                <p className="text-sm text-foreground">No upcoming missions</p>
-                                <p className="text-xs text-muted-foreground mt-1">Your confirmed missions will appear here</p>
-                            </div>
-                        ) : (
-                            upcomingMissions.map((mission) => (
-                                <div
-                                    key={mission.id}
-                                    className="flex gap-3 p-3 rounded-xl relative overflow-hidden group cursor-pointer transition-all hover:scale-[1.02] bg-card border border-border hover:border-primary/50 shadow-sm"
-                                >
-                                    <div className="size-10 rounded-full flex items-center justify-center flex-none bg-primary/10 text-primary">
-                                        <Stethoscope className="h-5 w-5" />
-                                    </div>
-                                    <div className="flex flex-col min-w-0">
-                                        <h4 className="font-bold text-sm truncate text-foreground">{mission.name}</h4>
-                                        <p className="text-xs truncate text-muted-foreground">
-                                            {mission.date} • {mission.timeRange}
-                                        </p>
-                                    </div>
-                                    <button className="ml-auto flex items-center justify-center size-8 rounded-full transition-colors hover:bg-muted text-muted-foreground hover:text-foreground">
-                                        <ArrowRight className="h-4 w-4" />
-                                    </button>
-                                </div>
-                            )))}
-                    </div>
-                </div>
-
-                {/* Footer Actions */}
-                <div className="p-6 pt-4 border-t border-border bg-card">
-                    {selectedAvailability ? (
-                        <div className="space-y-3">
-                            <div className="text-xs text-muted-foreground text-center mb-2">
-                                {selectedAvailability.status === "blocked" ? "Blocked" : "Available"} time exists for this day. You can update or remove it.
-                            </div>
-                            <div className="grid grid-cols-2 gap-3">
-                                <Button
-                                    onClick={handleDeleteAvailability}
-                                    variant="destructive"
-                                    className="w-full h-12 rounded-full text-base font-bold"
-                                >
-                                    Remove
-                                </Button>
-                                <Button
-                                    onClick={handleSaveAvailability}
-                                    className={`w-full h-12 rounded-full text-base font-bold transition-all ${availabilityStatus === "blocked"
-                                            ? "bg-destructive hover:bg-destructive/90 text-destructive-foreground shadow-sm"
-                                            : "bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm"
-                                        }`}
-                                >
-                                    {availabilityStatus === "blocked" ? "Update to Blocked" : "Update to Available"}
-                                </Button>
-                            </div>
-                        </div>
-                    ) : (
-                        <Button
-                            onClick={handleSaveAvailability}
-                            className={`w-full h-12 rounded-full text-base font-bold transition-all ${availabilityStatus === "blocked"
-                                    ? "bg-destructive hover:bg-destructive/90 text-destructive-foreground shadow-sm"
-                                    : "bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm"
-                                }`}
-                        >
-                            {availabilityStatus === "blocked" ? "Save Blocking" : "Save Availability"}
-                        </Button>
-                    )}
-                </div>
+            {/* Right Sidebar (Desktop) */}
+            <aside className="hidden lg:flex w-90 flex-none bg-background border-l border-border flex-col shadow-xl z-20">
+                {renderAvailabilityForm()}
             </aside>
         </div>
     );
 }
-

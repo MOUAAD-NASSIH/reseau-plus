@@ -116,11 +116,14 @@ export const workerApi = api.injectEndpoints({
         }),
 
         // Upload a document
-        uploadDocument: builder.mutation<ApiResponse<WorkerDocument>, { type: DocumentType; file: File }>({
-            query: ({ type, file }) => {
+        uploadDocument: builder.mutation<ApiResponse<WorkerDocument>, { type: DocumentType; file: File; title?: string }>({
+            query: ({ type, file, title }) => {
                 const formData = new FormData();
                 formData.append("document", file);
                 formData.append("type", type);
+                if (title) {
+                    formData.append("title", title);
+                }
                 return {
                     url: "/workers/documents",
                     method: "POST",

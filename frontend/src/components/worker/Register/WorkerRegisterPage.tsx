@@ -16,8 +16,6 @@ import StepConfirm from "./steps/StepConfirm";
 
 import { submitWorkerRegistration } from "./submitWorkerRegistration";
 
-import { useAppDispatch } from "@/features/hooks";
-import { getMe } from "@/features/slices/authSlice";
 import { useState } from "react";
 import { showErrorToast } from "@/lib/toast";
 import axios from "axios";
@@ -38,8 +36,6 @@ export default function WorkerRegisterPage() {
   const StepComponent = stepComponents[currentStep];
 
   const canProceed = isWorkerStepValid(currentStep, data);
-
-  const dispatch = useAppDispatch();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [backendError, setBackendError] = useState<string | null>(null);
@@ -66,7 +62,6 @@ export default function WorkerRegisterPage() {
 
       localStorage.setItem("auth_token", response.data.data.token);
 
-      dispatch(getMe());
       reset();
 
       // Show success animation instead of navigating immediately

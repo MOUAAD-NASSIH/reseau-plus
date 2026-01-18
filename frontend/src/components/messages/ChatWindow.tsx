@@ -8,7 +8,7 @@ import {
   type Conversation,
   type MessageUser,
 } from "../../features/api/endpoints/messageEndpoints";
-import { useAppSelector } from "../../features/hooks";
+import { useGetCurrentUserQuery } from "../../features/api/endpoints/authEndpoints";
 import { useMessageSocket } from "../../socket/hooks/useMessageSocket";
 import { UserAvatar } from "@/components/ui/avatar";
 
@@ -18,7 +18,10 @@ interface ChatWindowProps {
 }
 
 export default function ChatWindow({ conversation, onBack }: ChatWindowProps) {
-  const currentUser = useAppSelector((state) => state.auth.user);
+  // Get current user from RTK Query
+  const { data: userData } = useGetCurrentUserQuery();
+  const currentUser = userData?.data?.user;
+
   // Get the user ID - for workers/institutions it's in userId, for admins it's in id
   const currentUserId = (currentUser as any)?.userId ?? (currentUser as any)?.id;
   const [messageText, setMessageText] = useState("");

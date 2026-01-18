@@ -48,7 +48,8 @@ export const findAll = async (filters?: WorkerFilters, page = 1, limit = 10) => 
                     select: {
                         id: true,
                         email: true,
-                        status: true
+                        status: true,
+                        profilePicture: true
                     }
                 },
                 speciality: true,
@@ -107,7 +108,8 @@ export const findByUserId = async (userId: number) => {
                     id: true,
                     email: true,
                     role: true,
-                    status: true
+                    status: true,
+                    profilePicture: true
                 }
             },
             speciality: true,
@@ -131,14 +133,38 @@ export const update = async (id: number, data: UpdateWorkerInput) => {
         updateData.birthDate = new Date(data.birthDate);
     }
 
+    const { domainIds, profilePicture, ...workerData } = updateData;
+
+    // Prepare update payload
+    const dataToUpdate: any = { ...workerData };
+
+    // Handle user profile picture update
+    if (profilePicture !== undefined) {
+        dataToUpdate.user = {
+            update: {
+                profilePicture: profilePicture
+            }
+        };
+    }
+
+    // Handle domains update if provided
+    if (domainIds) {
+        dataToUpdate.domains = {
+            deleteMany: {}, // Clear existing domains
+            create: domainIds.map((domainId: number) => ({
+                domain: { connect: { id: domainId } }
+            }))
+        };
+    }
+
     return prisma.worker.update({
         where: { id },
-        data: updateData,
+        data: dataToUpdate,
         include: {
             speciality: true,
             domains: {
                 include: { domain: true }
-            }
+            },
         }
     });
 };
@@ -160,7 +186,8 @@ export const updateByUserId = async (userId: number, data: UpdateWorkerInput) =>
 export const uploadDocument = async (
     workerId: number,
     file: Express.Multer.File,
-    type: string
+    type: string,
+    title?: string
 ): Promise<any> => {
     // File is already uploaded to Cloudinary via multer-storage-cloudinary
     // The file.path contains the Cloudinary URL
@@ -168,6 +195,7 @@ export const uploadDocument = async (
         data: {
             workerId,
             type: type.toUpperCase(),
+            title,
             fileUrl: file.path,
             status: 'PENDING'
         }

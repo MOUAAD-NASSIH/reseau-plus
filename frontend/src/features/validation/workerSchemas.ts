@@ -47,6 +47,7 @@ export const updateWorkerProfileSchema = z.object({
     longitude: longitudeSchema.optional().nullable(),
     birthDate: dateStringSchema.optional().nullable(),
     gender: safeStringSchema.max(20, "Gender must be 20 characters or less").optional().nullable(),
+    domainIds: z.array(positiveIntSchema).optional(),
 });
 
 // WORKER AVAILABILITY SCHEMA

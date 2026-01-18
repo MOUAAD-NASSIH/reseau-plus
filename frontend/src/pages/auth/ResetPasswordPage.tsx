@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PasswordStrength } from "@/components/ui/password-strength";
 import { showErrorToast } from "@/lib/toast";
-import { authService } from "@/features/services/authServices";
+import { useResetPasswordMutation } from "@/features/api/endpoints/authEndpoints";
 import { staggerContainer, fadeUpItem, shouldReduceMotion } from "@/lib/animations";
 
 export default function ResetPasswordPage() {
@@ -30,6 +30,8 @@ export default function ResetPasswordPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const reduceMotion = shouldReduceMotion();
+
+  const [resetPassword] = useResetPasswordMutation();
 
   const form = useForm<ResetPasswordSchema>({
     resolver: zodResolver(resetPasswordSchema),
@@ -57,7 +59,7 @@ export default function ResetPasswordPage() {
 
     try {
       const { password } = data;
-      await authService.resetPassword(token, { password });
+      await resetPassword({ token, password }).unwrap();
       setIsSuccess(true);
     } catch (error) {
       showErrorToast(error, t("COMMON.UNEXPECTED_ERROR"));

@@ -85,4 +85,5 @@ export interface AuthenticatedUser {
     role: RoleType;
     workerId?: number;
     institutionId?: number;
+    profilePicture?: string | null;
 }

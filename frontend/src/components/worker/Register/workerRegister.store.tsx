@@ -26,6 +26,7 @@ export interface WorkerRegisterData {
         type: "DIPLOMA" | "CV" | "ID";
         file: File;
         status?: "PENDING" | "UPLOADED" | "ERROR";
+        title?: string;
     }[];
     termsAccepted?: boolean;
 }
