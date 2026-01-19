@@ -1734,6 +1734,14 @@ export const fr = {
         WORKER_REVIEWS: {
             TITLE: "Mes Avis",
             SUBTITLE: "Construisez votre réputation et donnez votre avis aux institutions",
+            SUMMARY: {
+                OVERALL_SCORE: "Note Globale",
+                BREAKDOWN: "Répartition des notes",
+                POSITIVE_RATE: "Taux Positif",
+                POSITIVE_DESC: "Des institutions vous recommandent",
+                THIS_WEEK: "Cette semaine",
+                TOTAL_REVIEWS: "Total des avis"
+            },
             STATS: {
                 AVG_RATING: "Note Moyenne",
                 RECEIVED: "Avis Reçus",

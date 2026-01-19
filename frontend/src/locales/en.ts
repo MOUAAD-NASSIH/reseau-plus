@@ -1732,6 +1732,14 @@ export const en = {
         WORKER_REVIEWS: {
             TITLE: "My Reviews",
             SUBTITLE: "Build your reputation and provide feedback to institutions",
+            SUMMARY: {
+                OVERALL_SCORE: "Overall Score",
+                BREAKDOWN: "Rating Breakdown",
+                POSITIVE_RATE: "Positive Rate",
+                POSITIVE_DESC: "Of institutions recommend you",
+                THIS_WEEK: "This week",
+                TOTAL_REVIEWS: "Total Reviews"
+            },
             STATS: {
                 AVG_RATING: "Average Rating",
                 RECEIVED: "Reviews Received",
@@ -1749,8 +1757,8 @@ export const en = {
                 BUTTON: "Review"
             },
             TABS: {
-                RECEIVED: "Received Reviews",
-                WRITTEN: "Written Reviews"
+                RECEIVED: "Received",
+                WRITTEN: "Written"
             },
             EMPTY: {
                 RECEIVED_TITLE: "No reviews received yet",
