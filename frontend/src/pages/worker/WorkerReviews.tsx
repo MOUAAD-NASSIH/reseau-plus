@@ -2,7 +2,7 @@ import { useState, useRef, useLayoutEffect } from "react";
 import { useSearchParams } from "react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
+import { useTranslation } from "react-i18next";
 import { Star, Send, Loader2, MessageSquare, User, Trophy, Quote } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -85,13 +85,14 @@ interface ReviewCardProps {
 }
 
 function ReviewCard({ review, type }: ReviewCardProps) {
+    const { t, i18n } = useTranslation();
     const otherUser = type === "received" ? review.reviewer : review.reviewee;
     const isWorker = !!otherUser?.worker;
 
     // Fallback name/avatar logic
     const name = isWorker
         ? `${otherUser?.worker?.firstName} ${otherUser?.worker?.lastName}`
-        : otherUser?.institution?.institutionName || (type === "received" ? "Anonymous" : "User");
+        : otherUser?.institution?.institutionName || (type === "received" ? t("WORKER_REVIEWS.FALLBACK_NAMES.ANONYMOUS") : t("WORKER_REVIEWS.FALLBACK_NAMES.USER"));
 
     const avatar = isWorker
         ? otherUser?.worker?.profilePicture
@@ -114,7 +115,7 @@ function ReviewCard({ review, type }: ReviewCardProps) {
                             <div>
                                 <h4 className="font-bold text-foreground">{name}</h4>
                                 <p className="text-xs text-muted-foreground flex items-center gap-2">
-                                    <span>{format(new Date(review.createdAt), "MMMM d, yyyy")}</span>
+                                    <span>{new Date(review.createdAt).toLocaleDateString(i18n.language, { month: 'long', day: 'numeric', year: 'numeric' })}</span>
                                 </p>
                             </div>
                             <div className="flex items-center gap-2 bg-yellow-50 dark:bg-yellow-950/20 px-3 py-1 rounded-full border border-yellow-100 dark:border-yellow-900/50 w-fit">
@@ -143,6 +144,7 @@ interface ReviewFormProps {
 }
 
 function ReviewForm({ assignment, onSuccess, onCancel }: ReviewFormProps) {
+    const { t } = useTranslation();
     const [createReview, { isLoading: isCreating }] = useCreateReviewMutation();
     const [rating, setRating] = useState(0);
 
@@ -163,10 +165,10 @@ function ReviewForm({ assignment, onSuccess, onCancel }: ReviewFormProps) {
     const onSubmit = async (data: CreateReviewInput) => {
         try {
             await createReview(data).unwrap();
-            showSuccessToast("Review submitted", "Thank you for your feedback!");
+            showSuccessToast(t("WORKER_REVIEWS.TOASTS.SUCCESS_TITLE"), t("WORKER_REVIEWS.TOASTS.SUCCESS_DESC"));
             onSuccess();
         } catch (error) {
-            showErrorToast(error, "Failed to submit review");
+            showErrorToast(error, t("WORKER_REVIEWS.TOASTS.ERROR"));
         }
     };
 
@@ -182,15 +184,15 @@ function ReviewForm({ assignment, onSuccess, onCancel }: ReviewFormProps) {
                     <User className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                    <p className="text-sm font-medium text-muted-foreground">Reviewing</p>
+                    <p className="text-sm font-medium text-muted-foreground">{t("WORKER_REVIEWS.FORM.REVIEWING")}</p>
                     <p className="font-bold text-foreground">
-                        {assignment.institution?.institutionName || "Institution"}
+                        {assignment.institution?.institutionName || t("WORKER_REVIEWS.FALLBACK_NAMES.INSTITUTION")}
                     </p>
                 </div>
             </div>
 
             <div className="space-y-3 text-center">
-                <Label className="text-base">How would you rate your experience?</Label>
+                <Label className="text-base">{t("WORKER_REVIEWS.FORM.RATING_LABEL")}</Label>
                 <div className="flex justify-center">
                     <StarRating value={rating} onChange={handleRatingChange} size="xl" />
                 </div>
@@ -200,11 +202,11 @@ function ReviewForm({ assignment, onSuccess, onCancel }: ReviewFormProps) {
             </div>
 
             <div className="space-y-2">
-                <Label htmlFor="comment">Additional Feedback <span className="text-muted-foreground font-normal">(Optional)</span></Label>
+                <Label htmlFor="comment">{t("WORKER_REVIEWS.FORM.FEEDBACK_LABEL")} <span className="text-muted-foreground font-normal">{t("WORKER_REVIEWS.FORM.OPTIONAL")}</span></Label>
                 <Textarea
                     id="comment"
                     {...register("comment")}
-                    placeholder="Share details about your collaboration, communication, and overall satisfaction..."
+                    placeholder={t("WORKER_REVIEWS.FORM.PLACEHOLDER")}
                     className="min-h-[120px] resize-none focus-visible:ring-primary"
                 />
                 {errors.comment && (
@@ -214,7 +216,7 @@ function ReviewForm({ assignment, onSuccess, onCancel }: ReviewFormProps) {
 
             <div className="flex justify-end gap-3 pt-2">
                 <Button type="button" variant="outline" onClick={onCancel} className="rounded-full px-6">
-                    Cancel
+                    {t("WORKER_REVIEWS.FORM.CANCEL")}
                 </Button>
                 <Button
                     type="submit"
@@ -222,9 +224,9 @@ function ReviewForm({ assignment, onSuccess, onCancel }: ReviewFormProps) {
                     className="rounded-full px-6 shadow-md shadow-primary/20"
                 >
                     {isCreating ? (
-                        <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...</>
+                        <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t("WORKER_REVIEWS.FORM.SUBMITTING")}</>
                     ) : (
-                        <><Send className="mr-2 h-4 w-4" /> Submit Review</>
+                        <><Send className="mr-2 h-4 w-4" /> {t("WORKER_REVIEWS.FORM.SUBMIT")}</>
                     )}
                 </Button>
             </div>
@@ -233,6 +235,7 @@ function ReviewForm({ assignment, onSuccess, onCancel }: ReviewFormProps) {
 }
 
 export default function WorkerReviews() {
+    const { t } = useTranslation();
     const [searchParams] = useSearchParams();
     const preselectedAssignmentId = searchParams.get("assignmentId");
 
@@ -295,12 +298,13 @@ export default function WorkerReviews() {
             <div className="flex flex-col gap-2 p-4">
                 <h1 className="text-3xl font-black font-spline tracking-tight flex items-center gap-3">
                     <Trophy className="h-8 w-8 text-primary" />
-                    My Reviews
+                    {t("WORKER_REVIEWS.TITLE")}
                 </h1>
                 <p className="text-muted-foreground">
-                    Build your reputation and provide feedback to institutions
+                    {t("WORKER_REVIEWS.SUBTITLE")}
                 </p>
             </div>
+
 
             {/* Stats Grid */}
             <div className="grid gap-4 md:grid-cols-3">
@@ -309,7 +313,7 @@ export default function WorkerReviews() {
                         <Star className="h-24 w-24 text-yellow-600" />
                     </div>
                     <CardContent className="p-6 relative z-10">
-                        <p className="text-sm font-medium text-yellow-700 dark:text-yellow-400 mb-1">Average Rating</p>
+                        <p className="text-sm font-medium text-yellow-700 dark:text-yellow-400 mb-1">{t("WORKER_REVIEWS.STATS.AVG_RATING")}</p>
                         <div className="flex items-baseline gap-2">
                             <span className="text-4xl font-bold text-foreground">{averageRating}</span>
                             {averageRating !== "N/A" && <span className="text-sm text-yellow-600 dark:text-yellow-400 flex items-center"><Star className="h-3 w-3 fill-current mr-1" /> / 5.0</span>}
@@ -322,7 +326,7 @@ export default function WorkerReviews() {
                         <Quote className="h-24 w-24" />
                     </div>
                     <CardContent className="p-6 relative z-10">
-                        <p className="text-sm font-medium text-muted-foreground mb-1">Reviews Received</p>
+                        <p className="text-sm font-medium text-muted-foreground mb-1">{t("WORKER_REVIEWS.STATS.RECEIVED")}</p>
                         <span className="text-4xl font-bold text-foreground">{receivedReviews.length}</span>
                     </CardContent>
                 </Card>
@@ -332,7 +336,7 @@ export default function WorkerReviews() {
                         <Send className="h-24 w-24" />
                     </div>
                     <CardContent className="p-6 relative z-10">
-                        <p className="text-sm font-medium text-muted-foreground mb-1">Reviews Written</p>
+                        <p className="text-sm font-medium text-muted-foreground mb-1">{t("WORKER_REVIEWS.STATS.WRITTEN")}</p>
                         <span className="text-4xl font-bold text-foreground">{writtenReviews.length}</span>
                     </CardContent>
                 </Card>
@@ -343,7 +347,7 @@ export default function WorkerReviews() {
                 <div className="space-y-4">
                     <div className="flex items-center gap-2">
                         <div className="h-1 flex-1 bg-border/50 rounded-full" />
-                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest px-2">Pending Actions</span>
+                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest px-2">{t("WORKER_REVIEWS.PENDING.LABEL")}</span>
                         <div className="h-1 flex-1 bg-border/50 rounded-full" />
                     </div>
 
@@ -351,10 +355,10 @@ export default function WorkerReviews() {
                         <CardHeader className="pb-3">
                             <CardTitle className="flex items-center gap-2 text-lg">
                                 <Star className="h-5 w-5 text-primary fill-primary" />
-                                Rate Your Recent Missions
+                                {t("WORKER_REVIEWS.PENDING.TITLE")}
                             </CardTitle>
                             <CardDescription>
-                                You have completed missions that haven't been reviewed yet.
+                                {t("WORKER_REVIEWS.PENDING.DESC")}
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -378,7 +382,7 @@ export default function WorkerReviews() {
                                                 onClick={() => handleOpenReviewForm(assignment)}
                                                 className="shrink-0 rounded-full"
                                             >
-                                                Review
+                                                {t("WORKER_REVIEWS.PENDING.BUTTON")}
                                             </Button>
                                         </div>
                                     ))}
@@ -393,10 +397,10 @@ export default function WorkerReviews() {
             <Tabs defaultValue="received" className="space-y-6">
                 <TabsList className="grid w-full grid-cols-2 p-1 bg-muted/50 rounded-full h-12">
                     <TabsTrigger value="received" className="rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all h-full">
-                        Received Reviews
+                        {t("WORKER_REVIEWS.TABS.RECEIVED")}
                     </TabsTrigger>
                     <TabsTrigger value="written" className="rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm transition-all h-full">
-                        Written Reviews
+                        {t("WORKER_REVIEWS.TABS.WRITTEN")}
                     </TabsTrigger>
                 </TabsList>
 
@@ -410,10 +414,13 @@ export default function WorkerReviews() {
                     ) : receivedReviews.length === 0 ? (
                         <EmptyState
                             icon={Star}
-                            title="No reviews received yet"
-                            description="Complete missions with excellence to earn 5-star reviews from institutions!"
-                            actionLabel="Browse Missions"
-                            onAction={() => window.location.href = '/worker/missions'}
+                            title={t("WORKER_REVIEWS.EMPTY.RECEIVED_TITLE")}
+                            description={t("WORKER_REVIEWS.EMPTY.RECEIVED_DESC")}
+                            action={
+                                <Button onClick={() => window.location.href = '/worker/missions'}>
+                                    {t("WORKER_REVIEWS.EMPTY.BROWSE_BTN")}
+                                </Button>
+                            }
                         />
                     ) : (
                         <div className="grid gap-4">
@@ -434,8 +441,8 @@ export default function WorkerReviews() {
                     ) : writtenReviews.length === 0 ? (
                         <EmptyState
                             icon={Send}
-                            title="No reviews written"
-                            description="Your feedback helps improve the community. Review institutions after completing missions."
+                            title={t("WORKER_REVIEWS.EMPTY.WRITTEN_TITLE")}
+                            description={t("WORKER_REVIEWS.EMPTY.WRITTEN_DESC")}
                         />
                     ) : (
                         <div className="grid gap-4">
@@ -451,9 +458,9 @@ export default function WorkerReviews() {
             <Dialog open={showReviewForm} onOpenChange={handleCloseReviewForm}>
                 <DialogContent className="sm:max-w-lg">
                     <DialogHeader>
-                        <DialogTitle className="text-2xl">Write a Review</DialogTitle>
+                        <DialogTitle className="text-2xl">{t("WORKER_REVIEWS.DIALOG.TITLE")}</DialogTitle>
                         <DialogDescription>
-                            Your honest feedback helps other workers and institutions.
+                            {t("WORKER_REVIEWS.DIALOG.DESC")}
                         </DialogDescription>
                     </DialogHeader>
                     {selectedAssignment && (

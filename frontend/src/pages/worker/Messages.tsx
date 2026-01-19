@@ -1,16 +1,17 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router";
-import { formatDistanceToNow } from "date-fns";
+import { useTranslation } from "react-i18next";
 import { MessageSquare, Search, User, Building2 } from "lucide-react";
 import { useGetMyConversationsQuery, useLazyGetOrCreateConversationQuery } from "@/features/api/endpoints/messageEndpoints";
 import ChatWindow from "@/components/messages/ChatWindow";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Card } from "@/components/ui/card";
+
 import { cn } from "@/lib/utils";
 
 export default function Messages() {
+  const { t, i18n } = useTranslation();
   const location = useLocation();
   const startConversationWith = location.state?.startConversationWith as number | undefined;
 
@@ -69,14 +70,14 @@ export default function Messages() {
         <div className="py-4 border-b border-border bg-background/50 backdrop-blur-sm sticky top-0 z-10">
           <h1 className="text-2xl font-bold font-spline mb-4 flex items-center gap-2 text-foreground">
             <MessageSquare className="size-6 text-primary" />
-            Messages
+            {t("MESSAGES.TITLE")}
           </h1>
 
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="Search conversations..."
+              placeholder={t("MESSAGES.SEARCH_PLACEHOLDER")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-9 bg-background border-border hover:border-primary/50 transition-colors h-10 rounded-full"
@@ -92,8 +93,8 @@ export default function Messages() {
                 <div className="h-12 w-12 rounded-full bg-muted/50 flex items-center justify-center mb-3">
                   <MessageSquare className="w-6 h-6 opacity-30" />
                 </div>
-                <p className="font-medium mb-1">No conversations</p>
-                <p className="text-xs">Start messaging from a mission details page</p>
+                <p className="font-medium mb-1">{t("MESSAGES.NO_CONVERSATIONS")}</p>
+                <p className="text-xs">{t("MESSAGES.START_MESSAGING")}</p>
               </div>
             ) : (
               filteredConversations.map((conversation) => {
@@ -103,7 +104,7 @@ export default function Messages() {
                 const isWorker = !!otherUser.worker;
                 const name = isWorker
                   ? `${otherUser.worker?.firstName} ${otherUser.worker?.lastName}`
-                  : otherUser.institution?.institutionName || "Unknown";
+                  : otherUser.institution?.institutionName || t("MESSAGES.UNKNOWN_USER");
                 const avatar = isWorker
                   ? otherUser.worker?.profilePicture
                   : otherUser.institution?.logo;
@@ -128,7 +129,7 @@ export default function Messages() {
                           {isWorker ? <User className="h-5 w-5" /> : <Building2 className="h-5 w-5" />}
                         </AvatarFallback>
                       </Avatar>
-                      {conversation.unreadCount > 0 && (
+                      {(conversation.unreadCount || 0) > 0 && (
                         <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground ring-2 ring-background">
                           {conversation.unreadCount}
                         </span>
@@ -145,7 +146,7 @@ export default function Messages() {
                         </span>
                         {lastMessage && (
                           <span className="text-[10px] text-muted-foreground shrink-0 tabular-nums">
-                            {formatDistanceToNow(new Date(lastMessage.createdAt), { addSuffix: false })}
+                            {new Date(lastMessage.createdAt).toLocaleString(i18n.language, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                           </span>
                         )}
                       </div>
@@ -154,11 +155,11 @@ export default function Messages() {
                           "text-xs truncate",
                           isSelected ? "text-primary/70" : "text-muted-foreground"
                         )}>
-                          {lastMessage.senderId === otherUser.id ? "" : "You: "}
+                          {lastMessage.senderId === otherUser.id ? "" : t("MESSAGES.YOU_PREFIX")}
                           {lastMessage.content}
                         </p>
                       ) : (
-                        <p className="text-xs text-muted-foreground italic">No messages yet</p>
+                        <p className="text-xs text-muted-foreground italic">{t("MESSAGES.NO_MESSAGES")}</p>
                       )}
                     </div>
                   </button>
@@ -188,9 +189,9 @@ export default function Messages() {
               <div className="h-20 w-20 rounded-2xl bg-primary/10 flex items-center justify-center transform rotate-3">
                 <MessageSquare className="h-10 w-10 text-primary" />
               </div>
-              <h2 className="text-2xl font-bold font-spline text-foreground">Your Messages</h2>
+              <h2 className="text-2xl font-bold font-spline text-foreground">{t("MESSAGES.EMPTY_WINDOW.TITLE")}</h2>
               <p className="text-muted-foreground">
-                Select a conversation from the sidebar to start chatting with institutions or support.
+                {t("MESSAGES.EMPTY_WINDOW.DESC")}
               </p>
             </div>
           </div>

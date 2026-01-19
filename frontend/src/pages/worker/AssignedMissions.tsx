@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Link } from "react-router";
-import { format, differenceInDays, isAfter, isBefore } from "date-fns";
+import { differenceInDays, isAfter, isBefore } from "date-fns";
 import {
     Calendar,
     Building2,
@@ -34,18 +34,21 @@ import type { AssignmentStatus } from "@/types/assignment.types";
 import { cn } from "@/lib/utils";
 import * as React from "react";
 
-const STATUS_FILTERS = [
-    { value: "ALL", label: "All Missions", icon: Briefcase },
-    { value: "ACTIVE", label: "Active", icon: TrendingUp },
-    { value: "ONGOING", label: "In Progress", icon: Clock },
-    { value: "COMPLETED", label: "Completed", icon: CheckCircle2 },
-    { value: "CANCELLED", label: "Cancelled", icon: X },
-];
+import { useTranslation } from "react-i18next";
 
 export default function AssignedMissions() {
+    const { t, i18n } = useTranslation();
     const { data: assignmentsData, isLoading } = useGetMyAssignmentsQuery();
     const { data: writtenReviewsData } = useGetMyWrittenReviewsQuery();
     const { data: paymentsData } = useGetPaymentsQuery();
+
+    const STATUS_FILTERS = [
+        { value: "ALL", label: t("ASSIGNED_MISSIONS.FILTERS.ALL"), icon: Briefcase },
+        { value: "ACTIVE", label: t("ASSIGNED_MISSIONS.FILTERS.ACTIVE"), icon: TrendingUp },
+        { value: "ONGOING", label: t("ASSIGNED_MISSIONS.FILTERS.ONGOING"), icon: Clock },
+        { value: "COMPLETED", label: t("ASSIGNED_MISSIONS.FILTERS.COMPLETED"), icon: CheckCircle2 },
+        { value: "CANCELLED", label: t("ASSIGNED_MISSIONS.FILTERS.CANCELLED"), icon: X },
+    ];
 
     const [statusFilter, setStatusFilter] = useState<string>("ALL");
     const [searchQuery, setSearchQuery] = useState("");
@@ -126,13 +129,13 @@ export default function AssignedMissions() {
     const getStatusConfig = (status: AssignmentStatus) => {
         switch (status) {
             case "ACTIVE":
-                return { color: "bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/30", icon: TrendingUp, label: "Active" };
+                return { color: "bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/30", icon: TrendingUp, label: t("ASSIGNED_MISSIONS.STATUS.ACTIVE") };
             case "ONGOING":
-                return { color: "bg-yellow-500/15 text-yellow-700 dark:text-yellow-400 border-yellow-500/30", icon: Clock, label: "In Progress" };
+                return { color: "bg-yellow-500/15 text-yellow-700 dark:text-yellow-400 border-yellow-500/30", icon: Clock, label: t("ASSIGNED_MISSIONS.STATUS.ONGOING") };
             case "COMPLETED":
-                return { color: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30", icon: CheckCircle2, label: "Completed" };
+                return { color: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30", icon: CheckCircle2, label: t("ASSIGNED_MISSIONS.STATUS.COMPLETED") };
             case "CANCELLED":
-                return { color: "bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/30", icon: X, label: "Cancelled" };
+                return { color: "bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/30", icon: X, label: t("ASSIGNED_MISSIONS.STATUS.CANCELLED") };
             default:
                 return { color: "bg-muted text-muted-foreground border-border", icon: Briefcase, label: status };
         }
@@ -140,10 +143,10 @@ export default function AssignedMissions() {
 
     const getDaysRemaining = (endDate: string) => {
         const days = differenceInDays(new Date(endDate), new Date());
-        if (days < 0) return "Ended";
-        if (days === 0) return "Ends today";
-        if (days === 1) return "1 day left";
-        return `${days} days left`;
+        if (days < 0) return t("ASSIGNED_MISSIONS.CARD.ENDED");
+        if (days === 0) return t("ASSIGNED_MISSIONS.CARD.ENDS_TODAY");
+        if (days === 1) return t("ASSIGNED_MISSIONS.CARD.ONE_DAY_LEFT");
+        return t("ASSIGNED_MISSIONS.CARD.DAYS_LEFT", { count: days });
     };
 
     return (
@@ -157,15 +160,15 @@ export default function AssignedMissions() {
                                 <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center">
                                     <Briefcase className="h-5 w-5 text-primary" />
                                 </div>
-                                My Assignments
+                                {t("ASSIGNED_MISSIONS.TITLE")}
                             </h1>
                             <p className="text-muted-foreground mt-2 ml-13">
-                                Track and manage your active and past missions
+                                {t("ASSIGNED_MISSIONS.SUBTITLE")}
                             </p>
                         </div>
                         <Button asChild className="rounded-full shadow-lg shadow-primary/20">
                             <Link to="/worker/missions">
-                                Find New Missions
+                                {t("ASSIGNED_MISSIONS.FIND_NEW")}
                                 <ArrowRight className="ml-2 h-4 w-4" />
                             </Link>
                         </Button>
@@ -174,34 +177,34 @@ export default function AssignedMissions() {
                     {/* Stats Grid - Using Dashboard Style */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                         <StatCard
-                            title="Active Missions"
+                            title={t("ASSIGNED_MISSIONS.STATS.ACTIVE")}
                             value={stats.active}
                             icon={<Briefcase />}
-                            description="Currently active"
-                            trend="Now"
+                            description={t("ASSIGNED_MISSIONS.STATS.ACTIVE_DESC")}
+                            trend={t("ASSIGNED_MISSIONS.STATS.TREND_NOW")}
                             trendUp={true}
                         />
                         <StatCard
-                            title="In Progress"
+                            title={t("ASSIGNED_MISSIONS.STATS.IN_PROGRESS")}
                             value={stats.ongoing}
                             icon={<Clock />}
-                            description="Ongoing missions"
-                            trend="Pending"
+                            description={t("ASSIGNED_MISSIONS.STATS.ONGOING_DESC")}
+                            trend={t("ASSIGNED_MISSIONS.STATS.TREND_PENDING")}
                             trendUp={true}
                         />
                         <StatCard
-                            title="Completed"
+                            title={t("ASSIGNED_MISSIONS.STATS.COMPLETED")}
                             value={stats.completed}
                             icon={<CheckCircle />}
-                            description="All time count"
-                            trend="Done"
+                            description={t("ASSIGNED_MISSIONS.STATS.COMPLETED_DESC")}
+                            trend={t("ASSIGNED_MISSIONS.STATS.TREND_DONE")}
                             trendUp={true}
                         />
                         <StatCard
-                            title="Total Earnings"
+                            title={t("ASSIGNED_MISSIONS.STATS.EARNINGS")}
                             value={formatCurrency(stats.totalEarnings)}
                             icon={<CreditCard />}
-                            description="Net earnings (fees deducted)"
+                            description={t("ASSIGNED_MISSIONS.STATS.EARNINGS_DESC")}
                             className="bg-primary/5 border-primary/20"
                         />
                     </div>
@@ -236,7 +239,7 @@ export default function AssignedMissions() {
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                 <Input
                                     type="text"
-                                    placeholder="Search assignments..."
+                                    placeholder={t("ASSIGNED_MISSIONS.SEARCH_PLACEHOLDER")}
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     className="pl-9 h-9 bg-muted/50 border-input hover:border-primary/50 transition-colors rounded-full text-sm placeholder:opacity-70"
@@ -250,13 +253,13 @@ export default function AssignedMissions() {
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
                                     <DropdownMenuItem onClick={() => setTimeFilter("all")}>
-                                        All Time
+                                        {t("ASSIGNED_MISSIONS.TIME_FILTER.ALL_TIME")}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem onClick={() => setTimeFilter("upcoming")}>
-                                        Upcoming
+                                        {t("ASSIGNED_MISSIONS.TIME_FILTER.UPCOMING")}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem onClick={() => setTimeFilter("past")}>
-                                        Past
+                                        {t("ASSIGNED_MISSIONS.TIME_FILTER.PAST")}
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
@@ -278,11 +281,11 @@ export default function AssignedMissions() {
                         <div className="size-20 rounded-full bg-muted/30 flex items-center justify-center mb-6">
                             <Briefcase className="h-10 w-10 text-muted-foreground/50" />
                         </div>
-                        <h3 className="text-xl font-bold text-foreground mb-2">No assignments found</h3>
+                        <h3 className="text-xl font-bold text-foreground mb-2">{t("ASSIGNED_MISSIONS.EMPTY.TITLE")}</h3>
                         <p className="text-muted-foreground mb-6 max-w-md">
                             {searchQuery || statusFilter !== "ALL" || timeFilter !== "all"
-                                ? "No assignments match your current filters. Try adjusting your search criteria."
-                                : "You don't have any assigned missions yet. Start browsing to find your next opportunity!"}
+                                ? t("ASSIGNED_MISSIONS.EMPTY.DESC_FILTERED")
+                                : t("ASSIGNED_MISSIONS.EMPTY.DESC_NO_DATA")}
                         </p>
                         {searchQuery || statusFilter !== "ALL" || timeFilter !== "all" ? (
                             <Button
@@ -294,11 +297,11 @@ export default function AssignedMissions() {
                                 }}
                                 className="rounded-full"
                             >
-                                Clear All Filters
+                                {t("ASSIGNED_MISSIONS.EMPTY.CLEAR_BTN")}
                             </Button>
                         ) : (
                             <Button asChild size="lg" className="rounded-full px-8">
-                                <Link to="/worker/missions">Browse Missions</Link>
+                                <Link to="/worker/missions">{t("ASSIGNED_MISSIONS.EMPTY.BROWSE_BTN")}</Link>
                             </Button>
                         )}
                     </div>
@@ -355,13 +358,13 @@ export default function AssignedMissions() {
                                             {isReviewed && (
                                                 <Badge variant="outline" className="px-2 py-0.5 text-[10px] font-semibold gap-1 border border-purple-200 bg-purple-50 text-purple-700 dark:border-purple-800 dark:bg-purple-900/20 dark:text-purple-400">
                                                     <Star className="h-3 w-3" />
-                                                    Reviewed
+                                                    {t("ASSIGNED_MISSIONS.CARD.REVIEWED")}
                                                 </Badge>
                                             )}
                                             {isPaid && (
                                                 <Badge variant="outline" className="px-2 py-0.5 text-[10px] font-semibold gap-1 border border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-400">
                                                     <DollarSign className="h-3 w-3" />
-                                                    Paid
+                                                    {t("ASSIGNED_MISSIONS.CARD.PAID")}
                                                 </Badge>
                                             )}
                                         </div>
@@ -371,29 +374,29 @@ export default function AssignedMissions() {
                                             <div className="space-y-1">
                                                 <div className="flex items-center gap-1.5 text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
                                                     <Calendar className="h-3 w-3" />
-                                                    Start
+                                                    {t("ASSIGNED_MISSIONS.CARD.START")}
                                                 </div>
                                                 <p className="text-xs font-semibold">
-                                                    {mission?.startDate ? format(new Date(mission.startDate), "MMM d, yyyy") : "TBD"}
+                                                    {mission?.startDate ? new Date(mission.startDate).toLocaleDateString(i18n.language, { month: 'short', day: 'numeric', year: 'numeric' }) : t("ASSIGNED_MISSIONS.CARD.TBD")}
                                                 </p>
                                             </div>
                                             <div className="space-y-1">
                                                 <div className="flex items-center gap-1.5 text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
                                                     <CreditCard className="h-3 w-3" />
-                                                    Budget
+                                                    {t("ASSIGNED_MISSIONS.CARD.BUDGET")}
                                                 </div>
                                                 <p className="text-xs font-semibold">
-                                                    {Number(mission?.budget || 0).toFixed(0)} <span className="text-[10px] text-muted-foreground">MAD</span>
+                                                    {Number(mission?.budget || 0).toFixed(0)} <span className="text-[10px] text-muted-foreground">{t("ASSIGNED_MISSIONS.CARD.MAD")}</span>
                                                 </p>
                                             </div>
                                             <div className="space-y-1 col-span-2 pt-2 border-t border-border/50">
                                                 <div className="flex items-center justify-between">
                                                     <div className="flex items-center gap-1.5 text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
                                                         <Clock className="h-3 w-3" />
-                                                        Timing
+                                                        {t("ASSIGNED_MISSIONS.CARD.TIMING")}
                                                     </div>
                                                     <p className="text-xs font-semibold text-primary">
-                                                        {mission?.endDate ? getDaysRemaining(mission.endDate) : "TBD"}
+                                                        {mission?.endDate ? getDaysRemaining(mission.endDate) : t("ASSIGNED_MISSIONS.CARD.TBD")}
                                                     </p>
                                                 </div>
                                             </div>
@@ -408,7 +411,7 @@ export default function AssignedMissions() {
                                             asChild
                                         >
                                             <Link to={`/worker/assignments/${assignment.id}`}>
-                                                Details
+                                                {t("ASSIGNED_MISSIONS.CARD.DETAILS")}
                                             </Link>
                                         </Button>
 
@@ -421,7 +424,7 @@ export default function AssignedMissions() {
                                                 className="flex-1 rounded-lg border-primary/20 text-primary hover:bg-primary/5 h-9 text-xs"
                                             >
                                                 <Link to={`/worker/assignments/${assignment.id}#review`}>
-                                                    Review
+                                                    {t("ASSIGNED_MISSIONS.CARD.REVIEW")}
                                                 </Link>
                                             </Button>
                                         )}

@@ -2,7 +2,8 @@ import { useState, useMemo } from "react";
 import { useParams, Link } from "react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format, differenceInDays } from "date-fns";
+import { useTranslation } from "react-i18next";
+import { differenceInDays } from "date-fns";
 import {
     MapPin,
     Calendar,
@@ -87,6 +88,7 @@ function StarRating({ value, onChange, readonly = false, size = "md" }: StarRati
 }
 
 function ReviewForm({ assignment, onSuccess }: { assignment: MissionAssignment; onSuccess: () => void }) {
+    const { t } = useTranslation();
     const [createReview, { isLoading: isCreating }] = useCreateReviewMutation();
     const [rating, setRating] = useState(0);
 
@@ -107,10 +109,10 @@ function ReviewForm({ assignment, onSuccess }: { assignment: MissionAssignment; 
     const onSubmit = async (data: CreateReviewInput) => {
         try {
             await createReview(data).unwrap();
-            showSuccessToast("Review submitted", "Thank you for your feedback!");
+            showSuccessToast(t("ASSIGNMENT_DETAILS.REVIEW.SUCCESS_TITLE"), t("ASSIGNMENT_DETAILS.REVIEW.SUCCESS_DESC"));
             onSuccess();
         } catch (error) {
-            showErrorToast(error, "Failed to submit review");
+            showErrorToast(error, t("ASSIGNMENT_DETAILS.REVIEW.ERROR_TITLE"));
         }
     };
 
@@ -124,16 +126,16 @@ function ReviewForm({ assignment, onSuccess }: { assignment: MissionAssignment; 
             <CardHeader className="bg-primary/10 pb-4">
                 <CardTitle className="flex items-center gap-2 text-primary">
                     <Star className="h-5 w-5 fill-primary" />
-                    How was your experience?
+                    {t("ASSIGNMENT_DETAILS.REVIEW.FORM_TITLE")}
                 </CardTitle>
                 <CardDescription>
-                    Rate your collaboration with {assignment.institution?.institutionName}. This feedback is valuable for the community.
+                    {t("ASSIGNMENT_DETAILS.REVIEW.FORM_DESC", { name: assignment.institution?.institutionName })}
                 </CardDescription>
             </CardHeader>
             <CardContent className="p-6">
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                     <div className="space-y-3 text-center">
-                        <Label className="text-base font-medium">Click to rate</Label>
+                        <Label className="text-base font-medium">{t("ASSIGNMENT_DETAILS.REVIEW.CLICK_TO_RATE")}</Label>
                         <div className="flex justify-center">
                             <StarRating value={rating} onChange={handleRatingChange} size="xl" />
                         </div>
@@ -143,11 +145,11 @@ function ReviewForm({ assignment, onSuccess }: { assignment: MissionAssignment; 
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="comment">Your Feedback <span className="text-muted-foreground font-normal">(Optional)</span></Label>
+                        <Label htmlFor="comment">{t("ASSIGNMENT_DETAILS.REVIEW.FEEDBACK_LABEL")} <span className="text-muted-foreground font-normal">{t("ASSIGNMENT_DETAILS.REVIEW.OPTIONAL")}</span></Label>
                         <Textarea
                             id="comment"
                             {...register("comment")}
-                            placeholder="Share details about the work environment, communication, etc..."
+                            placeholder={t("ASSIGNMENT_DETAILS.REVIEW.PLACEHOLDER")}
                             className="min-h-[100px] resize-none focus-visible:ring-primary bg-background"
                         />
                         {errors.comment && (
@@ -162,9 +164,9 @@ function ReviewForm({ assignment, onSuccess }: { assignment: MissionAssignment; 
                             className="rounded-full px-8 shadow-lg shadow-primary/20 w-full sm:w-auto"
                         >
                             {isCreating ? (
-                                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Submitting...</>
+                                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> {t("ASSIGNMENT_DETAILS.REVIEW.SUBMITTING")}</>
                             ) : (
-                                <><Send className="mr-2 h-4 w-4" /> Submit Review</>
+                                <><Send className="mr-2 h-4 w-4" /> {t("ASSIGNMENT_DETAILS.REVIEW.SUBMIT_BTN")}</>
                             )}
                         </Button>
                     </div>
@@ -176,53 +178,10 @@ function ReviewForm({ assignment, onSuccess }: { assignment: MissionAssignment; 
 
 // --- Helper Functions ---
 
-function getStatusConfig(status: string) {
-    switch (status) {
-        case "ACTIVE":
-            return { color: "bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/30", icon: TrendingUp, label: "Active" };
-        case "ONGOING":
-            return { color: "bg-yellow-500/15 text-yellow-700 dark:text-yellow-400 border-yellow-500/30", icon: Clock, label: "In Progress" };
-        case "COMPLETED":
-            return { color: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30", icon: CheckCircle2, label: "Completed" };
-        case "CANCELLED":
-            return { color: "bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/30", icon: RotateCcw, label: "Cancelled" };
-        default:
-            return { color: "bg-muted text-muted-foreground border-border", icon: Briefcase, label: status };
-    }
-}
-
-function getUrgencyConfig(urgency: string) {
-    switch (urgency) {
-        case "HIGH":
-            return { color: "bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/30", label: "Urgent" };
-        case "MEDIUM":
-            return { color: "bg-orange-500/15 text-orange-700 dark:text-orange-400 border-orange-500/30", label: "Medium Priority" };
-        case "LOW":
-            return { color: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30", label: "Standard" };
-        default:
-            return { color: "bg-muted text-muted-foreground border-border", label: urgency };
-    }
-}
-
-const handleSupport = () => {
-    showInfoToast("Coming Soon", "Support ticket feature will be available soon!");
-};
-
-const handleCall = () => {
-    showInfoToast("Coming Soon", "Call feature will be available soon!");
-};
-
-const handleGetDirections = () => {
-    showInfoToast("Coming Soon", "Map directions feature will be available soon!");
-};
-
-const handleViewMap = () => {
-    showInfoToast("Coming Soon", "Map view feature will be available soon!");
-};
-
 // --- Main Component ---
 
 export default function AssignmentDetails() {
+    const { t, i18n } = useTranslation();
     const { id } = useParams<{ id: string }>();
     const assignmentId = Number(id);
 
@@ -260,6 +219,51 @@ export default function AssignmentDetails() {
         receivedReviewsData?.data?.find(r => r.missionAssignmentId === assignmentId),
         [receivedReviewsData, assignmentId]);
 
+    // Helper Functions moved inside to access translation
+    function getStatusConfig(status: string) {
+        switch (status) {
+            case "ACTIVE":
+                return { color: "bg-blue-500/15 text-blue-700 dark:text-blue-400 border-blue-500/30", icon: TrendingUp, label: t("ASSIGNMENT_DETAILS.STATUS.ACTIVE") };
+            case "ONGOING":
+                return { color: "bg-yellow-500/15 text-yellow-700 dark:text-yellow-400 border-yellow-500/30", icon: Clock, label: t("ASSIGNMENT_DETAILS.STATUS.ONGOING") };
+            case "COMPLETED":
+                return { color: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30", icon: CheckCircle2, label: t("ASSIGNMENT_DETAILS.STATUS.COMPLETED") };
+            case "CANCELLED":
+                return { color: "bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/30", icon: RotateCcw, label: t("ASSIGNMENT_DETAILS.STATUS.CANCELLED") };
+            default:
+                return { color: "bg-muted text-muted-foreground border-border", icon: Briefcase, label: status };
+        }
+    }
+
+    function getUrgencyConfig(urgency: string) {
+        switch (urgency) {
+            case "HIGH":
+                return { color: "bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/30", label: t("ASSIGNMENT_DETAILS.URGENCY.HIGH") };
+            case "MEDIUM":
+                return { color: "bg-orange-500/15 text-orange-700 dark:text-orange-400 border-orange-500/30", label: t("ASSIGNMENT_DETAILS.URGENCY.MEDIUM") };
+            case "LOW":
+                return { color: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30", label: t("ASSIGNMENT_DETAILS.URGENCY.LOW") };
+            default:
+                return { color: "bg-muted text-muted-foreground border-border", label: urgency };
+        }
+    }
+
+    const handleSupport = () => {
+        showInfoToast(t("ASSIGNMENT_DETAILS.TOASTS.COMING_SOON"), t("ASSIGNMENT_DETAILS.TOASTS.SUPPORT_MSG"));
+    };
+
+    const handleCall = () => {
+        showInfoToast(t("ASSIGNMENT_DETAILS.TOASTS.COMING_SOON"), t("ASSIGNMENT_DETAILS.TOASTS.CALL_MSG"));
+    };
+
+    const handleGetDirections = () => {
+        showInfoToast(t("ASSIGNMENT_DETAILS.TOASTS.COMING_SOON"), t("ASSIGNMENT_DETAILS.TOASTS.DIRECTIONS_MSG"));
+    };
+
+    const handleViewMap = () => {
+        showInfoToast(t("ASSIGNMENT_DETAILS.TOASTS.COMING_SOON"), t("ASSIGNMENT_DETAILS.TOASTS.MAP_MSG"));
+    };
+
     const isLoading = assignmentLoading || (!!missionId && missionLoading);
 
     if (isLoading) {
@@ -289,10 +293,10 @@ export default function AssignmentDetails() {
                     <div className="size-16 rounded-full bg-muted/30 flex items-center justify-center mx-auto">
                         <Briefcase className="h-8 w-8 text-muted-foreground" />
                     </div>
-                    <h2 className="text-xl font-bold">Assignment Not Found</h2>
-                    <p className="text-muted-foreground max-w-md">We couldn't locate the assignment you're looking for. It may have been removed or you don't have access.</p>
+                    <h2 className="text-xl font-bold">{t("ASSIGNMENT_DETAILS.NOT_FOUND.TITLE")}</h2>
+                    <p className="text-muted-foreground max-w-md">{t("ASSIGNMENT_DETAILS.NOT_FOUND.DESC")}</p>
                     <Button asChild variant="outline" className="rounded-full">
-                        <Link to="/worker/assignments">Back to Assignments</Link>
+                        <Link to="/worker/assignments">{t("ASSIGNMENT_DETAILS.NOT_FOUND.BACK_BTN")}</Link>
                     </Button>
                 </div>
             </div>
@@ -318,15 +322,15 @@ export default function AssignmentDetails() {
                     {/* Breadcrumbs */}
                     <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-muted-foreground mb-8">
                         <Link to="/worker" className="text-muted-foreground hover:text-primary transition-colors">
-                            Dashboard
+                            {t("ASSIGNMENT_DETAILS.BREADCRUMBS.DASHBOARD")}
                         </Link>
                         <ChevronRight className="h-4 w-4 text-muted-foreground" />
                         <Link to="/worker/assignments" className="text-muted-foreground hover:text-primary transition-colors">
-                            Assignments
+                            {t("ASSIGNMENT_DETAILS.BREADCRUMBS.ASSIGNMENTS")}
                         </Link>
                         <ChevronRight className="h-4 w-4 text-muted-foreground" />
                         <span className="text-foreground font-medium truncate">
-                            Assignment#{assignment.id}
+                            {t("ASSIGNMENT_DETAILS.BREADCRUMBS.PREFIX")} {assignment.id}
                         </span>
                     </div>
 
@@ -375,13 +379,13 @@ export default function AssignmentDetails() {
                                 {isReviewed && (
                                     <Badge variant="outline" className="px-3 py-1 text-xs font-bold gap-1.5 border border-purple-200 bg-purple-50 text-purple-700 dark:border-purple-900/50 dark:bg-purple-900/20 dark:text-purple-400">
                                         <Star className="h-3.5 w-3.5 fill-current" />
-                                        Review Submitted
+                                        {t("ASSIGNMENT_DETAILS.BADGES.REVIEW_SUBMITTED")}
                                     </Badge>
                                 )}
                                 {isPaid && (
                                     <Badge variant="outline" className="px-3 py-1 text-xs font-bold gap-1.5 border border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-900/20 dark:text-emerald-400">
                                         <DollarSign className="h-3.5 w-3.5" />
-                                        Payment Received
+                                        {t("ASSIGNMENT_DETAILS.BADGES.PAYMENT_RECEIVED")}
                                     </Badge>
                                 )}
                             </div>
@@ -391,7 +395,7 @@ export default function AssignmentDetails() {
                         <div className="flex flex-col gap-3 lg:min-w-[200px] lg:pt-8">
                             <Button size="lg" className="w-full rounded-full shadow-lg shadow-primary/20 font-bold" onClick={handleSupport}>
                                 <HelpCircle className="h-4 w-4 mr-2" />
-                                Get Support
+                                {t("ASSIGNMENT_DETAILS.ACTIONS.GET_SUPPORT")}
                             </Button>
                         </div>
                     </div>
@@ -417,7 +421,7 @@ export default function AssignmentDetails() {
                                             </div>
                                             <div className="space-y-2">
                                                 <h3 className="font-bold font-spline text-lg text-blue-900 dark:text-blue-100">
-                                                    Institution Feedback
+                                                    {t("ASSIGNMENT_DETAILS.REVIEW.INSTITUTION_FEEDBACK_TITLE")}
                                                 </h3>
                                                 <div className="flex items-center gap-1 mb-2">
                                                     <StarRating value={receivedReview.rating} readonly size="sm" />
@@ -445,7 +449,7 @@ export default function AssignmentDetails() {
                                                 <User className="h-5 w-5" />
                                             </div>
                                             <div className="space-y-2">
-                                                <h3 className="font-bold font-spline text-lg text-purple-900 dark:text-purple-100"> Your Review</h3>
+                                                <h3 className="font-bold font-spline text-lg text-purple-900 dark:text-purple-100">{t("ASSIGNMENT_DETAILS.REVIEW.YOUR_REVIEW_TITLE")}</h3>
                                                 <div className="flex items-center gap-1 mb-2">
                                                     <StarRating value={writtenReview?.rating || 0} readonly size="sm" />
                                                     <span className="text-sm font-bold ml-2 text-purple-700 dark:text-purple-300">{writtenReview?.rating}/5</span>
@@ -468,14 +472,14 @@ export default function AssignmentDetails() {
                                         <FileText className="h-5 w-5" />
                                     </div>
                                     <div>
-                                        <CardTitle className="text-lg font-bold font-spline">Mission Overview</CardTitle>
-                                        <CardDescription>Details and context about this assignment</CardDescription>
+                                        <CardTitle className="text-lg font-bold font-spline">{t("ASSIGNMENT_DETAILS.OVERVIEW.TITLE")}</CardTitle>
+                                        <CardDescription>{t("ASSIGNMENT_DETAILS.OVERVIEW.DESC")}</CardDescription>
                                     </div>
                                 </div>
                             </CardHeader>
                             <CardContent className="p-6">
                                 <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
-                                    {mission.description || "No description provided for this mission."}
+                                    {mission.description || t("ASSIGNMENT_DETAILS.OVERVIEW.NO_DESC")}
                                 </p>
                             </CardContent>
                         </Card>
@@ -488,8 +492,8 @@ export default function AssignmentDetails() {
                                         <Briefcase className="h-5 w-5" />
                                     </div>
                                     <div>
-                                        <CardTitle className="text-lg font-bold font-spline">Requirements & Scope</CardTitle>
-                                        <CardDescription>Skills and expertise required</CardDescription>
+                                        <CardTitle className="text-lg font-bold font-spline">{t("ASSIGNMENT_DETAILS.REQUIREMENTS.TITLE")}</CardTitle>
+                                        <CardDescription>{t("ASSIGNMENT_DETAILS.REQUIREMENTS.DESC")}</CardDescription>
                                     </div>
                                 </div>
                             </CardHeader>
@@ -506,7 +510,7 @@ export default function AssignmentDetails() {
 
                                 {/* Domains */}
                                 <div>
-                                    <h4 className="text-sm font-bold font-spline uppercase tracking-wider text-muted-foreground mb-3">Intervention Domains</h4>
+                                    <h4 className="text-sm font-bold font-spline uppercase tracking-wider text-muted-foreground mb-3">{t("ASSIGNMENT_DETAILS.REQUIREMENTS.INTERVENTION_DOMAINS")}</h4>
                                     {mission.domains && mission.domains.length > 0 ? (
                                         <div className="flex flex-wrap gap-2">
                                             {mission.domains.map((md) => (
@@ -516,7 +520,7 @@ export default function AssignmentDetails() {
                                             ))}
                                         </div>
                                     ) : (
-                                        <p className="text-sm text-muted-foreground italic">No specific domains listed</p>
+                                        <p className="text-sm text-muted-foreground italic">{t("ASSIGNMENT_DETAILS.REQUIREMENTS.NO_DOMAINS")}</p>
                                     )}
                                 </div>
                             </CardContent>
@@ -536,9 +540,9 @@ export default function AssignmentDetails() {
                                             <DollarSign className="h-5 w-5" />
                                         </div>
                                         <div>
-                                            <p className="text-sm font-medium text-muted-foreground mb-0.5">Total Budget</p>
+                                            <p className="text-sm font-medium text-muted-foreground mb-0.5">{t("ASSIGNMENT_DETAILS.SIDEBAR.TOTAL_BUDGET")}</p>
                                             <p className="text-2xl font-black text-foreground tabular-nums tracking-tight">
-                                                {formatCurrency(mission.budget || 0)} <span className="text-sm font-bold text-muted-foreground">MAD</span>
+                                                {formatCurrency(mission.budget || 0)} <span className="text-sm font-bold text-muted-foreground">{t("COMMON.CURRENCY") || "MAD"}</span>
                                             </p>
                                         </div>
                                     </div>
@@ -550,17 +554,17 @@ export default function AssignmentDetails() {
                                         </div>
                                         <div className="space-y-4 w-full">
                                             <div>
-                                                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">Start Date</p>
-                                                <p className="font-semibold">{format(new Date(mission.startDate), "MMMM d, yyyy")}</p>
+                                                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">{t("ASSIGNMENT_DETAILS.SIDEBAR.START_DATE")}</p>
+                                                <p className="font-semibold">{new Date(mission.startDate).toLocaleDateString(i18n.language, { month: 'long', day: 'numeric', year: 'numeric' })}</p>
                                             </div>
                                             <div>
-                                                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">End Date</p>
-                                                <p className="font-semibold">{format(new Date(mission.endDate), "MMMM d, yyyy")}</p>
+                                                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-1">{t("ASSIGNMENT_DETAILS.SIDEBAR.END_DATE")}</p>
+                                                <p className="font-semibold">{new Date(mission.endDate).toLocaleDateString(i18n.language, { month: 'long', day: 'numeric', year: 'numeric' })}</p>
                                             </div>
                                             <div className="pt-2 border-t border-border/50 flex justify-between items-center">
-                                                <span className="text-xs font-medium text-muted-foreground">Duration</span>
+                                                <span className="text-xs font-medium text-muted-foreground">{t("ASSIGNMENT_DETAILS.SIDEBAR.DURATION")}</span>
                                                 <Badge variant="secondary" className="text-xs font-bold">
-                                                    {differenceInDays(new Date(mission.endDate), new Date(mission.startDate))} days
+                                                    {differenceInDays(new Date(mission.endDate), new Date(mission.startDate))} {t("ASSIGNMENT_DETAILS.SIDEBAR.DAYS")}
                                                 </Badge>
                                             </div>
                                         </div>
@@ -574,16 +578,16 @@ export default function AssignmentDetails() {
                                                     <MapPin className="h-5 w-5" />
                                                 </div>
                                                 <div>
-                                                    <p className="text-sm font-medium text-muted-foreground mb-1">Address</p>
+                                                    <p className="text-sm font-medium text-muted-foreground mb-1">{t("ASSIGNMENT_DETAILS.SIDEBAR.ADDRESS")}</p>
                                                     <p className="text-sm font-semibold leading-relaxed">{institution.address}</p>
                                                 </div>
                                             </div>
                                             <div className="grid grid-cols-2 gap-2">
                                                 <Button variant="outline" size="sm" className="w-full rounded-full text-xs" onClick={handleViewMap}>
-                                                    View Map
+                                                    {t("ASSIGNMENT_DETAILS.ACTIONS.VIEW_MAP")}
                                                 </Button>
                                                 <Button variant="outline" size="sm" className="w-full rounded-full text-xs" onClick={handleGetDirections}>
-                                                    Directions
+                                                    {t("ASSIGNMENT_DETAILS.ACTIONS.DIRECTIONS")}
                                                 </Button>
                                             </div>
                                         </div>
@@ -596,8 +600,8 @@ export default function AssignmentDetails() {
                                                 <User className="h-5 w-5 text-muted-foreground" />
                                             </div>
                                             <div>
-                                                <p className="text-sm font-bold">Institution Contact</p>
-                                                <p className="text-xs text-muted-foreground">Manager</p>
+                                                <p className="text-sm font-bold">{t("ASSIGNMENT_DETAILS.SIDEBAR.INSTITUTION_CONTACT")}</p>
+                                                <p className="text-xs text-muted-foreground">{t("ASSIGNMENT_DETAILS.SIDEBAR.MANAGER")}</p>
                                             </div>
                                         </div>
                                         <Button variant="ghost" size="icon" className="rounded-full text-primary hover:bg-primary/10" onClick={handleCall}>

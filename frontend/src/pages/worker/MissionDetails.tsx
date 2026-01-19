@@ -1,6 +1,7 @@
 import { useParams, Link, useNavigate } from "react-router";
-import { format } from "date-fns";
+
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
     MapPin,
     Calendar,
@@ -42,31 +43,9 @@ import type { Conversation } from "@/features/api/endpoints/messageEndpoints";
 
 type UrgencyLevel = 'HIGH' | 'MEDIUM' | 'LOW';
 
-const URGENCY_CONFIGS = {
-    HIGH: {
-        label: "URGENT",
-        color: "bg-red-500/15 text-red-600 dark:text-red-400 border-red-500/30 hover:bg-red-500/25 hover:border-red-500/40 transition-colors",
-        icon: AlertTriangle,
-        chipColor: "bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20 hover:bg-red-500/20 hover:border-red-500/30 transition-colors"
-    },
-    MEDIUM: {
-        label: "MODERATE",
-        color: "bg-yellow-500/15 text-yellow-600 dark:text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/25 hover:border-yellow-500/40 transition-colors",
-        icon: TrendingUp,
-        chipColor: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20 hover:bg-yellow-500/20 hover:border-yellow-500/30 transition-colors"
-    },
-    LOW: {
-        label: "STANDARD",
-        color: "bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-500/30 hover:bg-blue-500/25 hover:border-blue-500/40 transition-colors",
-        icon: FileText,
-        chipColor: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20 hover:bg-blue-500/20 hover:border-blue-500/30 transition-colors"
-    },
-} as const;
 
-function getUrgencyConfig(urgency: string) {
-    const key = urgency as UrgencyLevel;
-    return URGENCY_CONFIGS[key] ?? URGENCY_CONFIGS.LOW;
-}
+
+
 
 function getStatusColor(status: string) {
     switch (status) {
@@ -105,6 +84,31 @@ export default function MissionDetails() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const missionId = parseInt(id || "0");
+    const { t, i18n } = useTranslation();
+
+    const getUrgencyConfig = (urgency: string) => {
+        const configs = {
+            HIGH: {
+                label: t("WORKER_MISSION_DETAILS.URGENCY.URGENT"),
+                color: "bg-red-500/15 text-red-600 dark:text-red-400 border-red-500/30 hover:bg-red-500/25 hover:border-red-500/40 transition-colors",
+                icon: AlertTriangle,
+                chipColor: "bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20 hover:bg-red-500/20 hover:border-red-500/30 transition-colors"
+            },
+            MEDIUM: {
+                label: t("WORKER_MISSION_DETAILS.URGENCY.MODERATE"),
+                color: "bg-yellow-500/15 text-yellow-600 dark:text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/25 hover:border-yellow-500/40 transition-colors",
+                icon: TrendingUp,
+                chipColor: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20 hover:bg-yellow-500/20 hover:border-yellow-500/30 transition-colors"
+            },
+            LOW: {
+                label: t("WORKER_MISSION_DETAILS.URGENCY.STANDARD"),
+                color: "bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-500/30 hover:bg-blue-500/25 hover:border-blue-500/40 transition-colors",
+                icon: FileText,
+                chipColor: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20 hover:bg-blue-500/20 hover:border-blue-500/30 transition-colors"
+            },
+        };
+        return configs[urgency as UrgencyLevel] ?? configs.LOW;
+    };
 
     const { data: missionData, isLoading: missionLoading, error: missionError } = useGetMissionQuery(missionId);
     const { data: applicationsData, isLoading: applicationsLoading } = useGetMyApplicationsQuery();
@@ -126,9 +130,9 @@ export default function MissionDetails() {
     const handleApply = async () => {
         try {
             await applyToMission({ missionId }).unwrap();
-            showSuccessToast("Application submitted", "Your application has been sent to the institution.");
+            showSuccessToast(t("WORKER_MISSION_DETAILS.TOASTS.APPLY_SUCCESS"), t("WORKER_MISSION_DETAILS.TOASTS.APPLY_SUCCESS_DESC"));
         } catch (error) {
-            const message = (error as { data?: { message?: string } })?.data?.message || "Failed to withdraw application";
+            const message = (error as { data?: { message?: string } })?.data?.message || t("WORKER_MISSION_DETAILS.TOASTS.ERROR_DEFAULT");
             showErrorToast(error, message);
         }
     };
@@ -138,28 +142,28 @@ export default function MissionDetails() {
 
         try {
             await withdrawApplication({ id: existingApplication.id, missionId }).unwrap();
-            showSuccessToast("Application withdrawn", "Your application has been successfully withdrawn.");
+            showSuccessToast(t("WORKER_MISSION_DETAILS.TOASTS.WITHDRAW_SUCCESS"), t("WORKER_MISSION_DETAILS.TOASTS.WITHDRAW_SUCCESS_DESC"));
         } catch (error) {
-            const message = (error as { data?: { message?: string } })?.data?.message || "Failed to withdraw application";
+            const message = (error as { data?: { message?: string } })?.data?.message || t("WORKER_MISSION_DETAILS.TOASTS.ERROR_DEFAULT");
             showErrorToast(error, message);
         }
     };
 
     const handleSupport = () => {
-        showInfoToast("Coming Soon", "Support ticket feature will be available soon!");
+        showInfoToast(t("WORKER_MISSION_DETAILS.TOASTS.COMING_SOON"), t("WORKER_MISSION_DETAILS.TOASTS.SUPPORT_MSG"));
     };
 
     const handleCall = () => {
-        showInfoToast("Coming Soon", "Call feature will be available soon!");
+        showInfoToast(t("WORKER_MISSION_DETAILS.TOASTS.COMING_SOON"), t("WORKER_MISSION_DETAILS.TOASTS.CALL_MSG"));
     };
 
     const handleGetDirections = () => {
-        showInfoToast("Coming Soon", "Map directions feature will be available soon!");
+        showInfoToast(t("WORKER_MISSION_DETAILS.TOASTS.COMING_SOON"), t("WORKER_MISSION_DETAILS.TOASTS.DIRECTIONS_MSG"));
     };
 
     const handleOpenChat = async () => {
         if (!institution?.userId) {
-            showErrorToast(null, "Institution contact not available");
+            showErrorToast(null, t("WORKER_MISSION_DETAILS.TOASTS.CONTACT_ERROR"));
             return;
         }
 
@@ -168,7 +172,7 @@ export default function MissionDetails() {
             setCurrentConversation(conversation);
             setIsChatOpen(true);
         } catch (error) {
-            showErrorToast(error, "Failed to open chat");
+            showErrorToast(error, t("WORKER_MISSION_DETAILS.TOASTS.CHAT_ERROR"));
         }
     };
 
@@ -181,14 +185,14 @@ export default function MissionDetails() {
             <div className="min-h-screen p-4 lg:p-8">
                 <Alert variant="destructive">
                     <AlertTriangle className="h-4 w-4" />
-                    <AlertTitle>Mission not found</AlertTitle>
+                    <AlertTitle>{t("WORKER_MISSION_DETAILS.NOT_FOUND.TITLE")}</AlertTitle>
                     <AlertDescription>
-                        The mission you're looking for doesn't exist or has been removed.
+                        {t("WORKER_MISSION_DETAILS.NOT_FOUND.DESC")}
                     </AlertDescription>
                 </Alert>
                 <div className="mt-4">
                     <Button variant="outline" onClick={() => navigate("/worker/missions")}>
-                        Back to Missions
+                        {t("WORKER_MISSION_DETAILS.NOT_FOUND.BACK_BTN")}
                     </Button>
                 </div>
             </div>
@@ -204,15 +208,15 @@ export default function MissionDetails() {
             <div className="px-4 md:px-6 lg:px-8 pb-4 border-b border-border">
                 <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm">
                     <Link to="/worker" className="text-muted-foreground hover:text-primary transition-colors">
-                        Dashboard
+                        {t("WORKER_MISSION_DETAILS.BREADCRUMBS.DASHBOARD")}
                     </Link>
                     <ChevronRight className="h-4 w-4 text-muted-foreground" />
                     <Link to="/worker/missions" className="text-muted-foreground hover:text-primary transition-colors">
-                        Missions
+                        {t("WORKER_MISSION_DETAILS.BREADCRUMBS.MISSIONS")}
                     </Link>
                     <ChevronRight className="h-4 w-4 text-muted-foreground" />
                     <span className="text-foreground font-medium">
-                        Mission#{mission.id}
+                        {t("WORKER_MISSION_DETAILS.BREADCRUMBS.MISSION_PREFIX")}{mission.id}
                     </span>
                 </div>
             </div>
@@ -224,12 +228,12 @@ export default function MissionDetails() {
                         <div className="flex flex-wrap items-center gap-3 mb-4">
                             <Badge className={cn("flex items-center gap-2 px-3 py-1.5 border text-xs font-bold", getStatusColor(mission.status))}>
                                 <span className="size-2 rounded-full bg-current"></span>
-                                {mission.status}
+                                {t(`WORKER_MISSION_DETAILS.STATUS.${mission.status}`)}
                             </Badge>
                             {isApplied && (
                                 <Badge className="bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 px-3 py-1.5 hover:bg-emerald-500/25 hover:border-emerald-500/40 transition-colors">
                                     <CheckCircle className="h-3.5 w-3.5 mr-1.5" />
-                                    Applied
+                                    {t("WORKER_MISSION_DETAILS.HEADER.APPLIED_BADGE")}
                                 </Badge>
                             )}
                         </div>
@@ -242,7 +246,7 @@ export default function MissionDetails() {
                             <Building2 className="h-4 w-4" />
                             <span className="text-base font-medium">{institution?.institutionName}</span>
                             <span className="text-muted-foreground/50">•</span>
-                            <span className="text-sm">Ref: #{mission.id}-{mission.title?.substring(0, 3).toUpperCase()}</span>
+                            <span className="text-sm">{t("WORKER_MISSION_DETAILS.HEADER.REF")}: #{mission.id}-{mission.title?.substring(0, 3).toUpperCase()}</span>
                         </div>
 
                         {/* Metadata Chips */}
@@ -261,7 +265,7 @@ export default function MissionDetails() {
                             )}
                             <Badge variant="outline" className="border-border px-3 py-1.5 flex items-center gap-1.5">
                                 <Users className="h-3.5 w-3.5 text-primary" />
-                                <span className="text-xs font-medium">Professional Mission</span>
+                                <span className="text-xs font-medium">{t("WORKER_MISSION_DETAILS.HEADER.PROFESSIONAL_MISSION")}</span>
                             </Badge>
                         </div>
                     </div>
@@ -274,7 +278,7 @@ export default function MissionDetails() {
                             className="rounded-full hover:bg-muted hover:border-primary/50 transition-colors"
                         >
                             <HelpCircle className="h-4 w-4 mr-2" />
-                            Support
+                            {t("WORKER_MISSION_DETAILS.ACTIONS.SUPPORT")}
                         </Button>
                         {isApplied && existingApplication?.status === "SUBMITTED" && (
                             <Button
@@ -286,12 +290,12 @@ export default function MissionDetails() {
                                 {isWithdrawing ? (
                                     <>
                                         <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                        Withdrawing...
+                                        {t("WORKER_MISSION_DETAILS.ACTIONS.WITHDRAWING")}
                                     </>
                                 ) : (
                                     <>
                                         <X className="h-4 w-4 mr-2" />
-                                        Withdraw
+                                        {t("WORKER_MISSION_DETAILS.ACTIONS.WITHDRAW")}
                                     </>
                                 )}
                             </Button>
@@ -305,12 +309,12 @@ export default function MissionDetails() {
                                 {isApplying ? (
                                     <>
                                         <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                        Applying...
+                                        {t("WORKER_MISSION_DETAILS.ACTIONS.APPLYING")}
                                     </>
                                 ) : (
                                     <>
                                         <CheckCircle className="h-4 w-4 mr-2" />
-                                        Apply Now
+                                        {t("WORKER_MISSION_DETAILS.ACTIONS.APPLY")}
                                     </>
                                 )}
                             </Button>
@@ -328,10 +332,10 @@ export default function MissionDetails() {
                         <CardContent className="p-6">
                             <h2 className="text-foreground text-xl font-bold font-spline mb-4 flex items-center gap-2">
                                 <FileText className="h-5 w-5 text-primary" />
-                                Mission Overview
+                                {t("WORKER_MISSION_DETAILS.TABS.OVERVIEW.TITLE")}
                             </h2>
                             <p className="text-muted-foreground leading-relaxed font-spline mb-6">
-                                {mission.description || "Professional social work services required. Please review all requirements carefully before applying."}
+                                {mission.description || t("WORKER_MISSION_DETAILS.TABS.OVERVIEW.DEFAULT_DESC")}
                             </p>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -340,9 +344,9 @@ export default function MissionDetails() {
                                         <Calendar className="h-5 w-5 text-primary" />
                                     </div>
                                     <div>
-                                        <p className="text-muted-foreground text-xs uppercase tracking-wider font-bold mb-1">Start Date</p>
+                                        <p className="text-muted-foreground text-xs uppercase tracking-wider font-bold mb-1">{t("WORKER_MISSION_DETAILS.TABS.OVERVIEW.START_DATE")}</p>
                                         <p className="text-foreground font-semibold">
-                                            {mission.startDate ? format(new Date(mission.startDate), "MMM d, yyyy") : "N/A"}
+                                            {mission.startDate ? new Date(mission.startDate).toLocaleDateString(i18n.language, { year: 'numeric', month: 'short', day: 'numeric' }) : t("WORKER_MISSION_DETAILS.TABS.OVERVIEW.NA")}
                                         </p>
                                     </div>
                                 </div>
@@ -351,11 +355,11 @@ export default function MissionDetails() {
                                         <Clock className="h-5 w-5 text-primary" />
                                     </div>
                                     <div>
-                                        <p className="text-muted-foreground text-xs uppercase tracking-wider font-bold mb-1">Duration</p>
+                                        <p className="text-muted-foreground text-xs uppercase tracking-wider font-bold mb-1">{t("WORKER_MISSION_DETAILS.TABS.OVERVIEW.DURATION")}</p>
                                         <p className="text-foreground font-semibold">
                                             {mission.startDate && mission.endDate
-                                                ? `${format(new Date(mission.startDate), "MMM d")} - ${format(new Date(mission.endDate), "MMM d")}`
-                                                : "Multiple Days"}
+                                                ? `${new Date(mission.startDate).toLocaleDateString(i18n.language, { month: 'short', day: 'numeric' })} - ${new Date(mission.endDate).toLocaleDateString(i18n.language, { month: 'short', day: 'numeric' })}`
+                                                : t("WORKER_MISSION_DETAILS.TABS.OVERVIEW.MULTIPLE_DAYS")}
                                         </p>
                                     </div>
                                 </div>
@@ -369,7 +373,7 @@ export default function MissionDetails() {
                             <CardContent className="p-6">
                                 <h2 className="text-foreground text-xl font-bold font-spline mb-4 flex items-center gap-2">
                                     <MapPin className="h-5 w-5 text-primary" />
-                                    Institution
+                                    {t("WORKER_MISSION_DETAILS.TABS.INSTITUTION.TITLE")}
                                 </h2>
                                 <div className="flex items-start gap-3 mb-4">
                                     <div className="size-12 rounded-full bg-muted flex items-center justify-center shrink-0">
@@ -389,7 +393,7 @@ export default function MissionDetails() {
                                     onClick={handleGetDirections}
                                 >
                                     <Navigation className="h-4 w-4 mr-2" />
-                                    Get Directions
+                                    {t("WORKER_MISSION_DETAILS.TABS.INSTITUTION.GET_DIRECTIONS")}
                                 </Button>
                             </CardContent>
                         </Card>
@@ -401,14 +405,14 @@ export default function MissionDetails() {
                             <CardContent className="p-6">
                                 <h2 className="text-foreground text-xl font-bold font-spline mb-6 flex items-center gap-2">
                                     <Shield className="h-5 w-5 text-primary" />
-                                    Mission Requirements
+                                    {t("WORKER_MISSION_DETAILS.TABS.REQUIREMENTS.TITLE")}
                                 </h2>
 
                                 <div className="space-y-6">
                                     {/* Required Specialty */}
                                     {mission.requiredSpeciality && (
                                         <div>
-                                            <p className="text-muted-foreground text-xs uppercase tracking-wider font-bold mb-3">Required Specialty</p>
+                                            <p className="text-muted-foreground text-xs uppercase tracking-wider font-bold mb-3">{t("WORKER_MISSION_DETAILS.TABS.REQUIREMENTS.REQUIRED_SPECIALTY")}</p>
                                             <Badge
                                                 variant="outline"
                                                 className="px-3 py-1.5 text-sm border-primary/30 bg-primary/5 hover:bg-primary/10 transition-colors rounded-full font-semibold text-primary"
@@ -422,7 +426,7 @@ export default function MissionDetails() {
                                     {/* domains */}
                                     {mission.domains && mission.domains.length > 0 && (
                                         <div>
-                                            <p className="text-muted-foreground text-xs uppercase tracking-wider font-bold mb-3">Focus Domains</p>
+                                            <p className="text-muted-foreground text-xs uppercase tracking-wider font-bold mb-3">{t("WORKER_MISSION_DETAILS.TABS.REQUIREMENTS.FOCUS_DOMAINS")}</p>
                                             <div className="flex flex-wrap gap-2">
                                                 {mission.domains.map((md) => (
                                                     <Badge
@@ -444,7 +448,7 @@ export default function MissionDetails() {
                                 {(mission.requiredSpeciality || mission.domains?.some((md) => md.isRequired)) && (
                                     <p className="text-xs text-muted-foreground mt-6 flex items-center gap-1.5 pt-4 border-t border-border/50">
                                         <span className="text-red-500 font-bold">*</span>
-                                        Mandatory requirement for this mission
+                                        {t("WORKER_MISSION_DETAILS.TABS.REQUIREMENTS.MANDATORY_MSG")}
                                     </p>
                                 )}
                             </CardContent>
@@ -463,13 +467,13 @@ export default function MissionDetails() {
                                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                             <div>
                                                 <h3 className="font-bold font-spline text-emerald-600 dark:text-emerald-400 mb-1">
-                                                    Application Submitted Successfully
+                                                    {t("WORKER_MISSION_DETAILS.TABS.APPLICATION_STATUS.SUBMITTED_TITLE")}
                                                 </h3>
                                                 <p className="text-sm text-muted-foreground mb-2">
-                                                    Status: <span className="font-semibold text-foreground">{existingApplication?.status.toLowerCase()}</span>
+                                                    {t("WORKER_MISSION_DETAILS.TABS.APPLICATION_STATUS.STATUS_LABEL")} <span className="font-semibold text-foreground">{t(`WORKER_MISSION_DETAILS.STATUS.${existingApplication?.status}`)}</span>
                                                 </p>
                                                 <p className="text-xs text-muted-foreground">
-                                                    Applied on {format(new Date(existingApplication!.appliedAt), "MMM d, yyyy 'at' h:mm a")}
+                                                    {t("WORKER_MISSION_DETAILS.TABS.APPLICATION_STATUS.APPLIED_ON", { date: new Date(existingApplication!.appliedAt).toLocaleDateString(i18n.language, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) })}
                                                 </p>
                                             </div>
                                             {existingApplication?.status === "SUBMITTED" && (
@@ -485,7 +489,7 @@ export default function MissionDetails() {
                                                     ) : (
                                                         <X className="h-3.5 w-3.5 mr-2" />
                                                     )}
-                                                    Withdraw Application
+                                                    {t("WORKER_MISSION_DETAILS.TABS.APPLICATION_STATUS.WITHDRAW_BTN")}
                                                 </Button>
                                             )}
                                         </div>
@@ -502,15 +506,15 @@ export default function MissionDetails() {
                     <Card className="border-border shadow-sm">
                         <CardContent className="p-6">
                             <h3 className="text-muted-foreground text-xs font-bold font-spline uppercase tracking-wider mb-4">
-                                Point of Contact
+                                {t("WORKER_MISSION_DETAILS.TABS.CONTACT.TITLE")}
                             </h3>
                             <div className="flex items-center gap-4 mb-5">
                                 <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg">
                                     {institution?.institutionName?.charAt(0) || "?"}
                                 </div>
                                 <div>
-                                    <p className="text-foreground font-bold font-spline text-base">Institution Contact</p>
-                                    <p className="text-muted-foreground text-sm">Coordinator</p>
+                                    <p className="text-foreground font-bold font-spline text-base">{t("WORKER_MISSION_DETAILS.TABS.CONTACT.INSTITUTION_CONTACT")}</p>
+                                    <p className="text-muted-foreground text-sm">{t("WORKER_MISSION_DETAILS.TABS.CONTACT.COORDINATOR")}</p>
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-3">
@@ -520,7 +524,7 @@ export default function MissionDetails() {
                                     onClick={handleCall}
                                 >
                                     <Phone className="h-4 w-4 mr-2 text-primary" />
-                                    Call
+                                    {t("WORKER_MISSION_DETAILS.TABS.CONTACT.CALL")}
                                 </Button>
                                 <Button
                                     variant="outline"
@@ -528,7 +532,7 @@ export default function MissionDetails() {
                                     onClick={handleOpenChat}
                                 >
                                     <MessageSquare className="h-4 w-4 mr-2 text-primary" />
-                                    Message
+                                    {t("WORKER_MISSION_DETAILS.TABS.CONTACT.MESSAGE")}
                                 </Button>
                             </div>
                         </CardContent>
@@ -539,18 +543,17 @@ export default function MissionDetails() {
                         <CardContent className="p-6">
                             <h3 className="text-muted-foreground text-xs font-bold uppercase tracking-wider mb-3 flex items-center gap-2">
                                 <DollarSign className="h-4 w-4 text-primary" />
-                                Compensation
+                                {t("WORKER_MISSION_DETAILS.TABS.COMPENSATION.TITLE")}
                             </h3>
                             <div className="flex items-baseline gap-2 mb-4">
                                 <span className="text-4xl font-black text-foreground">
                                     {Number(mission.budget || 0).toFixed(0)}
                                 </span>
-                                <span className="text-muted-foreground text-base font-medium">MAD</span>
+                                <span className="text-muted-foreground text-base font-medium">{t("WORKER_MISSION_DETAILS.TABS.COMPENSATION.MAD")}</span>
                             </div>
                             <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/5 border border-primary/10 mb-4">
                                 <Info className="h-4 w-4 text-primary shrink-0" />
-                                <p className="text-[11px] leading-relaxed text-muted-foreground">
-                                    A <span className="font-bold text-primary">15% platform fee</span> will be deducted from this budget.
+                                <p className="text-[11px] leading-relaxed text-muted-foreground" dangerouslySetInnerHTML={{ __html: t("WORKER_MISSION_DETAILS.TABS.COMPENSATION.PLATFORM_FEE_MSG", { interpolation: { escapeValue: false } }).replace('<bold>', '<span class="font-bold text-primary">').replace('</bold>', '</span>') }}>
                                 </p>
                             </div>
                             <div className="flex items-center justify-between text-sm pt-3 border-t border-border">
@@ -558,7 +561,7 @@ export default function MissionDetails() {
                                     {mission.requiredSpeciality && `${mission.requiredSpeciality.name}`}
                                 </span>
                                 <Badge variant="outline" className="border-primary/30 text-primary">
-                                    Total Budget
+                                    {t("WORKER_MISSION_DETAILS.TABS.COMPENSATION.TOTAL_BUDGET")}
                                 </Badge>
                             </div>
                         </CardContent>
@@ -570,9 +573,9 @@ export default function MissionDetails() {
                             <div className="flex items-start gap-3">
                                 <Award className="text-primary h-6 w-6 shrink-0" />
                                 <div>
-                                    <h5 className="text-foreground font-bold text-sm mb-1">Verified Institution</h5>
+                                    <h5 className="text-foreground font-bold text-sm mb-1">{t("WORKER_MISSION_DETAILS.TABS.VERIFICATION.TITLE")}</h5>
                                     <p className="text-muted-foreground text-xs">
-                                        This institution has been verified by our platform and meets all quality standards.
+                                        {t("WORKER_MISSION_DETAILS.TABS.VERIFICATION.DESC")}
                                     </p>
                                 </div>
                             </div>
@@ -593,7 +596,7 @@ export default function MissionDetails() {
                 >
                     <div className="bg-background border border-border rounded-2xl w-full max-w-4xl h-[600px] flex flex-col shadow-2xl m-4">
                         <div className="flex items-center justify-between p-4 border-b border-border shrink-0">
-                            <h2 className="text-xl font-bold text-foreground">Message Institution</h2>
+                            <h2 className="text-xl font-bold text-foreground">{t("WORKER_MISSION_DETAILS.CHAT_MODAL.TITLE")}</h2>
                             <button
                                 onClick={() => setIsChatOpen(false)}
                                 className="p-2 hover:bg-muted rounded-lg transition-colors"

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { formatDistanceToNow } from "date-fns";
+import { useTranslation } from "react-i18next";
 import {
     Bell,
     Check,
@@ -155,6 +155,7 @@ function NotificationCard({
     isDeleting,
     userRole,
 }: NotificationCardProps) {
+    const { t, i18n } = useTranslation();
     const styles = getNotificationStyles(notification.type);
     const redirectUrl = getNotificationRedirectUrl(notification.type, userRole);
 
@@ -191,13 +192,13 @@ function NotificationCard({
                             {notification.message}
                         </p>
                         <span className="text-[10px] text-muted-foreground whitespace-nowrap shrink-0">
-                            {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
+                            {new Date(notification.createdAt).toLocaleString(i18n.language, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                         </span>
                     </div>
 
                     {!notification.isRead && (
                         <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
-                            New
+                            {t("WORKER_NOTIFICATIONS.NEW")}
                         </span>
                     )}
                 </div>
@@ -220,7 +221,7 @@ function NotificationCard({
                             ) : (
                                 <Check className="h-4 w-4 text-primary" />
                             )}
-                            <span className="sr-only">Mark as read</span>
+                            <span className="sr-only">{t("WORKER_NOTIFICATIONS.ACTIONS.MARK_READ")}</span>
                         </Button>
                     )}
                     <Button
@@ -238,7 +239,7 @@ function NotificationCard({
                         ) : (
                             <Trash2 className="h-4 w-4" />
                         )}
-                        <span className="sr-only">Delete</span>
+                        <span className="sr-only">{t("WORKER_NOTIFICATIONS.ACTIONS.DELETE")}</span>
                     </Button>
                 </div>
             </div>
@@ -268,6 +269,7 @@ function NotificationsSkeleton() {
 }
 
 export default function WorkerNotifications() {
+    const { t } = useTranslation();
     const navigate = useNavigate();
 
     // Get user from RTK Query
@@ -326,10 +328,10 @@ export default function WorkerNotifications() {
                 <div className="p-4">
                     <h1 className="text-3xl font-black font-spline tracking-tight flex items-center gap-3">
                         <Bell className="h-8 w-8 text-primary" />
-                        Notifications
+                        {t("WORKER_NOTIFICATIONS.TITLE")}
                     </h1>
                     <p className="text-muted-foreground mt-1">
-                        Stay updated on your missions, applications, and payments
+                        {t("WORKER_NOTIFICATIONS.SUBTITLE")}
                     </p>
                 </div>
                 {unreadNotifications.length > 0 && (
@@ -343,7 +345,7 @@ export default function WorkerNotifications() {
                         ) : (
                             <CheckCheck className="mr-2 h-4 w-4" />
                         )}
-                        Mark all as read
+                        {t("WORKER_NOTIFICATIONS.ACTIONS.MARK_ALL_READ")}
                     </Button>
                 )}
             </div>
@@ -356,11 +358,11 @@ export default function WorkerNotifications() {
                 <div className="flex items-center justify-between">
                     <TabsList className="bg-muted/50 rounded-full h-11 p-1">
                         <TabsTrigger value="all" className="rounded-full px-6 h-full transition-all">
-                            All Notifications
+                            {t("WORKER_NOTIFICATIONS.TABS.ALL")}
                             <Badge variant="secondary" className="ml-2 bg-background/50 text-foreground text-xs">{notifications.length}</Badge>
                         </TabsTrigger>
                         <TabsTrigger value="unread" className="rounded-full px-6 h-full transition-all">
-                            Unread
+                            {t("WORKER_NOTIFICATIONS.TABS.UNREAD")}
                             {unreadNotifications.length > 0 && (
                                 <Badge variant="destructive" className="ml-2 text-xs">{unreadNotifications.length}</Badge>
                             )}
@@ -374,8 +376,8 @@ export default function WorkerNotifications() {
                     ) : displayedNotifications.length === 0 ? (
                         <EmptyState
                             icon={Bell}
-                            title="No notifications"
-                            description="You're all caught up! Important updates will appear here."
+                            title={t("WORKER_NOTIFICATIONS.EMPTY.ALL_TITLE")}
+                            description={t("WORKER_NOTIFICATIONS.EMPTY.ALL_DESC")}
                         />
                     ) : (
                         <div className="space-y-3">
@@ -401,8 +403,8 @@ export default function WorkerNotifications() {
                     ) : unreadNotifications.length === 0 ? (
                         <EmptyState
                             icon={CheckCheck}
-                            title="No unread notifications"
-                            description="Great job! You've read all your notifications."
+                            title={t("WORKER_NOTIFICATIONS.EMPTY.UNREAD_TITLE")}
+                            description={t("WORKER_NOTIFICATIONS.EMPTY.UNREAD_DESC")}
                         />
                     ) : (
                         <div className="space-y-3">

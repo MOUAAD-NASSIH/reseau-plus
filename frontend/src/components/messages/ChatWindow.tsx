@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { ArrowLeft, Send, Phone, Video } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import { useTranslation } from "react-i18next";
 import {
   useGetConversationMessagesQuery,
   useSendMessageMutation,
@@ -18,6 +18,7 @@ interface ChatWindowProps {
 }
 
 export default function ChatWindow({ conversation, onBack }: ChatWindowProps) {
+  const { t, i18n } = useTranslation();
   // Get current user from RTK Query
   const { data: userData } = useGetCurrentUserQuery();
   const currentUser = userData?.data?.user;
@@ -195,7 +196,7 @@ export default function ChatWindow({ conversation, onBack }: ChatWindowProps) {
 
           <div>
             <h2 className="font-semibold">{name}</h2>
-            <p className="text-xs text-muted-foreground">{isWorker ? "Social Worker" : "Institution"}</p>
+            <p className="text-xs text-muted-foreground">{isWorker ? t("MESSAGES.CHAT_WINDOW.SOCIAL_WORKER") : t("MESSAGES.CHAT_WINDOW.INSTITUTION")}</p>
           </div>
         </div>
 
@@ -213,7 +214,7 @@ export default function ChatWindow({ conversation, onBack }: ChatWindowProps) {
       <div className="flex-1 overflow-y-auto py-4 md:p-4 space-y-4">
         {messages.length === 0 ? (
           <div className="flex items-center justify-center h-full text-muted-foreground">
-            <p>No messages yet. Say hello! 👋</p>
+            <p>{t("MESSAGES.CHAT_WINDOW.NO_MESSAGES_YET")}</p>
           </div>
         ) : (
           messages.map((message) => {
@@ -254,11 +255,13 @@ export default function ChatWindow({ conversation, onBack }: ChatWindowProps) {
                     </div>
                     <div className={`flex items-center gap-2 mt-1 px-2 ${isMe ? "justify-end" : ""}`}>
                       <span className="text-xs text-muted-foreground">
-                        {formatDistanceToNow(new Date(message.createdAt), { addSuffix: true })}
+                        {new Date(message.createdAt).toLocaleString(i18n.language, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                       </span>
                       {isMe && (
                         <span className="text-xs text-muted-foreground">
-                          {message.status === "READ" ? "Read" : message.status === "DELIVERED" ? "Delivered" : "Sent"}
+                          {message.status === "READ" ? t("MESSAGES.CHAT_WINDOW.STATUS.READ")
+                            : message.status === "DELIVERED" ? t("MESSAGES.CHAT_WINDOW.STATUS.DELIVERED")
+                              : t("MESSAGES.CHAT_WINDOW.STATUS.SENT")}
                         </span>
                       )}
                     </div>
@@ -278,7 +281,7 @@ export default function ChatWindow({ conversation, onBack }: ChatWindowProps) {
               <span className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
             </div>
             <span className="text-xs">
-              {typingUsers.map(t => t.userName).join(', ')} {typingUsers.length === 1 ? 'is' : 'are'} typing...
+              {typingUsers.map(t => t.userName).join(', ')} {typingUsers.length === 1 ? t("MESSAGES.CHAT_WINDOW.TYPING.IS") : t("MESSAGES.CHAT_WINDOW.TYPING.ARE")}
             </span>
           </div>
         )}
@@ -301,7 +304,8 @@ export default function ChatWindow({ conversation, onBack }: ChatWindowProps) {
                 handleSendMessage();
               }
             }}
-            placeholder="Type a message..."
+
+            placeholder={t("MESSAGES.CHAT_WINDOW.INPUT.PLACEHOLDER")}
             rows={1}
             className="flex-1 px-4 py-2 bg-background-dark border border-card-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary resize-none max-h-32"
             style={{ minHeight: "40px" }}
@@ -315,7 +319,7 @@ export default function ChatWindow({ conversation, onBack }: ChatWindowProps) {
             <Send className="w-5 h-5" />
           </button>
         </div>
-        <p className="text-xs text-muted-foreground mt-2">Press Enter to send, Shift+Enter for new line</p>
+        <p className="text-xs text-muted-foreground mt-2">{t("MESSAGES.CHAT_WINDOW.INPUT.HINT")}</p>
       </div>
     </div>
   );

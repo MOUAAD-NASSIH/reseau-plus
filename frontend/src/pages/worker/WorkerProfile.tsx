@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router";
@@ -54,6 +55,7 @@ import {
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 
 export default function WorkerProfile() {
+    const { t } = useTranslation();
     // API Hooks
     const { data: profileData, isLoading: profileLoading } = useGetWorkerProfileQuery();
     const { data: documentsData } = useGetWorkerDocumentsQuery();
@@ -131,9 +133,9 @@ export default function WorkerProfile() {
                 ...data,
                 domainIds: selectedDomains // Explicitly pass selected domains
             }).unwrap();
-            showSuccessToast("Profile updated", "Your profile has been saved successfully.");
+            showSuccessToast(t("WORKER_PROFILE.ACTIONS.MESSAGES.SUCCESS"), t("WORKER_PROFILE.ACTIONS.MESSAGES.SUCCESS_DESC"));
         } catch (error) {
-            showErrorToast(error, "Failed to update profile");
+            showErrorToast(error, t("WORKER_PROFILE.ACTIONS.MESSAGES.ERROR"));
         }
     };
 
@@ -146,7 +148,7 @@ export default function WorkerProfile() {
             if (result.data?.url) {
                 await updateProfilePictureCache(result.data.url);
             }
-            showSuccessToast("Profile picture updated", "Your profile picture has been uploaded successfully.");
+            showSuccessToast(t("WORKER_PROFILE.ACTIONS.MESSAGES.PIC_UPLOAD_SUCCESS"), t("WORKER_PROFILE.ACTIONS.MESSAGES.PIC_UPLOAD_DESC"));
         } catch (error) {
             showErrorToast(error, "Failed to upload profile picture");
         }
@@ -157,7 +159,7 @@ export default function WorkerProfile() {
             await deleteProfilePicture().unwrap();
             // Update RTK Query cache immediately
             await updateProfilePictureCache(null);
-            showSuccessToast("Profile picture removed", "Your profile picture has been deleted.");
+            showSuccessToast(t("WORKER_PROFILE.ACTIONS.MESSAGES.PIC_DELETE_SUCCESS"), t("WORKER_PROFILE.ACTIONS.MESSAGES.PIC_DELETE_DESC"));
         } catch (error) {
             showErrorToast(error, "Failed to delete profile picture");
         }
@@ -212,8 +214,8 @@ export default function WorkerProfile() {
 
                     {/* Desktop Header Content */}
                     <div className="flex flex-col gap-1">
-                        <h1 className="text-4xl font-bold font-spline tracking-tight">My Profile</h1>
-                        <p className="text-sm text-muted-foreground">Manage your personal information and privacy.</p>
+                        <h1 className="text-4xl font-bold font-spline tracking-tight">{t("WORKER_PROFILE.TITLE")}</h1>
+                        <p className="text-sm text-muted-foreground">{t("WORKER_PROFILE.SUBTITLE")}</p>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -264,7 +266,7 @@ export default function WorkerProfile() {
                                 {/* Completion Bar */}
                                 <div className="w-full mt-6 space-y-2">
                                     <div className="flex justify-between items-center text-xs font-medium font-spline uppercase tracking-wider">
-                                        <span className="text-muted-foreground">Profile Strength</span>
+                                        <span className="text-muted-foreground">{t("WORKER_PROFILE.CARDS.PROFILE.STRENGTH")}</span>
                                         <span className={profileCompletion === 100 ? "text-green-500" : "text-foreground"}>
                                             {profileCompletion}%
                                         </span>
@@ -276,7 +278,7 @@ export default function WorkerProfile() {
                                     />
                                     {profileCompletion < 100 && (
                                         <p className="text-[10px] text-muted-foreground text-left">
-                                            Complete your profile to increase visibility.
+                                            {t("WORKER_PROFILE.CARDS.PROFILE.COMPLETE_MSG")}
                                         </p>
                                     )}
                                 </div>
@@ -291,13 +293,13 @@ export default function WorkerProfile() {
                                         <Calendar className="h-5 w-5" />
                                     </div>
                                     <div className="flex flex-col">
-                                        <span className="font-semibold text-foreground">Availability</span>
-                                        <span className="text-xs text-muted-foreground">Manage your schedule</span>
+                                        <span className="font-semibold text-foreground">{t("WORKER_PROFILE.CARDS.AVAILABILITY.TITLE")}</span>
+                                        <span className="text-xs text-muted-foreground">{t("WORKER_PROFILE.CARDS.AVAILABILITY.SUBTITLE")}</span>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <Badge variant="outline" className="border-green-500/20 text-green-600 bg-green-500/5">
-                                        Active
+                                        {t("WORKER_PROFILE.CARDS.AVAILABILITY.ACTIVE")}
                                     </Badge>
                                     <Link to="/worker/availability">
                                         <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full">
@@ -309,7 +311,7 @@ export default function WorkerProfile() {
                             <div className="px-5 pb-5 pt-0">
                                 <Link to="/worker/availability" className="block w-full">
                                     <Button variant="outline" size="sm" className="w-full justify-between group-hover:bg-muted/50">
-                                        Manage Availability
+                                        {t("WORKER_PROFILE.CARDS.AVAILABILITY.MANAGE_BTN")}
                                         <span className="text-xs text-muted-foreground">→</span>
                                     </Button>
                                 </Link>
@@ -321,33 +323,33 @@ export default function WorkerProfile() {
                             <div className="flex justify-between items-center">
                                 <h4 className="font-semibold flex items-center gap-2 text-sm">
                                     <Shield className="h-4 w-4 text-primary" />
-                                    Verifications
+                                    {t("WORKER_PROFILE.CARDS.VERIFICATIONS.TITLE")}
                                 </h4>
                                 <Link to="/worker/documents">
-                                    <Button variant="link" size="sm" className="h-auto p-0 text-xs text-green-500">View All</Button>
+                                    <Button variant="link" size="sm" className="h-auto p-0 text-xs text-green-500">{t("WORKER_PROFILE.CARDS.VERIFICATIONS.VIEW_ALL")}</Button>
                                 </Link>
                             </div>
                             <div className="space-y-3">
                                 {/* Diploma Status */}
                                 <div className="flex items-center justify-between text-sm">
                                     <span className="text-muted-foreground flex items-center gap-2">
-                                        <GraduationCap className="h-3.5 w-3.5" /> Diploma
+                                        <GraduationCap className="h-3.5 w-3.5" /> {t("WORKER_PROFILE.CARDS.VERIFICATIONS.DIPLOMA")}
                                     </span>
                                     {documents.some(d => d.type === 'DIPLOMA' && d.status === 'APPROVED') ? (
-                                        <Badge variant="secondary" className="bg-green-500/10 text-green-600 hover:bg-green-500/20 text-[10px] h-5">Verified</Badge>
+                                        <Badge variant="secondary" className="bg-green-500/10 text-green-600 hover:bg-green-500/20 text-[10px] h-5">{t("WORKER_PROFILE.CARDS.VERIFICATIONS.VERIFIED")}</Badge>
                                     ) : (
-                                        <Badge variant="secondary" className="bg-muted text-muted-foreground text-[10px] h-5">Pending</Badge>
+                                        <Badge variant="secondary" className="bg-muted text-muted-foreground text-[10px] h-5">{t("WORKER_PROFILE.CARDS.VERIFICATIONS.PENDING")}</Badge>
                                     )}
                                 </div>
                                 {/* Identity Status */}
                                 <div className="flex items-center justify-between text-sm">
                                     <span className="text-muted-foreground flex items-center gap-2">
-                                        <User className="h-3.5 w-3.5" /> Identity
+                                        <User className="h-3.5 w-3.5" /> {t("WORKER_PROFILE.CARDS.VERIFICATIONS.IDENTITY")}
                                     </span>
                                     {documents.some(d => d.type === 'ID' && d.status === 'APPROVED') ? (
-                                        <Badge variant="secondary" className="bg-green-500/10 text-green-600 hover:bg-green-500/20 text-[10px] h-5">Verified</Badge>
+                                        <Badge variant="secondary" className="bg-green-500/10 text-green-600 hover:bg-green-500/20 text-[10px] h-5">{t("WORKER_PROFILE.CARDS.VERIFICATIONS.VERIFIED")}</Badge>
                                     ) : (
-                                        <Badge variant="secondary" className="bg-muted text-muted-foreground text-[10px] h-5">Pending</Badge>
+                                        <Badge variant="secondary" className="bg-muted text-muted-foreground text-[10px] h-5">{t("WORKER_PROFILE.CARDS.VERIFICATIONS.PENDING")}</Badge>
                                     )}
                                 </div>
                             </div>
@@ -361,32 +363,32 @@ export default function WorkerProfile() {
                         {/* Personal Information */}
                         <section className="space-y-4">
                             <div className="flex items-center justify-between">
-                                <h3 className="text-lg font-bold font-spline text-foreground">Personal Information</h3>
+                                <h3 className="text-lg font-bold font-spline text-foreground">{t("WORKER_PROFILE.FORMS.PERSONAL_INFO.TITLE")}</h3>
                                 <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-green-500" onClick={() => document.getElementById('firstName')?.focus()}>
-                                    Edit Details
+                                    {t("WORKER_PROFILE.FORMS.PERSONAL_INFO.EDIT_DETAILS")}
                                 </Button>
                             </div>
                             <Card className="border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm rounded-2xl overflow-hidden">
                                 <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
-                                        <Label htmlFor="firstName" className="text-xs font-semibold uppercase text-muted-foreground tracking-wide">First Name</Label>
+                                        <Label htmlFor="firstName" className="text-xs font-semibold uppercase text-muted-foreground tracking-wide">{t("WORKER_PROFILE.FORMS.PERSONAL_INFO.FIRST_NAME")}</Label>
                                         <Input id="firstName" {...register("firstName")} className="bg-background/50 border-muted-foreground/20 focus:border-green-500/50 focus:ring-green-500/20" />
                                         {errors.firstName && <p className="text-xs text-destructive">{errors.firstName.message}</p>}
                                     </div>
                                     <div className="space-y-2">
-                                        <Label htmlFor="lastName" className="text-xs font-semibold uppercase text-muted-foreground tracking-wide">Last Name</Label>
+                                        <Label htmlFor="lastName" className="text-xs font-semibold uppercase text-muted-foreground tracking-wide">{t("WORKER_PROFILE.FORMS.PERSONAL_INFO.LAST_NAME")}</Label>
                                         <Input id="lastName" {...register("lastName")} className="bg-background/50 border-muted-foreground/20 focus:border-green-500/50 focus:ring-green-500/20" />
                                         {errors.lastName && <p className="text-xs text-destructive">{errors.lastName.message}</p>}
                                     </div>
                                     <div className="space-y-2">
-                                        <Label className="text-xs font-semibold uppercase text-muted-foreground tracking-wide">Email Address</Label>
+                                        <Label className="text-xs font-semibold uppercase text-muted-foreground tracking-wide">{t("WORKER_PROFILE.FORMS.PERSONAL_INFO.EMAIL")}</Label>
                                         <div className="relative">
                                             <Mail className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
                                             <Input value={worker?.user?.email || ""} disabled className="pl-9 bg-muted/20 border-transparent text-muted-foreground" />
                                         </div>
                                     </div>
                                     <div className="space-y-2">
-                                        <Label className="text-xs font-semibold uppercase text-muted-foreground tracking-wide">Location</Label>
+                                        <Label className="text-xs font-semibold uppercase text-muted-foreground tracking-wide">{t("WORKER_PROFILE.FORMS.PERSONAL_INFO.LOCATION")}</Label>
                                         <div className="w-full">
                                             <CitySelect
                                                 value={watch("city") || ""}
@@ -404,16 +406,16 @@ export default function WorkerProfile() {
                             <Card className="border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm rounded-2xl overflow-hidden px-6 py-6">
                                 <div className="space-y-6">
                                     <div className="flex items-center justify-between">
-                                        <h3 className="text-lg font-bold font-spline text-foreground">Specialties & Domains</h3>
+                                        <h3 className="text-lg font-bold font-spline text-foreground">{t("WORKER_PROFILE.FORMS.SPECIALTIES.TITLE")}</h3>
                                         <Popover>
                                             <PopoverTrigger asChild>
                                                 <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 hover:bg-primary/10 dark:text-primary dark:hover:text-primary/80 dark:hover:bg-primary/20 font-semibold px-2">
-                                                    <Plus className="h-4 w-4 mr-1.5" /> Add More
+                                                    <Plus className="h-4 w-4 mr-1.5" /> {t("WORKER_PROFILE.FORMS.SPECIALTIES.ADD_MORE")}
                                                 </Button>
                                             </PopoverTrigger>
                                             <PopoverContent className="w-80 p-0" align="end">
                                                 <div className="p-4 max-h-80 overflow-y-auto">
-                                                    <h4 className="font-semibold mb-2 text-sm">Select Domains</h4>
+                                                    <h4 className="font-semibold mb-2 text-sm">{t("WORKER_PROFILE.FORMS.SPECIALTIES.SELECT_DOMAINS")}</h4>
                                                     <DomainMultiSelect
                                                         value={selectedDomains}
                                                         onChange={handleDomainChange}
@@ -451,7 +453,7 @@ export default function WorkerProfile() {
                                             })
                                         ) : (
                                             <div className="w-full flex justify-center py-4 border-2 border-dashed border-muted-foreground/20 rounded-xl bg-muted/5">
-                                                <p className="text-sm text-muted-foreground italic">No domains selected yet</p>
+                                                <p className="text-sm text-muted-foreground italic">{t("WORKER_PROFILE.FORMS.SPECIALTIES.NO_DOMAINS")}</p>
                                             </div>
                                         )}
                                     </div>
@@ -459,13 +461,13 @@ export default function WorkerProfile() {
                                     {/* Primary Domain (Speciality) & Experience */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
                                         <div className="space-y-3">
-                                            <Label className="text-sm font-bold text-foreground">Primary Domain</Label>
+                                            <Label className="text-sm font-bold text-foreground">{t("WORKER_PROFILE.FORMS.SPECIALTIES.PRIMARY_DOMAIN")}</Label>
                                             <Select
                                                 value={watch("specialityId")?.toString() || ""}
                                                 onValueChange={(val) => setValue("specialityId", parseInt(val), { shouldDirty: true })}
                                             >
                                                 <SelectTrigger className="bg-background/50 border-input shadow-sm focus:ring-2 focus:ring-blue-500/20 h-11 rounded-lg">
-                                                    <SelectValue placeholder="Select your primary domain" />
+                                                    <SelectValue placeholder={t("WORKER_PROFILE.FORMS.SPECIALTIES.SELECT_PRIMARY")} />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     {specialities.map((s) => (
@@ -478,14 +480,14 @@ export default function WorkerProfile() {
                                         </div>
 
                                         <div className="space-y-3">
-                                            <Label className="text-sm font-bold text-foreground">Years of Experience</Label>
+                                            <Label className="text-sm font-bold text-foreground">{t("WORKER_PROFILE.FORMS.SPECIALTIES.EXPERIENCE_YEARS")}</Label>
                                             <div className="relative">
                                                 <Clock className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
                                                 <Input
                                                     type="number"
                                                     {...register("experienceYears", { valueAsNumber: true })}
                                                     className="pl-10 h-11 bg-background/50 border-input shadow-sm focus:ring-2 focus:ring-blue-500/20 rounded-lg"
-                                                    placeholder="e.g. 5"
+                                                    placeholder={t("WORKER_PROFILE.FORMS.SPECIALTIES.EXPERIENCE_PLACEHOLDER")}
                                                     min={0}
                                                 />
                                             </div>
@@ -500,18 +502,18 @@ export default function WorkerProfile() {
                             <Card className="border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm rounded-2xl overflow-hidden px-6 py-6">
                                 <div className="space-y-6">
                                     <div>
-                                        <h3 className="text-lg font-bold font-spline text-foreground mb-6">Professional Bio</h3>
+                                        <h3 className="text-lg font-bold font-spline text-foreground mb-6">{t("WORKER_PROFILE.FORMS.BIO.TITLE")}</h3>
 
                                         <div className="space-y-3">
-                                            <Label className="text-sm font-bold text-foreground">About You</Label>
+                                            <Label className="text-sm font-bold text-foreground">{t("WORKER_PROFILE.FORMS.BIO.ABOUT_LABEL")}</Label>
                                             <Textarea
                                                 {...register("bio")}
-                                                placeholder="Write a few sentences about your professional background and expertise..."
+                                                placeholder={t("WORKER_PROFILE.FORMS.BIO.PLACEHOLDER")}
                                                 className="min-h-[180px] bg-background/50 border-input shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 resize-y p-4 text-base leading-relaxed rounded-xl"
                                                 maxLength={2000}
                                             />
                                             <div className="flex justify-end pt-1">
-                                                <span className="text-xs text-muted-foreground font-medium">{watchedBio.length} / 2000 characters</span>
+                                                <span className="text-xs text-muted-foreground font-medium">{watchedBio.length} / 2000 {t("WORKER_PROFILE.FORMS.BIO.chars")}</span>
                                             </div>
                                             {errors.bio && <p className="text-xs text-destructive mt-1">{errors.bio.message}</p>}
                                         </div>
@@ -531,7 +533,7 @@ export default function WorkerProfile() {
                         disabled={!isDirty || isUpdating}
                         className="hover:bg-muted/50"
                     >
-                        Cancel
+                        {t("WORKER_PROFILE.ACTIONS.CANCEL")}
                     </Button>
                     <Button
                         onClick={handleSubmit(onSubmit)}
@@ -543,7 +545,7 @@ export default function WorkerProfile() {
                         ) : (
                             <Save className="h-4 w-4 mr-2" />
                         )}
-                        Save Changes
+                        {isUpdating ? t("WORKER_PROFILE.ACTIONS.SAVING") : t("WORKER_PROFILE.ACTIONS.SAVE")}
                     </Button>
                 </div>
                 <div className="h-4"></div>

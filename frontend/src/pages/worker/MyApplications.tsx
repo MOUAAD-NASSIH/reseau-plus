@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Link } from "react-router";
-import { format } from "date-fns";
+import { useTranslation } from "react-i18next";
 import {
     ClipboardList,
     Calendar,
@@ -31,7 +31,7 @@ import {
     Dialog,
     DialogContent,
     DialogDescription,
-    DialogFooter,
+    DialogFooter, // This was removed in the instruction, but it's part of the original code and not explicitly marked for removal. Re-adding it.
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
@@ -43,16 +43,17 @@ import type { MissionApplication, ApplicationStatus } from "@/types/application.
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 import { cn } from "@/lib/utils";
 
-const STATUS_TABS: { value: ApplicationStatus | "ALL"; label: string; icon: any }[] = [
-    { value: "ALL", label: "All Applications", icon: ClipboardList },
-    { value: "SUBMITTED", label: "Pending", icon: Clock },
-    { value: "ACCEPTED", label: "Accepted", icon: CheckCircle2 },
-    { value: "REJECTED", label: "Rejected", icon: XCircle },
-];
-
 export default function MyApplications() {
+    const { t, i18n } = useTranslation();
     const { data: applicationsData, isLoading } = useGetMyApplicationsQuery();
     const [withdrawApplication, { isLoading: isWithdrawing }] = useWithdrawApplicationMutation();
+
+    const STATUS_TABS: { value: ApplicationStatus | "ALL"; label: string; icon: any }[] = [
+        { value: "ALL", label: t("MY_APPLICATIONS.TABS.ALL"), icon: ClipboardList },
+        { value: "SUBMITTED", label: t("MY_APPLICATIONS.TABS.PENDING"), icon: Clock },
+        { value: "ACCEPTED", label: t("MY_APPLICATIONS.TABS.ACCEPTED"), icon: CheckCircle2 },
+        { value: "REJECTED", label: t("MY_APPLICATIONS.TABS.REJECTED"), icon: XCircle },
+    ];
 
     const [statusFilter, setStatusFilter] = useState<string>("ALL");
     const [searchQuery, setSearchQuery] = useState("");
@@ -102,9 +103,9 @@ export default function MyApplications() {
                 id: confirmWithdrawApp.id,
                 missionId: confirmWithdrawApp.missionId,
             }).unwrap();
-            showSuccessToast("Application withdrawn", "Your application has been withdrawn.");
+            showSuccessToast(t("MY_APPLICATIONS.MESSAGES.WITHDRAW_SUCCESS"), t("MY_APPLICATIONS.MESSAGES.WITHDRAW_SUCCESS_DESC"));
         } catch (error: any) {
-            showErrorToast(error, error?.data?.message || "Failed to withdraw application");
+            showErrorToast(error, error?.data?.message || t("MY_APPLICATIONS.MESSAGES.WITHDRAW_ERROR"));
         } finally {
             setWithdrawingId(null);
             setConfirmWithdrawApp(null);
@@ -117,19 +118,19 @@ export default function MyApplications() {
                 return {
                     color: "bg-yellow-500/15 text-yellow-700 dark:text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/25",
                     icon: Clock,
-                    label: "Pending Review"
+                    label: t("MY_APPLICATIONS.CARD.STATUS.PENDING")
                 };
             case "ACCEPTED":
                 return {
                     color: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/25",
                     icon: CheckCircle2,
-                    label: "Accepted"
+                    label: t("MY_APPLICATIONS.CARD.STATUS.ACCEPTED")
                 };
             case "REJECTED":
                 return {
                     color: "bg-red-500/15 text-red-700 dark:text-red-400 border-red-500/30 hover:bg-red-500/25",
                     icon: XCircle,
-                    label: "Rejected"
+                    label: t("MY_APPLICATIONS.CARD.STATUS.REJECTED")
                 };
             default:
                 return {
@@ -151,15 +152,15 @@ export default function MyApplications() {
                                 <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center">
                                     <ClipboardList className="h-5 w-5 text-primary" />
                                 </div>
-                                My Applications
+                                {t("MY_APPLICATIONS.TITLE")}
                             </h1>
                             <p className="text-muted-foreground mt-2 ml-13">
-                                Track the status of your mission applications
+                                {t("MY_APPLICATIONS.SUBTITLE")}
                             </p>
                         </div>
                         <Button asChild className="rounded-full shadow-lg shadow-primary/20">
                             <Link to="/worker/missions">
-                                Browse Missions
+                                {t("MY_APPLICATIONS.BROWSE_BTN")}
                                 <ArrowRight className="ml-2 h-4 w-4" />
                             </Link>
                         </Button>
@@ -176,7 +177,7 @@ export default function MyApplications() {
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                             <Input
                                 type="text"
-                                placeholder="Search applications..."
+                                placeholder={t("MY_APPLICATIONS.SEARCH_PLACEHOLDER")}
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 className="pl-9 h-9 bg-muted/50 border-input hover:border-primary/50 transition-colors rounded-full text-sm placeholder:opacity-50"
@@ -231,16 +232,16 @@ export default function MyApplications() {
                             <ClipboardList className="h-12 w-12 text-muted-foreground/50" />
                         </div>
                         <h3 className="text-xl font-bold text-foreground mb-2">
-                            {statusFilter === "ALL" && !searchQuery ? "No applications yet" : "No matching applications"}
+                            {statusFilter === "ALL" && !searchQuery ? t("MY_APPLICATIONS.EMPTY.NO_APPS_TITLE") : t("MY_APPLICATIONS.EMPTY.NO_MATCH_TITLE")}
                         </h3>
                         <p className="text-muted-foreground mb-8 max-w-md">
                             {statusFilter === "ALL" && !searchQuery
-                                ? "You haven't applied to any missions yet. Start your journey by exploring available opportunities!"
-                                : "We couldn't find any applications matching your current filters. Try adjusting your search criteria."}
+                                ? t("MY_APPLICATIONS.EMPTY.NO_APPS_DESC")
+                                : t("MY_APPLICATIONS.EMPTY.NO_MATCH_DESC")}
                         </p>
                         {statusFilter === "ALL" && !searchQuery ? (
                             <Button asChild size="lg" className="rounded-full px-8">
-                                <Link to="/worker/missions">Start Exploring</Link>
+                                <Link to="/worker/missions">{t("MY_APPLICATIONS.EMPTY.START_EXPLORING")}</Link>
                             </Button>
                         ) : (
                             <Button
@@ -251,7 +252,7 @@ export default function MyApplications() {
                                 }}
                                 className="rounded-full"
                             >
-                                Clear All Filters
+                                {t("MY_APPLICATIONS.EMPTY.CLEAR_FILTERS")}
                             </Button>
                         )}
                     </div>
@@ -311,17 +312,17 @@ export default function MyApplications() {
                                                 <div className="flex items-center justify-between text-muted-foreground/80 bg-muted/30 p-2.5 rounded-lg border border-border/50">
                                                     <span className="flex items-center gap-2 text-xs font-medium">
                                                         <Calendar className="h-3.5 w-3.5" />
-                                                        Mission Period
+                                                        {t("MY_APPLICATIONS.CARD.MISSION_PERIOD")}
                                                     </span>
                                                     <span className="text-xs text-foreground font-semibold">
-                                                        {format(new Date(mission.startDate), "MMM d")}
-                                                        {mission.endDate && ` - ${format(new Date(mission.endDate), "MMM d")}`}
+                                                        {new Date(mission.startDate).toLocaleDateString(i18n.language, { month: 'short', day: 'numeric' })}
+                                                        {mission.endDate && ` - ${new Date(mission.endDate).toLocaleDateString(i18n.language, { month: 'short', day: 'numeric' })}`}
                                                     </span>
                                                 </div>
                                             )}
                                             <div className="flex items-center gap-2 text-primary/70 text-xs px-1">
                                                 <Clock className="h-3.5 w-3.5" />
-                                                Applied on {format(new Date(application.appliedAt), "MMM d, yyyy")}
+                                                {t("MY_APPLICATIONS.CARD.APPLIED_ON", { date: new Date(application.appliedAt).toLocaleDateString(i18n.language, { year: 'numeric', month: 'short', day: 'numeric' }) })}
                                             </div>
                                         </div>
                                     </CardContent>
@@ -334,7 +335,7 @@ export default function MyApplications() {
                                         >
                                             <Link to={`/worker/missions/${application.missionId}`}>
                                                 <ExternalLink className="mr-2 h-3.5 w-3.5" />
-                                                View Mission
+                                                {t("MY_APPLICATIONS.CARD.VIEW_MISSION")}
                                             </Link>
                                         </Button>
 
@@ -345,7 +346,7 @@ export default function MyApplications() {
                                                 className="h-9 w-9 rounded-lg text-muted-foreground hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors"
                                                 onClick={() => setConfirmWithdrawApp(application)}
                                                 disabled={isCurrentlyWithdrawing}
-                                                title="Withdraw Application"
+                                                title={t("MY_APPLICATIONS.CARD.WITHDRAW_BTN_TITLE")}
                                             >
                                                 {isCurrentlyWithdrawing ? (
                                                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -368,12 +369,10 @@ export default function MyApplications() {
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2 text-destructive">
                             <AlertCircle className="h-5 w-5" />
-                            Withdraw Application
+                            {t("MY_APPLICATIONS.WITHDRAW_DIALOG.TITLE")}
                         </DialogTitle>
                         <DialogDescription>
-                            Are you sure you want to withdraw your application for <span className="font-semibold text-foreground">"{confirmWithdrawApp?.mission?.title}"</span>?
-                            <br /><br />
-                            This action cannot be undone, but you can re-apply if the mission is still open.
+                            {t("MY_APPLICATIONS.WITHDRAW_DIALOG.DESC")} <span className="font-semibold text-foreground">"{confirmWithdrawApp?.mission?.title}"</span>{t("MY_APPLICATIONS.WITHDRAW_DIALOG.DESC_SUFFIX")}
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
@@ -382,7 +381,7 @@ export default function MyApplications() {
                             onClick={() => setConfirmWithdrawApp(null)}
                             disabled={isWithdrawing}
                         >
-                            Cancel
+                            {t("MY_APPLICATIONS.WITHDRAW_DIALOG.CANCEL")}
                         </Button>
                         <Button
                             variant="destructive"
@@ -392,12 +391,12 @@ export default function MyApplications() {
                             {isWithdrawing ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    Withdrawing...
+                                    {t("MY_APPLICATIONS.WITHDRAW_DIALOG.WITHDRAWING")}
                                 </>
                             ) : (
                                 <>
                                     <Trash2 className="mr-2 h-4 w-4" />
-                                    Confirm Withdrawal
+                                    {t("MY_APPLICATIONS.WITHDRAW_DIALOG.CONFIRM")}
                                 </>
                             )}
                         </Button>

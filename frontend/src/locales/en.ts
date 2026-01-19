@@ -45,7 +45,8 @@ export const en = {
             SOCIAL_SERVICE: "Social Service",
             SOCIAL_WORKER: "Social Worker",
             WORKER: "Worker",
-            N_A: "N/A"
+            N_A: "N/A",
+            DELETE_PROFILE_PIC: "Remove photo"
         },
         NAV: {
             FEATURES: "Features",
@@ -1027,78 +1028,78 @@ export const en = {
             },
         },
         ADMIN_VALIDATION: {
-                WORKERS: {
-                    TITLE: "Worker Validations",
-                    SUBTITLE: "Review and approve new worker registrations",
-                    SEARCH_PLACEHOLDER: "Search by name, email...",
-                    STATUS_FILTER: "Status",
-                    ALL_STATUSES: "All Statuses",
-                    EMPTY_TITLE: "No pending validations",
-                    EMPTY_DESC: "All worker registrations have been processed.",
-                    GRID_VIEW: "Card View",
-                    TABLE_VIEW: "Table View",
-                    REVIEW_APPLICATION: "Review Application",
-                    VIEW_DETAILS: "View Details",
-                    STATS: {
-                        PENDING: "Pending Validations",
-                        TOTAL: "Total Workers",
-                        VERIFIED: "Verified Workers",
-                        REJECTED: "Rejected Registrations"
-                    },
-                    SPECIALITY_LABEL: "Speciality",
-                    DOCUMENTS_SECTION: "Verification Documents",
-                    BIO_SECTION: "Worker Biography",
-                    APPROVE: "Approve",
-                    REJECT: "Reject",
-                    UPLOADED: "Uploaded",
-                    DOC_TYPES: {
-                        ID_CARD: "ID Card",
-                        DIPLOMA: "Diploma",
-                        LICENSE: "Professional License",
-                        CERTIFICATE: "Certificate",
-                        CV: "Resume/CV"
-                    },
-                    TABLE: {
-                        WORKER: "Worker",
-                        LOCATION: "Location",
-                        DOCS: "Docs",
-                        REGISTERED: "Registered",
-                        STATUS: "Status",
-                        ACTIONS: "Actions"
-                    },
-                    DIALOG: {
-                        TITLE: "Review Worker",
-                        SUBTITLE: "Verify worker details and documents",
-                        APPROVE_BTN: "Approve Worker",
-                        REJECT_BTN: "Reject Worker",
-                        CONFIRM_REJECT: "Confirm Rejection",
-                        REJECT_REASON: "Reason for rejection",
-                        CANCEL: "Cancel",
-                        DOCUMENTS_SECTION: "Documents",
-                        BIO_SECTION: "Bio"
-                    }
+            WORKERS: {
+                TITLE: "Worker Validations",
+                SUBTITLE: "Review and approve new worker registrations",
+                SEARCH_PLACEHOLDER: "Search by name, email...",
+                STATUS_FILTER: "Status",
+                ALL_STATUSES: "All Statuses",
+                EMPTY_TITLE: "No pending validations",
+                EMPTY_DESC: "All worker registrations have been processed.",
+                GRID_VIEW: "Card View",
+                TABLE_VIEW: "Table View",
+                REVIEW_APPLICATION: "Review Application",
+                VIEW_DETAILS: "View Details",
+                STATS: {
+                    PENDING: "Pending Validations",
+                    TOTAL: "Total Workers",
+                    VERIFIED: "Verified Workers",
+                    REJECTED: "Rejected Registrations"
                 },
-                DOCUMENTS: {
-                    TITLE: "Document Validations",
-                    SUBTITLE: "Review and verify uploaded worker documents",
-                    SEARCH_PLACEHOLDER: "Search by worker name...",
-                    TYPE_FILTER: "Document Type",
-                    ALL_TYPES: "All Types",
-                    EMPTY_TITLE: "No pending documents",
-                    EMPTY_DESC: "All uploaded documents have been reviewed.",
-                    CARD: {
-                        WORKER_ID: "Worker",
-                        UPLOADED: "Uploaded",
-                        VIEW: "View",
-                        DOWNLOAD: "Download",
-                        APPROVE: "Approve",
-                        REJECT: "Reject"
-                    },
-                    DIALOG: {
-                        TITLE: "Review Document",
-                        SUBTITLE: "Verify document authenticity",
-                        PREVIOUS_COMMENT: "Previous Comment",
-                        REJECT_COMMENT: "Rejection Reason"
+                SPECIALITY_LABEL: "Speciality",
+                DOCUMENTS_SECTION: "Verification Documents",
+                BIO_SECTION: "Worker Biography",
+                APPROVE: "Approve",
+                REJECT: "Reject",
+                UPLOADED: "Uploaded",
+                DOC_TYPES: {
+                    ID_CARD: "ID Card",
+                    DIPLOMA: "Diploma",
+                    LICENSE: "Professional License",
+                    CERTIFICATE: "Certificate",
+                    CV: "Resume/CV"
+                },
+                TABLE: {
+                    WORKER: "Worker",
+                    LOCATION: "Location",
+                    DOCS: "Docs",
+                    REGISTERED: "Registered",
+                    STATUS: "Status",
+                    ACTIONS: "Actions"
+                },
+                DIALOG: {
+                    TITLE: "Review Worker",
+                    SUBTITLE: "Verify worker details and documents",
+                    APPROVE_BTN: "Approve Worker",
+                    REJECT_BTN: "Reject Worker",
+                    CONFIRM_REJECT: "Confirm Rejection",
+                    REJECT_REASON: "Reason for rejection",
+                    CANCEL: "Cancel",
+                    DOCUMENTS_SECTION: "Documents",
+                    BIO_SECTION: "Bio"
+                }
+            },
+            DOCUMENTS: {
+                TITLE: "Document Validations",
+                SUBTITLE: "Review and verify uploaded worker documents",
+                SEARCH_PLACEHOLDER: "Search by worker name...",
+                TYPE_FILTER: "Document Type",
+                ALL_TYPES: "All Types",
+                EMPTY_TITLE: "No pending documents",
+                EMPTY_DESC: "All uploaded documents have been reviewed.",
+                CARD: {
+                    WORKER_ID: "Worker",
+                    UPLOADED: "Uploaded",
+                    VIEW: "View",
+                    DOWNLOAD: "Download",
+                    APPROVE: "Approve",
+                    REJECT: "Reject"
+                },
+                DIALOG: {
+                    TITLE: "Review Document",
+                    SUBTITLE: "Verify document authenticity",
+                    PREVIOUS_COMMENT: "Previous Comment",
+                    REJECT_COMMENT: "Rejection Reason"
                 }
             },
         },
@@ -1176,6 +1177,675 @@ export const en = {
                 ACTIVE: "Active"
             },
             SETTINGS_DESC: "Account settings and password management are handled through the main settings panel. Contact the system administrator for account-related changes."
+        },
+        WORKER_AVAILABILITY: {
+            TITLE: "My Availabilities",
+            SUBTITLE: "Manage your schedule and mission capacity for upcoming assignments.",
+            SYNC_CALENDAR: "Sync Calendar",
+            MONTH_VIEW: "Month View",
+            WEEK_VIEW: "Week View",
+            DAYS: {
+                SUN: "Sun",
+                MON: "Mon",
+                TUE: "Tue",
+                WED: "Wed",
+                THU: "Thu",
+                FRI: "Fri",
+                SAT: "Sat"
+            },
+            EDIT_SHEET_TITLE: "Edit Availability",
+            SELECTED_DAYS_COUNT: "{{count}} consecutive days selected",
+            TIP: "💡 Tip: Click on multiple consecutive dates to set availability for range.",
+            CLEAR: "Clear",
+            STATUS_LABEL: "Availability Status",
+            STATUS_AVAILABLE: "Available",
+            STATUS_BLOCKED: "Blocked",
+            TIME_SLOT_LABEL: "Time Slot",
+            SLOT_MORNING: "Morning",
+            SLOT_ALLDAY: "All Day",
+            SLOT_AFTERNOON: "Afternoon",
+            START_LABEL: "Start",
+            END_LABEL: "End",
+            UPCOMING_MISSIONS: "Upcoming Missions",
+            NO_UPCOMING: "No upcoming missions",
+            NO_UPCOMING_DESC: "Your confirmed missions will appear here",
+            UPDATE_AVAILABILITY: "Update Availability",
+            SET_AVAILABILITY: "Set Availability",
+            UPDATE_BLOCKED: "Update Blocked Status",
+            BLOCK_DAYS: "Block Selected Days",
+            REMOVE_AVAILABILITY: "Remove Availability",
+            REMOVE_BLOCKING: "Remove Blocking",
+            SAVE_AVAILABILITY: "Save Availability",
+            SAVE_BLOCKING: "Save Blocking",
+            TOAST: {
+                WEEKEND_TITLE: "Weekend not available",
+                WEEKEND_DESC: "You cannot set availability for weekends (Saturday and Sunday).",
+                INVALID_RANGE: "Invalid time range",
+                INVALID_RANGE_DESC: "End time must be after start time.",
+                SUCCESS_AVAILABILITY: "Availability updated",
+                SUCCESS_BLOCKING: "Blocking updated",
+                DELETED: "Availability deleted",
+                DELETED_DESC: "Your availability has been removed.",
+                SYNC: "Syncing calendar",
+                SYNC_DESC: "Your calendar is being synchronized..."
+            }
+        },
+        WORKER_PROFILE: {
+            TITLE: "My Profile",
+            SUBTITLE: "Manage your personal information and privacy.",
+            CARDS: {
+                PROFILE: {
+                    STRENGTH: "Profile Strength",
+                    COMPLETE_MSG: "Complete your profile to increase visibility."
+                },
+                AVAILABILITY: {
+                    TITLE: "Availability",
+                    SUBTITLE: "Manage your schedule",
+                    ACTIVE: "Active",
+                    MANAGE_BTN: "Manage Availability"
+                },
+                VERIFICATIONS: {
+                    TITLE: "Verifications",
+                    VIEW_ALL: "View All",
+                    DIPLOMA: "Diploma",
+                    IDENTITY: "Identity",
+                    VERIFIED: "Verified",
+                    PENDING: "Pending"
+                }
+            },
+            FORMS: {
+                PERSONAL_INFO: {
+                    TITLE: "Personal Information",
+                    EDIT_DETAILS: "Edit Details",
+                    FIRST_NAME: "First Name",
+                    LAST_NAME: "Last Name",
+                    EMAIL: "Email Address",
+                    LOCATION: "Location"
+                },
+                SPECIALTIES: {
+                    TITLE: "Specialties & Domains",
+                    ADD_MORE: "Add More",
+                    SELECT_DOMAINS: "Select Domains",
+                    NO_DOMAINS: "No domains selected yet",
+                    PRIMARY_DOMAIN: "Primary Domain",
+                    SELECT_PRIMARY: "Select your primary domain",
+                    EXPERIENCE_YEARS: "Years of Experience",
+                    EXPERIENCE_PLACEHOLDER: "e.g. 5"
+                },
+                BIO: {
+                    TITLE: "Professional Bio",
+                    ABOUT_LABEL: "About You",
+                    PLACEHOLDER: "Write a few sentences about your professional background and expertise...",
+                    chars: "characters"
+                }
+            },
+            ACTIONS: {
+                CANCEL: "Cancel",
+                SAVE: "Save Changes",
+                SAVING: "Saving...",
+                MESSAGES: {
+                    SUCCESS: "Profile updated",
+                    SUCCESS_DESC: "Your profile has been saved successfully.",
+                    ERROR: "Failed to update profile",
+                    PIC_UPLOAD_SUCCESS: "Profile picture updated",
+                    PIC_UPLOAD_DESC: "Your profile picture has been uploaded successfully.",
+                    PIC_DELETE_SUCCESS: "Profile picture removed",
+                    PIC_DELETE_DESC: "Your profile picture has been deleted."
+                }
+            }
+        },
+        WORKER_DASHBOARD: {
+            WELCOME: "Welcome back, {{name}}",
+            WELCOME_SUBTITLE: "You have <1>{{activeCount}} active missions</1> and <3>{{notifCount}} new notifications</3>.",
+            HEADER_BUTTONS: {
+                AVAILABILITY: "Availability",
+                FIND_MISSIONS: "Find Missions"
+            },
+            STATS: {
+                ACTIVE_MISSIONS: "Active Missions",
+                IN_PROGRESS: "Currently in progress",
+                COMPLETED_MISSIONS: "Missions Completed",
+                ALL_TIME: "All time count",
+                EARNINGS: "Total Earnings",
+                ESTIMATED_NET: "Estimated net earnings",
+                RATING: "Average Rating",
+                TOTAL_REVIEWS: "{{count}} total reviews"
+            },
+            ACTIVE_MISSION: {
+                TITLE: "Active Mission",
+                VIEW_DETAILS: "View Details",
+                IN_PROGRESS_BADGE: "In Progress",
+                VIEW_MISSION_BTN: "View Mission",
+                CONTACT_INSTITUTION: "Contact Institution",
+                NO_ACTIVE_TITLE: "No active mission",
+                NO_ACTIVE_DESC: "You don't have any missions currently in progress. Apply to new opportunities!",
+                FIND_MISSIONS_BTN: "Find Missions"
+            },
+            APPLICATIONS: {
+                TITLE: "Recent Applications",
+                VIEW_ALL: "View All",
+                NO_PENDING_TITLE: "No pending applications",
+                NO_PENDING_DESC: "You haven't submitted any applications recently.",
+                BROWSE_BTN: "Browse Missions",
+                TABLE: {
+                    MISSION: "Mission",
+                    INSTITUTION: "Institution",
+                    DATE: "Applied Date",
+                    STATUS: "Status"
+                },
+                APPLIED_LABEL: "Applied:"
+            },
+            QUICK_ACTIONS: {
+                TITLE: "Quick Actions",
+                AVAILABILITY: "Availability",
+                DOCUMENTS: "Documents",
+                REVIEWS: "Reviews",
+                SUPPORT: "Support"
+            },
+            NOTIFICATIONS: {
+                TITLE: "Notifications",
+                NO_NEW: "No new notifications.",
+                VIEW_ALL: "View All"
+            }
+        },
+        WORKER_DOCUMENTS: {
+            TITLE: "My Professional Documents",
+            SUBTITLE: "Manage your diplomas and certifications to ensure mission eligibility. Verified documents increase your visibility to institutions.",
+            SECURE_MSG: "Encrypted & Secure Storage",
+            UPLOAD_BTN: "Upload Document",
+            STATS: {
+                TOTAL: "Total Documents",
+                UPLOADED: "+{{count}} uploaded",
+                VERIFIED: "Verified & Active",
+                READY_MSG: "Ready for mission matching",
+                ACTION_REQUIRED: "Action Required",
+                CHECK_REJECTED: "Check rejected items"
+            },
+            DIALOG: {
+                TITLE: "Upload Document",
+                DESC: "Upload your professional documents (PDF only, max 10MB)",
+                TYPE_LABEL: "Document Type",
+                TYPE_PLACEHOLDER: "Select document type",
+                TYPES: {
+                    DIPLOMA: "Diploma",
+                    CV: "CV / Resume",
+                    ID: "ID Card",
+                    OTHER: "Other"
+                },
+                DOC_TITLE_LABEL: "Document Title",
+                DOC_TITLE_PLACEHOLDER: "e.g. Master in Management",
+                FILE_LABEL: "File",
+                DRAG_DROP: "Click to select or drag & drop",
+                DRAG_DROP_ACTIVE: "Dropping...",
+                DRAG_DROP_TITLE: "Drag & drop your PDF here",
+                DRAG_DROP_DESC: "Support for PDF files up to 10MB. We automatically scan for clarity and validity.",
+                CANCEL: "Cancel",
+                UPLOAD: "Upload",
+                UPLOADING: "Uploading..."
+            },
+            LIST: {
+                TITLE: "Recent Uploads",
+                EMPTY_TITLE: "No documents uploaded",
+                EMPTY_DESC: "Upload your first document to get started",
+                VIEW_BTN: "View",
+                STATUS: {
+                    VERIFIED: "Verified",
+                    PENDING: "Pending Review",
+                    REJECTED: "Rejected"
+                },
+                REASON: "Reason: {{reason}}"
+            },
+            MESSAGES: {
+                INVALID_TYPE: "Invalid file type",
+                Please_PDF: "Please upload a PDF file",
+                FILE_TOO_LARGE: "File too large",
+                SIZE_LIMIT: "Please upload a file smaller than 10MB",
+                UPLOAD_SUCCESS: "Document uploaded",
+                UPLOAD_SUCCESS_DESC: "Your document has been uploaded successfully and is pending review",
+                UPLOAD_ERROR: "Failed to upload document"
+            },
+            FOOTER: "Your documents are processed in accordance with GDPR regulations. Need assistance? Contact support."
+        },
+        MY_APPLICATIONS: {
+            TITLE: "My Applications",
+            SUBTITLE: "Track the status of your mission applications",
+            BROWSE_BTN: "Browse Missions",
+            SEARCH_PLACEHOLDER: "Search applications...",
+            TABS: {
+                ALL: "All Applications",
+                PENDING: "Pending",
+                ACCEPTED: "Accepted",
+                REJECTED: "Rejected"
+            },
+            EMPTY: {
+                NO_APPS_TITLE: "No applications yet",
+                NO_APPS_DESC: "You haven't applied to any missions yet. Start your journey by exploring available opportunities!",
+                NO_MATCH_TITLE: "No matching applications",
+                NO_MATCH_DESC: "We couldn't find any applications matching your current filters. Try adjusting your search criteria.",
+                START_EXPLORING: "Start Exploring",
+                CLEAR_FILTERS: "Clear All Filters"
+            },
+            CARD: {
+                MISSION_PERIOD: "Mission Period",
+                APPLIED_ON: "Applied on {{date}}",
+                VIEW_MISSION: "View Mission",
+                WITHDRAW_BTN_TITLE: "Withdraw Application",
+                STATUS: {
+                    PENDING: "Pending Review",
+                    ACCEPTED: "Accepted",
+                    REJECTED: "Rejected"
+                }
+            },
+            WITHDRAW_DIALOG: {
+                TITLE: "Withdraw Application",
+                DESC: "Are you sure you want to withdraw your application for",
+                DESC_SUFFIX: "? This action cannot be undone, but you can re-apply if the mission is still open.",
+                CANCEL: "Cancel",
+                CONFIRM: "Confirm Withdrawal",
+                WITHDRAWING: "Withdrawing..."
+            },
+            MESSAGES: {
+                WITHDRAW_SUCCESS: "Application withdrawn",
+                WITHDRAW_SUCCESS_DESC: "Your application has been withdrawn.",
+                WITHDRAW_ERROR: "Failed to withdraw application"
+            }
+        },
+        AVAILABLE_MISSIONS: {
+            TITLE: "Available Missions",
+            SUBTITLE: "Find your next social work contract with ease.",
+            FILTERS: {
+                TITLE: "Filters",
+                DOMAINS: "Domains",
+                SPECIALTY: "Specialty",
+                URGENCY: "Urgency",
+                DISTANCE: "Distance",
+                CLEAR_ALL: "Clear all",
+                RESET_ALL: "Reset all",
+                URGENCY_OPTIONS: {
+                    ALL: "All",
+                    HIGH: "High Priority",
+                    MEDIUM: "Medium",
+                    LOW: "Standard"
+                }
+            },
+            SORT: {
+                LABEL: "Sort by:",
+                OPTIONS: {
+                    HIGHEST_PAY: "Highest Pay",
+                    MOST_URGENT: "Most Urgent",
+                    NEAREST: "Nearest Location",
+                    NEWEST: "Newest First"
+                }
+            },
+            SEARCH_PLACEHOLDER: "Search missions...",
+            EMPTY: {
+                TITLE: "No missions found",
+                DESC: "No missions match your current filters. Try adjusting your search criteria.",
+                CLEAR_BTN: "Clear Filters"
+            },
+            CARD: {
+                TOTAL_BUDGET: "Total Budget",
+                VERIFIED_INSTITUTION: "Verified Institution",
+                APPLIED: "Applied",
+                VIEW_DETAILS: "View Details",
+                URGENCY: {
+                    URGENT: "URGENT",
+                    MODERATE: "MODERATE",
+                    STANDARD: "STANDARD"
+                }
+            }
+        },
+        WORKER_MISSION_DETAILS: {
+            URGENCY: {
+                URGENT: "URGENT",
+                MODERATE: "MODERATE",
+                STANDARD: "STANDARD"
+            },
+            STATUS: {
+                ACCEPTED: "Accepted",
+                SUBMITTED: "Submitted",
+                REJECTED: "Rejected",
+                OPEN: "Open",
+                ONGOING: "Ongoing",
+                CLOSED: "Closed",
+                COMPLETED: "Completed",
+                CANCELLED: "Cancelled"
+            },
+            NOT_FOUND: {
+                TITLE: "Mission not found",
+                DESC: "The mission you're looking for doesn't exist or has been removed.",
+                BACK_BTN: "Back to Missions"
+            },
+            BREADCRUMBS: {
+                DASHBOARD: "Dashboard",
+                MISSIONS: "Missions",
+                MISSION_PREFIX: "Mission#"
+            },
+            HEADER: {
+                APPLIED_BADGE: "Applied",
+                REF: "Ref",
+                PROFESSIONAL_MISSION: "Professional Mission"
+            },
+            ACTIONS: {
+                SUPPORT: "Support",
+                WITHDRAW: "Withdraw",
+                WITHDRAWING: "Withdrawing...",
+                APPLY: "Apply Now",
+                APPLYING: "Applying..."
+            },
+            TABS: {
+                OVERVIEW: {
+                    TITLE: "Mission Overview",
+                    DEFAULT_DESC: "Professional social work services required. Please review all requirements carefully before applying.",
+                    START_DATE: "Start Date",
+                    DURATION: "Duration",
+                    MULTIPLE_DAYS: "Multiple Days",
+                    NA: "N/A"
+                },
+                INSTITUTION: {
+                    TITLE: "Institution",
+                    GET_DIRECTIONS: "Get Directions"
+                },
+                REQUIREMENTS: {
+                    TITLE: "Mission Requirements",
+                    REQUIRED_SPECIALTY: "Required Specialty",
+                    FOCUS_DOMAINS: "Focus Domains",
+                    MANDATORY_MSG: "Mandatory requirement for this mission"
+                },
+                APPLICATION_STATUS: {
+                    SUBMITTED_TITLE: "Application Submitted Successfully",
+                    STATUS_LABEL: "Status:",
+                    APPLIED_ON: "Applied on {{date}}",
+                    WITHDRAW_BTN: "Withdraw Application"
+                },
+                CONTACT: {
+                    TITLE: "Point of Contact",
+                    INSTITUTION_CONTACT: "Institution Contact",
+                    COORDINATOR: "Coordinator",
+                    CALL: "Call",
+                    MESSAGE: "Message"
+                },
+                COMPENSATION: {
+                    TITLE: "Compensation",
+                    MAD: "MAD",
+                    PLATFORM_FEE_MSG: "A <bold>15% platform fee</bold> will be deducted from this budget.",
+                    TOTAL_BUDGET: "Total Budget"
+                },
+                VERIFICATION: {
+                    TITLE: "Verified Institution",
+                    DESC: "This institution has been verified by our platform and meets all quality standards."
+                }
+            },
+            TOASTS: {
+                APPLY_SUCCESS: "Application submitted",
+                APPLY_SUCCESS_DESC: "Your application has been sent to the institution.",
+                WITHDRAW_SUCCESS: "Application withdrawn",
+                WITHDRAW_SUCCESS_DESC: "Your application has been successfully withdrawn.",
+                ERROR_DEFAULT: "Failed to perform action",
+                COMING_SOON: "Coming Soon",
+                SUPPORT_MSG: "Support ticket feature will be available soon!",
+                CALL_MSG: "Call feature will be available soon!",
+                DIRECTIONS_MSG: "Map directions feature will be available soon!",
+                CONTACT_ERROR: "Institution contact not available",
+                CHAT_ERROR: "Failed to open chat"
+            },
+            CHAT_MODAL: {
+                TITLE: "Message Institution"
+            }
+        },
+        ASSIGNED_MISSIONS: {
+            TITLE: "My Assignments",
+            SUBTITLE: "Track and manage your active and past missions",
+            FIND_NEW: "Find New Missions",
+            STATS: {
+                ACTIVE: "Active Missions",
+                ACTIVE_DESC: "Currently active",
+                IN_PROGRESS: "In Progress",
+                ONGOING_DESC: "Ongoing missions",
+                COMPLETED: "Completed",
+                COMPLETED_DESC: "All time count",
+                EARNINGS: "Total Earnings",
+                EARNINGS_DESC: "Net earnings (fees deducted)",
+                TREND_NOW: "Now",
+                TREND_PENDING: "Pending",
+                TREND_DONE: "Done"
+            },
+            FILTERS: {
+                ALL: "All Missions",
+                ACTIVE: "Active",
+                ONGOING: "In Progress",
+                COMPLETED: "Completed",
+                CANCELLED: "Cancelled"
+            },
+            SEARCH_PLACEHOLDER: "Search assignments...",
+            TIME_FILTER: {
+                ALL_TIME: "All Time",
+                UPCOMING: "Upcoming",
+                PAST: "Past"
+            },
+            EMPTY: {
+                TITLE: "No assignments found",
+                DESC_FILTERED: "No assignments match your current filters. Try adjusting your search criteria.",
+                DESC_NO_DATA: "You don't have any assigned missions yet. Start browsing to find your next opportunity!",
+                CLEAR_BTN: "Clear All Filters",
+                BROWSE_BTN: "Browse Missions"
+            },
+            CARD: {
+                START: "Start",
+                BUDGET: "Budget",
+                TIMING: "Timing",
+                DETAILS: "Details",
+                REVIEW: "Review",
+                REVIEWED: "Reviewed",
+                PAID: "Paid",
+                TBD: "TBD",
+                ENDED: "Ended",
+                ENDS_TODAY: "Ends today",
+                DAYS_LEFT: "{{count}} days left",
+                ONE_DAY_LEFT: "1 day left",
+                MAD: "MAD"
+            },
+            STATUS: {
+                ACTIVE: "Active",
+                ONGOING: "In Progress",
+                COMPLETED: "Completed",
+                CANCELLED: "Cancelled"
+            }
+        },
+        ASSIGNMENT_DETAILS: {
+            BREADCRUMBS: {
+                DASHBOARD: "Dashboard",
+                ASSIGNMENTS: "Assignments",
+                PREFIX: "Assignment#"
+            },
+            BADGES: {
+                REVIEW_SUBMITTED: "Review Submitted",
+                PAYMENT_RECEIVED: "Payment Received"
+            },
+            ACTIONS: {
+                GET_SUPPORT: "Get Support",
+                VIEW_MAP: "View Map",
+                DIRECTIONS: "Directions",
+                CALL: "Call"
+            },
+            REVIEW: {
+                INSTITUTION_FEEDBACK_TITLE: "Institution Feedback",
+                YOUR_REVIEW_TITLE: "Your Review",
+                FORM_TITLE: "How was your experience?",
+                FORM_DESC: "Rate your collaboration with {{name}}. This feedback is valuable for the community.",
+                CLICK_TO_RATE: "Click to rate",
+                FEEDBACK_LABEL: "Your Feedback",
+                OPTIONAL: "(Optional)",
+                PLACEHOLDER: "Share details about the work environment, communication, etc...",
+                SUBMIT_BTN: "Submit Review",
+                SUBMITTING: "Submitting...",
+                SUCCESS_TITLE: "Review submitted",
+                SUCCESS_DESC: "Thank you for your feedback!",
+                ERROR_TITLE: "Failed to submit review"
+            },
+            OVERVIEW: {
+                TITLE: "Mission Overview",
+                DESC: "Details and context about this assignment",
+                NO_DESC: "No description provided for this mission."
+            },
+            REQUIREMENTS: {
+                TITLE: "Requirements & Scope",
+                DESC: "Skills and expertise required",
+                PRIMARY_SPECIALITY: "Primary Speciality",
+                INTERVENTION_DOMAINS: "Intervention Domains",
+                NO_DOMAINS: "No specific domains listed"
+            },
+            SIDEBAR: {
+                TOTAL_BUDGET: "Total Budget",
+                START_DATE: "Start Date",
+                END_DATE: "End Date",
+                DURATION: "Duration",
+                DAYS: "days",
+                ADDRESS: "Address",
+                INSTITUTION_CONTACT: "Institution Contact",
+                MANAGER: "Manager"
+            },
+            NOT_FOUND: {
+                TITLE: "Assignment Not Found",
+                DESC: "We couldn't locate the assignment you're looking for. It may have been removed or you don't have access.",
+                BACK_BTN: "Back to Assignments"
+            },
+            STATUS: {
+                ACTIVE: "Active",
+                ONGOING: "In Progress",
+                COMPLETED: "Completed",
+                CANCELLED: "Cancelled"
+            },
+            URGENCY: {
+                HIGH: "Urgent",
+                MEDIUM: "Medium Priority",
+                LOW: "Standard"
+            },
+            TOASTS: {
+                COMING_SOON: "Coming Soon",
+                SUPPORT_MSG: "Support ticket feature will be available soon!",
+                CALL_MSG: "Call feature will be available soon!",
+                DIRECTIONS_MSG: "Map directions feature will be available soon!",
+                MAP_MSG: "Map view feature will be available soon!"
+            }
+        },
+        WORKER_REVIEWS: {
+            TITLE: "My Reviews",
+            SUBTITLE: "Build your reputation and provide feedback to institutions",
+            STATS: {
+                AVG_RATING: "Average Rating",
+                RECEIVED: "Reviews Received",
+                WRITTEN: "Reviews Written"
+            },
+            FALLBACK_NAMES: {
+                ANONYMOUS: "Anonymous",
+                USER: "User",
+                INSTITUTION: "Institution"
+            },
+            PENDING: {
+                LABEL: "Pending Actions",
+                TITLE: "Rate Your Recent Missions",
+                DESC: "You have completed missions that haven't been reviewed yet.",
+                BUTTON: "Review"
+            },
+            TABS: {
+                RECEIVED: "Received Reviews",
+                WRITTEN: "Written Reviews"
+            },
+            EMPTY: {
+                RECEIVED_TITLE: "No reviews received yet",
+                RECEIVED_DESC: "Complete missions with excellence to earn 5-star reviews from institutions!",
+                BROWSE_BTN: "Browse Missions",
+                WRITTEN_TITLE: "No reviews written",
+                WRITTEN_DESC: "Your feedback helps improve the community. Review institutions after completing missions."
+            },
+            DIALOG: {
+                TITLE: "Write a Review",
+                DESC: "Your honest feedback helps other workers and institutions."
+            },
+            FORM: {
+                REVIEWING: "Reviewing",
+                RATING_LABEL: "How would you rate your experience?",
+                FEEDBACK_LABEL: "Additional Feedback",
+                OPTIONAL: "(Optional)",
+                PLACEHOLDER: "Share details about your collaboration, communication, and overall satisfaction...",
+                CANCEL: "Cancel",
+                SUBMIT: "Submit Review",
+                SUBMITTING: "Submitting..."
+            },
+            TOASTS: {
+                SUCCESS_TITLE: "Review submitted",
+                SUCCESS_DESC: "Thank you for your feedback!",
+                ERROR: "Failed to submit review"
+            }
+        },
+        WORKER_NOTIFICATIONS: {
+            TITLE: "Notifications",
+            SUBTITLE: "Stay updated on your missions, applications, and payments",
+            ACTIONS: {
+                MARK_ALL_READ: "Mark all as read",
+                MARK_READ: "Mark as read",
+                DELETE: "Delete"
+            },
+            TABS: {
+                ALL: "All Notifications",
+                UNREAD: "Unread"
+            },
+            NEW: "New",
+            EMPTY: {
+                ALL_TITLE: "No notifications",
+                ALL_DESC: "You're all caught up! Important updates will appear here.",
+                UNREAD_TITLE: "No unread notifications",
+                UNREAD_DESC: "Great job! You've read all your notifications."
+            }
+        },
+        MESSAGES: {
+            TITLE: "Messages",
+            SEARCH_PLACEHOLDER: "Search conversations...",
+            NO_CONVERSATIONS: "No conversations",
+            START_MESSAGING: "Start messaging from a mission details page",
+            UNKNOWN_USER: "Unknown",
+            YOU_PREFIX: "You: ",
+            NO_MESSAGES: "No messages yet",
+            EMPTY_WINDOW: {
+                TITLE: "Your Messages",
+                DESC: "Select a conversation from the sidebar to start chatting with institutions or support."
+            },
+            CHAT_WINDOW: {
+                SOCIAL_WORKER: "Social Worker",
+                INSTITUTION: "Institution",
+                NO_MESSAGES_YET: "No messages yet. Say hello! 👋",
+                STATUS: {
+                    READ: "Read",
+                    DELIVERED: "Delivered",
+                    SENT: "Sent"
+                },
+                TYPING: {
+                    IS: "is typing...",
+                    ARE: "are typing..."
+                },
+                INPUT: {
+                    PLACEHOLDER: "Type a message...",
+                    HINT: "Press Enter to send, Shift+Enter for new line"
+                }
+            }
+        },
+        PENDING_APPROVAL: {
+            TITLE: "Account Pending Approval",
+            DESC: "Your account is currently under review by our admin team",
+            ALERT: {
+                TITLE: "What happens next?",
+                DESC: "Our administrators will review your profile and documents. This process typically takes 1-3 business days. You'll receive a notification once your account has been verified."
+            },
+            WAIT_TITLE: "While you wait, you can:",
+            ACTIONS: {
+                PROFILE_TITLE: "Complete your profile",
+                PROFILE_DESC: "Make sure all your information is accurate and up-to-date",
+                DOCS_TITLE: "Upload required documents",
+                DOCS_DESC: "Ensure all necessary documents are uploaded for faster approval",
+                GO_PROFILE: "Go to Profile",
+                MANAGE_DOCS: "Manage Documents"
+            }
         }
     }
 };

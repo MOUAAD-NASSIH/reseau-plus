@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import {
     Upload,
     Lock,
@@ -42,6 +43,7 @@ import {
 import type { DocumentType } from "@/types/auth.types";
 
 export default function WorkerDocuments() {
+    const { t } = useTranslation();
     const { data: documentsData, isLoading } = useGetWorkerDocumentsQuery();
     const [uploadDocument, { isLoading: isUploading }] = useUploadDocumentMutation();
     const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
@@ -81,13 +83,13 @@ export default function WorkerDocuments() {
     const handleFileSelection = (file: File) => {
         // Validate file type
         if (file.type !== "application/pdf") {
-            showErrorToast("Invalid file type", "Please upload a PDF file");
+            showErrorToast(t("WORKER_DOCUMENTS.MESSAGES.INVALID_TYPE"), t("WORKER_DOCUMENTS.MESSAGES.Please_PDF"));
             return;
         }
 
         // Validate file size (10MB)
         if (file.size > 10 * 1024 * 1024) {
-            showErrorToast("File too large", "Please upload a file smaller than 10MB");
+            showErrorToast(t("WORKER_DOCUMENTS.MESSAGES.FILE_TOO_LARGE"), t("WORKER_DOCUMENTS.MESSAGES.SIZE_LIMIT"));
             return;
         }
 
@@ -111,14 +113,14 @@ export default function WorkerDocuments() {
                 title: documentTitle,
             }).unwrap();
 
-            showSuccessToast("Document uploaded", "Your document has been uploaded successfully and is pending review");
+            showSuccessToast(t("WORKER_DOCUMENTS.MESSAGES.UPLOAD_SUCCESS"), t("WORKER_DOCUMENTS.MESSAGES.UPLOAD_SUCCESS_DESC"));
 
             setIsUploadDialogOpen(false);
             setSelectedFile(null);
             setDocumentTitle("");
             setDocumentType("DIPLOMA");
         } catch (error) {
-            showErrorToast(error, "Failed to upload document");
+            showErrorToast(error, t("WORKER_DOCUMENTS.MESSAGES.UPLOAD_ERROR"));
         }
     };
 
@@ -163,7 +165,7 @@ export default function WorkerDocuments() {
                         variant="outline"
                         className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-bold border-primary/20"
                     >
-                        <CheckCircle2 className="h-3.5 w-3.5" /> Verified
+                        <CheckCircle2 className="h-3.5 w-3.5" /> {t("WORKER_DOCUMENTS.LIST.STATUS.VERIFIED")}
                     </Badge>
                 );
             case "PENDING":
@@ -172,7 +174,7 @@ export default function WorkerDocuments() {
                         variant="outline"
                         className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-yellow-500/10 text-yellow-400 text-xs font-bold border-yellow-500/20"
                     >
-                        <Clock className="h-3.5 w-3.5" /> Pending Review
+                        <Clock className="h-3.5 w-3.5" /> {t("WORKER_DOCUMENTS.LIST.STATUS.PENDING")}
                     </Badge>
                 );
             case "REJECTED":
@@ -181,7 +183,7 @@ export default function WorkerDocuments() {
                         variant="outline"
                         className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-destructive/10 text-destructive text-xs font-bold border-destructive/20"
                     >
-                        <AlertCircle className="h-3.5 w-3.5" /> Rejected
+                        <AlertCircle className="h-3.5 w-3.5" /> {t("WORKER_DOCUMENTS.LIST.STATUS.REJECTED")}
                     </Badge>
                 );
             default:
@@ -207,14 +209,13 @@ export default function WorkerDocuments() {
                         <div className="flex flex-col gap-2 max-w-2xl">
                             <div className="flex items-center gap-2 text-primary text-sm font-medium mb-1">
                                 <Lock className="h-4 w-4" />
-                                <span>Encrypted & Secure Storage</span>
+                                <span>{t("WORKER_DOCUMENTS.SECURE_MSG")}</span>
                             </div>
                             <h1 className="text-foreground font-spline text-3xl md:text-4xl font-bold leading-tight tracking-tight">
-                                My Professional Documents
+                                {t("WORKER_DOCUMENTS.TITLE")}
                             </h1>
                             <p className="text-muted-foreground text-base md:text-lg font-normal">
-                                Manage your diplomas and certifications to ensure mission eligibility.
-                                Verified documents increase your visibility to institutions.
+                                {t("WORKER_DOCUMENTS.SUBTITLE")}
                             </p>
                         </div>
                         <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
@@ -224,19 +225,19 @@ export default function WorkerDocuments() {
                                     onClick={() => setIsUploadDialogOpen(true)}
                                 >
                                     <Upload className="h-4 w-4" />
-                                    <span className="truncate">Upload Document</span>
+                                    <span className="truncate">{t("WORKER_DOCUMENTS.UPLOAD_BTN")}</span>
                                 </Button>
                             </DialogTrigger>
                             <DialogContent className="sm:max-w-[500px]">
                                 <DialogHeader>
-                                    <DialogTitle>Upload Document</DialogTitle>
+                                    <DialogTitle>{t("WORKER_DOCUMENTS.DIALOG.TITLE")}</DialogTitle>
                                     <DialogDescription>
-                                        Upload your professional documents (PDF only, max 10MB)
+                                        {t("WORKER_DOCUMENTS.DIALOG.DESC")}
                                     </DialogDescription>
                                 </DialogHeader>
                                 <div className="space-y-4 py-4">
                                     <div className="space-y-2">
-                                        <Label htmlFor="documentType">Document Type</Label>
+                                        <Label htmlFor="documentType">{t("WORKER_DOCUMENTS.DIALOG.TYPE_LABEL")}</Label>
                                         <Select
                                             value={documentType}
                                             onValueChange={(value) => {
@@ -248,13 +249,13 @@ export default function WorkerDocuments() {
                                             }}
                                         >
                                             <SelectTrigger id="documentType">
-                                                <SelectValue placeholder="Select document type" />
+                                                <SelectValue placeholder={t("WORKER_DOCUMENTS.DIALOG.TYPE_PLACEHOLDER")} />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value="DIPLOMA">Diploma</SelectItem>
-                                                <SelectItem value="CV">CV / Resume</SelectItem>
-                                                <SelectItem value="ID">ID Card</SelectItem>
-                                                <SelectItem value="OTHER">Other</SelectItem>
+                                                <SelectItem value="DIPLOMA">{t("WORKER_DOCUMENTS.DIALOG.TYPES.DIPLOMA")}</SelectItem>
+                                                <SelectItem value="CV">{t("WORKER_DOCUMENTS.DIALOG.TYPES.CV")}</SelectItem>
+                                                <SelectItem value="ID">{t("WORKER_DOCUMENTS.DIALOG.TYPES.ID")}</SelectItem>
+                                                <SelectItem value="OTHER">{t("WORKER_DOCUMENTS.DIALOG.TYPES.OTHER")}</SelectItem>
                                             </SelectContent>
                                         </Select>
                                     </div>
@@ -262,11 +263,11 @@ export default function WorkerDocuments() {
                                     {documentType === "DIPLOMA" && (
                                         <div className="space-y-2">
                                             <Label htmlFor="documentTitle">
-                                                Document Title
+                                                {t("WORKER_DOCUMENTS.DIALOG.DOC_TITLE_LABEL")}
                                             </Label>
                                             <Input
                                                 id="documentTitle"
-                                                placeholder="e.g. Master in Management"
+                                                placeholder={t("WORKER_DOCUMENTS.DIALOG.DOC_TITLE_PLACEHOLDER")}
                                                 value={documentTitle}
                                                 className="placeholder:opacity-40"
                                                 onChange={(e) => setDocumentTitle(e.target.value)}
@@ -275,7 +276,7 @@ export default function WorkerDocuments() {
                                     )}
 
                                     <div className="space-y-2">
-                                        <Label>File</Label>
+                                        <Label>{t("WORKER_DOCUMENTS.DIALOG.FILE_LABEL")}</Label>
                                         {selectedFile ? (
                                             <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
                                                 <div className="flex items-center gap-2">
@@ -302,7 +303,7 @@ export default function WorkerDocuments() {
                                             >
                                                 <CloudUpload className="h-8 w-8 text-primary" />
                                                 <p className="text-sm text-muted-foreground">
-                                                    Click to select or drag & drop
+                                                    {t("WORKER_DOCUMENTS.DIALOG.DRAG_DROP")}
                                                 </p>
                                             </div>
                                         )}
@@ -324,13 +325,13 @@ export default function WorkerDocuments() {
                                             setDocumentTitle("");
                                         }}
                                     >
-                                        Cancel
+                                        {t("WORKER_DOCUMENTS.DIALOG.CANCEL")}
                                     </Button>
                                     <Button
                                         onClick={handleUpload}
                                         disabled={!selectedFile || isUploading}
                                     >
-                                        {isUploading ? "Uploading..." : "Upload"}
+                                        {isUploading ? t("WORKER_DOCUMENTS.DIALOG.UPLOADING") : t("WORKER_DOCUMENTS.DIALOG.UPLOAD")}
                                     </Button>
                                 </div>
                             </DialogContent>
@@ -344,13 +345,13 @@ export default function WorkerDocuments() {
                                 <FolderOpen className="h-20 w-20 text-foreground" />
                             </div>
                             <p className="text-muted-foreground text-sm font-medium uppercase tracking-wider">
-                                Total Documents
+                                {t("WORKER_DOCUMENTS.STATS.TOTAL")}
                             </p>
                             <p className="text-foreground tracking-tight text-3xl font-bold">{totalDocs}</p>
                             {totalDocs > 0 && (
                                 <div className="flex items-center gap-1 mt-2">
                                     <span className="text-primary text-sm font-medium bg-primary/10 px-2 py-0.5 rounded-full">
-                                        +{totalDocs} uploaded
+                                        {t("WORKER_DOCUMENTS.STATS.UPLOADED", { count: totalDocs })}
                                     </span>
                                 </div>
                             )}
@@ -361,10 +362,10 @@ export default function WorkerDocuments() {
                                 <CheckCircle2 className="h-20 w-20 text-primary" />
                             </div>
                             <p className="text-muted-foreground text-sm font-medium uppercase tracking-wider">
-                                Verified & Active
+                                {t("WORKER_DOCUMENTS.STATS.VERIFIED")}
                             </p>
                             <p className="text-foreground tracking-tight text-3xl font-bold">{verifiedDocs}</p>
-                            <p className="text-muted-foreground text-sm mt-2">Ready for mission matching</p>
+                            <p className="text-muted-foreground text-sm mt-2">{t("WORKER_DOCUMENTS.STATS.READY_MSG")}</p>
                         </Card>
 
                         <Card className="flex flex-col gap-1 rounded-2xl p-6 border border-destructive/50 relative overflow-hidden group hover:border-destructive/50 transition-colors">
@@ -372,13 +373,13 @@ export default function WorkerDocuments() {
                                 <AlertCircle className="h-20 w-20 text-destructive" />
                             </div>
                             <p className="text-destructive text-sm font-medium uppercase tracking-wider">
-                                Action Required
+                                {t("WORKER_DOCUMENTS.STATS.ACTION_REQUIRED")}
                             </p>
                             <p className="text-foreground tracking-tight text-3xl font-bold">{rejectedDocs}</p>
                             {rejectedDocs > 0 && (
                                 <div className="flex items-center gap-1 mt-2">
                                     <span className="text-destructive text-sm font-medium bg-destructive/30 px-2 py-0.5 rounded-full">
-                                        Check rejected items
+                                        {t("WORKER_DOCUMENTS.STATS.CHECK_REJECTED")}
                                     </span>
                                 </div>
                             )}
@@ -408,11 +409,10 @@ export default function WorkerDocuments() {
                             </div>
                             <div className="flex flex-col items-center gap-1">
                                 <p className="text-foreground text-lg font-bold text-center">
-                                    Drag & drop your PDF here
+                                    {t("WORKER_DOCUMENTS.DIALOG.DRAG_DROP_TITLE")}
                                 </p>
                                 <p className="text-muted-foreground text-sm font-normal text-center max-w-sm">
-                                    Support for PDF files up to 10MB. We automatically scan for clarity
-                                    and validity.
+                                    {t("WORKER_DOCUMENTS.DIALOG.DRAG_DROP_DESC")}
                                 </p>
                             </div>
                         </div>
@@ -420,14 +420,14 @@ export default function WorkerDocuments() {
 
                     {/* Documents List */}
                     <div className="flex flex-col gap-4">
-                        <h3 className="text-foreground text-xl font-bold">Recent Uploads</h3>
+                        <h3 className="text-foreground text-xl font-bold">{t("WORKER_DOCUMENTS.LIST.TITLE")}</h3>
                         <div className="grid grid-cols-1 gap-4">
                             {documents.length === 0 ? (
                                 <Card className="p-8 text-center">
                                     <FileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                                    <p className="text-foreground font-medium mb-2">No documents uploaded</p>
+                                    <p className="text-foreground font-medium mb-2">{t("WORKER_DOCUMENTS.LIST.EMPTY_TITLE")}</p>
                                     <p className="text-muted-foreground text-sm">
-                                        Upload your first document to get started
+                                        {t("WORKER_DOCUMENTS.LIST.EMPTY_DESC")}
                                     </p>
                                 </Card>
                             ) : (
@@ -478,7 +478,7 @@ export default function WorkerDocuments() {
                                                     <div className="mt-2 p-2 rounded-lg bg-destructive/10 border border-destructive/20">
                                                         <p className="text-sm text-destructive font-medium">
                                                             <AlertCircle className="h-4 w-4 inline mr-1" />
-                                                            Reason: {doc.adminComment}
+                                                            {t("WORKER_DOCUMENTS.LIST.REASON", { reason: doc.adminComment })}
                                                         </p>
                                                     </div>
                                                 )}
@@ -495,7 +495,7 @@ export default function WorkerDocuments() {
                                                 className="gap-2 flex-1 sm:flex-initial"
                                             >
                                                 <ExternalLink className="h-4 w-4" />
-                                                <span className="sm:inline">View</span>
+                                                <span className="sm:inline">{t("WORKER_DOCUMENTS.LIST.VIEW_BTN")}</span>
                                             </Button>
                                         </div>
                                     </Card>
@@ -507,9 +507,7 @@ export default function WorkerDocuments() {
                     {/* Footer Info */}
                     <div className="flex justify-center mt-8">
                         <p className="text-foreground/30 text-xs text-center">
-                            Your documents are processed in accordance with GDPR regulations.
-                            <br />
-                            Need assistance? Contact support.
+                            {t("WORKER_DOCUMENTS.FOOTER")}
                         </p>
                     </div>
                 </div>

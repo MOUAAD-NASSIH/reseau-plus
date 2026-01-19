@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Link, useNavigate } from "react-router";
+import { useTranslation, Trans } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -47,6 +48,7 @@ const formatCurrency = (amount: number) => {
 };
 
 export default function WorkerDashboardPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   // Data Fetching
@@ -159,23 +161,27 @@ export default function WorkerDashboardPage() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-1.5">
               <h1 className="text-3xl md:text-4xl font-extrabold font-spline tracking-tight bg-linear-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                Welcome back, {firstName}
+                {t("WORKER_DASHBOARD.WELCOME", { name: firstName })}
               </h1>
               <p className="text-muted-foreground font-spline text-lg">
-                You have <span className="font-semibold text-foreground">{activeList.length} active missions</span> and <span className="font-semibold text-foreground">{unread.data?.data?.count ?? 0} new notifications</span>.
+                <Trans
+                  i18nKey="WORKER_DASHBOARD.WELCOME_SUBTITLE"
+                  values={{ activeCount: activeList.length, notifCount: unread.data?.data?.count ?? 0 }}
+                  components={{ 1: <span className="font-semibold text-foreground" />, 3: <span className="font-semibold text-foreground" /> }}
+                />
               </p>
             </div>
             <div className="flex items-center gap-3">
               <Button variant="outline" className="gap-2 h-11 border-primary/20 hover:border-primary/50 hover:bg-primary/5" asChild>
                 <Link to="/worker/availability">
                   <Calendar className="h-4 w-4 text-primary" />
-                  <span>Availability</span>
+                  <span>{t("WORKER_DASHBOARD.HEADER_BUTTONS.AVAILABILITY")}</span>
                 </Link>
               </Button>
               <Button className="gap-2 h-11 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/25" asChild>
                 <Link to="/worker/missions">
                   <Search className="h-4 w-4" />
-                  <span>Find Missions</span>
+                  <span>{t("WORKER_DASHBOARD.HEADER_BUTTONS.FIND_MISSIONS")}</span>
                 </Link>
               </Button>
             </div>
@@ -187,30 +193,30 @@ export default function WorkerDashboardPage() {
         {/* KPI Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard
-            title="Active Missions"
+            title={t("WORKER_DASHBOARD.STATS.ACTIVE_MISSIONS")}
             value={activeList.length}
             icon={<Briefcase />}
-            description="Currently in progress"
+            description={t("WORKER_DASHBOARD.STATS.IN_PROGRESS")}
           />
           <StatCard
-            title="Missions Completed"
+            title={t("WORKER_DASHBOARD.STATS.COMPLETED_MISSIONS")}
             value={totalMissionsCompleted}
             icon={<CheckCircle />}
-            description="All time count"
+            description={t("WORKER_DASHBOARD.STATS.ALL_TIME")}
           />
           <StatCard
-            title="Total Earnings"
+            title={t("WORKER_DASHBOARD.STATS.EARNINGS")}
             value={formatCurrency(totalEarnings)}
             icon={<CreditCard />}
-            description="Estimated net earnings"
+            description={t("WORKER_DASHBOARD.STATS.ESTIMATED_NET")}
             trend="+12%" // Placeholder trend
             trendUp={true}
           />
           <StatCard
-            title="Average Rating"
+            title={t("WORKER_DASHBOARD.STATS.RATING")}
             value={(rating.data?.data?.average ?? 0).toFixed(1)}
             icon={<Star />}
-            description={`${rating.data?.data?.count ?? 0} total reviews`}
+            description={t("WORKER_DASHBOARD.STATS.TOTAL_REVIEWS", { count: rating.data?.data?.count ?? 0 })}
             className="border-primary/20 bg-primary/5"
           />
         </div>
@@ -224,12 +230,12 @@ export default function WorkerDashboardPage() {
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-bold font-spline flex items-center gap-2">
                   <CurrentMissionIcon className="h-5 w-5 text-primary" />
-                  Active Mission
+                  {t("WORKER_DASHBOARD.ACTIVE_MISSION.TITLE")}
                 </h2>
                 {activeMissionData && (
                   <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 hover:bg-primary/5" asChild>
                     <Link to={`/worker/assignments/${activeMissionData.id}`} className="gap-1">
-                      View Details <ChevronRight className="h-4 w-4" />
+                      {t("WORKER_DASHBOARD.ACTIVE_MISSION.VIEW_DETAILS")} <ChevronRight className="h-4 w-4" />
                     </Link>
                   </Button>
                 )}
@@ -246,7 +252,7 @@ export default function WorkerDashboardPage() {
                       </div>
                       <div className="absolute top-3 left-3">
                         <Badge className="bg-green-500 hover:bg-green-600 text-white border-none shadow-xs">
-                          In Progress
+                          {t("WORKER_DASHBOARD.ACTIVE_MISSION.IN_PROGRESS_BADGE")}
                         </Badge>
                       </div>
                     </div>
@@ -276,14 +282,14 @@ export default function WorkerDashboardPage() {
                       <div className="mt-6 flex items-center gap-3">
                         <Button className="flex-1 gap-2" asChild>
                           <Link to={`/worker/assignments/${activeMissionData.id}`}>
-                            View Mission
+                            {t("WORKER_DASHBOARD.ACTIVE_MISSION.VIEW_MISSION_BTN")}
                             <ChevronRight className="h-4 w-4" />
                           </Link>
                         </Button>
                         <Button
                           variant="outline"
                           size="icon"
-                          title="Contact Institution"
+                          title={t("WORKER_DASHBOARD.ACTIVE_MISSION.CONTACT_INSTITUTION")}
                           onClick={() => {
                             if (activeMissionData.institutionUserId) {
                               navigate("/worker/messages", {
@@ -305,12 +311,12 @@ export default function WorkerDashboardPage() {
                   <div className="p-3 bg-muted rounded-full mb-3">
                     <Briefcase className="h-6 w-6 text-muted-foreground" />
                   </div>
-                  <h3 className="font-semibold text-lg">No active mission</h3>
+                  <h3 className="font-semibold text-lg">{t("WORKER_DASHBOARD.ACTIVE_MISSION.NO_ACTIVE_TITLE")}</h3>
                   <p className="text-sm text-muted-foreground max-w-xs mt-1 mb-4">
-                    You don't have any missions currently in progress. Apply to new opportunities!
+                    {t("WORKER_DASHBOARD.ACTIVE_MISSION.NO_ACTIVE_DESC")}
                   </p>
                   <Button variant="outline" asChild>
-                    <Link to="/worker/missions">Find Missions</Link>
+                    <Link to="/worker/missions">{t("WORKER_DASHBOARD.ACTIVE_MISSION.FIND_MISSIONS_BTN")}</Link>
                   </Button>
                 </Card>
               )}
@@ -323,11 +329,11 @@ export default function WorkerDashboardPage() {
                   <div className="p-2 bg-primary/10 rounded-lg text-primary">
                     <FileText className="h-5 w-5" />
                   </div>
-                  Recent Applications
+                  {t("WORKER_DASHBOARD.APPLICATIONS.TITLE")}
                 </h2>
                 <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 hover:bg-primary/5" asChild>
                   <Link to="/worker/applications" className="gap-1">
-                    View All <ChevronRight className="h-4 w-4" />
+                    {t("WORKER_DASHBOARD.APPLICATIONS.VIEW_ALL")} <ChevronRight className="h-4 w-4" />
                   </Link>
                 </Button>
               </div>
@@ -343,12 +349,12 @@ export default function WorkerDashboardPage() {
                     <div className="w-12 h-12 bg-muted/50 rounded-full flex items-center justify-center mb-4">
                       <FileText className="h-6 w-6 text-muted-foreground/50" />
                     </div>
-                    <p className="text-lg font-medium text-foreground">No pending applications</p>
+                    <p className="text-lg font-medium text-foreground">{t("WORKER_DASHBOARD.APPLICATIONS.NO_PENDING_TITLE")}</p>
                     <p className="text-sm text-muted-foreground max-w-sm mt-1 mb-4">
-                      You haven't submitted any applications recently.
+                      {t("WORKER_DASHBOARD.APPLICATIONS.NO_PENDING_DESC")}
                     </p>
                     <Button variant="outline" size="sm" asChild>
-                      <Link to="/worker/missions">Browse Missions</Link>
+                      <Link to="/worker/missions">{t("WORKER_DASHBOARD.APPLICATIONS.BROWSE_BTN")}</Link>
                     </Button>
                   </div>
                 ) : (
@@ -358,10 +364,10 @@ export default function WorkerDashboardPage() {
                       <table className="w-full text-sm text-left">
                         <thead className="text-xs text-muted-foreground uppercase bg-muted/30 font-semibold border-b border-border">
                           <tr>
-                            <th className="px-6 py-4">Mission</th>
-                            <th className="px-6 py-4">Institution</th>
-                            <th className="px-6 py-4">Applied Date</th>
-                            <th className="px-6 py-4 text-right">Status</th>
+                            <th className="px-6 py-4">{t("WORKER_DASHBOARD.APPLICATIONS.TABLE.MISSION")}</th>
+                            <th className="px-6 py-4">{t("WORKER_DASHBOARD.APPLICATIONS.TABLE.INSTITUTION")}</th>
+                            <th className="px-6 py-4">{t("WORKER_DASHBOARD.APPLICATIONS.TABLE.DATE")}</th>
+                            <th className="px-6 py-4 text-right">{t("WORKER_DASHBOARD.APPLICATIONS.TABLE.STATUS")}</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-border/50">
@@ -433,7 +439,7 @@ export default function WorkerDashboardPage() {
                             </Badge>
                           </div>
                           <div className="flex items-center justify-between text-xs text-muted-foreground pt-1">
-                            <span>Applied: {app.appliedAt ? new Date(app.appliedAt).toLocaleDateString() : "-"}</span>
+                            <span>{t("WORKER_DASHBOARD.APPLICATIONS.APPLIED_LABEL")} {app.appliedAt ? new Date(app.appliedAt).toLocaleDateString() : "-"}</span>
                           </div>
                         </div>
                       ))}
@@ -450,32 +456,33 @@ export default function WorkerDashboardPage() {
             <Card className="bg-card border-border shadow-sm">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base font-semibold font-spline text-muted-foreground uppercase tracking-wider">
-                  Quick Actions
+                  {t("WORKER_DASHBOARD.QUICK_ACTIONS.TITLE")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="grid grid-cols-2 gap-3">
+
                 <QuickActionButton
                   to="/worker/availability"
                   icon={<Calendar className="h-5 w-5" />}
-                  label="Availability"
+                  label={t("WORKER_DASHBOARD.QUICK_ACTIONS.AVAILABILITY")}
                   color="bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-500/20"
                 />
                 <QuickActionButton
                   to="/worker/documents"
                   icon={<FileText className="h-5 w-5" />}
-                  label="Documents"
+                  label={t("WORKER_DASHBOARD.QUICK_ACTIONS.DOCUMENTS")}
                   color="bg-orange-500/10 text-orange-600 dark:text-orange-400 hover:bg-orange-500/20"
                 />
                 <QuickActionButton
                   to="/worker/reviews"
                   icon={<Star className="h-5 w-5" />}
-                  label="Reviews"
+                  label={t("WORKER_DASHBOARD.QUICK_ACTIONS.REVIEWS")}
                   color="bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 hover:bg-yellow-500/20"
                 />
                 <QuickActionButton
                   to="/worker/help"
                   icon={<AlertCircle className="h-5 w-5" />}
-                  label="Support"
+                  label={t("WORKER_DASHBOARD.QUICK_ACTIONS.SUPPORT")}
                   color="bg-gray-500/10 text-gray-600 dark:text-gray-400 hover:bg-gray-500/20"
                 />
               </CardContent>
@@ -485,7 +492,7 @@ export default function WorkerDashboardPage() {
             <Card className="bg-card border-border shadow-sm flex flex-col h-full max-h-[400px]">
               <CardHeader className="pb-3 flex-row items-center justify-between space-y-0">
                 <CardTitle className="text-base font-semibold font-spline text-muted-foreground uppercase tracking-wider">
-                  Notifications
+                  {t("WORKER_DASHBOARD.NOTIFICATIONS.TITLE")}
                 </CardTitle>
                 {unread.data?.data?.count ? (
                   <Badge variant="destructive" className="h-5 px-1.5 min-w-5">
@@ -496,7 +503,7 @@ export default function WorkerDashboardPage() {
               <CardContent className="flex-1 overflow-y-auto space-y-4 pr-1">
                 {notifList.length === 0 ? (
                   <p className="text-sm text-muted-foreground py-4 text-center italic">
-                    No new notifications.
+                    {t("WORKER_DASHBOARD.NOTIFICATIONS.NO_NEW")}
                   </p>
                 ) : (
                   notifList.map((n: Notification) => (
@@ -515,7 +522,7 @@ export default function WorkerDashboardPage() {
               </CardContent>
               <div className="p-4 pt-0">
                 <Button variant="ghost" className="w-full text-xs text-muted-foreground" asChild>
-                  <Link to="/worker/notifications">View All</Link>
+                  <Link to="/worker/notifications">{t("WORKER_DASHBOARD.NOTIFICATIONS.VIEW_ALL")}</Link>
                 </Button>
               </div>
             </Card>

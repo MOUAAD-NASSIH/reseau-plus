@@ -8,6 +8,7 @@ import { Upload, X, Camera, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { UserAvatar } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 // Constants matching backend validation
 const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -73,6 +74,7 @@ export function ProfilePictureUpload({
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const isProcessing = isLoading || isDeleting;
+    const { t } = useTranslation();
 
     /**
      * Handle file selection
@@ -190,7 +192,7 @@ export function ProfilePictureUpload({
                     <button
                         type="button"
                         onClick={triggerFileSelect}
-                        className="absolute bottom-1 right-1 p-2 bg-primary text-primary-foreground rounded-full shadow-lg hover:bg-primary/90 transition-all hover:scale-105 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                        className="absolute bottom-1 right-1 p-2 bg-primary text-primary-foreground rounded-full shadow-lg hover:bg-primary/90 transition-all hover:scale-105 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 cursor-pointer"
                         aria-label="Change profile picture"
                     >
                         <Camera className="h-4 w-4" />
@@ -253,10 +255,10 @@ export function ProfilePictureUpload({
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="text-destructive hover:text-destructive bg-destructive/10 hover:bg-destructive/10 text-xs h-7"
+                    className="text-destructive hover:text-destructive bg-destructive/10 hover:bg-destructive/10 text-xs h-7 cursor-pointer"
                     onClick={handleDelete}
                 >
-                    Remove photo
+                    {t("COMMON.DELETE_PROFILE_PIC")}
                 </Button>
             )}
         </div>

@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Link } from "react-router";
-import { format } from "date-fns";
+import { useTranslation } from "react-i18next";
 import {
     Search,
     MapPin,
@@ -26,20 +26,22 @@ import { useGetDomainsQuery, useGetSpecialitiesQuery } from "@/features/api/endp
 import { cn } from "@/lib/utils";
 import type { Mission } from "@/types/mission.types";
 
-const URGENCY_FILTERS = [
-    { value: "HIGH", label: "High Priority", icon: Zap, color: "bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20" },
-    { value: "MEDIUM", label: "Medium", icon: History, color: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20" },
-    { value: "LOW", label: "Standard", icon: FileText, color: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20" },
-];
-
-const SORT_OPTIONS = [
-    { value: "pay_high", label: "Highest Pay" },
-    { value: "urgent", label: "Most Urgent" },
-    { value: "nearest", label: "Nearest Location" },
-    { value: "newest", label: "Newest First" },
-];
-
 export default function AvailableMissions() {
+    const { t, i18n } = useTranslation();
+
+    const URGENCY_FILTERS = [
+        { value: "HIGH", label: t("AVAILABLE_MISSIONS.FILTERS.URGENCY_OPTIONS.HIGH"), icon: Zap, color: "bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20" },
+        { value: "MEDIUM", label: t("AVAILABLE_MISSIONS.FILTERS.URGENCY_OPTIONS.MEDIUM"), icon: History, color: "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 border-yellow-500/20" },
+        { value: "LOW", label: t("AVAILABLE_MISSIONS.FILTERS.URGENCY_OPTIONS.LOW"), icon: FileText, color: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20" },
+    ];
+
+    const SORT_OPTIONS = [
+        { value: "pay_high", label: t("AVAILABLE_MISSIONS.SORT.OPTIONS.HIGHEST_PAY") },
+        { value: "urgent", label: t("AVAILABLE_MISSIONS.SORT.OPTIONS.MOST_URGENT") },
+        { value: "nearest", label: t("AVAILABLE_MISSIONS.SORT.OPTIONS.NEAREST") },
+        { value: "newest", label: t("AVAILABLE_MISSIONS.SORT.OPTIONS.NEWEST") },
+    ];
+
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedDomains, setSelectedDomains] = useState<string[]>([]);
     const [selectedSpecialities, setSelectedSpecialities] = useState<string[]>([]);
@@ -155,17 +157,17 @@ export default function AvailableMissions() {
     const getUrgencyBadge = (mission: Mission) => {
         const urgencyConfig = {
             HIGH: {
-                label: "URGENT",
+                label: t("AVAILABLE_MISSIONS.CARD.URGENCY.URGENT"),
                 color: "bg-red-500/15 text-red-600 dark:text-red-400 border-red-500/30 hover:bg-red-500/25 hover:border-red-500/40 transition-colors",
                 icon: Zap
             },
             MEDIUM: {
-                label: "MODERATE",
+                label: t("AVAILABLE_MISSIONS.CARD.URGENCY.MODERATE"),
                 color: "bg-yellow-500/15 text-yellow-600 dark:text-yellow-400 border-yellow-500/30 hover:bg-yellow-500/25 hover:border-yellow-500/40 transition-colors",
                 icon: History
             },
             LOW: {
-                label: "STANDARD",
+                label: t("AVAILABLE_MISSIONS.CARD.URGENCY.STANDARD"),
                 color: "bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-500/30 hover:bg-blue-500/25 hover:border-blue-500/40 transition-colors",
                 icon: FileText
             },
@@ -190,7 +192,7 @@ export default function AvailableMissions() {
                 <div className="flex items-center justify-between mb-3">
                     <h4 className="text-sm font-bold text-foreground uppercase tracking-wider flex items-center gap-2">
                         <Shield className="h-4 w-4 text-primary" />
-                        Domains
+                        {t("AVAILABLE_MISSIONS.FILTERS.DOMAINS")}
                     </h4>
                     {selectedDomains.length > 0 && (
                         <Badge variant="secondary" className="h-5 px-2 text-xs">
@@ -223,7 +225,7 @@ export default function AvailableMissions() {
                 <div className="flex items-center justify-between mb-3">
                     <h4 className="text-sm font-bold text-foreground uppercase tracking-wider flex items-center gap-2">
                         <FileText className="h-4 w-4 text-primary" />
-                        Specialty
+                        {t("AVAILABLE_MISSIONS.FILTERS.SPECIALTY")}
                     </h4>
                     {selectedSpecialities.length > 0 && (
                         <Badge variant="secondary" className="h-5 px-2 text-xs">
@@ -256,7 +258,7 @@ export default function AvailableMissions() {
                 <div className="flex items-center justify-between mb-3">
                     <h4 className="text-sm font-bold text-foreground uppercase tracking-wider flex items-center gap-2">
                         <Zap className="h-4 w-4 text-primary" />
-                        Urgency
+                        {t("AVAILABLE_MISSIONS.FILTERS.URGENCY")}
                     </h4>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -269,7 +271,7 @@ export default function AvailableMissions() {
                                 : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
                         )}
                     >
-                        All
+                        {t("AVAILABLE_MISSIONS.FILTERS.URGENCY_OPTIONS.ALL")}
                     </button>
                     {URGENCY_FILTERS.map((filter) => {
                         const isSelected = urgencyFilter === filter.value;
@@ -297,7 +299,7 @@ export default function AvailableMissions() {
                 <div className="flex justify-between items-center mb-3">
                     <h4 className="text-sm font-bold text-foreground uppercase tracking-wider flex items-center gap-2">
                         <MapPin className="h-4 w-4 text-primary" />
-                        Distance
+                        {t("AVAILABLE_MISSIONS.FILTERS.DISTANCE")}
                     </h4>
                     <span className="text-sm font-bold text-primary"> {distanceRange[0]} km</span>
                 </div>
@@ -325,7 +327,7 @@ export default function AvailableMissions() {
                     <div className="flex items-center justify-between">
                         <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
                             <SlidersHorizontal className="h-5 w-5 text-primary" />
-                            Filters
+                            {t("AVAILABLE_MISSIONS.FILTERS.TITLE")}
                             {activeFilterCount > 0 && (
                                 <Badge variant="default" className="ml-2 h-5 px-2">
                                     {activeFilterCount}
@@ -337,7 +339,7 @@ export default function AvailableMissions() {
                                 onClick={handleResetFilters}
                                 className="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
                             >
-                                Clear all
+                                {t("AVAILABLE_MISSIONS.FILTERS.CLEAR_ALL")}
                             </button>
                         )}
                     </div>
@@ -347,7 +349,7 @@ export default function AvailableMissions() {
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
                             type="text"
-                            placeholder="Search missions..."
+                            placeholder={t("AVAILABLE_MISSIONS.SEARCH_PLACEHOLDER")}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="pl-10 h-11 bg-background border-border focus:border-primary focus:ring-2 focus:ring-primary/20"
@@ -368,10 +370,10 @@ export default function AvailableMissions() {
                     <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
                         <div>
                             <h1 className="text-foreground text-3xl lg:text-4xl font-black font-spline leading-tight tracking-tight mb-2">
-                                Available Missions
+                                {t("AVAILABLE_MISSIONS.TITLE")}
                             </h1>
                             <p className="text-muted-foreground text-base font-spline">
-                                Find your next social work contract with ease.
+                                {t("AVAILABLE_MISSIONS.SUBTITLE")}
                             </p>
                         </div>
 
@@ -381,7 +383,7 @@ export default function AvailableMissions() {
                                 <SheetTrigger asChild>
                                     <Button variant="outline" className="lg:hidden gap-2">
                                         <SlidersHorizontal className="h-4 w-4" />
-                                        Filters
+                                        {t("AVAILABLE_MISSIONS.FILTERS.TITLE")}
                                         {activeFilterCount > 0 && (
                                             <Badge variant="default" className="h-5 px-2">
                                                 {activeFilterCount}
@@ -394,14 +396,14 @@ export default function AvailableMissions() {
                                         <SheetTitle className="flex items-center justify-between">
                                             <span className="flex items-center gap-2">
                                                 <SlidersHorizontal className="h-5 w-5 text-primary" />
-                                                Filters
+                                                {t("AVAILABLE_MISSIONS.FILTERS.TITLE")}
                                             </span>
                                             {activeFilterCount > 0 && (
                                                 <button
                                                     onClick={handleResetFilters}
                                                     className="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
                                                 >
-                                                    Reset all
+                                                    {t("AVAILABLE_MISSIONS.FILTERS.RESET_ALL")}
                                                 </button>
                                             )}
                                         </SheetTitle>
@@ -415,7 +417,7 @@ export default function AvailableMissions() {
                             {/* Sort Dropdown */}
                             <div className="flex items-center gap-2">
                                 <label className="text-muted-foreground text-sm font-medium whitespace-nowrap hidden sm:block">
-                                    Sort by:
+                                    {t("AVAILABLE_MISSIONS.SORT.LABEL")}
                                 </label>
                                 <div className="relative">
                                     <select
@@ -447,12 +449,12 @@ export default function AvailableMissions() {
                             <div className="size-20 rounded-full bg-muted flex items-center justify-center mb-4">
                                 <FileText className="h-10 w-10 text-muted-foreground opacity-50" />
                             </div>
-                            <h3 className="text-xl font-bold text-foreground mb-2">No missions found</h3>
+                            <h3 className="text-xl font-bold text-foreground mb-2">{t("AVAILABLE_MISSIONS.EMPTY.TITLE")}</h3>
                             <p className="text-muted-foreground mb-6 max-w-md">
-                                No missions match your current filters. Try adjusting your search criteria.
+                                {t("AVAILABLE_MISSIONS.EMPTY.DESC")}
                             </p>
                             <Button onClick={handleResetFilters} className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold">
-                                Clear Filters
+                                {t("AVAILABLE_MISSIONS.EMPTY.CLEAR_BTN")}
                             </Button>
                         </div>
                     ) : (
@@ -499,8 +501,8 @@ export default function AvailableMissions() {
                                                 <div className="flex items-center gap-2">
                                                     <Calendar className="h-3.5 md:h-4 w-3.5 md:w-4 text-primary" />
                                                     <span className="text-xs md:text-sm font-medium text-foreground">
-                                                        {format(new Date(mission.startDate), "MMM d")} -{" "}
-                                                        {format(new Date(mission.endDate), "MMM d, yyyy")}
+                                                        {new Date(mission.startDate).toLocaleDateString(i18n.language, { month: 'short', day: 'numeric' })} -{" "}
+                                                        {new Date(mission.endDate).toLocaleDateString(i18n.language, { month: 'short', day: 'numeric', year: 'numeric' })}
                                                     </span>
                                                 </div>
                                                 {mission.location && (
@@ -517,7 +519,7 @@ export default function AvailableMissions() {
                                             <div className="flex items-center gap-2">
                                                 <Badge variant="outline" className="text-xs border-primary/30 text-primary hover:bg-primary/10 transition-colors">
                                                     <Shield className="h-3 w-3 mr-1" />
-                                                    Verified Institution
+                                                    {t("AVAILABLE_MISSIONS.CARD.VERIFIED_INSTITUTION")}
                                                 </Badge>
                                             </div>
                                         </div>
@@ -526,7 +528,7 @@ export default function AvailableMissions() {
                                         <div className="flex flex-col font-spline gap-3 border-t md:border-t-0 md:border-l border-border pt-4 md:pt-0 md:pl-6 shrink-0 md:min-w-[180px]">
                                             <div className="flex md:flex-col items-center md:items-end justify-between md:justify-start gap-2">
                                                 <div className="text-left md:text-right w-full flex sm:flex-col items-center justify-between gap-2">
-                                                    <p className="text-muted-foreground text-xs font-medium mb-1">Total Budget</p>
+                                                    <p className="text-muted-foreground text-xs font-medium mb-1">{t("AVAILABLE_MISSIONS.CARD.TOTAL_BUDGET")}</p>
                                                     <div className="flex items-baseline gap-1.5">
                                                         <p className="text-foreground text-2xl md:text-3xl font-black tracking-tight">
                                                             {Number(mission.budget).toFixed(0)}
@@ -551,11 +553,11 @@ export default function AvailableMissions() {
                                                     {isApplied ? (
                                                         <>
                                                             <CheckCircle2 className="h-4 w-4" />
-                                                            Applied
+                                                            {t("AVAILABLE_MISSIONS.CARD.APPLIED")}
                                                         </>
                                                     ) : (
                                                         <>
-                                                            View Details
+                                                            {t("AVAILABLE_MISSIONS.CARD.VIEW_DETAILS")}
                                                             <ArrowRight className="h-4 w-4" />
                                                         </>
                                                     )}

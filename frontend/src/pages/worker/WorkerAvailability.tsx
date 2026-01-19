@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -42,16 +43,10 @@ interface CalendarDay {
     };
 }
 
-interface Mission {
-    id: string;
-    name: string;
-    date: string;
-    timeRange: string;
-    icon: "hospital" | "community";
-    color: string;
-}
+
 
 export default function WorkerAvailability() {
+    const { t, i18n } = useTranslation();
     const { data: availabilitiesData, refetch: refetchAvailabilities } = useGetWorkerAvailabilitiesQuery();
     const { data: assignmentsData } = useGetMyAssignmentsQuery();
     const [addAvailability] = useAddAvailabilityMutation();
@@ -111,8 +106,8 @@ export default function WorkerAvailability() {
                 return {
                     id: assignment.id,
                     name: assignment.mission?.institution?.name || 'Mission',
-                    date: startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-                    timeRange: `${startDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })} - ${endDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}`,
+                    date: startDate.toLocaleDateString(i18n.language, { month: 'short', day: 'numeric' }),
+                    timeRange: `${startDate.toLocaleTimeString(i18n.language, { hour: '2-digit', minute: '2-digit', hour12: false })} - ${endDate.toLocaleTimeString(i18n.language, { hour: '2-digit', minute: '2-digit', hour12: false })}`,
                     icon: 'hospital' as const,
                     color: 'green',
                 };
@@ -284,8 +279,8 @@ export default function WorkerAvailability() {
         // Prevent clicking on weekends
         if (day.isWeekend) {
             showErrorToast(
-                "Weekend not available",
-                "You cannot set availability for weekends (Saturday and Sunday)."
+                t("WORKER_AVAILABILITY.TOAST.WEEKEND_TITLE"),
+                t("WORKER_AVAILABILITY.TOAST.WEEKEND_DESC")
             );
             return;
         }
@@ -354,8 +349,8 @@ export default function WorkerAvailability() {
                     const newDayOfWeek = newDate.getDay();
                     if (newDayOfWeek === 0 || newDayOfWeek === 6) {
                         showErrorToast(
-                            "Weekend not available",
-                            "You cannot include weekends in your availability range."
+                            t("WORKER_AVAILABILITY.TOAST.WEEKEND_TITLE"),
+                            t("WORKER_AVAILABILITY.TOAST.WEEKEND_DESC")
                         );
                         return;
                     }
@@ -409,7 +404,7 @@ export default function WorkerAvailability() {
             const tempEnd = new Date(0, 0, 0, endHour, endMinute);
 
             if (tempEnd <= tempStart) {
-                showErrorToast("Invalid time range", "End time must be after start time.");
+                showErrorToast(t("WORKER_AVAILABILITY.TOAST.INVALID_RANGE"), t("WORKER_AVAILABILITY.TOAST.INVALID_RANGE_DESC"));
                 return;
             }
 
@@ -446,9 +441,9 @@ export default function WorkerAvailability() {
 
                 await addAvailability(availabilityData).unwrap();
                 const message = availabilityStatus === "blocked"
-                    ? "Your blocking has been updated successfully."
-                    : "Your availability has been updated successfully.";
-                showSuccessToast(availabilityStatus === "blocked" ? "Blocking updated" : "Availability updated", message);
+                    ? t("WORKER_AVAILABILITY.TOAST.SUCCESS_BLOCKING")
+                    : t("WORKER_AVAILABILITY.TOAST.SUCCESS_AVAILABILITY");
+                showSuccessToast(availabilityStatus === "blocked" ? t("WORKER_AVAILABILITY.TOAST.SUCCESS_BLOCKING") : t("WORKER_AVAILABILITY.TOAST.SUCCESS_AVAILABILITY"), message);
 
                 await refetchAvailabilities();
                 return;
@@ -500,10 +495,10 @@ export default function WorkerAvailability() {
 
             if (successCount > 0) {
                 const message = availabilityStatus === "blocked"
-                    ? `${successCount} day(s) blocked successfully.`
-                    : `${successCount} day(s) marked as available successfully.`;
+                    ? t("WORKER_AVAILABILITY.TOAST.SUCCESS_BLOCKING")
+                    : t("WORKER_AVAILABILITY.TOAST.SUCCESS_AVAILABILITY");
                 showSuccessToast(
-                    availabilityStatus === "blocked" ? "Blocking saved" : "Availability saved",
+                    availabilityStatus === "blocked" ? t("WORKER_AVAILABILITY.TOAST.SUCCESS_BLOCKING") : t("WORKER_AVAILABILITY.TOAST.SUCCESS_AVAILABILITY"),
                     message
                 );
             }
@@ -530,7 +525,7 @@ export default function WorkerAvailability() {
 
         try {
             await deleteAvailability(selectedAvailability.id).unwrap();
-            showSuccessToast("Availability deleted", "Your availability has been removed.");
+            showSuccessToast(t("WORKER_AVAILABILITY.TOAST.DELETED"), t("WORKER_AVAILABILITY.TOAST.DELETED_DESC"));
 
             // Clear selection and reset form
             setSelectedAvailability(null);
@@ -547,12 +542,12 @@ export default function WorkerAvailability() {
 
     const handleSyncCalendar = () => {
         // TODO: Implement calendar sync functionality
-        showSuccessToast("Syncing calendar", "Your calendar is being synchronized...");
+        showSuccessToast(t("WORKER_AVAILABILITY.TOAST.SYNC"), t("WORKER_AVAILABILITY.TOAST.SYNC_DESC"));
     };
 
     const getDisplayTitle = () => {
         if (viewMode === "month") {
-            return currentDate.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+            return currentDate.toLocaleDateString(i18n.language, { month: "long", year: "numeric" });
         } else {
             // Week view - show week range
             const dayOfWeek = currentDate.getDay();
@@ -561,8 +556,8 @@ export default function WorkerAvailability() {
             const weekEnd = new Date(weekStart);
             weekEnd.setDate(weekStart.getDate() + 6);
 
-            const startMonth = weekStart.toLocaleDateString("en-US", { month: "short" });
-            const endMonth = weekEnd.toLocaleDateString("en-US", { month: "short" });
+            const startMonth = weekStart.toLocaleDateString(i18n.language, { month: "short" });
+            const endMonth = weekEnd.toLocaleDateString(i18n.language, { month: "short" });
             const year = weekStart.getFullYear();
 
             if (startMonth === endMonth) {
@@ -577,22 +572,22 @@ export default function WorkerAvailability() {
     const selectedDayName = useMemo(() => {
         if (selectedDates.length === 0) return "";
         if (selectedDates.length === 1) {
-            return new Date(currentDate.getFullYear(), currentDate.getMonth(), selectedDates[0]).toLocaleDateString("en-US", { weekday: "long" });
+            return new Date(currentDate.getFullYear(), currentDate.getMonth(), selectedDates[0]).toLocaleDateString(i18n.language, { weekday: "long" });
         }
         const sortedDates = [...selectedDates].sort((a, b) => a - b);
-        return `${sortedDates.length} consecutive days`;
-    }, [currentDate, selectedDates]);
+        return t("WORKER_AVAILABILITY.SELECTED_DAYS_COUNT", { count: sortedDates.length });
+    }, [currentDate, selectedDates, i18n.language, t]);
 
     const selectedDateFormatted = useMemo(() => {
         if (selectedDates.length === 0) return "";
         if (selectedDates.length === 1) {
-            return new Date(currentDate.getFullYear(), currentDate.getMonth(), selectedDates[0]).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+            return new Date(currentDate.getFullYear(), currentDate.getMonth(), selectedDates[0]).toLocaleDateString(i18n.language, { month: "long", day: "numeric", year: "numeric" });
         }
         const sortedDates = [...selectedDates].sort((a, b) => a - b);
         const firstDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), sortedDates[0]);
         const lastDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), sortedDates[sortedDates.length - 1]);
-        return `${firstDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })} - ${lastDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`;
-    }, [currentDate, selectedDates]);
+        return `${firstDate.toLocaleDateString(i18n.language, { month: "short", day: "numeric" })} - ${lastDate.toLocaleDateString(i18n.language, { month: "short", day: "numeric", year: "numeric" })}`;
+    }, [currentDate, selectedDates, i18n.language]);
 
     const renderAvailabilityForm = () => (
         <div className="flex flex-col h-full bg-card/50">
@@ -602,7 +597,7 @@ export default function WorkerAvailability() {
                     <p className="text-primary text-sm font-medium">{selectedDateFormatted}</p>
                     {selectedDates.length > 1 && (
                         <p className="text-muted-foreground text-xs mt-1">
-                            {selectedDates.length} consecutive days selected
+                            {t("WORKER_AVAILABILITY.SELECTED_DAYS_COUNT", { count: selectedDates.length })}
                         </p>
                     )}
                 </div>
@@ -617,14 +612,14 @@ export default function WorkerAvailability() {
                     <div className="rounded-lg bg-primary/10 border border-primary/20 p-3">
                         <div className="flex items-start justify-between gap-2">
                             <p className="text-xs text-primary font-medium flex-1">
-                                💡 Tip: Click on multiple consecutive dates to set availability for range.
+                                {t("WORKER_AVAILABILITY.TIP")}
                             </p>
                             {selectedDates.length > 1 && (
                                 <button
                                     onClick={() => setSelectedDates([selectedDates[0]])}
                                     className="text-xs text-primary hover:text-primary/80 font-bold underline whitespace-nowrap"
                                 >
-                                    Clear
+                                    {t("WORKER_AVAILABILITY.CLEAR")}
                                 </button>
                             )}
                         </div>
@@ -634,7 +629,7 @@ export default function WorkerAvailability() {
                 {/* Status Selector */}
                 <div className="flex flex-col gap-3">
                     <label className="text-muted-foreground text-xs font-bold uppercase tracking-wider">
-                        Availability Status
+                        {t("WORKER_AVAILABILITY.STATUS_LABEL")}
                     </label>
                     <div className="grid grid-cols-2 gap-3">
                         <button
@@ -654,7 +649,7 @@ export default function WorkerAvailability() {
                             <div className={`p-2 rounded-full ${availabilityStatus === "available" ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"}`}>
                                 <Stethoscope className="h-5 w-5" />
                             </div>
-                            <span className={`font-bold text-sm ${availabilityStatus === "available" ? "text-foreground" : "text-muted-foreground"}`}>Available</span>
+                            <span className={`font-bold text-sm ${availabilityStatus === "available" ? "text-foreground" : "text-muted-foreground"}`}>{t("WORKER_AVAILABILITY.STATUS_AVAILABLE")}</span>
                         </button>
 
                         <button
@@ -674,7 +669,7 @@ export default function WorkerAvailability() {
                             <div className={`p-2 rounded-full ${availabilityStatus === "blocked" ? "bg-destructive/20 text-destructive" : "bg-muted text-muted-foreground"}`}>
                                 <Ban className="h-5 w-5" />
                             </div>
-                            <span className={`font-bold text-sm ${availabilityStatus === "blocked" ? "text-foreground" : "text-muted-foreground"}`}>Blocked</span>
+                            <span className={`font-bold text-sm ${availabilityStatus === "blocked" ? "text-foreground" : "text-muted-foreground"}`}>{t("WORKER_AVAILABILITY.STATUS_BLOCKED")}</span>
                         </button>
                     </div>
                 </div>
@@ -684,7 +679,7 @@ export default function WorkerAvailability() {
                         {/* Working Hours */}
                         <div className="flex flex-col gap-4">
                             <label className="text-muted-foreground text-xs font-bold uppercase tracking-wider">
-                                Time Slot
+                                {t("WORKER_AVAILABILITY.TIME_SLOT_LABEL")}
                             </label>
 
                             {/* Preset Slots */}
@@ -693,26 +688,26 @@ export default function WorkerAvailability() {
                                     onClick={() => handleTimeSlotChange("morning")}
                                     className={`flex-1 py-2 px-3 text-xs font-bold rounded-md transition-all ${timeSlot === "morning" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
                                 >
-                                    Morning
+                                    {t("WORKER_AVAILABILITY.SLOT_MORNING")}
                                 </button>
                                 <button
                                     onClick={() => handleTimeSlotChange("allday")}
                                     className={`flex-1 py-2 px-3 text-xs font-bold rounded-md transition-all ${timeSlot === "allday" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
                                 >
-                                    All Day
+                                    {t("WORKER_AVAILABILITY.SLOT_ALLDAY")}
                                 </button>
                                 <button
                                     onClick={() => handleTimeSlotChange("afternoon")}
                                     className={`flex-1 py-2 px-3 text-xs font-bold rounded-md transition-all ${timeSlot === "afternoon" ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
                                 >
-                                    Afternoon
+                                    {t("WORKER_AVAILABILITY.SLOT_AFTERNOON")}
                                 </button>
                             </div>
 
                             {/* Time Range Inputs */}
                             <div className="flex items-center gap-2">
                                 <div className="flex-1 space-y-1.5">
-                                    <label className="text-[10px] font-semibold text-muted-foreground uppercase">Start</label>
+                                    <label className="text-[10px] font-semibold text-muted-foreground uppercase">{t("WORKER_AVAILABILITY.START_LABEL")}</label>
                                     <Input
                                         type="time"
                                         value={timeRange.start}
@@ -724,7 +719,7 @@ export default function WorkerAvailability() {
                                     <ArrowRight className="h-4 w-4" />
                                 </div>
                                 <div className="flex-1 space-y-1.5">
-                                    <label className="text-[10px] font-semibold text-muted-foreground uppercase">End</label>
+                                    <label className="text-[10px] font-semibold text-muted-foreground uppercase">{t("WORKER_AVAILABILITY.END_LABEL")}</label>
                                     <Input
                                         type="time"
                                         value={timeRange.end}
@@ -740,13 +735,13 @@ export default function WorkerAvailability() {
                 {/* Upcoming Missions */}
                 <div className="mt-6 flex flex-col gap-3">
                     <label className="text-muted-foreground text-xs font-bold uppercase tracking-wider">
-                        Upcoming Missions
+                        {t("WORKER_AVAILABILITY.UPCOMING_MISSIONS")}
                     </label>
                     {upcomingMissions.length === 0 ? (
                         <div className="p-6 rounded-xl bg-muted/50 border border-border text-center">
                             <Calendar className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
-                            <p className="text-sm text-foreground">No upcoming missions</p>
-                            <p className="text-xs text-muted-foreground mt-1">Your confirmed missions will appear here</p>
+                            <p className="text-sm text-foreground">{t("WORKER_AVAILABILITY.NO_UPCOMING")}</p>
+                            <p className="text-xs text-muted-foreground mt-1">{t("WORKER_AVAILABILITY.NO_UPCOMING_DESC")}</p>
                         </div>
                     ) : (
                         upcomingMissions.map((mission) => (
@@ -780,8 +775,8 @@ export default function WorkerAvailability() {
                             }`}
                     >
                         {selectedAvailability
-                            ? (availabilityStatus === "blocked" ? "Update Blocked Status" : "Update Availability")
-                            : (availabilityStatus === "blocked" ? "Block Selected Days" : "Set Availability")
+                            ? (availabilityStatus === "blocked" ? t("WORKER_AVAILABILITY.UPDATE_BLOCKED") : t("WORKER_AVAILABILITY.UPDATE_AVAILABILITY"))
+                            : (availabilityStatus === "blocked" ? t("WORKER_AVAILABILITY.BLOCK_DAYS") : t("WORKER_AVAILABILITY.SET_AVAILABILITY"))
                         }
                     </Button>
 
@@ -791,7 +786,7 @@ export default function WorkerAvailability() {
                             onClick={handleDeleteAvailability}
                             className="w-full h-11 text-destructive hover:text-destructive hover:bg-destructive/10 font-bold"
                         >
-                            Remove {availabilityStatus === "blocked" ? "Blocking" : "Availability"}
+                            {availabilityStatus === "blocked" ? t("WORKER_AVAILABILITY.REMOVE_BLOCKING") : t("WORKER_AVAILABILITY.REMOVE_AVAILABILITY")}
                         </Button>
                     )}
                 </div>
@@ -808,10 +803,10 @@ export default function WorkerAvailability() {
                     <div className="flex flex-wrap items-center justify-between gap-4">
                         <div className="flex flex-col gap-1">
                             <h1 className="text-foreground font-spline text-3xl lg:text-4xl font-bold leading-tight tracking-tight">
-                                My Availabilities
+                                {t("WORKER_AVAILABILITY.TITLE")}
                             </h1>
                             <p className="text-muted-foreground text-base font-normal">
-                                Manage your schedule and mission capacity for upcoming assignments.
+                                {t("WORKER_AVAILABILITY.SUBTITLE")}
                             </p>
                         </div>
                         <div className="flex items-center gap-3">
@@ -821,7 +816,7 @@ export default function WorkerAvailability() {
                                 onClick={handleSyncCalendar}
                             >
                                 <RefreshCw className="h-4 w-4 mr-2" />
-                                Sync Calendar
+                                {t("WORKER_AVAILABILITY.SYNC_CALENDAR")}
                             </Button>
                         </div>
                     </div>
@@ -854,7 +849,7 @@ export default function WorkerAvailability() {
                         {/* View Switcher */}
                         <div className="flex h-10 items-center justify-center rounded-full bg-muted p-1 border border-border">
                             <label className="flex cursor-pointer h-full items-center justify-center px-6 rounded-full has-checked:bg-background has-checked:shadow-sm has-checked:text-foreground text-muted-foreground has-checked:font-bold text-sm font-medium transition-all">
-                                <span>Month View</span>
+                                <span>{t("WORKER_AVAILABILITY.MONTH_VIEW")}</span>
                                 <input
                                     type="radio"
                                     name="view_mode"
@@ -865,7 +860,7 @@ export default function WorkerAvailability() {
                                 />
                             </label>
                             <label className="flex cursor-pointer h-full items-center justify-center px-6 rounded-full has-checked:bg-background has-checked:shadow-sm has-checked:text-foreground text-muted-foreground has-checked:font-bold text-sm font-medium transition-all">
-                                <span>Week View</span>
+                                <span>{t("WORKER_AVAILABILITY.WEEK_VIEW")}</span>
                                 <input
                                     type="radio"
                                     name="view_mode"
@@ -884,12 +879,12 @@ export default function WorkerAvailability() {
                     <div className="w-full h-full min-h-150 flex flex-col rounded-xl overflow-hidden border border-border bg-card shadow-sm">
                         {/* Days Header */}
                         <div className="grid grid-cols-7 border-b border-border bg-muted/50">
-                            {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+                            {["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"].map((day) => (
                                 <div
                                     key={day}
                                     className="py-3 text-center text-xs font-bold uppercase tracking-wider text-muted-foreground"
                                 >
-                                    {day}
+                                    {t(`WORKER_AVAILABILITY.DAYS.${day}`)}
                                 </div>
                             ))}
                         </div>
@@ -985,7 +980,7 @@ export default function WorkerAvailability() {
             <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
                 <SheetContent side="bottom" className="h-[85vh] p-0 rounded-t-3xl border-t border-border focus:outline-none">
                     <SheetHeader className="sr-only">
-                        <SheetTitle>Edit Availability</SheetTitle>
+                        <SheetTitle>{t("WORKER_AVAILABILITY.EDIT_SHEET_TITLE")}</SheetTitle>
                     </SheetHeader>
                     {renderAvailabilityForm()}
                 </SheetContent>

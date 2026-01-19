@@ -45,7 +45,8 @@ export const fr = {
             SOCIAL_SERVICE: "Service Social",
             SOCIAL_WORKER: "Travailleur Social",
             WORKER: "Intervenant",
-            N_A: "N/D"
+            N_A: "N/D",
+            DELETE_PROFILE_PIC: "Supprimer la photo",
         },
         NAV: {
             FEATURES: "Fonctionnalités",
@@ -1177,6 +1178,676 @@ export const fr = {
                 ACTIVE: "Actif"
             },
             SETTINGS_DESC: "La gestion du compte et des mots de passe se fait via le panneau de configuration principal. Contactez l'administrateur système pour toute modification liée au compte."
+        },
+        WORKER_AVAILABILITY: {
+            TITLE: "Mes Disponibilités",
+            SUBTITLE: "Gérez votre planning et votre capacité pour les prochaines missions.",
+            SYNC_CALENDAR: "Sync Calendrier",
+            MONTH_VIEW: "Vue Mois",
+            WEEK_VIEW: "Vue Semaine",
+            DAYS: {
+                SUN: "Dim",
+                MON: "Lun",
+                TUE: "Mar",
+                WED: "Mer",
+                THU: "Jeu",
+                FRI: "Ven",
+                SAT: "Sam"
+            },
+            EDIT_SHEET_TITLE: "Modifier la Disponibilité",
+            SELECTED_DAYS_COUNT: "{{count}} jours consécutifs sélectionnés",
+            TIP: "💡 Conseil : Cliquez sur plusieurs dates consécutives pour définir une plage.",
+            CLEAR: "Effacer",
+            STATUS_LABEL: "Statut de Disponibilité",
+            STATUS_AVAILABLE: "Disponible",
+            STATUS_BLOCKED: "Indisponible",
+            TIME_SLOT_LABEL: "Créneau Horaire",
+            SLOT_MORNING: "Matin",
+            SLOT_ALLDAY: "Toute la journée",
+            SLOT_AFTERNOON: "Après-midi",
+            START_LABEL: "Début",
+            END_LABEL: "Fin",
+            UPCOMING_MISSIONS: "Missions à Venir",
+            NO_UPCOMING: "Aucune mission à venir",
+            NO_UPCOMING_DESC: "Vos missions confirmées apparaîtront ici",
+            UPDATE_AVAILABILITY: "Mettre à jour la Disponibilité",
+            SET_AVAILABILITY: "Définir la Disponibilité",
+            UPDATE_BLOCKED: "Mettre à jour l'Indisponibilité",
+            BLOCK_DAYS: "Bloquer les Jours",
+            REMOVE_AVAILABILITY: "Supprimer la Disponibilité",
+            REMOVE_BLOCKING: "Supprimer le Blocage",
+            SAVE_AVAILABILITY: "Enregistrer",
+            SAVE_BLOCKING: "Enregistrer le Blocage",
+            TOAST: {
+                WEEKEND_TITLE: "Week-end indisponible",
+                WEEKEND_DESC: "Vous ne pouvez pas définir de disponibilité pour les week-ends.",
+                INVALID_RANGE: "Plage horaire invalide",
+                INVALID_RANGE_DESC: "L'heure de fin doit être après l'heure de début.",
+                SUCCESS_AVAILABILITY: "Disponibilité mise à jour",
+                SUCCESS_BLOCKING: "Blocage mis à jour",
+                DELETED: "Disponibilité supprimée",
+                DELETED_DESC: "Votre disponibilité a été retirée.",
+                SYNC: "Synchronisation...",
+                SYNC_DESC: "Votre calendrier est en cours de synchronisation..."
+            }
+        },
+        WORKER_PROFILE: {
+            TITLE: "Mon Profil",
+            SUBTITLE: "Gérez vos informations personnelles et votre confidentialité.",
+            CARDS: {
+                PROFILE: {
+                    STRENGTH: "Force du Profil",
+                    COMPLETE_MSG: "Complétez votre profil pour augmenter votre visibilité."
+                },
+                AVAILABILITY: {
+                    TITLE: "Disponibilité",
+                    SUBTITLE: "Gérez votre emploi du temps",
+                    ACTIVE: "Actif",
+                    MANAGE_BTN: "Gérer la Disponibilité"
+                },
+                VERIFICATIONS: {
+                    TITLE: "Vérifications",
+                    VIEW_ALL: "Voir Tout",
+                    DIPLOMA: "Diplôme",
+                    IDENTITY: "Identité",
+                    VERIFIED: "Vérifié",
+                    PENDING: "En Attente"
+                }
+            },
+            FORMS: {
+                PERSONAL_INFO: {
+                    TITLE: "Informations Personnelles",
+                    EDIT_DETAILS: "Modifier",
+                    FIRST_NAME: "Prénom",
+                    LAST_NAME: "Nom",
+                    EMAIL: "Adresse Email",
+                    LOCATION: "Localisation"
+                },
+                SPECIALTIES: {
+                    TITLE: "Spécialités & Domaines",
+                    ADD_MORE: "Ajouter",
+                    SELECT_DOMAINS: "Sélectionner des Domaines",
+                    NO_DOMAINS: "Aucun domaine sélectionné",
+                    PRIMARY_DOMAIN: "Domaine Principal",
+                    SELECT_PRIMARY: "Sélectionnez votre domaine principal",
+                    EXPERIENCE_YEARS: "Années d'Expérience",
+                    EXPERIENCE_PLACEHOLDER: "ex. 5"
+                },
+                BIO: {
+                    TITLE: "Biographie Professionnelle",
+                    ABOUT_LABEL: "À Propos de Vous",
+                    PLACEHOLDER: "Écrivez quelques phrases sur votre parcours professionnel et votre expertise...",
+                    chars: "caractères"
+                }
+            },
+            ACTIONS: {
+                CANCEL: "Annuler",
+                SAVE: "Enregistrer",
+                SAVING: "Enregistrement...",
+                MESSAGES: {
+                    SUCCESS: "Profil mis à jour",
+                    SUCCESS_DESC: "Votre profil a été enregistré avec succès.",
+                    ERROR: "Échec de la mise à jour du profil",
+                    PIC_UPLOAD_SUCCESS: "Photo de profil mise à jour",
+                    PIC_UPLOAD_DESC: "Votre photo de profil a été téléchargée avec succès.",
+                    PIC_DELETE_SUCCESS: "Photo de profil supprimée",
+                    PIC_DELETE_DESC: "Votre photo de profil a été supprimée."
+                }
+            },
+
+        },
+        WORKER_DASHBOARD: {
+            WELCOME: "Bienvenue, {{name}}",
+            WELCOME_SUBTITLE: "Vous avez <1>{{activeCount}} missions actives</1> et <3>{{notifCount}} nouvelles notifications</3>.",
+            HEADER_BUTTONS: {
+                AVAILABILITY: "Disponibilité",
+                FIND_MISSIONS: "Trouver des Missions"
+            },
+            STATS: {
+                ACTIVE_MISSIONS: "Missions Actives",
+                IN_PROGRESS: "En cours actuellement",
+                COMPLETED_MISSIONS: "Missions Terminées",
+                ALL_TIME: "Total historique",
+                EARNINGS: "Gains Totaux",
+                ESTIMATED_NET: "Gains nets estimés",
+                RATING: "Note Moyenne",
+                TOTAL_REVIEWS: "{{count}} avis total"
+            },
+            ACTIVE_MISSION: {
+                TITLE: "Mission Active",
+                VIEW_DETAILS: "Voir Détails",
+                IN_PROGRESS_BADGE: "En Cours",
+                VIEW_MISSION_BTN: "Voir Mission",
+                CONTACT_INSTITUTION: "Contacter l'Institution",
+                NO_ACTIVE_TITLE: "Aucune mission active",
+                NO_ACTIVE_DESC: "Vous n'avez aucune mission en cours. Postulez à de nouvelles opportunités !",
+                FIND_MISSIONS_BTN: "Trouver des Missions"
+            },
+            APPLICATIONS: {
+                TITLE: "Candidatures Récentes",
+                VIEW_ALL: "Voir Tout",
+                NO_PENDING_TITLE: "Aucune candidature en attente",
+                NO_PENDING_DESC: "Vous n'avez soumis aucune candidature récemment.",
+                BROWSE_BTN: "Parcourir les Missions",
+                TABLE: {
+                    MISSION: "Mission",
+                    INSTITUTION: "Institution",
+                    DATE: "Date de Candidature",
+                    STATUS: "Statut"
+                },
+                APPLIED_LABEL: "Postulé :"
+            },
+            QUICK_ACTIONS: {
+                TITLE: "Actions Rapides",
+                AVAILABILITY: "Disponibilité",
+                DOCUMENTS: "Documents",
+                REVIEWS: "Avis",
+                SUPPORT: "Support"
+            },
+            NOTIFICATIONS: {
+                TITLE: "Notifications",
+                NO_NEW: "Aucune nouvelle notification.",
+                VIEW_ALL: "Voir Tout"
+            }
+        },
+        WORKER_DOCUMENTS: {
+            TITLE: "Mes Documents Professionnels",
+            SUBTITLE: "Gérez vos diplômes et certifications pour assurer votre éligibilité aux missions. Les documents vérifiés augmentent votre visibilité auprès des institutions.",
+            SECURE_MSG: "Stockage Crypté & Sécurisé",
+            UPLOAD_BTN: "Télécharger un Document",
+            STATS: {
+                TOTAL: "Total Documents",
+                UPLOADED: "+{{count}} téléchargés",
+                VERIFIED: "Vérifiés & Actifs",
+                READY_MSG: "Prêt pour le matching de missions",
+                ACTION_REQUIRED: "Action Requise",
+                CHECK_REJECTED: "Vérifier les éléments rejetés"
+            },
+            DIALOG: {
+                TITLE: "Télécharger un Document",
+                DESC: "Téléchargez vos documents professionnels (PDF uniquement, max 10MB)",
+                TYPE_LABEL: "Type de Document",
+                TYPE_PLACEHOLDER: "Sélectionner le type",
+                TYPES: {
+                    DIPLOMA: "Diplôme",
+                    CV: "CV / Resume",
+                    ID: "Carte d'Identité",
+                    OTHER: "Autre"
+                },
+                DOC_TITLE_LABEL: "Titre du Document",
+                DOC_TITLE_PLACEHOLDER: "ex. Master en Management",
+                FILE_LABEL: "Fichier",
+                DRAG_DROP: "Cliquez pour sélectionner ou glissez-déposez",
+                DRAG_DROP_ACTIVE: "Déposez...",
+                DRAG_DROP_TITLE: "Glissez & déposez votre PDF ici",
+                DRAG_DROP_DESC: "Prise en charge des fichiers PDF jusqu'à 10MB. Nous scannons automatiquement la clarté et la validité.",
+                CANCEL: "Annuler",
+                UPLOAD: "Télécharger",
+                UPLOADING: "Téléchargement..."
+            },
+            LIST: {
+                TITLE: "Téléchargements Récents",
+                EMPTY_TITLE: "Aucun document téléchargé",
+                EMPTY_DESC: "Téléchargez votre premier document pour commencer",
+                VIEW_BTN: "Voir",
+                STATUS: {
+                    VERIFIED: "Vérifié",
+                    PENDING: "En Attente",
+                    REJECTED: "Rejeté"
+                },
+                REASON: "Raison : {{reason}}"
+            },
+            MESSAGES: {
+                INVALID_TYPE: "Type de fichier invalide",
+                Please_PDF: "Veuillez télécharger un fichier PDF",
+                FILE_TOO_LARGE: "Fichier trop volumineux",
+                SIZE_LIMIT: "Veuillez télécharger un fichier de moins de 10MB",
+                UPLOAD_SUCCESS: "Document téléchargé",
+                UPLOAD_SUCCESS_DESC: "Votre document a été téléchargé avec succès et est en attente de validation",
+                UPLOAD_ERROR: "Échec du téléchargement du document"
+            },
+            FOOTER: "Vos documents sont traités conformément aux réglementations RGPD. Besoin d'aide ? Contactez le support."
+        },
+        MY_APPLICATIONS: {
+            TITLE: "Mes Candidatures",
+            SUBTITLE: "Suivez le statut de vos candidatures aux missions",
+            BROWSE_BTN: "Parcourir les Missions",
+            SEARCH_PLACEHOLDER: "Rechercher des candidatures...",
+            TABS: {
+                ALL: "Toutes",
+                PENDING: "En Attente",
+                ACCEPTED: "Acceptées",
+                REJECTED: "Rejetées"
+            },
+            EMPTY: {
+                NO_APPS_TITLE: "Aucune candidature",
+                NO_APPS_DESC: "Vous n'avez pas encore postulé à des missions. Commencez votre parcours en explorant les opportunités disponibles !",
+                NO_MATCH_TITLE: "Aucune candidature correspondante",
+                NO_MATCH_DESC: "Nous n'avons trouvé aucune candidature correspondant à vos filtres actuels. Essayez d'ajuster vos critères de recherche.",
+                START_EXPLORING: "Commencer à Explorer",
+                CLEAR_FILTERS: "Effacer les Filtres"
+            },
+            CARD: {
+                MISSION_PERIOD: "Période de Mission",
+                APPLIED_ON: "Postulé le {{date}}",
+                VIEW_MISSION: "Voir la Mission",
+                WITHDRAW_BTN_TITLE: "Retirer la Candidature",
+                STATUS: {
+                    PENDING: "En Attente",
+                    ACCEPTED: "Acceptée",
+                    REJECTED: "Rejetée"
+                }
+            },
+            WITHDRAW_DIALOG: {
+                TITLE: "Retirer la Candidature",
+                DESC: "Êtes-vous sûr de vouloir retirer votre candidature pour",
+                DESC_SUFFIX: "? Cette action est irréversible, mais vous pourrez postuler à nouveau si la mission est toujours ouverte.",
+                CANCEL: "Annuler",
+                CONFIRM: "Confirmer le Retrait",
+                WITHDRAWING: "Retrait en cours..."
+            },
+            MESSAGES: {
+                WITHDRAW_SUCCESS: "Candidature retirée",
+                WITHDRAW_SUCCESS_DESC: "Votre candidature a été retirée.",
+                WITHDRAW_ERROR: "Échec du retrait de la candidature"
+            }
+        },
+        AVAILABLE_MISSIONS: {
+            TITLE: "Missions Disponibles",
+            SUBTITLE: "Trouvez facilement votre prochain contrat de travail social.",
+            FILTERS: {
+                TITLE: "Filtres",
+                DOMAINS: "domaines",
+                SPECIALTY: "Spécialité",
+                URGENCY: "Urgence",
+                DISTANCE: "Distance",
+                CLEAR_ALL: "Tout effacer",
+                RESET_ALL: "Tout réinitialiser",
+                URGENCY_OPTIONS: {
+                    ALL: "Tous",
+                    HIGH: "Haute Priorité",
+                    MEDIUM: "Moyenne",
+                    LOW: "Standard"
+                }
+            },
+            SORT: {
+                LABEL: "Trier par:",
+                OPTIONS: {
+                    HIGHEST_PAY: "Meilleur Salaire",
+                    MOST_URGENT: "Plus Urgent",
+                    NEAREST: "Plus Proche",
+                    NEWEST: "Plus Récent"
+                }
+            },
+            SEARCH_PLACEHOLDER: "Rechercher des missions...",
+            EMPTY: {
+                TITLE: "Aucune mission trouvée",
+                DESC: "Aucune mission ne correspond à vos filtres. Essayez d'ajuster vos critères.",
+                CLEAR_BTN: "Effacer les Filtres"
+            },
+            CARD: {
+                TOTAL_BUDGET: "Budget Total",
+                VERIFIED_INSTITUTION: "Institution Vérifiée",
+                APPLIED: "Postulé",
+                VIEW_DETAILS: "Voir Détails",
+                URGENCY: {
+                    URGENT: "URGENT",
+                    MODERATE: "MODÉRÉ",
+                    STANDARD: "STANDARD"
+                }
+            }
+        },
+        WORKER_MISSION_DETAILS: {
+            URGENCY: {
+                URGENT: "URGENT",
+                MODERATE: "MODÉRÉ",
+                STANDARD: "STANDARD"
+            },
+            STATUS: {
+                ACCEPTED: "Acceptée",
+                SUBMITTED: "Postulée",
+                REJECTED: "Rejetée",
+                OPEN: "Ouverte",
+                ONGOING: "En cours",
+                CLOSED: "Fermée",
+                COMPLETED: "Terminée",
+                CANCELLED: "Annulée"
+            },
+            NOT_FOUND: {
+                TITLE: "Mission introuvable",
+                DESC: "La mission que vous recherchez n'existe pas ou a été supprimée.",
+                BACK_BTN: "Retour aux Missions"
+            },
+            BREADCRUMBS: {
+                DASHBOARD: "Tableau de bord",
+                MISSIONS: "Missions",
+                MISSION_PREFIX: "Mission#"
+            },
+            HEADER: {
+                APPLIED_BADGE: "Postulé",
+                REF: "Réf",
+                PROFESSIONAL_MISSION: "Mission Professionnelle"
+            },
+            ACTIONS: {
+                SUPPORT: "Support",
+                WITHDRAW: "Retirer",
+                WITHDRAWING: "Retrait...",
+                APPLY: "Postuler",
+                APPLYING: "Envoi..."
+            },
+            TABS: {
+                OVERVIEW: {
+                    TITLE: "Aperçu de la Mission",
+                    DEFAULT_DESC: "Services professionnels de travail social requis. Veuillez examiner attentivement toutes les exigences avant de postuler.",
+                    START_DATE: "Date de début",
+                    DURATION: "Durée",
+                    MULTIPLE_DAYS: "Plusieurs Jours",
+                    NA: "N/A"
+                },
+                INSTITUTION: {
+                    TITLE: "Institution",
+                    GET_DIRECTIONS: "Obtenir l'itinéraire"
+                },
+                REQUIREMENTS: {
+                    TITLE: "Exigences de la Mission",
+                    REQUIRED_SPECIALTY: "Spécialité Requise",
+                    FOCUS_DOMAINS: "Domaines Cibles",
+                    MANDATORY_MSG: "Exigence obligatoire pour cette mission"
+                },
+                APPLICATION_STATUS: {
+                    SUBMITTED_TITLE: "Candidature Soumise avec Succès",
+                    STATUS_LABEL: "Statut:",
+                    APPLIED_ON: "Postulé le {{date}}",
+                    WITHDRAW_BTN: "Retirer la Candidature"
+                },
+                CONTACT: {
+                    TITLE: "Point de Contact",
+                    INSTITUTION_CONTACT: "Contact Institution",
+                    COORDINATOR: "Coordinateur",
+                    CALL: "Appeler",
+                    MESSAGE: "Message"
+                },
+                COMPENSATION: {
+                    TITLE: "Rémunération",
+                    MAD: "MAD",
+                    PLATFORM_FEE_MSG: "Des <bold>frais de plateforme de 15%</bold> seront déduits de ce budget.",
+                    TOTAL_BUDGET: "Budget Total"
+                },
+                VERIFICATION: {
+                    TITLE: "Institution Vérifiée",
+                    DESC: "Cette institution a été vérifiée par notre plateforme et répond à toutes les normes de qualité."
+                }
+            },
+            TOASTS: {
+                APPLY_SUCCESS: "Candidature soumise",
+                APPLY_SUCCESS_DESC: "Votre candidature a été envoyée à l'institution.",
+                WITHDRAW_SUCCESS: "Candidature retirée",
+                WITHDRAW_SUCCESS_DESC: "Votre candidature a été retirée avec succès.",
+                ERROR_DEFAULT: "Échec de l'action",
+                COMING_SOON: "Bientôt Disponible",
+                SUPPORT_MSG: "La fonctionnalité de ticket de support sera bientôt disponible !",
+                CALL_MSG: "La fonctionnalité d'appel sera bientôt disponible !",
+                DIRECTIONS_MSG: "La fonctionnalité d'itinéraire sera bientôt disponible !",
+                CONTACT_ERROR: "Contact de l'institution non disponible",
+                CHAT_ERROR: "Échec de l'ouverture du chat"
+            },
+            CHAT_MODAL: {
+                TITLE: "Message à l'Institution"
+            }
+        },
+        ASSIGNED_MISSIONS: {
+            TITLE: "Mes Affectations",
+            SUBTITLE: "Suivez et gérez vos missions actives et passées",
+            FIND_NEW: "Trouver de nouvelles missions",
+            STATS: {
+                ACTIVE: "Missions Actives",
+                ACTIVE_DESC: "Actuellement actives",
+                IN_PROGRESS: "En Cours",
+                ONGOING_DESC: "Missions en cours",
+                COMPLETED: "Terminées",
+                COMPLETED_DESC: "Total historique",
+                EARNINGS: "Gains Totaux",
+                EARNINGS_DESC: "Revenus nets (frais déduits)",
+                TREND_NOW: "Maintenant",
+                TREND_PENDING: "En attente",
+                TREND_DONE: "Fait"
+            },
+            FILTERS: {
+                ALL: "Toutes les Missions",
+                ACTIVE: "Actives",
+                ONGOING: "En Cours",
+                COMPLETED: "Terminées",
+                CANCELLED: "Annulées"
+            },
+            SEARCH_PLACEHOLDER: "Rechercher des affectations...",
+            TIME_FILTER: {
+                ALL_TIME: "Tout",
+                UPCOMING: "À venir",
+                PAST: "Passées"
+            },
+            EMPTY: {
+                TITLE: "Aucune affectation trouvée",
+                DESC_FILTERED: "Aucune affectation ne correspond à vos filtres. Essayez d'ajuster vos critères.",
+                DESC_NO_DATA: "Vous n'avez pas encore de missions assignées. Commencez à explorer pour trouver votre prochaine opportunité !",
+                CLEAR_BTN: "Effacer les filtres",
+                BROWSE_BTN: "Parcourir les Missions"
+            },
+            CARD: {
+                START: "Début",
+                BUDGET: "Budget",
+                TIMING: "Temps restant",
+                DETAILS: "Détails",
+                REVIEW: "Évaluer",
+                REVIEWED: "Évaluée",
+                PAID: "Payée",
+                TBD: "À déterminer",
+                ENDED: "Terminée",
+                ENDS_TODAY: "Se termine aujourd'hui",
+                DAYS_LEFT: "{{count}} jours restants",
+                ONE_DAY_LEFT: "1 jour restant",
+                MAD: "MAD"
+            },
+            STATUS: {
+                ACTIVE: "Active",
+                ONGOING: "En Cours",
+                COMPLETED: "Terminée",
+                CANCELLED: "Annulée"
+            }
+        },
+        ASSIGNMENT_DETAILS: {
+            BREADCRUMBS: {
+                DASHBOARD: "Tableau de bord",
+                ASSIGNMENTS: "Affectations",
+                PREFIX: "Affectation#"
+            },
+            BADGES: {
+                REVIEW_SUBMITTED: "Évaluation Soumise",
+                PAYMENT_RECEIVED: "Paiement Reçu"
+            },
+            ACTIONS: {
+                GET_SUPPORT: "Obtenir de l'aide",
+                VIEW_MAP: "Voir la carte",
+                DIRECTIONS: "Itinéraire",
+                CALL: "Appeler"
+            },
+            REVIEW: {
+                INSTITUTION_FEEDBACK_TITLE: "Rétroaction de l'Institution",
+                YOUR_REVIEW_TITLE: "Votre Évaluation",
+                FORM_TITLE: "Comment s'est passée votre expérience ?",
+                FORM_DESC: "Évaluez votre collaboration avec {{name}}. Ces commentaires sont précieux pour la communauté.",
+                CLICK_TO_RATE: "Cliquez pour noter",
+                FEEDBACK_LABEL: "Votre Avis",
+                OPTIONAL: "(Optionnel)",
+                PLACEHOLDER: "Partagez des détails sur l'environnement de travail, la communication, etc...",
+                SUBMIT_BTN: "Soumettre l'évaluation",
+                SUBMITTING: "Envoi en cours...",
+                SUCCESS_TITLE: "Évaluation soumise",
+                SUCCESS_DESC: "Merci pour vos commentaires !",
+                ERROR_TITLE: "Échec de l'envoi de l'évaluation"
+            },
+            OVERVIEW: {
+                TITLE: "Aperçu de la Mission",
+                DESC: "Détails et contexte de cette affectation",
+                NO_DESC: "Aucune description fournie pour cette mission."
+            },
+            REQUIREMENTS: {
+                TITLE: "Exigences & Portée",
+                DESC: "Compétences et expertise requises",
+                PRIMARY_SPECIALITY: "Spécialité Principale",
+                INTERVENTION_DOMAINS: "Domaines d'Intervention",
+                NO_DOMAINS: "Aucun domaine spécifique listé"
+            },
+            SIDEBAR: {
+                TOTAL_BUDGET: "Budget Total",
+                START_DATE: "Date de Début",
+                END_DATE: "Date de Fin",
+                DURATION: "Durée",
+                DAYS: "jours",
+                ADDRESS: "Adresse",
+                INSTITUTION_CONTACT: "Contact Institution",
+                MANAGER: "Gestionnaire"
+            },
+            NOT_FOUND: {
+                TITLE: "Affectation Non Trouvée",
+                DESC: "Nous n'avons pas pu localiser l'affectation que vous recherchez. Elle a peut-être été supprimée ou vous n'y avez pas accès.",
+                BACK_BTN: "Retour aux Affectations"
+            },
+            STATUS: {
+                ACTIVE: "Active",
+                ONGOING: "En Cours",
+                COMPLETED: "Terminée",
+                CANCELLED: "Annulée"
+            },
+            URGENCY: {
+                HIGH: "Urgent",
+                MEDIUM: "Priorité Moyenne",
+                LOW: "Standard"
+            },
+            TOASTS: {
+                COMING_SOON: "Bientôt Disponible",
+                SUPPORT_MSG: "La fonctionnalité de ticket de support sera bientôt disponible !",
+                CALL_MSG: "La fonctionnalité d'appel sera bientôt disponible !",
+                DIRECTIONS_MSG: "La fonctionnalité d'itinéraire sera bientôt disponible !",
+                MAP_MSG: "La vue carte sera bientôt disponible !"
+            }
+        },
+        WORKER_REVIEWS: {
+            TITLE: "Mes Avis",
+            SUBTITLE: "Construisez votre réputation et donnez votre avis aux institutions",
+            STATS: {
+                AVG_RATING: "Note Moyenne",
+                RECEIVED: "Avis Reçus",
+                WRITTEN: "Avis Écrits"
+            },
+            FALLBACK_NAMES: {
+                ANONYMOUS: "Anonyme",
+                USER: "Utilisateur",
+                INSTITUTION: "Institution"
+            },
+            PENDING: {
+                LABEL: "Actions En Attente",
+                TITLE: "Notez vos missions récentes",
+                DESC: "Vous avez terminé des missions qui n'ont pas encore été évaluées.",
+                BUTTON: "Noter"
+            },
+            TABS: {
+                RECEIVED: "Avis Reçus",
+                WRITTEN: "Avis Écrits"
+            },
+            EMPTY: {
+                RECEIVED_TITLE: "Aucun avis reçu pour le moment",
+                RECEIVED_DESC: "Complétez des missions avec excellence pour obtenir des avis 5 étoiles des institutions !",
+                BROWSE_BTN: "Parcourir les missions",
+                WRITTEN_TITLE: "Aucun avis écrit",
+                WRITTEN_DESC: "Vos commentaires aident à améliorer la communauté. Évaluez les institutions après avoir terminé les missions."
+            },
+            DIALOG: {
+                TITLE: "Écrire un avis",
+                DESC: "Vos commentaires honnêtes aident les autres travailleurs et institutions."
+            },
+            FORM: {
+                REVIEWING: "Évaluation de",
+                RATING_LABEL: "Comment évalueriez-vous votre expérience ?",
+                FEEDBACK_LABEL: "Commentaires supplémentaires",
+                OPTIONAL: "(Optionnel)",
+                PLACEHOLDER: "Partagez des détails sur votre collaboration, la communication et votre satisfaction globale...",
+                CANCEL: "Annuler",
+                SUBMIT: "Soumettre",
+                SUBMITTING: "Envoi..."
+            },
+            TOASTS: {
+                SUCCESS_TITLE: "Avis soumis",
+                SUCCESS_DESC: "Merci pour vos commentaires !",
+                ERROR: "Échec de l'envoi de l'avis"
+            }
+        },
+        WORKER_NOTIFICATIONS: {
+            TITLE: "Notifications",
+            SUBTITLE: "Restez informé sur vos missions, candidatures et paiements",
+            ACTIONS: {
+                MARK_ALL_READ: "Tout marquer comme lu",
+                MARK_READ: "Marquer comme lu",
+                DELETE: "Supprimer"
+            },
+            TABS: {
+                ALL: "Toutes les Notifications",
+                UNREAD: "Non lues"
+            },
+            NEW: "Nouveau",
+            EMPTY: {
+                ALL_TITLE: "Aucune notification",
+                ALL_DESC: "Vous êtes à jour ! Les mises à jour importantes apparaîtront ici.",
+                UNREAD_TITLE: "Aucune notification non lue",
+                UNREAD_DESC: "Excellent travail ! Vous avez lu toutes vos notifications."
+            }
+        },
+        MESSAGES: {
+            TITLE: "Messages",
+            SEARCH_PLACEHOLDER: "Rechercher des conversations...",
+            NO_CONVERSATIONS: "Aucune conversation",
+            START_MESSAGING: "Commencez à discuter depuis une page de détails de mission",
+            UNKNOWN_USER: "Inconnu",
+            YOU_PREFIX: "Vous : ",
+            NO_MESSAGES: "Pas encore de messages",
+            EMPTY_WINDOW: {
+                TITLE: "Vos Messages",
+                DESC: "Sélectionnez une conversation dans la barre latérale pour commencer à discuter avec des institutions ou le support."
+            },
+            CHAT_WINDOW: {
+                SOCIAL_WORKER: "Travailleur Social",
+                INSTITUTION: "Institution",
+                NO_MESSAGES_YET: "Pas encore de messages. Dites bonjour ! 👋",
+                STATUS: {
+                    READ: "Lu",
+                    DELIVERED: "Reçu",
+                    SENT: "Envoyé"
+                },
+                TYPING: {
+                    IS: "écrit...",
+                    ARE: "écrivent..."
+                },
+                INPUT: {
+                    PLACEHOLDER: "Tapez un message...",
+                    HINT: "Appuyez sur Entrée pour envoyer, Maj+Entrée pour une nouvelle ligne"
+                }
+            }
+        },
+        PENDING_APPROVAL: {
+            TITLE: "Compte en attente d'approbation",
+            DESC: "Votre compte est actuellement en cours d'examen par notre équipe administrative",
+            ALERT: {
+                TITLE: "Que se passe-t-il ensuite ?",
+                DESC: "Nos administrateurs examineront votre profil et vos documents. Ce processus prend généralement de 1 à 3 jours ouvrables. Vous recevrez une notification une fois votre compte vérifié."
+            },
+            WAIT_TITLE: "En attendant, vous pouvez :",
+            ACTIONS: {
+                PROFILE_TITLE: "Complétez votre profil",
+                PROFILE_DESC: "Assurez-vous que toutes vos informations sont exactes et à jour",
+                DOCS_TITLE: "Téléchargez les documents requis",
+                DOCS_DESC: "Assurez-vous que tous les documents nécessaires sont téléchargés pour une approbation plus rapide",
+                GO_PROFILE: "Aller au profil",
+                MANAGE_DOCS: "Gérer les documents"
+            }
         }
     }
 };
