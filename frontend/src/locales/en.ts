@@ -516,6 +516,14 @@ export const en = {
                 DRAFT: "Draft",
                 VISIBILITY_LABEL: "Visibility:",
                 PUBLIC: "Public"
+            },
+            MESSAGES: {
+                SUCCESS: "Mission created",
+                SUCCESS_DESC: "Your mission has been created successfully.",
+                ERROR: "Failed to create mission",
+                NOT_FOUND: "Mission Not Found",
+                NOT_FOUND_DESC: "The mission you are trying to edit doesn't exist or has been removed.",
+                SYNC_NOTICE: "Changes are synchronized immediately with active workers."
             }
         },
         EDIT_MISSION: {
@@ -539,8 +547,6 @@ export const en = {
                 SUCCESS_DESC: "Your mission has been updated successfully.",
                 ERROR: "Failed to update mission",
                 NOT_FOUND: "Mission Not Found",
-                NOT_FOUND_DESC: "The mission you are trying to edit doesn't exist or has been removed.",
-                SYNC_NOTICE: "Changes are synchronized immediately with active workers."
             }
         },
         MY_MISSIONS: {

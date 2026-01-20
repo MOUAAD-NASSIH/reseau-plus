@@ -35,10 +35,13 @@ export const NOTIFICATION_METADATA: Record<NotificationType, { icon: any; color:
     APPLICATION_ACCEPTED: { icon: UserCheck, color: "text-emerald-500 bg-emerald-500/10", category: "MISSIONS" },
     APPLICATION_REJECTED: { icon: UserX, color: "text-red-500 bg-red-500/10", category: "MISSIONS" },
     ASSIGNMENT_CREATED: { icon: FileText, color: "text-cyan-500 bg-cyan-500/10", category: "MISSIONS" },
+    ASSIGNMENT_ACTIVE: { icon: CheckCircle2, color: "text-blue-500 bg-blue-500/10", category: "MISSIONS" },
+    ASSIGNMENT_ONGOING: { icon: FileText, color: "text-amber-500 bg-amber-500/10", category: "MISSIONS" },
     ASSIGNMENT_COMPLETED: { icon: CheckCircle2, color: "text-emerald-500 bg-emerald-500/10", category: "MISSIONS" },
     ASSIGNMENT_CANCELLED: { icon: XCircle, color: "text-red-500 bg-red-500/10", category: "MISSIONS" },
     PAYMENT_RECEIVED: { icon: DollarSign, color: "text-emerald-500 bg-emerald-500/10", category: "PAYMENTS" },
     PAYMENT_FAILED: { icon: AlertCircle, color: "text-red-500 bg-red-500/10", category: "PAYMENTS" },
+    PAYMENT_COMPLETED: { icon: CheckCircle2, color: "text-emerald-500 bg-emerald-500/10", category: "PAYMENTS" },
     WORKER_VERIFIED: { icon: ShieldCheck, color: "text-emerald-500 bg-emerald-500/10", category: "SYSTEM" },
     WORKER_REJECTED: { icon: ShieldAlert, color: "text-red-500 bg-red-500/10", category: "SYSTEM" },
     DOCUMENT_APPROVED: { icon: FileCheck, color: "text-emerald-500 bg-emerald-500/10", category: "SYSTEM" },
@@ -51,7 +54,7 @@ export const useInstitutionNotifications = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState("ALL");
-    
+
     const { data: notificationsData, isLoading } = useGetNotificationsQuery();
     const [markAsRead] = useMarkAsReadMutation();
     const [markAllAsRead] = useMarkAllAsReadMutation();
@@ -93,13 +96,15 @@ export const useInstitutionNotifications = () => {
         }
     };
 
-    const getRedirectUrl = (type: NotificationType): string | null => {
+    const getRedirectUrl = (notification: { type: NotificationType, entityId?: number }): string | null => {
+        const { type, entityId } = notification;
         switch (type) {
             case "APPLICATION_SUBMITTED": return "/institution/missions";
             case "APPLICATION_ACCEPTED":
             case "ASSIGNMENT_CREATED":
             case "ASSIGNMENT_COMPLETED":
-            case "ASSIGNMENT_CANCELLED": return "/institution/assignments";
+            case "ASSIGNMENT_CANCELLED":
+                return entityId ? `/institution/assignments/${entityId}` : "/institution/assignments";
             case "PAYMENT_RECEIVED":
             case "PAYMENT_FAILED": return "/institution/payments/history";
             case "REVIEW_RECEIVED": return "/institution/reviews";

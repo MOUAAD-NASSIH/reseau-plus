@@ -5,6 +5,7 @@
 import { prisma } from "../lib/prisma";
 import { ReviewFilters, RATING_MIN, RATING_MAX } from "../types/review.types";
 import { createAdminLog } from "./adminService";
+import * as notificationService from "./notificationService";
 
 /**
  * Custom error class for review operations
@@ -124,6 +125,19 @@ export const createReview = async (
       }
     }
   });
+
+
+
+  // Notify the reviewee
+  try {
+    await notificationService.notifyReviewReceived(
+      revieweeId,
+      rating,
+      assignment.mission.title
+    );
+  } catch (error) {
+    console.error('Failed to send review notification:', error);
+  }
 
   return review;
 };

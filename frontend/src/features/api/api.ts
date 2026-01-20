@@ -24,6 +24,7 @@ export const TAG_TYPES = [
     "Auth",
     "Conversations",
     "Messages",
+    "UnreadCount",
 ] as const;
 
 export type TagType = (typeof TAG_TYPES)[number];

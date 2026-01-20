@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
-import { ArrowLeft, Send, Phone, Video } from "lucide-react";
+import { ArrowLeft, Send, Phone, Video, WifiOff, Wifi } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import {
   useGetConversationMessagesQuery,
@@ -11,6 +11,8 @@ import {
 import { useGetCurrentUserQuery } from "../../features/api/endpoints/authEndpoints";
 import { useMessageSocket } from "../../socket/hooks/useMessageSocket";
 import { UserAvatar } from "@/components/ui/avatar";
+import { TypingIndicator } from "./TypingIndicator";
+import { MessageStatus } from "./MessageStatus";
 
 interface ChatWindowProps {
   conversation: Conversation;
@@ -32,10 +34,9 @@ export default function ChatWindow({ conversation, onBack }: ChatWindowProps) {
   // Real-time message socket hook - handles room join/leave and message events
   const { typingUsers, sendTypingIndicator, isRealtime } = useMessageSocket(conversation.id);
 
-  console.log('[ChatWindow] Socket connection status:', { isRealtime, conversationId: conversation.id });
-
   const {
     data: messages = [],
+    refetch,
   } = useGetConversationMessagesQuery({
     conversationId: conversation.id,
     limit: 100,
@@ -67,12 +68,7 @@ export default function ChatWindow({ conversation, onBack }: ChatWindowProps) {
     } : undefined,
   }), [currentUser, currentUserId]);
 
-  console.log("ChatWindow render:", {
-    otherUser,
-    conversationId: conversation.id,
-    isSending,
-    messageText
-  });
+
   const isWorker = !!otherUser?.worker;
   const name = isWorker
     ? `${otherUser?.worker?.firstName} ${otherUser?.worker?.lastName}`
@@ -88,17 +84,29 @@ export default function ChatWindow({ conversation, onBack }: ChatWindowProps) {
     scrollToBottom();
   }, [messages]);
 
-  // Mark messages as read when conversation opens
+  // Mark messages as read when conversation opens or new messages arrive
+  useEffect(() => {
+    if (conversation.id && messages.length > 0) {
+      // Check if there are any unread messages from the other user
+      const hasUnreadFromOther = messages.some(
+        (msg) => msg.receiverId === currentUserId && msg.status !== 'READ'
+      );
+
+      if (hasUnreadFromOther) {
+        // Mark via REST API (which also triggers socket event)
+        markAsRead(conversation.id);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conversation.id, messages.length]);
+
+  // Refetch messages when conversation opens to get any missed messages
   useEffect(() => {
     if (conversation.id) {
-      // Mark via REST API
-      markAsRead(conversation.id);
+      refetch();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversation.id]);
-
-  // Note: REST polling fallback is now handled by useMessageSocket hook
-  // When socket is disconnected, the hook automatically polls every 5 seconds
 
   // Handle typing indicator
   const handleTyping = useCallback(() => {
@@ -126,20 +134,7 @@ export default function ChatWindow({ conversation, onBack }: ChatWindowProps) {
   }, []);
 
   const handleSendMessage = async () => {
-    console.log("handleSendMessage called!");
-    console.log("Check values:", {
-      messageText: messageText.trim(),
-      otherUser,
-      isSending
-    });
-
     if (!messageText.trim() || !otherUser || isSending || !currentUserId) {
-      console.log("Blocked because:", {
-        noMessage: !messageText.trim(),
-        noOtherUser: !otherUser,
-        isSending,
-        noCurrentUserId: !currentUserId
-      });
       return;
     }
 
@@ -148,12 +143,6 @@ export default function ChatWindow({ conversation, onBack }: ChatWindowProps) {
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
     }
-
-    console.log("Sending message:", {
-      conversationId: conversation.id,
-      receiverId: otherUser.id,
-      content: messageText.trim(),
-    });
 
     // Clear input immediately for better UX (optimistic)
     const messageContent = messageText.trim();
@@ -170,7 +159,6 @@ export default function ChatWindow({ conversation, onBack }: ChatWindowProps) {
 
       scrollToBottom();
     } catch (error) {
-      console.error("Failed to send message:", error);
       // Restore message text on error so user can retry
       setMessageText(messageContent);
     }
@@ -196,7 +184,16 @@ export default function ChatWindow({ conversation, onBack }: ChatWindowProps) {
 
           <div>
             <h2 className="font-semibold">{name}</h2>
-            <p className="text-xs text-muted-foreground">{isWorker ? t("MESSAGES.CHAT_WINDOW.SOCIAL_WORKER") : t("MESSAGES.CHAT_WINDOW.INSTITUTION")}</p>
+            <div className="flex items-center gap-2">
+              <p className="text-xs text-muted-foreground">{isWorker ? t("MESSAGES.CHAT_WINDOW.SOCIAL_WORKER") : t("MESSAGES.CHAT_WINDOW.INSTITUTION")}</p>
+              <div title={isRealtime ? "Connected" : "Disconnected"}>
+                {isRealtime ? (
+                  <Wifi className="h-3 w-3 text-green-500" />
+                ) : (
+                  <WifiOff className="h-3 w-3 text-muted-foreground" />
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -253,17 +250,11 @@ export default function ChatWindow({ conversation, onBack }: ChatWindowProps) {
                     >
                       <p className="text-sm wrap-break-word">{message.content}</p>
                     </div>
-                    <div className={`flex items-center gap-2 mt-1 px-2 ${isMe ? "justify-end" : ""}`}>
+                    <div className={`flex items-center gap-1 mt-1 px-2 ${isMe ? "justify-end" : ""}`}>
                       <span className="text-xs text-muted-foreground">
                         {new Date(message.createdAt).toLocaleString(i18n.language, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                       </span>
-                      {isMe && (
-                        <span className="text-xs text-muted-foreground">
-                          {message.status === "READ" ? t("MESSAGES.CHAT_WINDOW.STATUS.READ")
-                            : message.status === "DELIVERED" ? t("MESSAGES.CHAT_WINDOW.STATUS.DELIVERED")
-                              : t("MESSAGES.CHAT_WINDOW.STATUS.SENT")}
-                        </span>
-                      )}
+                      <MessageStatus status={message.status} isOwnMessage={isMe} />
                     </div>
                   </div>
                 </div>
@@ -272,19 +263,7 @@ export default function ChatWindow({ conversation, onBack }: ChatWindowProps) {
           })
         )}
 
-        {/* Typing indicator */}
-        {typingUsers.length > 0 && (
-          <div className="flex items-center gap-2 text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <span className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-              <span className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-              <span className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-            </div>
-            <span className="text-xs">
-              {typingUsers.map(t => t.userName).join(', ')} {typingUsers.length === 1 ? t("MESSAGES.CHAT_WINDOW.TYPING.IS") : t("MESSAGES.CHAT_WINDOW.TYPING.ARE")}
-            </span>
-          </div>
-        )}
+        <TypingIndicator typingUsers={typingUsers} />
 
         <div ref={messagesEndRef} />
       </div>

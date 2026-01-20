@@ -13,13 +13,17 @@ import type { NotificationPayload } from "../types/socket.types";
 export const createNotification = async (
     userId: number,
     type: NotificationType | string,
-    message: string
+    message: string,
+    entityId?: number,
+    entityType?: string
 ) => {
     const notification = await prisma.notification.create({
         data: {
             userId,
             type,
             message,
+            entityId,
+            entityType
             // isRead defaults to false per Prisma schema
         }
     });
@@ -30,6 +34,8 @@ export const createNotification = async (
         userId: notification.userId,
         type: notification.type,
         message: notification.message,
+        entityId: notification.entityId ?? undefined,
+        entityType: notification.entityType ?? undefined,
         isRead: notification.isRead,
         createdAt: notification.createdAt.toISOString(),
     };

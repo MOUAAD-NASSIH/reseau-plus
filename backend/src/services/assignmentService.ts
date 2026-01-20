@@ -273,9 +273,9 @@ export const updateAssignmentStatus = async (
     }
 
     // Perform update in transaction
-    return await prisma.$transaction(async (tx) => {
+    const updatedAssignment = await prisma.$transaction(async (tx) => {
         // Update assignment status
-        const updatedAssignment = await tx.missionAssignment.update({
+        const savedAssignment = await tx.missionAssignment.update({
             where: { id },
             data: { status: newStatus },
             include: {
@@ -289,12 +289,12 @@ export const updateAssignmentStatus = async (
         if (newStatus === 'COMPLETED') {
             // Update mission status to CLOSED
             await tx.mission.update({
-                where: { id: assignment.missionId },
+                where: { id: savedAssignment.missionId },
                 data: { status: 'CLOSED' }
             });
 
             // Create payment record
-            const amount = assignment.mission.budget ? Number(assignment.mission.budget) : 0;
+            const amount = savedAssignment.mission.budget ? Number(savedAssignment.mission.budget) : 0;
 
             if (amount > 0) {
                 const platformFee = Math.round(amount * PLATFORM_FEE_PERCENTAGE * 100) / 100;
@@ -302,9 +302,9 @@ export const updateAssignmentStatus = async (
 
                 await tx.payment.create({
                     data: {
-                        missionAssignmentId: assignment.id,
-                        institutionId: assignment.institutionId,
-                        workerId: assignment.workerId,
+                        missionAssignmentId: savedAssignment.id,
+                        institutionId: savedAssignment.institutionId,
+                        workerId: savedAssignment.workerId,
                         amountTotal: amount,
                         platformFee: platformFee,
                         workerAmount: workerAmount,
@@ -315,19 +315,30 @@ export const updateAssignmentStatus = async (
         } else if (newStatus === 'CANCELLED') {
             // Update mission status to CANCELLED
             await tx.mission.update({
-                where: { id: assignment.missionId },
+                where: { id: savedAssignment.missionId },
                 data: { status: 'CANCELLED' }
             });
         } else if (newStatus === 'ONGOING') {
             // Update mission status to ONGOING if not already
             await tx.mission.update({
-                where: { id: assignment.missionId },
+                where: { id: savedAssignment.missionId },
                 data: { status: 'ONGOING' }
             });
         }
 
-        return updatedAssignment;
+        return savedAssignment;
     });
+
+    // Notify parties about status change
+    // We do this outside the transaction to catch any errors without rolling back the status update
+    try {
+        await notifyAssignmentStatusChange(updatedAssignment, newStatus);
+    } catch (error) {
+        console.error('Failed to send assignment status notification:', error);
+        // Don't throw here, as the operation was successful
+    }
+
+    return updatedAssignment;
 };
 
 /**
@@ -337,48 +348,63 @@ export const notifyAssignmentStatusChange = async (
     assignment: any,
     newStatus: AssignmentStatus
 ) => {
+    console.log(`[notifyAssignmentStatusChange] Called for assignment ${assignment.id}, status: ${newStatus}`);
+
     const workerUserId = assignment.worker.userId;
     const institutionUserId = assignment.institution.userId;
     const missionTitle = assignment.mission.title;
 
     let workerMessage = '';
     let institutionMessage = '';
+    let notificationType: string | null = null;
 
     switch (newStatus) {
         case 'ACTIVE':
             workerMessage = `You have been assigned to mission: ${missionTitle}`;
             institutionMessage = `Worker ${assignment.worker.firstName} ${assignment.worker.lastName} has been assigned to mission: ${missionTitle}`;
+            notificationType = 'ASSIGNMENT_ACTIVE';
             break;
         case 'ONGOING':
             workerMessage = `Mission "${missionTitle}" is now in progress`;
             institutionMessage = `Mission "${missionTitle}" is now in progress`;
+            notificationType = 'ASSIGNMENT_ONGOING';
             break;
         case 'COMPLETED':
             workerMessage = `Mission "${missionTitle}" has been completed. Payment is being processed.`;
             institutionMessage = `Mission "${missionTitle}" has been completed. Please process the payment.`;
+            notificationType = 'ASSIGNMENT_COMPLETED';
             break;
         case 'CANCELLED':
             workerMessage = `Mission "${missionTitle}" has been cancelled`;
             institutionMessage = `Mission "${missionTitle}" has been cancelled`;
+            notificationType = 'ASSIGNMENT_CANCELLED';
             break;
     }
 
-    // Create notifications
-    if (workerMessage) {
+    // Create notifications for both parties
+    if (notificationType && workerMessage) {
+        console.log(`[notifyAssignmentStatusChange] Creating notification for worker ${workerUserId}, type: ${notificationType}`);
         await notificationService.createNotification(
             workerUserId,
-            `ASSIGNMENT_${newStatus}`,
-            workerMessage
+            notificationType,
+            workerMessage,
+            assignment.id,
+            'ASSIGNMENT'
         );
     }
 
-    if (institutionMessage) {
+    if (notificationType && institutionMessage) {
+        console.log(`[notifyAssignmentStatusChange] Creating notification for institution ${institutionUserId}, type: ${notificationType}`);
         await notificationService.createNotification(
             institutionUserId,
-            `ASSIGNMENT_${newStatus}`,
-            institutionMessage
+            notificationType,
+            institutionMessage,
+            assignment.id,
+            'ASSIGNMENT'
         );
     }
+
+    console.log(`[notifyAssignmentStatusChange] Completed for assignment ${assignment.id}`);
 };
 
 /**

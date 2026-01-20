@@ -517,6 +517,14 @@ export const fr = {
                 DRAFT: "Brouillon",
                 VISIBILITY_LABEL: "Visibilité :",
                 PUBLIC: "Public"
+            },
+            MESSAGES: {
+                SUCCESS: "Mission créée",
+                SUCCESS_DESC: "Votre mission a été créée avec succès.",
+                ERROR: "Échec de la création de la mission",
+                NOT_FOUND: "Mission Non Trouvée",
+                NOT_FOUND_DESC: "La mission que vous essayez de créer n'existe pas ou a été supprimée.",
+                SYNC_NOTICE: "Les modifications sont synchronisées immédiatement avec les intervenants actifs."
             }
         },
         EDIT_MISSION: {
@@ -540,8 +548,6 @@ export const fr = {
                 SUCCESS_DESC: "Votre mission a été mise à jour avec succès.",
                 ERROR: "Échec de la mise à jour de la mission",
                 NOT_FOUND: "Mission Non Trouvée",
-                NOT_FOUND_DESC: "La mission que vous essayez de modifier n'existe pas ou a été supprimée.",
-                SYNC_NOTICE: "Les modifications sont synchronisées immédiatement avec les intervenants actifs."
             }
         },
         MY_MISSIONS: {

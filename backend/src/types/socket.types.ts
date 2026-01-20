@@ -9,6 +9,8 @@ export interface NotificationPayload {
     userId: number;
     type: string;
     message: string;
+    entityId?: number;
+    entityType?: string;
     isRead: boolean;
     createdAt: string;
 }

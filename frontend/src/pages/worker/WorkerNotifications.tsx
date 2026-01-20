@@ -30,12 +30,15 @@ import { useState } from "react";
 /**
  * Get the redirect URL based on notification type and user role
  */
-const getNotificationRedirectUrl = (type: NotificationType, role: string): string | null => {
+const getNotificationRedirectUrl = (notification: Notification, role: string): string | null => {
+    const { type, entityId } = notification;
     switch (type) {
         // Worker notifications
         case "APPLICATION_ACCEPTED":
         case "ASSIGNMENT_CREATED":
-            return role === "worker" ? "/worker/assignments" : "/institution/assignments";
+            return role === "worker" ?
+                (entityId ? `/worker/assignments/${entityId}` : "/worker/assignments") :
+                (entityId ? `/institution/assignments/${entityId}` : "/institution/assignments");
         case "APPLICATION_REJECTED":
         case "APPLICATION_SUBMITTED":
             return role === "worker" ? "/worker/applications" : null;
@@ -50,9 +53,13 @@ const getNotificationRedirectUrl = (type: NotificationType, role: string): strin
         case "PAYMENT_FAILED":
             return role === "institution" ? "/institution/payments/history" : null;
         case "ASSIGNMENT_COMPLETED":
-            return role === "worker" ? "/worker/assignments" : "/institution/assignments";
+            return role === "worker" ?
+                (entityId ? `/worker/assignments/${entityId}` : "/worker/assignments") :
+                (entityId ? `/institution/assignments/${entityId}` : "/institution/assignments");
         case "ASSIGNMENT_CANCELLED":
-            return role === "worker" ? "/worker/assignments" : "/institution/assignments";
+            return role === "worker" ?
+                (entityId ? `/worker/assignments/${entityId}` : "/worker/assignments") :
+                (entityId ? `/institution/assignments/${entityId}` : "/institution/assignments");
         case "REVIEW_RECEIVED":
             return role === "worker" ? "/worker/reviews" : "/institution/reviews";
         default:
@@ -113,6 +120,8 @@ function getNotificationStyles(type: NotificationType) {
             };
         case "APPLICATION_SUBMITTED":
         case "ASSIGNMENT_CREATED":
+        case "ASSIGNMENT_ACTIVE":
+        case "ASSIGNMENT_ONGOING":
             return {
                 bg: "bg-blue-50 dark:bg-blue-950/20",
                 border: "border-blue-200 dark:border-blue-900/50",
@@ -157,7 +166,7 @@ function NotificationCard({
 }: NotificationCardProps) {
     const { t, i18n } = useTranslation();
     const styles = getNotificationStyles(notification.type);
-    const redirectUrl = getNotificationRedirectUrl(notification.type, userRole);
+    const redirectUrl = getNotificationRedirectUrl(notification, userRole);
 
     const handleClick = () => {
         if (!notification.isRead) {
@@ -316,7 +325,7 @@ export default function WorkerNotifications() {
     };
 
     const handleNotificationClick = (notification: Notification) => {
-        const redirectUrl = getNotificationRedirectUrl(notification.type, userRole);
+        const redirectUrl = getNotificationRedirectUrl(notification, userRole);
         if (redirectUrl) {
             navigate(redirectUrl);
         }

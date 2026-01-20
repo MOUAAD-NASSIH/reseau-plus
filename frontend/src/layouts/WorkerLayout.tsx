@@ -11,7 +11,7 @@ import {
     MessageSquare,
 } from "lucide-react";
 import DashboardLayout, { type NavItem } from "./DashboardLayout";
-import { useUnreadMessageCount } from "@/hooks/useUnreadMessageCount";
+import { useUnreadMessageCount } from "@/socket/hooks/useUnreadMessageCount";
 
 interface WorkerLayoutProps {
     children: React.ReactNode;

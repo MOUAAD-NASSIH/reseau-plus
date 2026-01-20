@@ -4,7 +4,8 @@ import {
     getMyConversations,
     sendMessage,
     markMessagesAsRead,
-    getConversationMessages
+    getConversationMessages,
+    getUnreadCount
 } from "../controllers/messageController";
 import { protect } from "../middleware/authMiddleware";
 
@@ -27,5 +28,8 @@ router.post("/messages", sendMessage);
 
 // Mark messages as read
 router.patch("/conversations/:conversationId/read", markMessagesAsRead);
+
+// Get unread message count
+router.get("/unread/count", getUnreadCount);
 
 export default router;

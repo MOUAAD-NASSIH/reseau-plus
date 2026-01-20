@@ -144,9 +144,6 @@ export const updateAssignmentStatus = asyncHandler(async (req: AuthenticatedRequ
             user.role
         );
 
-        // Send notifications about status change
-        await assignmentService.notifyAssignmentStatusChange(updatedAssignment, status);
-
         let message = "Assignment status updated successfully";
         if (status === 'COMPLETED') {
             message = "Assignment completed. Payment record created.";

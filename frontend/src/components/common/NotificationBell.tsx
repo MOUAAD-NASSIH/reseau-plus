@@ -2,7 +2,7 @@
  * NotificationBell - bell icon with unread count and dropdown for recent notifications
  */
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Bell, CheckCheck, Loader2, ExternalLink, WifiOff } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
@@ -30,11 +30,15 @@ interface ApiUser {
     role?: string;
 }
 
-const getNotificationRedirectUrl = (type: NotificationType, role: string): string | null => {
+const getNotificationRedirectUrl = (notification: Notification, role: string): string | null => {
+    const { type, entityId } = notification;
+
     switch (type) {
         case "APPLICATION_ACCEPTED":
         case "ASSIGNMENT_CREATED":
-            return role === "worker" ? "/worker/assignments" : "/institution/assignments";
+            return role === "worker" ?
+                (entityId ? `/worker/assignments/${entityId}` : "/worker/assignments") :
+                (entityId ? `/institution/assignments/${entityId}` : "/institution/assignments");
         case "APPLICATION_REJECTED":
         case "APPLICATION_SUBMITTED":
             return role === "worker" ? "/worker/applications" : null;
@@ -49,9 +53,13 @@ const getNotificationRedirectUrl = (type: NotificationType, role: string): strin
         case "PAYMENT_FAILED":
             return role === "institution" ? "/institution/payments" : null;
         case "ASSIGNMENT_COMPLETED":
-            return role === "worker" ? "/worker/assignments" : "/institution/assignments";
+            return role === "worker" ?
+                (entityId ? `/worker/assignments/${entityId}` : "/worker/assignments") :
+                (entityId ? `/institution/assignments/${entityId}` : "/institution/assignments");
         case "ASSIGNMENT_CANCELLED":
-            return role === "worker" ? "/worker/assignments" : "/institution/assignments";
+            return role === "worker" ?
+                (entityId ? `/worker/assignments/${entityId}` : "/worker/assignments") :
+                (entityId ? `/institution/assignments/${entityId}` : "/institution/assignments");
         case "REVIEW_RECEIVED":
             return role === "worker" ? "/worker/reviews" : "/institution/reviews";
         default:
@@ -66,6 +74,7 @@ const getNotificationStyle = (type: NotificationType): { color: string; bgColor:
         case "DOCUMENT_APPROVED":
         case "PAYMENT_RECEIVED":
         case "ASSIGNMENT_COMPLETED":
+        case "PAYMENT_COMPLETED":
             return { color: "text-success", bgColor: "bg-success/10" };
         case "APPLICATION_REJECTED":
         case "WORKER_REJECTED":
@@ -75,6 +84,8 @@ const getNotificationStyle = (type: NotificationType): { color: string; bgColor:
             return { color: "text-destructive", bgColor: "bg-destructive/10" };
         case "APPLICATION_SUBMITTED":
         case "ASSIGNMENT_CREATED":
+        case "ASSIGNMENT_ACTIVE":
+        case "ASSIGNMENT_ONGOING":
         case "REVIEW_RECEIVED":
             return { color: "text-info", bgColor: "bg-info/10" };
         default:
@@ -100,7 +111,7 @@ interface NotificationItemProps {
 
 function NotificationItem({ notification, onMarkAsRead, onNavigate, isMarking, userRole }: NotificationItemProps) {
     const style = getNotificationStyle(notification.type);
-    const redirectUrl = getNotificationRedirectUrl(notification.type, userRole);
+    const redirectUrl = getNotificationRedirectUrl(notification, userRole);
 
     const handleClick = () => {
         if (!notification.isRead) {
@@ -169,7 +180,6 @@ export function NotificationBell() {
 
     const [markingId, setMarkingId] = useState<number | null>(null);
     const [isOpen, setIsOpen] = useState(false);
-    const previousUnreadCount = useRef<number>(0);
 
     const apiUser = user as ApiUser;
     const userRole = apiUser?.role || "";
@@ -179,15 +189,8 @@ export function NotificationBell() {
     const { data: unreadCountData } = useGetUnreadNotificationCountQuery();
     const unreadCount = unreadCountData?.data?.count ?? 0;
 
-    const { data: notificationsData, isLoading, refetch: refetchNotifications } = useGetNotificationsQuery({ limit: 5 });
+    const { data: notificationsData, isLoading } = useGetNotificationsQuery({ limit: 5 });
     const notifications = notificationsData?.data ?? [];
-
-    useEffect(() => {
-        if (unreadCount > previousUnreadCount.current) {
-            refetchNotifications();
-        }
-        previousUnreadCount.current = unreadCount;
-    }, [unreadCount, refetchNotifications]);
 
     const [markAsRead] = useMarkAsReadMutation();
     const [markAllAsRead, { isLoading: isMarkingAllAsRead }] = useMarkAllAsReadMutation();
@@ -206,7 +209,7 @@ export function NotificationBell() {
     };
 
     const handleNotificationClick = (notification: Notification) => {
-        const redirectUrl = getNotificationRedirectUrl(notification.type, userRole);
+        const redirectUrl = getNotificationRedirectUrl(notification, userRole);
         setIsOpen(false);
         if (redirectUrl) {
             navigate(redirectUrl);

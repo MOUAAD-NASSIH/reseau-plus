@@ -10,6 +10,8 @@ export type NotificationType =
     | 'APPLICATION_ACCEPTED'
     | 'APPLICATION_REJECTED'
     | 'ASSIGNMENT_CREATED'
+    | 'ASSIGNMENT_ACTIVE'
+    | 'ASSIGNMENT_ONGOING'
     | 'ASSIGNMENT_COMPLETED'
     | 'ASSIGNMENT_CANCELLED'
     | 'PAYMENT_RECEIVED'
@@ -29,6 +31,8 @@ export interface Notification {
     userId: number;
     type: string;
     message: string;
+    entityId?: number;
+    entityType?: string;
     isRead: boolean;
     createdAt: Date;
 }

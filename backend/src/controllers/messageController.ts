@@ -214,17 +214,8 @@ export const sendMessage = async (req: AuthenticatedRequest, res: Response) => {
             },
         };
 
-        socketEmitter.emitMessage(conversationId, messagePayload);
+        // Only emit to receiver - sender gets message via API response
         socketEmitter.emitToUser(receiverIdInt, 'message', messagePayload);
-
-        await prisma.notification.create({
-            data: {
-                userId: receiverIdInt,
-                type: "MESSAGE",
-                message: `You have a new message`,
-                isRead: false
-            }
-        });
 
         return res.status(201).json({ success: true, data: message });
     } catch (error) {
@@ -346,5 +337,25 @@ export const getConversationMessages = async (req: AuthenticatedRequest, res: Re
     } catch (error) {
         console.error("Error getting conversation messages:", error);
         return res.status(500).json({ success: false, message: "Failed to get messages" });
+    }
+};
+
+export const getUnreadCount = async (req: AuthenticatedRequest, res: Response) => {
+    try {
+        const userId = req.user!.userId;
+
+        const count = await prisma.message.count({
+            where: {
+                receiverId: userId,
+                status: {
+                    not: "READ"
+                }
+            }
+        });
+
+        return res.status(200).json({ success: true, data: { count } });
+    } catch (error) {
+        console.error("Error getting unread message count:", error);
+        return res.status(500).json({ success: false, message: "Failed to get unread count" });
     }
 };

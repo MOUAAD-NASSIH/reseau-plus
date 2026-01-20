@@ -86,6 +86,13 @@ export const messageApi = api.injectEndpoints({
             },
         }),
 
+        // Get unread message count
+        getUnreadCount: builder.query<{ count: number }, void>({
+            query: () => ({ url: "/messages/unread/count" }),
+            transformResponse: (response: { success: boolean; data: { count: number } }) => response.data,
+            providesTags: ["UnreadCount"],
+        }),
+
         // Get messages for a conversation
         getConversationMessages: builder.query<
             Message[],
@@ -197,4 +204,5 @@ export const {
     useGetConversationMessagesQuery,
     useSendMessageMutation,
     useMarkMessagesAsReadMutation,
+    useGetUnreadCountQuery,
 } = messageApi;

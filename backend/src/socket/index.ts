@@ -56,16 +56,6 @@ export function createSocketServer(config: SocketServerConfig): TypedSocketServe
         handleConnection(socket);
         registerConversationHandlers(socket);
 
-        socket.on('typing', (data) => {
-            const conversationRoom = getConversationRoom(data.conversationId);
-            socket.to(conversationRoom).emit('typing', {
-                conversationId: data.conversationId,
-                userId: socket.data.userId,
-                userName: '',
-                isTyping: data.isTyping,
-            });
-        });
-
         socket.on('disconnect', (reason) => {
             handleDisconnection(socket, reason);
         });

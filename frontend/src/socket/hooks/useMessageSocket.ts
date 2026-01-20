@@ -75,7 +75,10 @@ export function useMessageSocket(conversationId: number | null): UseMessageSocke
     }, [dispatch, conversationId]);
 
     const handleTyping = useCallback((payload: TypingPayload) => {
+        console.log('[useMessageSocket] Received typing event:', payload);
+
         if (conversationId === null || payload.conversationId !== conversationId) {
+            console.log('[useMessageSocket] Ignoring typing - wrong conversation:', { currentConversation: conversationId, payloadConversation: payload.conversationId });
             return;
         }
 
@@ -83,10 +86,12 @@ export function useMessageSocket(conversationId: number | null): UseMessageSocke
             if (payload.isTyping) {
                 const exists = prev.some(t => t.userId === payload.userId);
                 if (!exists) {
+                    console.log('[useMessageSocket] Adding typing user:', payload.userName);
                     return [...prev, payload];
                 }
                 return prev;
             } else {
+                console.log('[useMessageSocket] Removing typing user:', payload.userName);
                 return prev.filter(t => t.userId !== payload.userId);
             }
         });
@@ -131,7 +136,6 @@ export function useMessageSocket(conversationId: number | null): UseMessageSocke
         }
     }, [conversationId, isConnected, emit]);
 
-    // Handle conversation room join/leave
     useEffect(() => {
         const previousConversation = currentConversationRef.current;
 
@@ -153,11 +157,12 @@ export function useMessageSocket(conversationId: number | null): UseMessageSocke
         currentConversationRef.current = conversationId;
 
         return () => {
-            if (conversationId !== null && isConnected) {
+            if (conversationId !== null && currentConversationRef.current === conversationId) {
                 emit('leaveConversation', conversationId);
             }
         };
-    }, [conversationId, isConnected, emit]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [conversationId, isConnected]);
 
     // Set up socket event listeners
     useEffect(() => {

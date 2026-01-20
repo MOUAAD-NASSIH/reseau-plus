@@ -427,12 +427,14 @@ model Payment {
 // ============================================
 
 model Notification {
-  id        Int      @id @default(autoincrement())
-  userId    Int      @map("user_id")
-  type      String   @db.VarChar(100)
-  message   String   @db.Text
-  isRead    Boolean  @default(false) @map("is_read")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  id         Int      @id @default(autoincrement())
+  userId     Int      @map("user_id")
+  type       String   @db.VarChar(100)
+  message    String   @db.Text
+  entityId   Int?     @map("entity_id")
+  entityType String?  @map("entity_type") @db.VarChar(50)
+  isRead     Boolean  @default(false) @map("is_read")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
 
   // Relations
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
