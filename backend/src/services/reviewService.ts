@@ -133,7 +133,8 @@ export const createReview = async (
     await notificationService.notifyReviewReceived(
       revieweeId,
       rating,
-      assignment.mission.title
+      assignment.mission.title,
+      review.id
     );
   } catch (error) {
     console.error('Failed to send review notification:', error);

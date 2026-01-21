@@ -85,7 +85,11 @@ export const getNotifications = async (
     });
 
     return {
-        notifications,
+        notifications: notifications.map(n => ({
+            ...n,
+            entityId: n.entityId ?? undefined,
+            entityType: n.entityType ?? undefined,
+        })),
         total,
         page,
         limit,
@@ -163,7 +167,9 @@ export const getUnreadCount = async (userId: number): Promise<number> => {
 export const notifyApplicationStatus = async (
     workerId: number,
     missionTitle: string,
-    status: 'ACCEPTED' | 'REJECTED'
+    status: 'ACCEPTED' | 'REJECTED',
+    entityId?: number,
+    entityType: string = 'APPLICATION'
 ) => {
     // Get worker's userId
     const worker = await prisma.worker.findUnique({
@@ -181,7 +187,7 @@ export const notifyApplicationStatus = async (
         ? `Your application for "${missionTitle}" has been accepted!`
         : `Your application for "${missionTitle}" has been rejected.`;
 
-    return await createNotification(worker.userId, type, message);
+    return await createNotification(worker.userId, type, message, entityId, entityType);
 };
 
 /**
@@ -382,11 +388,14 @@ export const notifyDocumentReviewed = async (
 export const notifyReviewReceived = async (
     userId: number,
     rating: number,
-    missionTitle: string
+    missionTitle: string,
+    reviewId: number
 ) => {
     return await createNotification(
         userId,
         'REVIEW_RECEIVED',
-        `You received a ${rating}-star review for mission "${missionTitle}".`
+        `You received a ${rating}-star review for mission "${missionTitle}".`,
+        reviewId,
+        'REVIEW'
     );
 };

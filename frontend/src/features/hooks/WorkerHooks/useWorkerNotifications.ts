@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { useTranslation } from "react-i18next";
@@ -22,36 +21,43 @@ import {
     FileCheck,
     FileX,
     Star,
-    UserPlus,
-    UserCheck,
-    UserX,
-    FileText,
+    ClipboardList,
+    Briefcase,
 } from "lucide-react";
 
 /**
- * Notification Metadata for visual cues
+ * Notification Metadata for visual cues - Worker specific
  */
-export const NOTIFICATION_METADATA: Record<NotificationType, { icon: any; color: string; category: string }> = {
-    APPLICATION_SUBMITTED: { icon: UserPlus, color: "text-blue-500 bg-blue-500/10", category: "MISSIONS" },
-    APPLICATION_ACCEPTED: { icon: UserCheck, color: "text-emerald-500 bg-emerald-500/10", category: "MISSIONS" },
-    APPLICATION_REJECTED: { icon: UserX, color: "text-red-500 bg-red-500/10", category: "MISSIONS" },
-    ASSIGNMENT_CREATED: { icon: FileText, color: "text-cyan-500 bg-cyan-500/10", category: "MISSIONS" },
+export const WORKER_NOTIFICATION_METADATA: Record<NotificationType, { icon: any; color: string; category: string }> = {
+    // Mission Applications
+    APPLICATION_SUBMITTED: { icon: ClipboardList, color: "text-blue-500 bg-blue-500/10", category: "MISSIONS" },
+    APPLICATION_ACCEPTED: { icon: CheckCircle2, color: "text-emerald-500 bg-emerald-500/10", category: "MISSIONS" },
+    APPLICATION_REJECTED: { icon: XCircle, color: "text-red-500 bg-red-500/10", category: "MISSIONS" },
+
+    // Assignments
+    ASSIGNMENT_CREATED: { icon: Briefcase, color: "text-cyan-500 bg-cyan-500/10", category: "MISSIONS" },
     ASSIGNMENT_ACTIVE: { icon: CheckCircle2, color: "text-blue-500 bg-blue-500/10", category: "MISSIONS" },
-    ASSIGNMENT_ONGOING: { icon: FileText, color: "text-amber-500 bg-amber-500/10", category: "MISSIONS" },
+    ASSIGNMENT_ONGOING: { icon: Briefcase, color: "text-amber-500 bg-amber-500/10", category: "MISSIONS" },
     ASSIGNMENT_COMPLETED: { icon: CheckCircle2, color: "text-emerald-500 bg-emerald-500/10", category: "MISSIONS" },
     ASSIGNMENT_CANCELLED: { icon: XCircle, color: "text-red-500 bg-red-500/10", category: "MISSIONS" },
+
+    // Payments
     PAYMENT_RECEIVED: { icon: DollarSign, color: "text-emerald-500 bg-emerald-500/10", category: "PAYMENTS" },
     PAYMENT_FAILED: { icon: AlertCircle, color: "text-red-500 bg-red-500/10", category: "PAYMENTS" },
     PAYMENT_COMPLETED: { icon: CheckCircle2, color: "text-emerald-500 bg-emerald-500/10", category: "PAYMENTS" },
+
+    // System / Profile
     WORKER_VERIFIED: { icon: ShieldCheck, color: "text-emerald-500 bg-emerald-500/10", category: "SYSTEM" },
     WORKER_REJECTED: { icon: ShieldAlert, color: "text-red-500 bg-red-500/10", category: "SYSTEM" },
     DOCUMENT_APPROVED: { icon: FileCheck, color: "text-emerald-500 bg-emerald-500/10", category: "SYSTEM" },
     DOCUMENT_REJECTED: { icon: FileX, color: "text-red-500 bg-red-500/10", category: "SYSTEM" },
     REVIEW_RECEIVED: { icon: Star, color: "text-amber-500 bg-amber-500/10", category: "SYSTEM" },
+
+    // Fallback
     GENERAL: { icon: Bell, color: "text-slate-500 bg-slate-500/10", category: "SYSTEM" },
 };
 
-export const useInstitutionNotifications = () => {
+export const useWorkerNotifications = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState("ALL");
@@ -68,7 +74,7 @@ export const useInstitutionNotifications = () => {
     const filteredNotifications = notifications.filter((n) => {
         if (activeTab === "ALL") return true;
         if (activeTab === "UNREAD") return !n.isRead;
-        const meta = NOTIFICATION_METADATA[n.type];
+        const meta = WORKER_NOTIFICATION_METADATA[n.type];
         return meta?.category === activeTab;
     });
 
@@ -97,11 +103,8 @@ export const useInstitutionNotifications = () => {
         }
     };
 
-
-
     const getRedirectUrl = (notification: { type: NotificationType, entityId?: number, entityType?: string }): string | null => {
-        // Use the shared utility, defaulting role to 'institution'
-        return getNotificationRedirectUrl(notification as any, "institution");
+        return getNotificationRedirectUrl(notification as any, "worker");
     };
 
     const formatDate = (dateString: string) => {

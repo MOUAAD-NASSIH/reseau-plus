@@ -1,17 +1,16 @@
-import { Trophy, Calendar, Check, Trash2, ArrowRight } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Bell, Check, Trash2, ExternalLink, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import type { Notification } from "@/types/notification.types";
 import { NOTIFICATION_METADATA } from "@/features/hooks/InstitutionHooks/useInstitutionNotifications";
+import type { Notification } from "@/types/notification.types";
 
 interface NotificationsListProps {
   notifications: Notification[];
   onMarkAsRead: (id: number) => void;
   onDelete: (id: number) => void;
   onNavigate: (url: string) => void;
-  getRedirectUrl: (type: any) => string | null;
+  getRedirectUrl: (notification: Notification) => string | null;
   formatDate: (date: string) => string;
   t: (key: string) => string;
 }
@@ -31,7 +30,7 @@ export function NotificationsList({
         <div className="relative">
           <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full" />
           <div className="relative h-24 w-24 rounded-full bg-background border shadow-2xl flex items-center justify-center">
-            <Trophy className="h-12 w-12 text-primary" />
+            <Bell className="h-12 w-12 text-primary" />
           </div>
         </div>
         <div className="space-y-1">
@@ -49,106 +48,105 @@ export function NotificationsList({
   return (
     <div className="space-y-3">
       {notifications.map((notification) => {
-        const meta =
-          NOTIFICATION_METADATA[notification.type] ||
-          NOTIFICATION_METADATA.GENERAL;
+        const meta = NOTIFICATION_METADATA[notification.type] || NOTIFICATION_METADATA.GENERAL;
         const Icon = meta.icon;
-        const redirectUrl = getRedirectUrl(notification.type);
+        const redirectUrl = getRedirectUrl(notification);
+        const isClickable = !!redirectUrl;
 
         return (
           <Card
             key={notification.id}
             className={cn(
-              "group border-border/40 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 hover:border-primary/20 overflow-hidden",
-              !notification.isRead &&
-                "bg-primary/[0.02] border-primary/20 shadow-lg shadow-primary/5"
+              "group transition-all duration-300 border-l-4",
+              notification.isRead
+                ? "bg-background/50 border-l-border/50 opacity-75 hover:opacity-100"
+                : "bg-card border-l-primary shadow-lg shadow-primary/5",
+              isClickable && "cursor-pointer hover:shadow-xl hover:scale-[1.01]"
             )}
+            onClick={() => {
+              if (!notification.isRead) onMarkAsRead(notification.id);
+              if (isClickable) onNavigate(redirectUrl);
+            }}
           >
-            <CardContent className="p-0">
-              <div className="flex flex-col sm:flex-row items-stretch">
-                {/* Left Status Bar */}
-                {!notification.isRead && (
-                  <div className="w-1.5 bg-primary relative overflow-hidden hidden sm:block">
-                    <div className="absolute inset-0 bg-white/20 animate-pulse" />
-                  </div>
+            <CardContent className="p-5 flex gap-4">
+              {/* Icon */}
+              <div
+                className={cn(
+                  "h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110",
+                  meta.color
                 )}
+              >
+                <Icon className="h-6 w-6" />
+              </div>
 
-                <div className="flex-1 p-5 flex items-start gap-4">
-                  {/* Category Icon */}
-                  <div
-                    className={cn(
-                      "h-12 w-12 shrink-0 rounded-2xl flex items-center justify-center border transition-transform duration-500 group-hover:scale-110",
-                      meta.color,
-                      "border-current/10"
-                    )}
-                  >
-                    <Icon className="h-6 w-6" />
-                  </div>
-
-                  {/* Content */}
-                  <div className="flex-1 min-w-0 space-y-1">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-4">
-                      <Badge
-                        variant="outline"
-                        className="w-fit text-[10px] font-black uppercase tracking-widest bg-muted/30"
+              {/* Content */}
+              <div className="flex-1 min-w-0 space-y-1">
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={cn(
+                          "text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full border bg-background",
+                          meta.color
+                        )}
                       >
                         {meta.category}
-                      </Badge>
-                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium">
-                        <Calendar className="h-3.5 w-3.5" />
-                        {formatDate(notification.createdAt)}
-                      </div>
-                    </div>
-                    <p
-                      className={cn(
-                        "text-foreground/90 text-[15px] leading-relaxed",
-                        !notification.isRead && "font-bold text-foreground"
-                      )}
-                    >
-                      {notification.message}
-                    </p>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="flex flex-col items-end gap-2 shrink-0">
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      </span>
                       {!notification.isRead && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => onMarkAsRead(notification.id)}
-                          className="h-8 w-8 text-primary hover:bg-primary/10 rounded-full"
-                        >
-                          <Check className="h-4 w-4" />
-                        </Button>
+                        <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
                       )}
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => onDelete(notification.id)}
-                        className="h-8 w-8 text-muted-foreground hover:text-destructive hover:text-destructive/10 rounded-full"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
                     </div>
-
-                    {redirectUrl && (
-                      <Button
-                        size="sm"
-                        variant={notification.isRead ? "ghost" : "secondary"}
-                        onClick={() => {
-                          if (!notification.isRead)
-                            onMarkAsRead(notification.id);
-                          onNavigate(redirectUrl);
-                        }}
-                        className="rounded-full font-bold group/btn"
-                      >
-                        {t("COMMON.VIEW_DETAILS")}
-                        <ArrowRight className="h-3.5 w-3.5 ml-2 transition-transform group-hover/btn:translate-x-1" />
-                      </Button>
-                    )}
+                    <span className="text-xs font-medium text-muted-foreground whitespace-nowrap tabular-nums flex items-center gap-1">
+                      <Calendar className="h-3.5 w-3.5" />
+                      {formatDate(notification.createdAt)}
+                    </span>
                   </div>
+                  <p
+                    className={cn(
+                      "text-sm leading-relaxed",
+                      !notification.isRead
+                        ? "font-semibold text-foreground"
+                        : "font-medium text-muted-foreground"
+                    )}
+                  >
+                    {notification.message}
+                  </p>
                 </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex flex-col gap-1 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity -mr-2">
+                {!notification.isRead && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 hover:bg-primary/10 hover:text-primary rounded-xl"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onMarkAsRead(notification.id);
+                    }}
+                    title={t("WORKER_NOTIFICATIONS.ACTIONS.MARK_READ")}
+                  >
+                    <Check className="h-4 w-4" />
+                  </Button>
+                )}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive rounded-xl"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(notification.id);
+                  }}
+                  title={t("WORKER_NOTIFICATIONS.ACTIONS.DELETE")}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+                {isClickable && (
+                  <div className="h-8 w-8 flex items-center justify-center text-muted-foreground/30">
+                    <ExternalLink className="h-4 w-4" />
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>

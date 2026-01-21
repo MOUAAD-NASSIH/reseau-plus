@@ -6,7 +6,7 @@ import {
     useCreateReviewMutation,
 } from "@/features/api/endpoints/reviewEndpoints";
 import { useGetInstitutionAssignmentsQuery } from "@/features/api/endpoints/assignmentEndpoints";
-import type { Review } from "@/types/review.types";
+
 import type { MissionAssignment } from "@/types/assignment.types";
 import { isSameWeek, parseISO } from "date-fns";
 

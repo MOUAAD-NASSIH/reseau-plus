@@ -1804,7 +1804,7 @@ export const fr = {
                 DELETE: "Supprimer"
             },
             TABS: {
-                ALL: "Toutes les Notifications",
+                ALL: "Toutes",
                 UNREAD: "Non lues"
             },
             NEW: "Nouveau",

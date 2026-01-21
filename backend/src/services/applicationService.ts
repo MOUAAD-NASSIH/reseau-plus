@@ -86,8 +86,10 @@ export const applyToMission = async (workerId: number, missionId: number) => {
     // Notify institution about new application
     await createNotification(
         mission.institution.userId,
-        "APPLICATION_RECEIVED",
-        `New application received from ${application.worker.firstName} ${application.worker.lastName} for mission "${mission.title}"`
+        "APPLICATION_SUBMITTED",
+        `New application received from ${application.worker.firstName} ${application.worker.lastName} for mission "${mission.title}"`,
+        application.id,
+        'APPLICATION'
     );
 
     return application;
@@ -325,7 +327,9 @@ export const acceptApplication = async (institutionId: number, applicationId: nu
     await createNotification(
         application.worker.userId,
         "APPLICATION_ACCEPTED",
-        `Your application for mission "${application.mission.title}" has been accepted!`
+        `Your application for mission "${application.mission.title}" has been accepted!`,
+        result.assignment.id,
+        'ASSIGNMENT'
     );
 
     // Notify other applicants about rejection
@@ -342,7 +346,9 @@ export const acceptApplication = async (institutionId: number, applicationId: nu
         await createNotification(
             rejected.worker.userId,
             "APPLICATION_REJECTED",
-            `Your application for mission "${application.mission.title}" was not selected.`
+            `Your application for mission "${application.mission.title}" was not selected.`,
+            application.missionId,
+            'MISSION'
         );
     }
 

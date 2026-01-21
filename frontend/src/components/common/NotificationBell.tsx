@@ -30,42 +30,7 @@ interface ApiUser {
     role?: string;
 }
 
-const getNotificationRedirectUrl = (notification: Notification, role: string): string | null => {
-    const { type, entityId } = notification;
-
-    switch (type) {
-        case "APPLICATION_ACCEPTED":
-        case "ASSIGNMENT_CREATED":
-            return role === "worker" ?
-                (entityId ? `/worker/assignments/${entityId}` : "/worker/assignments") :
-                (entityId ? `/institution/assignments/${entityId}` : "/institution/assignments");
-        case "APPLICATION_REJECTED":
-        case "APPLICATION_SUBMITTED":
-            return role === "worker" ? "/worker/applications" : null;
-        case "WORKER_VERIFIED":
-        case "WORKER_REJECTED":
-            return role === "worker" ? "/worker" : null;
-        case "DOCUMENT_APPROVED":
-        case "DOCUMENT_REJECTED":
-            return role === "worker" ? "/worker/documents" : null;
-        case "PAYMENT_RECEIVED":
-            return role === "worker" ? "/worker/assignments" : "/institution/payments";
-        case "PAYMENT_FAILED":
-            return role === "institution" ? "/institution/payments" : null;
-        case "ASSIGNMENT_COMPLETED":
-            return role === "worker" ?
-                (entityId ? `/worker/assignments/${entityId}` : "/worker/assignments") :
-                (entityId ? `/institution/assignments/${entityId}` : "/institution/assignments");
-        case "ASSIGNMENT_CANCELLED":
-            return role === "worker" ?
-                (entityId ? `/worker/assignments/${entityId}` : "/worker/assignments") :
-                (entityId ? `/institution/assignments/${entityId}` : "/institution/assignments");
-        case "REVIEW_RECEIVED":
-            return role === "worker" ? "/worker/reviews" : "/institution/reviews";
-        default:
-            return null;
-    }
-};
+import { getNotificationRedirectUrl } from "@/utils/notificationUtils";
 
 const getNotificationStyle = (type: NotificationType): { color: string; bgColor: string } => {
     switch (type) {
@@ -241,7 +206,7 @@ export function NotificationBell() {
                     )}
                     {!isConnected && (
                         <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-warning flex items-center justify-center" title="Real-time updates unavailable">
-                            <WifiOff className="h-2 w-2 text-warning-foreground" />
+                            <WifiOff className="h-1.5 w-1.5 text-muted-foreground" />
                         </span>
                     )}
                     <span className="sr-only">

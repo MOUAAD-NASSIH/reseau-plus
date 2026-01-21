@@ -1802,7 +1802,7 @@ export const en = {
                 DELETE: "Delete"
             },
             TABS: {
-                ALL: "All Notifications",
+                ALL: "All",
                 UNREAD: "Unread"
             },
             NEW: "New",

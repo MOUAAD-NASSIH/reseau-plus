@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { useSearchParams } from "react-router";
+
 import { useDebounce } from "@/hooks/use-debounce";
 import { useGetPendingDocumentsQuery, useReviewDocumentMutation } from "@/features/api/endpoints/adminEndpoints";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
@@ -11,8 +11,8 @@ export type DocumentStatusFilter = "PENDING" | "APPROVED" | "REJECTED" | "ALL";
 
 export function useDocumentsValidation() {
     const { t } = useTranslation();
-    const [searchParams, setSearchParams] = useSearchParams();
-    
+
+
     // State
     const [searchQuery, setSearchQuery] = useState("");
     const [statusFilter, setStatusFilter] = useState<DocumentStatusFilter>("PENDING");
@@ -22,7 +22,7 @@ export function useDocumentsValidation() {
     const [pageSize, setPageSize] = useState(9);
     const [selectedDocument, setSelectedDocument] = useState<WorkerDocument | null>(null);
     const [dialogOpen, setDialogOpen] = useState(false);
-    
+
     // Derived state
     const debouncedSearch = useDebounce(searchQuery, 300);
 
@@ -80,11 +80,11 @@ export function useDocumentsValidation() {
     // Note: Ideally backend should handle search. For now we search in the current page
     const filteredDocuments = useMemo(() => {
         if (!debouncedSearch) return documents;
-        
+
         const lowerSearch = debouncedSearch.toLowerCase();
         return documents.filter((doc) => {
-            const workerName = doc.worker 
-                ? `${doc.worker.firstName} ${doc.worker.lastName}`.toLowerCase() 
+            const workerName = doc.worker
+                ? `${doc.worker.firstName} ${doc.worker.lastName}`.toLowerCase()
                 : "";
             const workerEmail = doc.worker?.user?.email?.toLowerCase() || "";
             return workerName.includes(lowerSearch) || workerEmail.includes(lowerSearch);

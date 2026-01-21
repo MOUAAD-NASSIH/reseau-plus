@@ -1,17 +1,17 @@
 import { Bell, CheckCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-interface NotificationsHeaderProps {
+interface WorkerNotificationsHeaderProps {
     unreadCount: number;
     onMarkAllRead: () => void;
     t: (key: string) => string;
 }
 
-export function NotificationsHeader({
+export function WorkerNotificationsHeader({
     unreadCount,
     onMarkAllRead,
     t,
-}: NotificationsHeaderProps) {
+}: WorkerNotificationsHeaderProps) {
     return (
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="space-y-1.5">
@@ -24,10 +24,10 @@ export function NotificationsHeader({
                             </span>
                         )}
                     </div>
-                    {t("NOTIFICATIONS.TITLE")}
+                    {t("WORKER_NOTIFICATIONS.TITLE")}
                 </h1>
                 <p className="text-muted-foreground text-lg">
-                    {t("NOTIFICATIONS.SUBTITLE")}
+                    {t("WORKER_NOTIFICATIONS.SUBTITLE")}
                 </p>
             </div>
 
@@ -38,7 +38,7 @@ export function NotificationsHeader({
                     size="lg"
                 >
                     <CheckCheck className="mr-2 h-4 w-4" />
-                    {t("NOTIFICATIONS.ACTIONS.MARK_ALL_READ")}
+                    {t("WORKER_NOTIFICATIONS.ACTIONS.MARK_ALL_READ")}
                 </Button>
             )}
         </div>

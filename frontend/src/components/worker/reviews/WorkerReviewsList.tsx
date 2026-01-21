@@ -1,7 +1,7 @@
 
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
-import { User, Calendar, Quote, Building2, Briefcase } from "lucide-react";
+import { User, Calendar, Quote, Building2, Briefcase, Star } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -62,26 +62,20 @@ export function WorkerReviewsList({ reviews, isLoading, type }: WorkerReviewsLis
             {reviews.map((review) => {
                 // For "received": reviewer is institution
                 // For "written": reviewee is institution
-                // But wait, the API might populate `institution` object directly on review?
-                // Let's assume the standard `reviewer` / `reviewee` user object which has `institution` or `worker` field.
-                // We need to check how the backend sends it. The types say reviewer/reviewee are User.
-
                 const user = type === "received" ? review.reviewer : review.reviewee;
-                const isInstitution = !!user?.institution;
-                const isWorker = !!user?.worker;
+                const isInstitution = !!(user as any)?.institution;
+                const isWorker = !!(user as any)?.worker;
 
                 // If it's a worker view, usually:
                 // Received -> From Institution
                 // Written -> To Institution
-                // But maybe peer reviews exist? Assuming Institution for now as per key "My Reviews ... from institutions"
-
                 const name = isInstitution
-                    ? user?.institution?.institutionName
+                    ? (user as any)?.institution?.institutionName
                     : isWorker
-                        ? `${user?.worker?.firstName} ${user?.worker?.lastName}`
+                        ? `${(user as any)?.worker?.firstName} ${(user as any)?.worker?.lastName}`
                         : t("WORKER_REVIEWS.FALLBACK_NAMES.ANONYMOUS");
 
-                const avatar = isInstitution ? user?.institution?.logo : user?.worker?.profilePicture;
+                const avatar = isInstitution ? (user as any)?.institution?.logo : (user as any)?.worker?.profilePicture;
 
                 return (
                     <Card key={review.id} className="group border-border/60 hover:border-primary/20 transition-all duration-300 bg-card/40 backdrop-blur-sm overflow-hidden shadow-sm">

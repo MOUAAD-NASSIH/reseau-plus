@@ -8,22 +8,22 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 
-interface NotificationsTabsProps {
+interface WorkerNotificationsTabsProps {
     activeTab: string;
     onTabChange: (value: string) => void;
     unreadCount: number;
     t: (key: string) => string;
 }
 
-export function NotificationsTabs({
+export function WorkerNotificationsTabs({
     activeTab,
     onTabChange,
     unreadCount,
     t,
-}: NotificationsTabsProps) {
+}: WorkerNotificationsTabsProps) {
     const tabs = [
-        { id: "ALL", label: t("NOTIFICATIONS.TABS.ALL") },
-        { id: "UNREAD", label: t("NOTIFICATIONS.TABS.UNREAD"), count: unreadCount },
+        { id: "ALL", label: t("WORKER_NOTIFICATIONS.TABS.ALL") },
+        { id: "UNREAD", label: t("WORKER_NOTIFICATIONS.TABS.UNREAD"), count: unreadCount },
         { id: "MISSIONS", label: "Missions" },
         { id: "PAYMENTS", label: "Payments" },
         { id: "SYSTEM", label: "System" },
@@ -69,8 +69,8 @@ export function NotificationsTabs({
                             <Badge
                                 variant={activeTab === tab.id ? "default" : "secondary"}
                                 className={`ml-2 h-5 min-w-[20px] px-1.5 ${activeTab === tab.id
-                                        ? "bg-primary/20 text-primary hover:bg-primary/30"
-                                        : "bg-muted text-muted-foreground"
+                                    ? "bg-primary/20 text-primary hover:bg-primary/30"
+                                    : "bg-muted text-muted-foreground"
                                     }`}
                             >
                                 {tab.count}

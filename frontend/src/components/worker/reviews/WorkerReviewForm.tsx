@@ -62,7 +62,7 @@ export function WorkerReviewForm({ assignment, onSuccess, onCancel }: WorkerRevi
                 <div>
                     <p className="text-sm font-medium text-muted-foreground">{t("WORKER_REVIEWS.FORM.REVIEWING")}</p>
                     <p className="font-bold text-foreground">
-                        {assignment.institution?.institutionName || t("WORKER_REVIEWS.FALLBACK_NAMES.INSTITUTION")}
+                        {assignment.mission?.institution?.institutionName || t("WORKER_REVIEWS.FALLBACK_NAMES.INSTITUTION")}
                     </p>
                 </div>
             </div>
@@ -83,7 +83,7 @@ export function WorkerReviewForm({ assignment, onSuccess, onCancel }: WorkerRevi
                     id="comment"
                     {...register("comment")}
                     placeholder={t("WORKER_REVIEWS.FORM.PLACEHOLDER")}
-                    className="min-h-[120px] resize-none focus-visible:ring-primary"
+                    className="min-h-[120px] resize-none focus-visible:ring-primary placeholder:opacity-60 text-sm"
                 />
                 {errors.comment && (
                     <p className="text-sm text-destructive">{errors.comment.message}</p>
