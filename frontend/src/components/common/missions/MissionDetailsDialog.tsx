@@ -25,12 +25,10 @@ export function MissionDetailsDialog({
   mission,
   open,
   onOpenChange,
-  mode,
 }: {
   mission: Mission | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  mode?: string;
 }) {
   if (!mission) return null;
 
@@ -45,9 +43,9 @@ export function MissionDetailsDialog({
     m == null
       ? "Not specified"
       : new Intl.NumberFormat("fr-MA", {
-          style: "currency",
-          currency: "MAD",
-        }).format(m);
+        style: "currency",
+        currency: "MAD",
+      }).format(m);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -76,9 +74,8 @@ export function MissionDetailsDialog({
           <div className="mt-3 flex gap-2 items-center">
             <StatusBadge status={mission.status} />
             <Badge
-              className={`flex items-center gap-1 ${
-                urgencyColors[mission.urgency]
-              } text-xs px-2 py-0.5`}
+              className={`flex items-center gap-1 ${urgencyColors[mission.urgency]
+                } text-xs px-2 py-0.5`}
             >
               <span className="inline-flex items-center justify-center h-3 w-3">
                 <AlertTriangle className="h-3 w-3" />
@@ -111,12 +108,17 @@ export function MissionDetailsDialog({
               <Info icon={<Layers className="h-3 w-3" />} label="Budget">
                 {mad(mission.budget)}
               </Info>
-              {mission.speciality && (
-                <Info label="Speciality">
-                  <Badge variant="secondary" className="px-2 py-0.5 text-xs">
-                    {mission.speciality.name}
-                  </Badge>
-                </Info>
+              {mission.requiredSpeciality && (
+                <div className="space-y-0.5">
+                  <Label className="flex items-center gap-1 text-[11px] font-medium text-muted-foreground uppercase tracking-wide">
+                    Speciality
+                  </Label>
+                  <p className="font-medium text-sm truncate">
+                    <Badge variant="secondary" className="px-2 py-0.5 text-xs">
+                      {mission.requiredSpeciality.name}
+                    </Badge>
+                  </p>
+                </div>
               )}
             </div>
           </section>

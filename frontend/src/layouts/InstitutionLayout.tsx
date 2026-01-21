@@ -1,6 +1,5 @@
 import {
     LayoutDashboard,
-    Building2,
     PlusCircle,
     Briefcase,
     ClipboardList,
@@ -11,6 +10,7 @@ import {
 } from "lucide-react";
 import DashboardLayout, { type NavItem } from "./DashboardLayout";
 import { useUnreadMessageCount } from "@/socket/hooks/useUnreadMessageCount";
+import { useTranslation } from "react-i18next";
 
 interface InstitutionLayoutProps {
     children: React.ReactNode;
@@ -24,53 +24,49 @@ export default function InstitutionLayout({
     description,
 }: InstitutionLayoutProps) {
     const unreadCount = useUnreadMessageCount();
+    const { t } = useTranslation();
 
     const institutionNavItems: NavItem[] = [
         {
-            label: "Dashboard",
+            label: t("DASHBOARD_NAV.DASHBOARD"),
             href: "/institution",
             icon: LayoutDashboard,
         },
         {
-            label: "Create Mission",
+            label: t("DASHBOARD_NAV.CREATE_MISSION"),
             href: "/institution/missions/create",
             icon: PlusCircle,
         },
         {
-            label: "My Missions",
+            label: t("DASHBOARD_NAV.MY_MISSIONS"),
             href: "/institution/missions",
             icon: Briefcase,
         },
         {
-            label: "Assignments",
+            label: t("DASHBOARD_NAV.ASSIGNMENTS"),
             href: "/institution/assignments",
             icon: ClipboardList,
         },
         {
-            label: "Messages",
+            label: t("DASHBOARD_NAV.MESSAGES"),
             href: "/institution/messages",
             icon: MessageSquare,
             badge: unreadCount > 0 ? unreadCount : undefined,
         },
         {
-            label: "Payments",
+            label: t("DASHBOARD_NAV.PAYMENTS"),
             href: "/institution/payments/history",
             icon: CreditCard,
         },
         {
-            label: "Reviews",
+            label: t("DASHBOARD_NAV.REVIEWS"),
             href: "/institution/reviews",
             icon: Star,
         },
         {
-            label: "Notifications",
+            label: t("DASHBOARD_NAV.NOTIFICATIONS"),
             href: "/institution/notifications",
             icon: Bell,
-        },
-        {
-            label: "Profile",
-            href: "/institution/profile",
-            icon: Building2,
         },
     ];
 

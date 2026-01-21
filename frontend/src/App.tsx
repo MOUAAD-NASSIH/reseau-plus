@@ -132,8 +132,8 @@ const App = () => {
             <ProtectedRoute>
               <RoleGuard allowedRoles={["worker"]} fallbackPath="/unauthorized">
                 <WorkerLayout
-                  title="Dashboard"
-                  description="Overview of your activity and quick actions"
+                  title="HEADER_TITLES.DASHBOARD"
+                  description="HEADER_TITLES.DASHBOARD_DESC"
                 >
                   <WorkerDashboard />
                 </WorkerLayout>
@@ -147,8 +147,8 @@ const App = () => {
             <ProtectedRoute>
               <RoleGuard allowedRoles={["worker"]} fallbackPath="/unauthorized">
                 <WorkerLayout
-                  title="Profile"
-                  description="Manage your personal and professional information"
+                  title="HEADER_TITLES.PROFILE"
+                  description="HEADER_TITLES.PROFILE_DESC"
                 >
                   <WorkerProfile />
                 </WorkerLayout>
@@ -162,8 +162,8 @@ const App = () => {
             <ProtectedRoute>
               <RoleGuard allowedRoles={["worker"]} fallbackPath="/unauthorized">
                 <WorkerLayout
-                  title="Documents"
-                  description="Upload and manage your verification documents"
+                  title="HEADER_TITLES.DOCUMENTS"
+                  description="HEADER_TITLES.DOCUMENTS_DESC"
                 >
                   <WorkerDocuments />
                 </WorkerLayout>
@@ -178,8 +178,8 @@ const App = () => {
               <RoleGuard allowedRoles={["worker"]} fallbackPath="/unauthorized">
                 <WorkerVerifiedGuard>
                   <WorkerLayout
-                    title="Availability"
-                    description="Set your available dates for missions"
+                    title="HEADER_TITLES.AVAILABILITY"
+                    description="HEADER_TITLES.AVAILABILITY_DESC"
                   >
                     <WorkerAvailability />
                   </WorkerLayout>
@@ -195,8 +195,8 @@ const App = () => {
               <RoleGuard allowedRoles={["worker"]} fallbackPath="/unauthorized">
                 <WorkerVerifiedGuard>
                   <WorkerLayout
-                    title="Available Missions"
-                    description="Browse and apply for open missions"
+                    title="HEADER_TITLES.AVAILABLE_MISSIONS"
+                    description="HEADER_TITLES.AVAILABLE_MISSIONS_DESC"
                   >
                     <AvailableMissions />
                   </WorkerLayout>
@@ -212,8 +212,8 @@ const App = () => {
               <RoleGuard allowedRoles={["worker"]} fallbackPath="/unauthorized">
                 <WorkerVerifiedGuard>
                   <WorkerLayout
-                    title="Mission Details"
-                    description="View mission information and apply"
+                    title="HEADER_TITLES.MISSION_DETAILS"
+                    description="HEADER_TITLES.MISSION_DETAILS_DESC"
                   >
                     <MissionDetails />
                   </WorkerLayout>
@@ -229,8 +229,8 @@ const App = () => {
               <RoleGuard allowedRoles={["worker"]} fallbackPath="/unauthorized">
                 <WorkerVerifiedGuard>
                   <WorkerLayout
-                    title="My Applications"
-                    description="Track your mission applications"
+                    title="HEADER_TITLES.MY_APPLICATIONS"
+                    description="HEADER_TITLES.MY_APPLICATIONS_DESC"
                   >
                     <MyApplications />
                   </WorkerLayout>
@@ -246,8 +246,8 @@ const App = () => {
               <RoleGuard allowedRoles={["worker"]} fallbackPath="/unauthorized">
                 <WorkerVerifiedGuard>
                   <WorkerLayout
-                    title="Assigned Missions"
-                    description="View your current and past assignments"
+                    title="HEADER_TITLES.ASSIGNED_MISSIONS"
+                    description="HEADER_TITLES.ASSIGNED_MISSIONS_DESC"
                   >
                     <AssignedMissions />
                   </WorkerLayout>
@@ -262,7 +262,7 @@ const App = () => {
             <ProtectedRoute>
               <RoleGuard allowedRoles={["worker"]} fallbackPath="/unauthorized">
                 <WorkerVerifiedGuard>
-                  <WorkerLayout title="Assignment Details" description="View assignment information">
+                  <WorkerLayout title="HEADER_TITLES.ASSIGNMENT_DETAILS" description="HEADER_TITLES.ASSIGNMENT_DETAILS_DESC">
                     <AssignmentDetails />
                   </WorkerLayout>
                 </WorkerVerifiedGuard>
@@ -277,8 +277,8 @@ const App = () => {
               <RoleGuard allowedRoles={["worker"]} fallbackPath="/unauthorized">
                 <WorkerVerifiedGuard>
                   <WorkerLayout
-                    title="Reviews"
-                    description="View and write reviews for completed missions"
+                    title="HEADER_TITLES.REVIEWS"
+                    description="HEADER_TITLES.REVIEWS_DESC"
                   >
                     <WorkerReviews />
                   </WorkerLayout>
@@ -293,7 +293,7 @@ const App = () => {
             <ProtectedRoute>
               <RoleGuard allowedRoles={["worker"]} fallbackPath="/unauthorized">
                 <WorkerVerifiedGuard>
-                  <WorkerLayout title="Messages" description="Chat with institutions about missions">
+                  <WorkerLayout title="HEADER_TITLES.MESSAGES" description="HEADER_TITLES.MESSAGES_DESC">
                     <Messages />
                   </WorkerLayout>
                 </WorkerVerifiedGuard>
@@ -307,8 +307,8 @@ const App = () => {
             <ProtectedRoute>
               <RoleGuard allowedRoles={["worker"]} fallbackPath="/unauthorized">
                 <WorkerLayout
-                  title="Notifications"
-                  description="Stay updated with your activity"
+                  title="HEADER_TITLES.NOTIFICATIONS"
+                  description="HEADER_TITLES.NOTIFICATIONS_DESC"
                 >
                   <WorkerNotifications />
                 </WorkerLayout>
@@ -322,8 +322,8 @@ const App = () => {
             <ProtectedRoute>
               <RoleGuard allowedRoles={["worker"]} fallbackPath="/unauthorized">
                 <WorkerLayout
-                  title="Pending Approval"
-                  description="Your account is awaiting verification"
+                  title="HEADER_TITLES.PENDING_APPROVAL"
+                  description="HEADER_TITLES.PENDING_APPROVAL_DESC"
                 >
                   <PendingApproval />
                 </WorkerLayout>
@@ -342,8 +342,8 @@ const App = () => {
                 fallbackPath="/unauthorized"
               >
                 <InstitutionLayout
-                  title="Dashboard"
-                  description="Overview of your missions and activity"
+                  title="HEADER_TITLES.DASHBOARD"
+                  description="HEADER_TITLES.DASHBOARD_DESC"
                 >
                   <InstitutionDashboard />
                 </InstitutionLayout>
@@ -360,8 +360,8 @@ const App = () => {
                 fallbackPath="/unauthorized"
               >
                 <InstitutionLayout
-                  title="Profile"
-                  description="Manage your institution information"
+                  title="HEADER_TITLES.PROFILE"
+                  description="HEADER_TITLES.PROFILE_DESC"
                 >
                   <InstitutionProfile />
                 </InstitutionLayout>
@@ -378,8 +378,8 @@ const App = () => {
                 fallbackPath="/unauthorized"
               >
                 <InstitutionLayout
-                  title="Create Mission"
-                  description="Post a new mission for social workers"
+                  title="HEADER_TITLES.CREATE_MISSION"
+                  description="HEADER_TITLES.CREATE_MISSION_DESC"
                 >
                   <CreateMission />
                 </InstitutionLayout>
@@ -396,8 +396,8 @@ const App = () => {
                 fallbackPath="/unauthorized"
               >
                 <InstitutionLayout
-                  title="Edit Mission"
-                  description="Update mission details"
+                  title="HEADER_TITLES.EDIT_MISSION"
+                  description="HEADER_TITLES.EDIT_MISSION_DESC"
                 >
                   <EditMission />
                 </InstitutionLayout>
@@ -414,8 +414,8 @@ const App = () => {
                 fallbackPath="/unauthorized"
               >
                 <InstitutionLayout
-                  title="My Missions"
-                  description="Manage your posted missions"
+                  title="HEADER_TITLES.MY_MISSIONS"
+                  description="HEADER_TITLES.MY_MISSIONS_DESC"
                 >
                   <MyMissions />
                 </InstitutionLayout>
@@ -432,8 +432,8 @@ const App = () => {
                 fallbackPath="/unauthorized"
               >
                 <InstitutionLayout
-                  title="Mission Details"
-                  description="View mission information"
+                  title="HEADER_TITLES.MISSION_DETAILS"
+                  description="HEADER_TITLES.MISSION_DETAILS_DESC"
                 >
                   <InstitutionMissionDetails />
                 </InstitutionLayout>
@@ -450,8 +450,8 @@ const App = () => {
                 fallbackPath="/unauthorized"
               >
                 <InstitutionLayout
-                  title="Mission Applicants"
-                  description="Review and manage applicants"
+                  title="HEADER_TITLES.MISSION_APPLICANTS"
+                  description="HEADER_TITLES.MISSION_APPLICANTS_DESC"
                 >
                   <MissionApplicants />
                 </InstitutionLayout>
@@ -468,8 +468,8 @@ const App = () => {
                 fallbackPath="/unauthorized"
               >
                 <InstitutionLayout
-                  title="Assignments"
-                  description="Manage your mission assignments"
+                  title="HEADER_TITLES.ASSIGNMENTS"
+                  description="HEADER_TITLES.ASSIGNMENTS_DESC"
                 >
                   <InstitutionAssignments />
                 </InstitutionLayout>
@@ -486,8 +486,8 @@ const App = () => {
                 fallbackPath="/unauthorized"
               >
                 <InstitutionLayout
-                  title="Assignment Details"
-                  description="View assignment information"
+                  title="HEADER_TITLES.ASSIGNMENT_DETAILS"
+                  description="HEADER_TITLES.ASSIGNMENT_DETAILS_DESC"
                 >
                   <AssignedMissionView />
                 </InstitutionLayout>
@@ -504,8 +504,8 @@ const App = () => {
                 fallbackPath="/unauthorized"
               >
                 <InstitutionLayout
-                  title="Payment"
-                  description="Complete payment for assignment"
+                  title="HEADER_TITLES.PAYMENT"
+                  description="HEADER_TITLES.PAYMENT_DESC"
                 >
                   <PaymentPage />
                 </InstitutionLayout>
@@ -526,8 +526,8 @@ const App = () => {
                 fallbackPath="/unauthorized"
               >
                 <InstitutionLayout
-                  title="Payment History"
-                  description="View your payment transactions"
+                  title="HEADER_TITLES.PAYMENT_HISTORY"
+                  description="HEADER_TITLES.PAYMENT_HISTORY_DESC"
                 >
                   <PaymentHistory />
                 </InstitutionLayout>
@@ -544,8 +544,8 @@ const App = () => {
                 fallbackPath="/unauthorized"
               >
                 <InstitutionLayout
-                  title="Reviews"
-                  description="View and write reviews"
+                  title="HEADER_TITLES.REVIEWS"
+                  description="HEADER_TITLES.REVIEWS_DESC"
                 >
                   <InstitutionReviews />
                 </InstitutionLayout>
@@ -561,7 +561,7 @@ const App = () => {
                 allowedRoles={["institution"]}
                 fallbackPath="/unauthorized"
               >
-                <InstitutionLayout title="Messages" description="Chat with workers about missions">
+                <InstitutionLayout title="HEADER_TITLES.MESSAGES" description="HEADER_TITLES.MESSAGES_DESC">
                   <InstitutionMessages />
                 </InstitutionLayout>
               </RoleGuard>
@@ -577,8 +577,8 @@ const App = () => {
                 fallbackPath="/unauthorized"
               >
                 <InstitutionLayout
-                  title="Notifications"
-                  description="Stay updated with your activity"
+                  title="HEADER_TITLES.NOTIFICATIONS"
+                  description="HEADER_TITLES.NOTIFICATIONS_DESC"
                 >
                   <InstitutionNotifications />
                 </InstitutionLayout>
@@ -594,8 +594,8 @@ const App = () => {
             <ProtectedRoute>
               <RoleGuard allowedRoles={["admin"]} fallbackPath="/unauthorized">
                 <AdminLayout
-                  title="Dashboard"
-                  description="Platform overview and key metrics"
+                  title="HEADER_TITLES.DASHBOARD"
+                  description="HEADER_TITLES.DASHBOARD_DESC"
                 >
                   <AdminDashboard />
                 </AdminLayout>
@@ -609,8 +609,8 @@ const App = () => {
             <ProtectedRoute>
               <RoleGuard allowedRoles={["admin"]} fallbackPath="/unauthorized">
                 <AdminLayout
-                  title="Profile"
-                  description="Manage your admin account"
+                  title="HEADER_TITLES.PROFILE"
+                  description="HEADER_TITLES.PROFILE_DESC"
                 >
                   <AdminProfile />
                 </AdminLayout>

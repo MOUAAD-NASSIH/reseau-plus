@@ -1,8 +1,7 @@
 
 import { useTranslation } from "react-i18next";
-import { Star, MessageSquare, ThumbsUp, TrendingUp } from "lucide-react";
+import { Star, ThumbsUp, TrendingUp } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StarRating } from "@/components/common/StarRating";
 
@@ -44,7 +43,7 @@ export function ReviewsGlobalStats({ stats, totalReviews, isLoading }: ReviewsGl
                     <div className="mt-4 flex items-center justify-between gap-4">
                         <StarRating value={parseFloat(stats.avg)} readonly size="h-4 w-4" />
                         <div className="px-3 py-1 bg-muted/30 rounded-full border border-border/40">
-                             <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{totalReviews} {t("REVIEWS.SUMMARY.TOTAL_REVIEWS")}</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{totalReviews} {t("REVIEWS.SUMMARY.TOTAL_REVIEWS")}</span>
                         </div>
                     </div>
                 </CardContent>
@@ -68,8 +67,8 @@ export function ReviewsGlobalStats({ stats, totalReviews, isLoading }: ReviewsGl
                                         <Star className="h-2.5 w-2.5 text-amber-500 fill-amber-500" />
                                     </div>
                                     <div className="flex-1 h-1.5 bg-muted/50 rounded-full overflow-hidden border border-border/10">
-                                        <div 
-                                            className="h-full bg-primary/80 transition-all duration-1000 ease-out rounded-full shadow-[0_0_8px_rgba(var(--primary),0.2)]" 
+                                        <div
+                                            className="h-full bg-primary/80 transition-all duration-1000 ease-out rounded-full shadow-[0_0_8px_rgba(var(--primary),0.2)]"
                                             style={{ width: `${percentage}%` }}
                                         />
                                     </div>
@@ -107,8 +106,8 @@ export function ReviewsGlobalStats({ stats, totalReviews, isLoading }: ReviewsGl
                         {t("REVIEWS.SUMMARY.POSITIVE_DESC")}
                     </p>
                     <div className="mt-4 pt-4 border-t border-border/40 flex items-center gap-2">
-                         <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                         <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-tight">+{stats.countThisWeek} {t("REVIEWS.SUMMARY.THIS_WEEK")}</span>
+                        <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-tight">+{stats.countThisWeek} {t("REVIEWS.SUMMARY.THIS_WEEK")}</span>
                     </div>
                 </CardContent>
             </Card>

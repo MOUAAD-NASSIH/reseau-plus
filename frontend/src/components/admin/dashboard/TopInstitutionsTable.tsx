@@ -11,7 +11,7 @@ interface TopInstitutionsTableProps {
     isLoading: boolean;
 }
 
-export function TopInstitutionsTable({ stats, isLoading }: TopInstitutionsTableProps) {
+export function TopInstitutionsTable({ isLoading }: TopInstitutionsTableProps) {
     const { t } = useTranslation();
 
     // Mock data for top institutions - in production, this would come from backend
@@ -49,7 +49,7 @@ export function TopInstitutionsTable({ stats, isLoading }: TopInstitutionsTableP
         const max = Math.max(...data);
         const min = Math.min(...data);
         const range = max - min;
-        
+
         const points = data.map((value, index) => {
             const x = (index / (data.length - 1)) * 60;
             const y = 20 - ((value - min) / range) * 15;
@@ -127,11 +127,10 @@ export function TopInstitutionsTable({ stats, isLoading }: TopInstitutionsTableP
                                     <p className="font-bold text-foreground">{institution.revenue} MAD</p>
                                 </div>
                                 <div className="col-span-2 text-center">
-                                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-bold ${
-                                        parseFloat(institution.fulfillment) >= 95
+                                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-bold ${parseFloat(institution.fulfillment) >= 95
                                             ? "bg-emerald-500/10 text-emerald-600"
                                             : "bg-amber-500/10 text-amber-600"
-                                    }`}>
+                                        }`}>
                                         {institution.fulfillment}
                                     </span>
                                 </div>

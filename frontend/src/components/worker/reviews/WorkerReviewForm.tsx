@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -83,7 +82,7 @@ export function WorkerReviewForm({ assignment, onSuccess, onCancel }: WorkerRevi
                     id="comment"
                     {...register("comment")}
                     placeholder={t("WORKER_REVIEWS.FORM.PLACEHOLDER")}
-                    className="min-h-[120px] resize-none focus-visible:ring-primary placeholder:opacity-60 text-sm"
+                    className="min-h-30 resize-none focus-visible:ring-primary placeholder:opacity-60 text-sm"
                 />
                 {errors.comment && (
                     <p className="text-sm text-destructive">{errors.comment.message}</p>

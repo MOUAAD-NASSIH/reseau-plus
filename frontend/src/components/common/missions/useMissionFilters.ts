@@ -25,7 +25,7 @@ export function useMissionFilters<T extends Mission>(
     return missions.filter((m) => {
       if (
         filters.speciality !== "ALL" &&
-        `${m.speciality?.id ?? ""}` !== filters.speciality
+        `${m.requiredSpeciality?.id ?? ""}` !== filters.speciality
       )
         return false;
 
@@ -37,9 +37,8 @@ export function useMissionFilters<T extends Mission>(
       if (filters.urgency !== "ALL" && m.urgency !== filters.urgency)
         return false;
 
-      const hay = `${m.title} ${m.description ?? ""} ${m.location ?? ""} ${
-        m.institution?.institutionName ?? ""
-      }`
+      const hay = `${m.title} ${m.description ?? ""} ${m.location ?? ""} ${m.institution?.institutionName ?? ""
+        }`
         .toLowerCase()
         .trim();
 

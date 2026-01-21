@@ -19,6 +19,7 @@ import { submitWorkerRegistration } from "./submitWorkerRegistration";
 import { useState } from "react";
 import { showErrorToast } from "@/lib/toast";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 const stepComponents = [
   StepAccount,
@@ -31,6 +32,7 @@ const stepComponents = [
 
 export default function WorkerRegisterPage() {
   const { currentStep, next, back } = useRegisterStepper(workerSteps.length);
+  const { t } = useTranslation();
 
   const { data, reset } = useWorkerRegisterStore();
   const StepComponent = stepComponents[currentStep];
@@ -88,10 +90,10 @@ export default function WorkerRegisterPage() {
     return (
       <RegisterLayout steps={workerSteps} currentStep={workerSteps.length - 1}>
         <RegistrationSuccess
-          title="Welcome to the Network! 🎉"
-          message="Your worker profile has been created successfully. You can now browse available missions and start applying."
+          title={t("REGISTRATION.SUCCESS.WORKER_TITLE")}
+          message={t("REGISTRATION.SUCCESS.WORKER_MESSAGE")}
           redirectPath="/worker"
-          redirectLabel="Go to Dashboard"
+          redirectLabel={t("REGISTRATION.SUCCESS.WORKER_REDIRECT")}
         />
       </RegisterLayout>
     );

@@ -224,7 +224,7 @@ export default function AssignmentsOverview() {
                 <h1 className="text-4xl font-extrabold tracking-tight text-foreground lg:text-5xl">
                     {t("INSTITUTION_ASSIGNMENTS.TITLE", "Assignments")}
                 </h1>
-                <p className="text-muted-foreground text-lg max-w-[700px]">
+                <p className="text-muted-foreground text-lg max-w-175">
                     {t("INSTITUTION_ASSIGNMENTS.DESCRIPTION", "Manage and track all mission assignments across the platform.")}
                 </p>
             </div>

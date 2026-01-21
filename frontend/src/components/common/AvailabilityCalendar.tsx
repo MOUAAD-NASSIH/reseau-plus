@@ -121,7 +121,7 @@ function SlotForm({
         setValue,
         formState: { errors },
     } = useForm<CreateAvailabilityInput>({
-        resolver: zodResolver(createAvailabilitySchema),
+        resolver: zodResolver(createAvailabilitySchema) as any,
         defaultValues: {
             startDate: defaultValues?.startDate || "",
             endDate: defaultValues?.endDate || "",
@@ -131,7 +131,6 @@ function SlotForm({
     });
 
     const isRecurring = watch("isRecurring");
-    const status = watch("status");
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

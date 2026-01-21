@@ -4,6 +4,7 @@ import { CheckCircle2, PartyPopper, ArrowRight } from "lucide-react";
 import { AnimatedButton } from "@/components/ui/animated-button";
 import { shouldReduceMotion } from "@/lib/animations";
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 
 interface RegistrationSuccessProps {
     title?: string;
@@ -36,13 +37,19 @@ const generateConfettiParticles = () => {
 };
 
 export function RegistrationSuccess({
-    title = "Registration Complete!",
-    message = "Your account has been created successfully. You can now log in to access your dashboard.",
+    title,
+    message,
     redirectPath = "/login",
-    redirectLabel = "Go to Login",
+    redirectLabel,
 }: RegistrationSuccessProps) {
     const reduceMotion = shouldReduceMotion();
     const navigate = useNavigate();
+    const { t } = useTranslation();
+
+    // Use translation keys as defaults if not provided
+    const displayTitle = title || t("REGISTRATION.SUCCESS.DEFAULT_TITLE");
+    const displayMessage = message || t("REGISTRATION.SUCCESS.DEFAULT_MESSAGE");
+    const displayRedirectLabel = redirectLabel || t("REGISTRATION.SUCCESS.DEFAULT_REDIRECT");
 
     // Use memoized confetti particles
     const confettiParticles = useMemo(() => generateConfettiParticles(), []);
@@ -169,7 +176,7 @@ export function RegistrationSuccess({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
             >
-                {title}
+                {displayTitle}
             </motion.h2>
 
             {/* Message */}
@@ -179,7 +186,7 @@ export function RegistrationSuccess({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.6 }}
             >
-                {message}
+                {displayMessage}
             </motion.p>
 
             {/* CTA Button */}
@@ -193,7 +200,7 @@ export function RegistrationSuccess({
                     onClick={() => navigate(redirectPath)}
                     rightIcon={<ArrowRight className="w-4 h-4" />}
                 >
-                    {redirectLabel}
+                    {displayRedirectLabel}
                 </AnimatedButton>
             </motion.div>
 
@@ -204,7 +211,7 @@ export function RegistrationSuccess({
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.9 }}
             >
-                A confirmation email has been sent to your inbox
+                {t("REGISTRATION.SUCCESS.EMAIL_CONFIRMATION")}
             </motion.p>
         </div>
     );

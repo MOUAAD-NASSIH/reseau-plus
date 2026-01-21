@@ -23,13 +23,13 @@ export default function AdminMissionsPage() {
   const [statusFilter, setStatusFilter] = useState<MissionStatus | "ALL">("ALL");
   const [specialityFilter, setSpecialityFilter] = useState("ALL");
   const [urgencyFilter, setUrgencyFilter] = useState<Urgency | "ALL">("ALL");
-  
+
   // Pagination State
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(9); // Default to 9 for grid view
 
   // Fetch all missions
-  const { data: missionsData, isLoading } = useGetAllMissionsQuery(); 
+  const { data: missionsData, isLoading } = useGetAllMissionsQuery();
   const { data: specsData } = useGetSpecialitiesQuery();
 
   const missions = missionsData?.data ?? [];
@@ -58,7 +58,7 @@ export default function AdminMissionsPage() {
   // Client-side Pagination
   const totalItems = filteredMissions.length;
   const totalPages = Math.ceil(totalItems / pageSize);
-  
+
   const paginatedMissions = useMemo(() => {
     const startIndex = (page - 1) * pageSize;
     return filteredMissions.slice(startIndex, startIndex + pageSize);
@@ -87,7 +87,7 @@ export default function AdminMissionsPage() {
       <AdminMissionsHeader />
 
       {/* Filters */}
-      <AdminMissionsFilter 
+      <AdminMissionsFilter
         search={search}
         setSearch={setSearch}
         statusFilter={statusFilter}
@@ -106,49 +106,49 @@ export default function AdminMissionsPage() {
         <MissionSkeletonList view={view === "list" ? "table" : "grid"} />
       ) : (
         <>
-            {filteredMissions.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-24 text-center space-y-4 border-2 border-dashed border-border/40 rounded-xl bg-muted/5">
-                    <div className="p-6 rounded-full bg-muted/30 ring-1 ring-border/50">
-                        <Search className="h-10 w-10 text-muted-foreground/50" />
-                    </div>
-                    <div className="space-y-1">
-                        <h3 className="text-xl font-semibold">No missions found</h3>
-                        <p className="text-muted-foreground max-w-sm mx-auto">
-                            No missions match your current filter criteria. Try adjusting your filters or search terms.
-                        </p>
-                    </div>
-                    <Button variant="outline" className="mt-4" onClick={clearFilters}>
-                        Clear Filters
-                    </Button>
-                </div>
-            ) : (
-                <div className="space-y-6">
-                    <div className={view === "grid" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" : "flex flex-col gap-4"}>
-                        {paginatedMissions.map((mission) => (
-                            <AdminMissionCard
-                                key={mission.id}
-                                mission={mission}
-                                view={view}
-                                onView={onView}
-                            />
-                        ))}
-                    </div>
+          {filteredMissions.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-24 text-center space-y-4 border-2 border-dashed border-border/40 rounded-xl bg-muted/5">
+              <div className="p-6 rounded-full bg-muted/30 ring-1 ring-border/50">
+                <Search className="h-10 w-10 text-muted-foreground/50" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-xl font-semibold">No missions found</h3>
+                <p className="text-muted-foreground max-w-sm mx-auto">
+                  No missions match your current filter criteria. Try adjusting your filters or search terms.
+                </p>
+              </div>
+              <Button variant="outline" className="mt-4" onClick={clearFilters}>
+                Clear Filters
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              <div className={view === "grid" ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" : "flex flex-col gap-4"}>
+                {paginatedMissions.map((mission) => (
+                  <AdminMissionCard
+                    key={mission.id}
+                    mission={mission}
+                    view={view}
+                    onView={onView}
+                  />
+                ))}
+              </div>
 
-                    {/* Pagination */}
-                    {totalItems > 0 && (
-                        <div className="border-t pt-4">
-                            <PaginationControls
-                                currentPage={page}
-                                totalPages={totalPages}
-                                pageSize={pageSize}
-                                setPageSize={setPageSize}
-                                setPage={setPage}
-                                totalItems={totalItems}
-                            />
-                        </div>
-                    )}
+              {/* Pagination */}
+              {totalItems > 0 && (
+                <div className="border-t pt-4">
+                  <PaginationControls
+                    currentPage={page}
+                    totalPages={totalPages}
+                    pageSize={pageSize}
+                    setPageSize={setPageSize}
+                    setPage={setPage}
+                    totalItems={totalItems}
+                  />
                 </div>
-            )}
+              )}
+            </div>
+          )}
         </>
       )}
 
@@ -156,7 +156,6 @@ export default function AdminMissionsPage() {
         open={open}
         onOpenChange={setOpen}
         mission={selectedMission}
-        mode="admin"
       />
     </div>
   );

@@ -4,7 +4,6 @@ import {
   LayoutGrid,
   List,
   Users,
-  CheckCircle,
   Clock,
   XCircle,
 } from "lucide-react";

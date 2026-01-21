@@ -15,6 +15,7 @@ import { submitInstitutionRegistration } from "./submitInstitutionRegistration";
 import { useState } from "react";
 import { showErrorToast } from "@/lib/toast";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 const stepComponents = [StepAccount, StepInstitutionInfo, StepConfirm];
 
@@ -22,6 +23,7 @@ export default function InstitutionRegisterPage() {
   const { currentStep, next, back } = useRegisterStepper(
     institutionSteps.length
   );
+  const { t } = useTranslation();
 
   const StepComponent = stepComponents[currentStep];
   const { data, reset } = useInstitutionRegisterStore();
@@ -77,10 +79,10 @@ export default function InstitutionRegisterPage() {
     return (
       <RegisterLayout steps={institutionSteps} currentStep={institutionSteps.length - 1}>
         <RegistrationSuccess
-          title="Institution Registered! 🎉"
-          message="Your institution account has been created successfully. You can now post missions and find qualified workers."
+          title={t("REGISTRATION.SUCCESS.INSTITUTION_TITLE")}
+          message={t("REGISTRATION.SUCCESS.INSTITUTION_MESSAGE")}
           redirectPath="/institution"
-          redirectLabel="Go to Dashboard"
+          redirectLabel={t("REGISTRATION.SUCCESS.INSTITUTION_REDIRECT")}
         />
       </RegisterLayout>
     );

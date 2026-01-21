@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useGetAdminLogsQuery } from '@/features/api/endpoints/adminEndpoints';
-import { Loader2, FileText, Activity, ArrowRight, Clock } from 'lucide-react';
+import { FileText, Activity, ArrowRight, Clock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
@@ -96,14 +96,14 @@ export function DashboardLogs() {
                                             {log.details}
                                         </p>
                                     </div>
-                                    
+
                                     <div className="md:col-span-6 hidden md:flex items-center gap-2">
                                         <p className="text-xs text-muted-foreground truncate">
                                             <span className="opacity-70">Details: </span>
                                             {log.details || "No additional details"}
                                         </p>
                                     </div>
-                                    
+
                                     <div className="md:col-span-2 flex items-center justify-end">
                                         <span className="text-[10px] uppercase font-bold text-muted-foreground flex items-center gap-1 bg-muted/40 px-2 py-0.5 rounded-full border border-border/50 whitespace-nowrap">
                                             <Clock className="h-3 w-3" />

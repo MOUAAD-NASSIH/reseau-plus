@@ -68,7 +68,7 @@ export function NotificationsTabs({
                         {tab.count !== undefined && tab.count > 0 && (
                             <Badge
                                 variant={activeTab === tab.id ? "default" : "secondary"}
-                                className={`ml-2 h-5 min-w-[20px] px-1.5 ${activeTab === tab.id
+                                className={`ml-2 h-5 min-w-5 px-1.5 ${activeTab === tab.id
                                         ? "bg-primary/20 text-primary hover:bg-primary/30"
                                         : "bg-muted text-muted-foreground"
                                     }`}
