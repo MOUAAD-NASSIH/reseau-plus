@@ -46,7 +46,22 @@ export const en = {
             SOCIAL_WORKER: "Social Worker",
             WORKER: "Worker",
             N_A: "N/A",
-            DELETE_PROFILE_PIC: "Remove photo"
+            DELETE_PROFILE_PIC: "Remove photo",
+            STATUS: {
+                SUBMITTED: "Submitted",
+                REJECTED: "Rejected",
+                ACCEPTED: "Accepted",
+                ACTIVE: "Active",
+                ONGOING: "Ongoing",
+                COMPLETED: "Completed",
+                CANCELLED: "Cancelled",
+                PENDING: "Pending",
+                FAILED: "Failed",
+                VERIFIED: "Verified",
+                OPEN: "Open",
+                CLOSED: "Closed",
+                APPROVED: "Approved"
+            }
         },
         NAV: {
             FEATURES: "Features",
@@ -536,8 +551,12 @@ export const en = {
             }
         },
         INSTITUTION_DASHBOARD: {
-            WELCOME: "Welcome back, {{name}} 👋",
-            SUBTITLE: "Here's what's happening with your missions today.",
+            WELCOME: {
+                GREETING_MORNING: "Good morning",
+                GREETING_AFTERNOON: "Good afternoon",
+                GREETING_EVENING: "Good evening",
+                SUBTITLE: "Here's what's happening with your missions today."
+            },
             STATS: {
                 ACTIVE_MISSIONS: "Active Missions",
                 PENDING_APPLICANTS: "Pending Applicants",
@@ -549,6 +568,20 @@ export const en = {
                 LAST_30_DAYS: "Last 30 days",
                 CLOSED_MISSIONS: "Closed Missions",
                 CANCELLED_MISSIONS: "Cancelled Missions"
+            },
+            QUICK_ACTIONS: {
+                TITLE: "Quick Actions",
+                CREATE_MISSION: "Create Mission",
+                VIEW_MISSIONS: "View Missions",
+                VIEW_APPLICATIONS: "Applications",
+                VIEW_MESSAGES: "Messages"
+            },
+            MISSIONS: {
+                TITLE: "Recent Missions",
+                VIEW_ALL: "View all",
+                NO_MISSIONS_TITLE: "No missions yet",
+                NO_MISSIONS_DESC: "Create your first mission to start finding qualified workers",
+                CREATE_FIRST: "Create Mission"
             },
             SECTIONS: {
                 RECENT_MISSIONS: "Recent Missions",

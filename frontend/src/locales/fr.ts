@@ -47,6 +47,21 @@ export const fr = {
             WORKER: "Intervenant",
             N_A: "N/D",
             DELETE_PROFILE_PIC: "Supprimer la photo",
+            STATUS: {
+                SUBMITTED: "Soumis",
+                REJECTED: "Rejeté",
+                ACCEPTED: "Accepté",
+                ACTIVE: "Actif",
+                ONGOING: "En cours",
+                COMPLETED: "Terminé",
+                CANCELLED: "Annulé",
+                PENDING: "En attente",
+                FAILED: "Échoué",
+                VERIFIED: "Vérifié",
+                OPEN: "Ouvert",
+                CLOSED: "Fermé",
+                APPROVED: "Approuvé"
+            }
         },
         NAV: {
             FEATURES: "Fonctionnalités",
@@ -536,8 +551,12 @@ export const fr = {
             }
         },
         INSTITUTION_DASHBOARD: {
-            WELCOME: "Bon retour, {{name}}",
-            SUBTITLE: "Voici ce qui se passe avec vos missions aujourd'hui.",
+            WELCOME: {
+                GREETING_MORNING: "Bonjour",
+                GREETING_AFTERNOON: "Bon après-midi",
+                GREETING_EVENING: "Bonsoir",
+                SUBTITLE: "Voici ce qui se passe avec vos missions aujourd'hui."
+            },
             STATS: {
                 ACTIVE_MISSIONS: "Missions actives",
                 PENDING_APPLICANTS: "Candidats en attente",
@@ -550,6 +569,20 @@ export const fr = {
                 CLOSED_MISSIONS: "Missions Clôturées",
                 CANCELLED_MISSIONS: "Missions Annulées",
                 RATING: "Évaluation"
+            },
+            QUICK_ACTIONS: {
+                TITLE: "Actions rapides",
+                CREATE_MISSION: "Créer une mission",
+                VIEW_MISSIONS: "Voir les missions",
+                VIEW_APPLICATIONS: "Candidatures",
+                VIEW_MESSAGES: "Messages"
+            },
+            MISSIONS: {
+                TITLE: "Missions récentes",
+                VIEW_ALL: "Voir tout",
+                NO_MISSIONS_TITLE: "Aucune mission pour le moment",
+                NO_MISSIONS_DESC: "Créez votre première mission pour commencer à trouver des travailleurs qualifiés",
+                CREATE_FIRST: "Créer une mission"
             },
             SECTIONS: {
                 RECENT_MISSIONS: "Missions récentes",

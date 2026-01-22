@@ -4,6 +4,7 @@ import { useTranslation, Trans } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { StatusBadge, type StatusType } from "@/components/common/StatusBadge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import {
@@ -196,18 +197,21 @@ export default function WorkerDashboardPage() {
             title={t("WORKER_DASHBOARD.STATS.ACTIVE_MISSIONS")}
             value={activeList.length}
             icon={<Briefcase />}
+            iconColor="text-primary"
             description={t("WORKER_DASHBOARD.STATS.IN_PROGRESS")}
           />
           <StatCard
             title={t("WORKER_DASHBOARD.STATS.COMPLETED_MISSIONS")}
             value={totalMissionsCompleted}
             icon={<CheckCircle />}
+            iconColor="text-chart-2"
             description={t("WORKER_DASHBOARD.STATS.ALL_TIME")}
           />
           <StatCard
             title={t("WORKER_DASHBOARD.STATS.EARNINGS")}
             value={formatCurrency(totalEarnings)}
             icon={<CreditCard />}
+            iconColor="text-chart-5"
             description={t("WORKER_DASHBOARD.STATS.ESTIMATED_NET")}
             trend="+12%" // Placeholder trend
             trendUp={true}
@@ -216,6 +220,7 @@ export default function WorkerDashboardPage() {
             title={t("WORKER_DASHBOARD.STATS.RATING")}
             value={(rating.data?.data?.average ?? 0).toFixed(1)}
             icon={<Star />}
+            iconColor="text-chart-4"
             description={t("WORKER_DASHBOARD.STATS.TOTAL_REVIEWS", { count: rating.data?.data?.count ?? 0 })}
             className="border-primary/20 bg-primary/5"
           />
@@ -390,17 +395,7 @@ export default function WorkerDashboardPage() {
                                 {app.appliedAt ? new Date(app.appliedAt).toLocaleDateString() : "-"}
                               </td>
                               <td className="px-6 py-4 text-right">
-                                <Badge
-                                  variant={app.status === 'SUBMITTED' ? 'secondary' : 'outline'}
-                                  className={cn(
-                                    "capitalize font-medium border-0 shadow-xs",
-                                    app.status === 'SUBMITTED' && "bg-blue-500/10 text-blue-700 dark:text-blue-400 hover:bg-blue-500/20",
-                                    app.status === 'ACCEPTED' && "bg-green-500/10 text-green-700 dark:text-green-400 hover:bg-green-500/20",
-                                    app.status === 'REJECTED' && "bg-red-500/10 text-red-700 dark:text-red-400 hover:bg-red-500/20"
-                                  )}
-                                >
-                                  {app.status ? app.status.toLowerCase() : "unknown"}
-                                </Badge>
+                                <StatusBadge status={app.status as StatusType} />
                               </td>
                             </tr>
                           ))}
@@ -426,17 +421,10 @@ export default function WorkerDashboardPage() {
                                 {app.mission?.institution?.institutionName || "Unknown"}
                               </p>
                             </div>
-                            <Badge
-                              variant={app.status === 'SUBMITTED' ? 'secondary' : 'outline'}
-                              className={cn(
-                                "capitalize shrink-0 text-[10px] px-1.5 h-5",
-                                app.status === 'SUBMITTED' && "bg-blue-500/10 text-blue-700 dark:text-blue-400",
-                                app.status === 'ACCEPTED' && "bg-green-500/10 text-green-700 dark:text-green-400",
-                                app.status === 'REJECTED' && "bg-red-500/10 text-red-700 dark:text-red-400"
-                              )}
-                            >
-                              {app.status ? app.status.toLowerCase() : "unknown"}
-                            </Badge>
+                            <StatusBadge
+                              status={app.status as StatusType}
+                              className="shrink-0 text-[10px] px-1.5 h-5"
+                            />
                           </div>
                           <div className="flex items-center justify-between text-xs text-muted-foreground pt-1">
                             <span>{t("WORKER_DASHBOARD.APPLICATIONS.APPLIED_LABEL")} {app.appliedAt ? new Date(app.appliedAt).toLocaleDateString() : "-"}</span>
@@ -539,6 +527,7 @@ function StatCard({
   title,
   value,
   icon,
+  iconColor = "text-primary",
   description,
   trend,
   trendUp,
@@ -547,6 +536,7 @@ function StatCard({
   title: string;
   value: React.ReactNode;
   icon: React.ReactNode;
+  iconColor?: string;
   description?: string;
   trend?: string;
   trendUp?: boolean;
@@ -554,9 +544,16 @@ function StatCard({
 }) {
   return (
     <Card className={cn(
-      "bg-card border-border shadow-sm hover:shadow-md transition-all duration-200 relative overflow-hidden group",
+      "relative overflow-hidden border-none shadow-md bg-card group transition-all hover:shadow-lg",
       className
     )}>
+      {/* Background watermark icon */}
+      <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+        {React.isValidElement(icon) ? React.cloneElement(icon as React.ReactElement<{ className?: string }>, {
+          className: `w-24 h-24 ${iconColor} transform rotate-12`
+        }) : null}
+      </div>
+
       <CardContent className="p-6">
         <div className="flex items-start justify-between">
           <div className="space-y-4 relative z-10 w-full">
@@ -579,11 +576,6 @@ function StatCard({
               </div>
             )}
           </div>
-        </div>
-
-        {/* Decorative background element */}
-        <div className="absolute -right-4 -bottom-4 opacity-[0.03] scale-150 pointer-events-none group-hover:scale-[1.7] transition-transform duration-500">
-          {React.isValidElement(icon) ? React.cloneElement(icon as React.ReactElement<{ className?: string }>, { className: "h-24 w-24" }) : null}
         </div>
       </CardContent>
     </Card>

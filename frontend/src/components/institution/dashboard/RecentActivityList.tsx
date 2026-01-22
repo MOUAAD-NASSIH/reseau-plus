@@ -29,7 +29,7 @@ export function RecentActivityList({ notifications, isLoading }: RecentActivityL
         <div className="md:col-span-3 lg:col-span-2 space-y-6">
             <Card className="border-none shadow-md h-full flex flex-col bg-card overflow-hidden">
                 <CardHeader className="pb-3 border-b border-border">
-                    <CardTitle className="text-lg font-bold flex items-center gap-2">
+                    <CardTitle className="text-base font-semibold font-spline text-muted-foreground uppercase tracking-wider flex items-center gap-2">
                         <Activity className="h-5 w-5 text-primary" />
                         {t("INSTITUTION_DASHBOARD.SECTIONS.RECENT_ACTIVITY")}
                     </CardTitle>
@@ -95,7 +95,7 @@ export function RecentActivityList({ notifications, isLoading }: RecentActivityL
 
                                 return (
                                     <div key={notification.id} className="p-4 hover:bg-slate-50 dark:hover:bg-slate-900/50 transition-colors flex gap-3 group">
-                                        <div className={`flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center ${iconBg} ${iconColor} mt-1`}>
+                                        <div className={`shrink-0 h-10 w-10 rounded-full flex items-center justify-center ${iconBg} ${iconColor} mt-1`}>
                                             <Icon className="h-5 w-5" />
                                         </div>
                                         <div className="flex-1 space-y-1">
@@ -114,7 +114,7 @@ export function RecentActivityList({ notifications, isLoading }: RecentActivityL
                     )}
                 </CardContent>
                 <div className="p-4 border-t border-border bg-muted/20">
-                    <Button variant="outline" className="w-full text-xs font-semibold h-9" asChild>
+                    <Button variant="outline" className="w-full text-xs font-semibold font-spline h-9" asChild>
                         <Link to="/institution/notifications">
                             {t("INSTITUTION_DASHBOARD.SECTIONS.VIEW_ALL")}
                         </Link>
