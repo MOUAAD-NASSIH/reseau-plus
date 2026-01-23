@@ -631,7 +631,7 @@ export const en = {
                 START_DATE_LABEL: "Start Date",
                 END_DATE_LABEL: "End Date",
                 LOCATION_LABEL: "Location",
-                LOCATION_PLACEHOLDER: "City, Zip Code, or Address",
+                LOCATION_PLACEHOLDER: "City",
                 BUDGET_LABEL: "Total Budget",
                 BUDGET_PLACEHOLDER: "0.00"
             },

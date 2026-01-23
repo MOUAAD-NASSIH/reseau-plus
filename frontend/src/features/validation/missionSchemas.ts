@@ -14,8 +14,6 @@ import {
 } from "./commonSchemas";
 
 // ENUM SCHEMAS
-
-
 /**
  * Mission status enum schema
  */
@@ -26,9 +24,8 @@ export const missionStatusSchema = z.enum(["OPEN", "ONGOING", "CLOSED", "CANCELL
  */
 export const urgencySchema = z.enum(["HIGH", "MEDIUM", "LOW"]);
 
+
 // CREATE MISSION SCHEMA
-
-
 /**
  * Create mission input schema
  */
@@ -38,11 +35,11 @@ export const createMissionSchema = z
         description: safeStringSchema.optional(),
         startDate: dateStringSchema,
         endDate: dateStringSchema,
-        requiredSpecialityId: positiveIntSchema.optional(),
+        requiredSpecialityId: z.number({ message: "Please select a specialty" }).int().positive(),
         location: safeStringSchema.optional(),
         budget: positiveNumberSchema.optional(),
         urgency: urgencySchema,
-        domainIds: z.array(positiveIntSchema).optional(),
+        domainIds: z.array(positiveIntSchema).min(1, "Select at least one domain"),
     })
     .refine(
         (data) => new Date(data.endDate) > new Date(data.startDate),
@@ -52,9 +49,8 @@ export const createMissionSchema = z
         }
     );
 
+
 // UPDATE MISSION SCHEMA
-
-
 /**
  * Update mission input schema
  */
@@ -84,9 +80,8 @@ export const updateMissionSchema = z
         }
     );
 
+
 // MISSION FILTER SCHEMA
-
-
 /**
  * Mission filter schema
  */
@@ -145,9 +140,8 @@ export const missionFilterSchema = z
         }
     );
 
+
 // TYPE EXPORTS
-
-
 export type MissionStatus = z.infer<typeof missionStatusSchema>;
 export type Urgency = z.infer<typeof urgencySchema>;
 export type CreateMissionInput = z.infer<typeof createMissionSchema>;

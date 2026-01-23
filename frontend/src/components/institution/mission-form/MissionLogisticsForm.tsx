@@ -1,5 +1,5 @@
 import { type UseFormReturn, Controller } from "react-hook-form";
-import {  useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { MapPin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -22,7 +22,7 @@ export function MissionLogisticsForm({ form }: MissionLogisticsFormProps) {
                     <span className="bg-primary/10 text-primary p-1.5 rounded-lg">
                         <MapPin className="h-4 w-4" />
                     </span>
-                    <h3 className="font-bold text-lg">{t("CREATE_MISSION.SECTIONS.LOGISTICS")}</h3>
+                    <h3 className="font-bold text-lg font-spline">{t("CREATE_MISSION.SECTIONS.LOGISTICS")}</h3>
                 </div>
 
                 <div className="grid gap-6 md:grid-cols-2">
@@ -88,8 +88,8 @@ export function MissionLogisticsForm({ form }: MissionLogisticsFormProps) {
                             {t("CREATE_MISSION.LOGISTICS.BUDGET_LABEL")}
                         </Label>
                         <div className="relative group">
-                            <div className="absolute left-0 top-0 bottom-0 w-12 bg-muted flex items-center justify-center border-r border-input rounded-l-xl">
-                                <span className="text-[10px] font-bold text-muted-foreground uppercase">MAD</span>
+                            <div className="absolute left-0 top-0 bottom-0 w-12 bg-muted/50 flex items-center justify-center border-r border-input rounded-l-xl">
+                                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">MAD</span>
                             </div>
                             <Input
                                 id="budget"

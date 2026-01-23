@@ -632,7 +632,7 @@ export const fr = {
                 START_DATE_LABEL: "Date de Début",
                 END_DATE_LABEL: "Date de Fin",
                 LOCATION_LABEL: "Lieu",
-                LOCATION_PLACEHOLDER: "Ville, Code Postal ou Adresse",
+                LOCATION_PLACEHOLDER: "Ville",
                 BUDGET_LABEL: "Budget Total",
                 BUDGET_PLACEHOLDER: "0.00"
             },

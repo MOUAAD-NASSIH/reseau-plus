@@ -16,7 +16,7 @@ import type { CreateMissionInput, UpdateMissionInput } from "@/features/validati
 
 interface MissionDetailsFormProps {
     form: UseFormReturn<CreateMissionInput | UpdateMissionInput | any>;
-    showStatus?: boolean; 
+    showStatus?: boolean;
 }
 
 export function MissionDetailsForm({ form, showStatus = false }: MissionDetailsFormProps) {
@@ -30,7 +30,7 @@ export function MissionDetailsForm({ form, showStatus = false }: MissionDetailsF
                     <span className="bg-primary/10 text-primary p-1.5 rounded-lg">
                         <LayoutDashboard className="h-4 w-4" />
                     </span>
-                    <h3 className="font-bold text-lg">{t("CREATE_MISSION.SECTIONS.DETAILS")}</h3>
+                    <h3 className="font-bold text-lg font-spline">{t("CREATE_MISSION.SECTIONS.DETAILS")}</h3>
                 </div>
 
                 {/* Title */}
@@ -40,7 +40,7 @@ export function MissionDetailsForm({ form, showStatus = false }: MissionDetailsF
                     </Label>
                     <Input
                         id="title"
-                        className="h-11 md:h-12 bg-background border-input focus:ring-2 focus:ring-primary/20 transition-all rounded-xl"
+                        className="h-11 md:h-12 bg-background border-input focus:ring-2 focus:ring-primary/20 transition-all rounded-xl placeholder:text-sm"
                         placeholder={t("CREATE_MISSION.DETAILS.TITLE_PLACEHOLDER")}
                         {...register("title")}
                     />
@@ -59,7 +59,7 @@ export function MissionDetailsForm({ form, showStatus = false }: MissionDetailsF
                     </Label>
                     <Textarea
                         id="description"
-                        className="min-h-[160px] bg-background border-input focus:ring-2 focus:ring-primary/20 transition-all resize-y rounded-xl"
+                        className="min-h-[160px] bg-background border-input focus:ring-2 focus:ring-primary/20 transition-all resize-y rounded-xl placeholder:opacity-60 placeholder:text-sm"
                         placeholder={t("CREATE_MISSION.DETAILS.DESCRIPTION_PLACEHOLDER")}
                         {...register("description")}
                     />
@@ -81,8 +81,8 @@ export function MissionDetailsForm({ form, showStatus = false }: MissionDetailsF
                             name="status"
                             control={control}
                             render={({ field }) => (
-                                <Select 
-                                    value={field.value} 
+                                <Select
+                                    value={field.value}
                                     onValueChange={field.onChange}
                                 >
                                     <SelectTrigger className="h-11 md:h-12 bg-background border-input focus:ring-2 focus:ring-primary/20 rounded-xl">

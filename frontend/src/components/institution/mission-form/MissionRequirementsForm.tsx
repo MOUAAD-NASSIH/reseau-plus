@@ -60,7 +60,7 @@ export function MissionRequirementsForm({
           <span className="bg-primary/10 text-primary p-1.5 rounded-lg">
             <TrendingUp className="h-4 w-4" />
           </span>
-          <h3 className="font-bold text-lg">
+          <h3 className="font-bold text-lg font-spline">
             {t("CREATE_MISSION.SECTIONS.CRITERIA")}
           </h3>
         </div>
@@ -119,7 +119,7 @@ export function MissionRequirementsForm({
         {/* Specialty */}
         <div className="space-y-2">
           <Label htmlFor="requiredSpecialityId" className="font-medium">
-            {t("CREATE_MISSION.REQUIREMENTS.SPECIALITY_LABEL")}
+            {t("CREATE_MISSION.REQUIREMENTS.SPECIALITY_LABEL")} <span className="text-destructive">*</span>
           </Label>
           {specialitiesLoading ? (
             <Skeleton className="h-12 w-full rounded-xl" />
@@ -172,7 +172,7 @@ export function MissionRequirementsForm({
         <div className="space-y-3">
           <Label className="flex items-center gap-2 font-medium">
             <Tag className="h-4 w-4 text-muted-foreground" />
-            {t("CREATE_MISSION.REQUIREMENTS.DOMAINS_LABEL")}
+            {t("CREATE_MISSION.REQUIREMENTS.DOMAINS_LABEL")} <span className="text-destructive">*</span>
           </Label>
           {domainsLoading ? (
             <div className="flex gap-2 flex-wrap">
@@ -191,8 +191,8 @@ export function MissionRequirementsForm({
                     className={cn(
                       "cursor-pointer px-3 py-1.5 transition-all text-sm border-2 rounded-xl",
                       isSelected
-                        ? "bg-primary hover:bg-primary/90 border-primary"
-                        : "bg-card hover:bg-muted border-muted hover:border-muted-foreground/30"
+                        ? "bg-primary text-primary-foreground hover:bg-primary/90 border-primary shadow-sm"
+                        : "bg-background hover:bg-muted border-input hover:border-primary/50 text-muted-foreground"
                     )}
                     onClick={() => handleDomainToggle(domain.id)}
                   >
