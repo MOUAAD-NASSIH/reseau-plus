@@ -1,5 +1,5 @@
 /**
- * Profile Picture Service - handles upload, validation, and management for all user types
+ * Profile Picture/logo Service - handles upload, validation, and management for all user types
  */
 
 import cloudinary from "../lib/cloudinary";
@@ -87,7 +87,8 @@ export const deleteFromCloudinary = async (publicId: string): Promise<boolean> =
 
 export const uploadToCloudinary = async (
     fileBuffer: Buffer,
-    folder: string = 'social-workers-network/worker-profile-pictures'
+    folder: string = 'social-workers-network/worker-profile-pictures',
+    transformation: any[] = [{ width: 500, height: 500, crop: 'fill', gravity: 'face' }]
 ): Promise<ProfilePictureUploadResult> => {
     return new Promise((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream(
@@ -95,9 +96,7 @@ export const uploadToCloudinary = async (
                 folder,
                 resource_type: 'image',
                 allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
-                transformation: [
-                    { width: 500, height: 500, crop: 'fill', gravity: 'face' }
-                ]
+                transformation
             },
             (error, result) => {
                 if (error) {
@@ -136,71 +135,98 @@ export const getProfilePictureUrl = async (
     return user?.profilePicture || null;
 };
 
-export const uploadWorkerProfilePicture = async (
+export const uploadProfileImage = async (
     userId: number,
-    file: Express.Multer.File
+    file: Express.Multer.File,
+    config: {
+        folder: string,
+        transformation?: any[],
+        entityType: 'user' | 'institution', // 'user' handles both worker and admin
+        checkRole?: string // Optional role check for admins
+    }
 ): Promise<ProfilePictureUploadResult> => {
     validateFile({ mimetype: file.mimetype, size: file.size });
 
-    const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: { id: true, profilePicture: true }
-    });
+    let currentImageUrl: string | null = null;
+    let dbUpdate: (url: string) => Promise<any>;
 
-    if (!user) {
-        throw new ProfilePictureAuthorizationError('User not found');
+    if (config.entityType === 'institution') {
+        const institution = await prisma.institution.findUnique({
+            where: { userId },
+            select: { id: true, logo: true }
+        });
+
+        if (!institution) {
+            throw new ProfilePictureAuthorizationError('Institution not found');
+        }
+
+        currentImageUrl = institution.logo;
+        dbUpdate = async (url) => prisma.institution.update({
+            where: { id: institution.id },
+            data: { logo: url }
+        });
+    } else {
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            include: { role: true }
+        });
+
+        if (!user) {
+            throw new ProfilePictureAuthorizationError('User not found');
+        }
+
+        if (config.checkRole && user.role.name !== config.checkRole) {
+            throw new ProfilePictureAuthorizationError('Not authorized to update this profile');
+        }
+
+        currentImageUrl = user.profilePicture;
+        dbUpdate = async (url) => prisma.user.update({
+            where: { id: userId },
+            data: { profilePicture: url }
+        });
     }
 
-    if (user.profilePicture) {
-        const publicId = extractPublicIdFromUrl(user.profilePicture);
+    // Delete existing image if any
+    if (currentImageUrl) {
+        const publicId = extractPublicIdFromUrl(currentImageUrl);
         if (publicId) {
             await deleteFromCloudinary(publicId);
         }
     }
 
-    const uploadResult = await uploadToCloudinary(file.buffer);
+    // Upload new image
+    const uploadResult = await uploadToCloudinary(
+        file.buffer,
+        config.folder,
+        config.transformation
+    );
 
-    await prisma.user.update({
-        where: { id: user.id },
-        data: { profilePicture: uploadResult.url }
-    });
+    // Update database
+    await dbUpdate(uploadResult.url);
 
     return uploadResult;
+};
+
+export const uploadWorkerProfilePicture = async (
+    userId: number,
+    file: Express.Multer.File
+): Promise<ProfilePictureUploadResult> => {
+    return uploadProfileImage(userId, file, {
+        folder: 'social-workers-network/worker-profile-pictures',
+        entityType: 'user',
+        transformation: [{ width: 500, height: 500, crop: 'fill', gravity: 'face' }]
+    });
 };
 
 export const uploadInstitutionLogo = async (
     userId: number,
     file: Express.Multer.File
 ): Promise<ProfilePictureUploadResult> => {
-    validateFile({ mimetype: file.mimetype, size: file.size });
-
-    const institution = await prisma.institution.findUnique({
-        where: { userId },
-        select: { id: true, logo: true }
+    return uploadProfileImage(userId, file, {
+        folder: 'social-workers-network/institution-logos',
+        entityType: 'institution',
+        transformation: [{ width: 500, height: 500, crop: 'fill', gravity: 'center' }]
     });
-
-    if (!institution) {
-        throw new ProfilePictureAuthorizationError('Institution not found');
-    }
-
-    if (institution.logo) {
-        const publicId = extractPublicIdFromUrl(institution.logo);
-        if (publicId) {
-            await deleteFromCloudinary(publicId);
-        }
-    }
-
-    const uploadResult = await uploadToCloudinary(
-        file.buffer,
-        'social-workers-network/institution-logos'
-    );
-
-    await prisma.institution.update({
-        where: { id: institution.id },
-        data: { logo: uploadResult.url }
-    });
-
-    return uploadResult;
 };
 
 export const deleteWorkerProfilePicture = async (userId: number): Promise<void> => {
@@ -253,39 +279,12 @@ export const uploadAdminProfilePicture = async (
     userId: number,
     file: Express.Multer.File
 ): Promise<ProfilePictureUploadResult> => {
-    validateFile({ mimetype: file.mimetype, size: file.size });
-
-    const user = await prisma.user.findUnique({
-        where: { id: userId },
-        include: { role: true }
+    return uploadProfileImage(userId, file, {
+        folder: 'social-workers-network/admin-profile-pictures',
+        entityType: 'user',
+        checkRole: 'admin',
+        transformation: [{ width: 500, height: 500, crop: 'fill', gravity: 'face' }]
     });
-
-    if (!user) {
-        throw new ProfilePictureAuthorizationError('User not found');
-    }
-
-    if (user.role.name !== 'admin') {
-        throw new ProfilePictureAuthorizationError('Not authorized to update this profile');
-    }
-
-    if (user.profilePicture) {
-        const publicId = extractPublicIdFromUrl(user.profilePicture);
-        if (publicId) {
-            await deleteFromCloudinary(publicId);
-        }
-    }
-
-    const uploadResult = await uploadToCloudinary(
-        file.buffer,
-        'social-workers-network/admin-profile-pictures'
-    );
-
-    await prisma.user.update({
-        where: { id: user.id },
-        data: { profilePicture: uploadResult.url }
-    });
-
-    return uploadResult;
 };
 
 export const deleteAdminProfilePicture = async (userId: number): Promise<void> => {

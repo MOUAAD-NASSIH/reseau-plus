@@ -26,7 +26,7 @@ export const authApi = api.injectEndpoints({
                 url: "/auth/me",
                 method: "GET",
             }),
-            providesTags: ["Auth"],
+            providesTags: [{ type: "Auth", id: "ME" }],
         }),
 
         /**

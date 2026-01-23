@@ -21,9 +21,9 @@ export function QuickActions() {
             color: "bg-chart-2/10 text-chart-2 hover:bg-chart-2/20"
         },
         {
-            to: "/institution/applications",
+            to: "/institution/assignments",
             icon: FileText,
-            label: t("INSTITUTION_DASHBOARD.QUICK_ACTIONS.VIEW_APPLICATIONS"),
+            label: t("INSTITUTION_DASHBOARD.QUICK_ACTIONS.VIEW_ASSIGNMENTS"),
             color: "bg-chart-4/10 text-chart-4 hover:bg-chart-4/20"
         },
         {

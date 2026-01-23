@@ -574,6 +574,7 @@ export const en = {
                 CREATE_MISSION: "Create Mission",
                 VIEW_MISSIONS: "View Missions",
                 VIEW_APPLICATIONS: "Applications",
+                VIEW_ASSIGNMENTS: "Assignments",
                 VIEW_MESSAGES: "Messages"
             },
             MISSIONS: {
@@ -1056,7 +1057,7 @@ export const en = {
         },
         INSTITUTION_PROFILE: {
             TITLE: "Institution Profile",
-            SUBTITLE: "Update your institution's information. This information will be visible to workers.",
+            SUBTITLE: "Update your institution's information.",
             SECTIONS: {
                 ORGANIZATION: "Organization Details",
                 ACCOUNT: "Account Information"
@@ -1080,12 +1081,17 @@ export const en = {
                 ADDRESS_LINE2: "Street Address (Optional)",
                 CITY: "City",
                 STATE: "State/Prov",
-                ZIP: "Zip/Postal"
+                ZIP: "Zip/Postal",
+                MEMBER_SINCE: "Member Since"
             },
             ACTIONS: {
                 CANCEL: "Cancel",
                 SAVE: "Save Changes",
                 SAVING: "Saving..."
+            },
+            ALERTS: {
+                LOGO_UPLOAD_SUCCESS: "Your logo has been uploaded successfully.",
+                LOGO_DELETE_SUCCESS: "Your logo has been deleted."
             }
         },
         NOTIFICATIONS: {

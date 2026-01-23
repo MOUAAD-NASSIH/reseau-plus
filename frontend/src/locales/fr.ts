@@ -575,6 +575,7 @@ export const fr = {
                 CREATE_MISSION: "Créer une mission",
                 VIEW_MISSIONS: "Voir les missions",
                 VIEW_APPLICATIONS: "Candidatures",
+                VIEW_ASSIGNMENTS: "Affectations",
                 VIEW_MESSAGES: "Messages"
             },
             MISSIONS: {
@@ -1057,7 +1058,7 @@ export const fr = {
         },
         INSTITUTION_PROFILE: {
             TITLE: "Profil de l'Institution",
-            SUBTITLE: "Mettez à jour les informations de votre institution. Ces informations seront visibles par les intervenants.",
+            SUBTITLE: "Mettez à jour les informations de votre institution.",
             SECTIONS: {
                 ORGANIZATION: "Détails de l'Organisation",
                 ACCOUNT: "Informations du Compte"
@@ -1081,12 +1082,17 @@ export const fr = {
                 ADDRESS_LINE2: "Complément d'Adresse (Optionnel)",
                 CITY: "Ville",
                 STATE: "État/Province",
-                ZIP: "Code Postal"
+                ZIP: "Code Postal",
+                MEMBER_SINCE: "Membre depuis"
             },
             ACTIONS: {
                 CANCEL: "Annuler",
                 SAVE: "Enregistrer",
                 SAVING: "Enregistrement..."
+            },
+            ALERTS: {
+                LOGO_UPLOAD_SUCCESS: "Votre logo a été téléversé avec succès.",
+                LOGO_DELETE_SUCCESS: "Votre logo a été supprimé."
             }
         },
         NOTIFICATIONS: {
