@@ -36,6 +36,7 @@ interface AssignmentDetailsDialogProps {
 }
 
 function AssignmentDetailsDialog({ assignment, open, onOpenChange }: AssignmentDetailsDialogProps) {
+    const { t } = useTranslation();
     if (!assignment) return null;
 
     const formatDate = (dateString: string) => {
@@ -52,10 +53,10 @@ function AssignmentDetailsDialog({ assignment, open, onOpenChange }: AssignmentD
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                         <ClipboardList className="h-5 w-5" />
-                        Assignment Details
+                        {t("ASSIGNMENTS_OVERVIEW.DIALOG.TITLE")}
                     </DialogTitle>
                     <DialogDescription>
-                        Assignment #{assignment.id} information
+                        {t("ASSIGNMENTS_OVERVIEW.DIALOG.SUBTITLE", { id: assignment.id })}
                     </DialogDescription>
                 </DialogHeader>
 
@@ -69,7 +70,7 @@ function AssignmentDetailsDialog({ assignment, open, onOpenChange }: AssignmentD
                     <div className="space-y-2">
                         <Label className="text-muted-foreground flex items-center gap-1">
                             <User className="h-3 w-3" />
-                            Assigned Worker
+                            {t("ASSIGNMENTS_OVERVIEW.DIALOG.ASSIGNED_WORKER")}
                         </Label>
                         <div className="bg-muted/50 p-3 rounded-lg">
                             <p className="font-medium">
@@ -85,11 +86,11 @@ function AssignmentDetailsDialog({ assignment, open, onOpenChange }: AssignmentD
                     <div className="space-y-2">
                         <Label className="text-muted-foreground flex items-center gap-1">
                             <Building2 className="h-3 w-3" />
-                            Institution
+                            {t("ASSIGNMENTS_OVERVIEW.DIALOG.INSTITUTION")}
                         </Label>
                         <div className="bg-muted/50 p-3 rounded-lg">
                             <p className="font-medium">
-                                {assignment.institution?.institutionName || "Unknown"}
+                                {assignment.institution?.institutionName || t("COMMON.UNKNOWN")}
                             </p>
                             {assignment.institution?.address && (
                                 <p className="text-sm text-muted-foreground">
@@ -104,7 +105,7 @@ function AssignmentDetailsDialog({ assignment, open, onOpenChange }: AssignmentD
                         <div className="space-y-2">
                             <Label className="text-muted-foreground flex items-center gap-1">
                                 <Briefcase className="h-3 w-3" />
-                                Mission
+                                {t("ASSIGNMENTS_OVERVIEW.DIALOG.MISSION")}
                             </Label>
                             <div className="bg-muted/50 p-3 rounded-lg">
                                 <p className="font-medium">{assignment.mission.title}</p>
@@ -125,13 +126,13 @@ function AssignmentDetailsDialog({ assignment, open, onOpenChange }: AssignmentD
                         <div className="space-y-1">
                             <Label className="text-muted-foreground flex items-center gap-1">
                                 <Calendar className="h-3 w-3" />
-                                Assigned At
+                                {t("ASSIGNMENTS_OVERVIEW.DIALOG.ASSIGNED_AT")}
                             </Label>
                             <p className="font-medium">{formatDate(assignment.assignedAt)}</p>
                         </div>
                         {assignment.mission && (
                             <div className="space-y-1">
-                                <Label className="text-muted-foreground">Mission Period</Label>
+                                <Label className="text-muted-foreground">{t("ASSIGNMENTS_OVERVIEW.DIALOG.MISSION_PERIOD")}</Label>
                                 <p className="font-medium">
                                     {formatDate(assignment.mission.startDate)} - {formatDate(assignment.mission.endDate)}
                                 </p>
@@ -222,17 +223,17 @@ export default function AssignmentsOverview() {
             {/* Page Header */}
             <div className="space-y-2">
                 <h1 className="text-4xl font-extrabold tracking-tight text-foreground lg:text-5xl">
-                    {t("INSTITUTION_ASSIGNMENTS.TITLE", "Assignments")}
+                    {t("ASSIGNMENTS_OVERVIEW.TITLE")}
                 </h1>
                 <p className="text-muted-foreground text-lg max-w-[700px]">
-                    {t("INSTITUTION_ASSIGNMENTS.DESCRIPTION", "Manage and track all mission assignments across the platform.")}
+                    {t("ASSIGNMENTS_OVERVIEW.DESCRIPTION")}
                 </p>
             </div>
 
              {/* Stats Overview */}
              <div className="grid gap-4 md:grid-cols-4">
                 <StatCard 
-                    title={t("INSTITUTION_ASSIGNMENTS.STATS.TOTAL", "Total Assignments")} 
+                    title={t("ASSIGNMENTS_OVERVIEW.STATS.TOTAL")} 
                     value={stats.total} 
                     icon={ListTodo} 
                     isLoading={assignmentsLoading} 
@@ -240,7 +241,7 @@ export default function AssignmentsOverview() {
                     bg="bg-primary/5"
                 />
                 <StatCard 
-                    title={t("INSTITUTION_ASSIGNMENTS.STATS.ACTIVE", "Active")} 
+                    title={t("ASSIGNMENTS_OVERVIEW.STATS.ACTIVE")} 
                     value={stats.active} 
                     icon={Clock} 
                     isLoading={assignmentsLoading} 
@@ -248,7 +249,7 @@ export default function AssignmentsOverview() {
                     bg="bg-blue-500/5"
                 />
                 <StatCard 
-                    title={t("INSTITUTION_ASSIGNMENTS.STATS.COMPLETED", "Completed")} 
+                    title={t("ASSIGNMENTS_OVERVIEW.STATS.COMPLETED")} 
                     value={stats.completed} 
                     icon={CheckCircle2} 
                     isLoading={assignmentsLoading} 
@@ -256,7 +257,7 @@ export default function AssignmentsOverview() {
                     bg="bg-emerald-500/5"
                 />
                 <StatCard 
-                    title={t("INSTITUTION_ASSIGNMENTS.STATS.CANCELLED", "Cancelled")} 
+                    title={t("ASSIGNMENTS_OVERVIEW.STATS.CANCELLED")} 
                     value={stats.cancelled} 
                     icon={XCircle} 
                     isLoading={assignmentsLoading} 

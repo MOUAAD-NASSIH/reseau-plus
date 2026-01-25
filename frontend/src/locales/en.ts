@@ -5,6 +5,13 @@ export const en = {
             TAGLINE: "Connecting independent workers with institutions for mission success."
         },
         COMMON: {
+            UNKNOWN: "Unknown",
+            GENERAL_SOCIAL_WORK: "General Social Work",
+            UNTITLED_MISSION: "Untitled Mission",
+            UNTITLED_APPLICATION: "Untitled Application",
+            UNKNOWN_INSTITUTION: "Unknown Institution",
+            THERE: "there",
+            LOADING: "Loading...",
             UNEXPECTED_ERROR: "An unexpected error occurred. Please try again.",
             PASSWORD_STRENGTH: {
                 STRENGTH_LABEL: "Password strength",
@@ -823,6 +830,25 @@ export const en = {
                 PROFILE: "Profile"
             }
         },
+        ASSIGNMENTS_OVERVIEW: {
+            TITLE: "Assignments",
+            DESCRIPTION: "Manage and track all mission assignments across the platform.",
+            STATS: {
+                TOTAL: "Total Assignments",
+                ACTIVE: "Active",
+                COMPLETED: "Completed",
+                CANCELLED: "Cancelled"
+            },
+            DIALOG: {
+                TITLE: "Assignment Details",
+                SUBTITLE: "Assignment #{{id}} information",
+                ASSIGNED_WORKER: "Assigned Worker",
+                INSTITUTION: "Institution",
+                MISSION: "Mission",
+                ASSIGNED_AT: "Assigned At",
+                MISSION_PERIOD: "Mission Period"
+            }
+        },
         FINANCIAL: {
             TITLE: "Financial Overview",
             SUBTITLE: "Manage payments, invoices, and mission budgets.",
@@ -1118,7 +1144,13 @@ export const en = {
                 ACTION_TYPE: "Action Type",
                 ALL_ACTIONS: "All Actions",
                 CLEAR: "Clear Filters",
-                FOUND: "{{count}} log(s) found"
+                FOUND: "{{count}} log(s) found",
+                PERIOD: "Period",
+                ALL_TIME: "All Time",
+                TODAY: "Today",
+                YESTERDAY: "Yesterday",
+                LAST_7_DAYS: "Last 7 Days",
+                LAST_30_DAYS: "Last 30 Days"
             },
             LIST: {
                 TITLE: "System Logs",
@@ -1152,7 +1184,8 @@ export const en = {
                 ADMIN_ID: "Admin ID",
                 TARGET_USER: "Target User ID",
                 DETAILS: "Details",
-                CREATED_AT: "Timestamp"
+                CREATED_AT: "Timestamp",
+                NO_CONTEXT: "No additional context provided for this action."
             }
         },
         ADMIN_PROFILE: {
@@ -1296,7 +1329,9 @@ export const en = {
                     PIC_UPLOAD_SUCCESS: "Profile picture updated",
                     PIC_UPLOAD_DESC: "Your profile picture has been uploaded successfully.",
                     PIC_DELETE_SUCCESS: "Profile picture removed",
-                    PIC_DELETE_DESC: "Your profile picture has been deleted."
+                    PIC_DELETE_DESC: "Your profile picture has been deleted.",
+                    UPLOAD_ERROR: "Failed to upload profile picture",
+                    DELETE_ERROR: "Failed to delete profile picture"
                 }
             }
         },
@@ -1555,6 +1590,7 @@ export const en = {
                 REQUIREMENTS: {
                     TITLE: "Mission Requirements",
                     REQUIRED_SPECIALTY: "Required Specialty",
+                    PRIMARY_SPECIALITY: "Primary Speciality",
                     FOCUS_DOMAINS: "Focus Domains",
                     MANDATORY_MSG: "Mandatory requirement for this mission"
                 },

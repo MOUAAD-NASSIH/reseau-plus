@@ -150,7 +150,7 @@ export default function WorkerProfile() {
             }
             showSuccessToast(t("WORKER_PROFILE.ACTIONS.MESSAGES.PIC_UPLOAD_SUCCESS"), t("WORKER_PROFILE.ACTIONS.MESSAGES.PIC_UPLOAD_DESC"));
         } catch (error) {
-            showErrorToast(error, "Failed to upload profile picture");
+            showErrorToast(error, t("WORKER_PROFILE.ACTIONS.MESSAGES.UPLOAD_ERROR"));
         }
     };
 
@@ -161,7 +161,7 @@ export default function WorkerProfile() {
             await updateProfilePictureCache(null);
             showSuccessToast(t("WORKER_PROFILE.ACTIONS.MESSAGES.PIC_DELETE_SUCCESS"), t("WORKER_PROFILE.ACTIONS.MESSAGES.PIC_DELETE_DESC"));
         } catch (error) {
-            showErrorToast(error, "Failed to delete profile picture");
+            showErrorToast(error, t("WORKER_PROFILE.ACTIONS.MESSAGES.DELETE_ERROR"));
         }
     };
 
@@ -260,7 +260,7 @@ export default function WorkerProfile() {
                                     )}
                                 </h2>
                                 <p className="text-muted-foreground font-medium font-spline text-sm mt-1">
-                                    {worker?.speciality?.name || "Social Worker"}
+                                    {worker?.speciality?.name || t("COMMON.SOCIAL_WORKER")}
                                 </p>
 
                                 {/* Completion Bar */}
@@ -431,7 +431,7 @@ export default function WorkerProfile() {
                                             selectedDomains.map((id) => {
                                                 const domainName = domainsData?.data?.find(d => d.id === id)?.name ||
                                                     worker?.domains?.find(d => d.domainId === id)?.domain?.name ||
-                                                    "Loading...";
+                                                    t("COMMON.LOADING");
 
                                                 return (
                                                     <Badge

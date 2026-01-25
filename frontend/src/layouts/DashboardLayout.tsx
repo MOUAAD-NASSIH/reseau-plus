@@ -366,7 +366,6 @@ export default function DashboardLayout({
                         <div className="flex items-center gap-1 md:gap-2">
                             {/* Notification bell */}
                             <NotificationBell />
-
                             {/* Theme toggle */}
                             <ThemeToggle />
 

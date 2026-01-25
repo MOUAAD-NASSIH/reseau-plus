@@ -70,7 +70,7 @@ export default function WorkerDashboardPage() {
   const unread = useGetUnreadNotificationCountQuery();
 
   // Derived State
-  const firstName = me.data?.data?.firstName ?? "there";
+  const firstName = me.data?.data?.firstName ?? t("COMMON.THERE");
   const completedList = React.useMemo(
     () => completedAssignments.data?.data ?? [],
     [completedAssignments.data?.data]
@@ -120,10 +120,10 @@ export default function WorkerDashboardPage() {
     if (!activeMission) return null;
     return {
       id: activeMission.id,
-      title: activeMission.mission?.title ?? "Untitled Mission",
-      institutionName: activeMission.institution?.institutionName ?? activeMission.mission?.institution?.institutionName ?? "Unknown Institution",
+      title: activeMission.mission?.title ?? t("COMMON.UNTITLED_MISSION"),
+      institutionName: activeMission.institution?.institutionName ?? activeMission.mission?.institution?.institutionName ?? t("COMMON.UNKNOWN_INSTITUTION"),
       institutionId: activeMission.institutionId ?? activeMission.mission?.institutionId,
-      location: activeMission.mission?.location ?? "Remote",
+      location: activeMission.mission?.location ?? t("COMMON.REMOTE"),
       startDate: activeMission.mission?.startDate,
       institutionUserId: activeMission.institution?.userId ?? activeMission.mission?.institution?.userId
     };
@@ -296,7 +296,7 @@ export default function WorkerDashboardPage() {
                                 state: { startConversationWith: activeMissionData.institutionUserId }
                               });
                             } else {
-                              toast.error("Institution contact info not available");
+                              toast.error(t("WORKER_DASHBOARD.TOASTS.CONTACT_ERROR") || "Institution contact info not available");
                             }
                           }}
                         >
@@ -378,12 +378,12 @@ export default function WorkerDashboardPage() {
                               onClick={() => navigate(`/worker/missions/${app.missionId}`)}
                             >
                               <td className="px-6 py-4 font-medium text-foreground group-hover:text-primary transition-colors">
-                                {app.mission?.title || "Untitled Application"}
+                                {app.mission?.title || t("COMMON.UNTITLED_APPLICATION")}
                               </td>
                               <td className="px-6 py-4 text-muted-foreground">
                                 <div className="flex items-center gap-2">
                                   <Building className="h-3.5 w-3.5 text-muted-foreground/70" />
-                                  {app.mission?.institution?.institutionName || "Unknown"}
+                                  {app.mission?.institution?.institutionName || t("COMMON.UNKNOWN")}
                                 </div>
                               </td>
                               <td className="px-6 py-4 text-muted-foreground tabular-nums">
@@ -399,7 +399,7 @@ export default function WorkerDashboardPage() {
                                     app.status === 'REJECTED' && "bg-red-500/10 text-red-700 dark:text-red-400 hover:bg-red-500/20"
                                   )}
                                 >
-                                  {app.status ? app.status.toLowerCase() : "unknown"}
+                                  {app.status ? app.status.toLowerCase() : t("COMMON.UNKNOWN").toLowerCase()}
                                 </Badge>
                               </td>
                             </tr>
@@ -418,12 +418,12 @@ export default function WorkerDashboardPage() {
                         >
                           <div className="flex items-start justify-between gap-3">
                             <div>
-                              <h4 className="font-semibold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
-                                {app.mission?.title || "Untitled"}
+                                <h4 className="font-semibold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
+                                {app.mission?.title || t("COMMON.UNTITLED")}
                               </h4>
                               <p className="text-sm text-muted-foreground flex items-center gap-1.5 mt-1">
                                 <Building className="h-3 w-3" />
-                                {app.mission?.institution?.institutionName || "Unknown"}
+                                {app.mission?.institution?.institutionName || t("COMMON.UNKNOWN")}
                               </p>
                             </div>
                             <Badge
@@ -435,7 +435,7 @@ export default function WorkerDashboardPage() {
                                 app.status === 'REJECTED' && "bg-red-500/10 text-red-700 dark:text-red-400"
                               )}
                             >
-                              {app.status ? app.status.toLowerCase() : "unknown"}
+                              {app.status ? app.status.toLowerCase() : t("COMMON.UNKNOWN").toLowerCase()}
                             </Badge>
                           </div>
                           <div className="flex items-center justify-between text-xs text-muted-foreground pt-1">

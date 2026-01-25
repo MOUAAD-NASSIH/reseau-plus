@@ -169,8 +169,7 @@ function LogDetailsDialog({ log, open, onOpenChange }: LogDetailsDialogProps) {
             <div className="bg-muted/30 border border-border/40 p-6 rounded-[2rem] relative overflow-hidden group">
               <div className="absolute top-0 right-0 h-32 w-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl" />
               <p className="text-sm font-semibold leading-relaxed text-foreground/80 whitespace-pre-wrap relative z-10">
-                {log.details ||
-                  "No additional context provided for this action."}
+                {log.details || t("ADMIN_LOGS.DIALOG.NO_CONTEXT")}
               </p>
             </div>
           </div>
@@ -289,38 +288,38 @@ export default function AdminLogs() {
 
             <Select value={dateFilter} onValueChange={setDateFilter}>
               <SelectTrigger className="w-[180px] h-14 bg-muted/30 border-border/40 rounded-2xl font-black uppercase text-[10px] tracking-widest">
-                <SelectValue placeholder="Period" />
+                 <SelectValue placeholder={t("ADMIN_LOGS.FILTERS.PERIOD")} />
               </SelectTrigger>
               <SelectContent className="rounded-2xl border-border/40">
                 <SelectItem
                   value="ALL"
                   className="font-black uppercase text-[10px] tracking-widest"
                 >
-                  All Time
+                   {t("ADMIN_LOGS.FILTERS.ALL_TIME")}
                 </SelectItem>
                 <SelectItem
                   value="TODAY"
                   className="font-black uppercase text-[10px] tracking-widest"
                 >
-                  Today
+                   {t("ADMIN_LOGS.FILTERS.TODAY")}
                 </SelectItem>
                 <SelectItem
                   value="YESTERDAY"
                   className="font-black uppercase text-[10px] tracking-widest"
                 >
-                  Yesterday
+                   {t("ADMIN_LOGS.FILTERS.YESTERDAY")}
                 </SelectItem>
                 <SelectItem
                   value="LAST_7_DAYS"
                   className="font-black uppercase text-[10px] tracking-widest"
                 >
-                  Last 7 Days
+                   {t("ADMIN_LOGS.FILTERS.LAST_7_DAYS")}
                 </SelectItem>
                 <SelectItem
                   value="LAST_30_DAYS"
                   className="font-black uppercase text-[10px] tracking-widest"
                 >
-                  Last 30 Days
+                   {t("ADMIN_LOGS.FILTERS.LAST_30_DAYS")}
                 </SelectItem>
               </SelectContent>
             </Select>

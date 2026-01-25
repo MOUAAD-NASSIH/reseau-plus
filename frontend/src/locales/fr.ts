@@ -5,6 +5,13 @@ export const fr = {
             TAGLINE: "Mise en relation des travailleurs indépendants et des établissements."
         },
         COMMON: {
+            UNKNOWN: "Inconnu",
+            GENERAL_SOCIAL_WORK: "Travail Social Général",
+            UNTITLED_MISSION: "Mission Sans Titre",
+            UNTITLED_APPLICATION: "Candidature Sans Titre",
+            UNKNOWN_INSTITUTION: "Institution Inconnue",
+            THERE: "là",
+            LOADING: "Chargement...",
             UNEXPECTED_ERROR: "Une erreur inattendue s'est produite. Veuillez réessayer.",
             PASSWORD_STRENGTH: {
                 STRENGTH_LABEL: "Force du mot de passe",
@@ -1119,7 +1126,13 @@ export const fr = {
                 ACTION_TYPE: "Type d'Action",
                 ALL_ACTIONS: "Toute les Actions",
                 CLEAR: "Effacer les Filtres",
-                FOUND: "{{count}} journal(aux) trouvé(s)"
+                FOUND: "{{count}} journal(aux) trouvé(s)",
+                PERIOD: "Période",
+                ALL_TIME: "Tout le temps",
+                TODAY: "Aujourd'hui",
+                YESTERDAY: "Hier",
+                LAST_7_DAYS: "7 derniers jours",
+                LAST_30_DAYS: "30 derniers jours"
             },
             LIST: {
                 TITLE: "Journaux Système",
@@ -1153,7 +1166,8 @@ export const fr = {
                 ADMIN_ID: "ID de l'Admin",
                 TARGET_USER: "ID de l'Utilisateur Cible",
                 DETAILS: "Détails",
-                CREATED_AT: "Horodatage"
+                CREATED_AT: "Horodatage",
+                NO_CONTEXT: "Aucun contexte supplémentaire fourni pour cette action."
             }
         },
         ADMIN_PROFILE: {
@@ -1297,7 +1311,9 @@ export const fr = {
                     PIC_UPLOAD_SUCCESS: "Photo de profil mise à jour",
                     PIC_UPLOAD_DESC: "Votre photo de profil a été téléchargée avec succès.",
                     PIC_DELETE_SUCCESS: "Photo de profil supprimée",
-                    PIC_DELETE_DESC: "Votre photo de profil a été supprimée."
+                    PIC_DELETE_DESC: "Votre photo de profil a été supprimée.",
+                    UPLOAD_ERROR: "Échec du téléchargement de la photo",
+                    DELETE_ERROR: "Échec de la suppression de la photo"
                 }
             },
 
@@ -1557,7 +1573,8 @@ export const fr = {
                 REQUIREMENTS: {
                     TITLE: "Exigences de la Mission",
                     REQUIRED_SPECIALTY: "Spécialité Requise",
-                    FOCUS_DOMAINS: "Domaines Cibles",
+                    PRIMARY_SPECIALITY: "Spécialité Principale",
+                    FOCUS_DOMAINS: "Domaines de Concentration",
                     MANDATORY_MSG: "Exigence obligatoire pour cette mission"
                 },
                 APPLICATION_STATUS: {
@@ -1861,6 +1878,26 @@ export const fr = {
                 DOCS_DESC: "Assurez-vous que tous les documents nécessaires sont téléchargés pour une approbation plus rapide",
                 GO_PROFILE: "Aller au profil",
                 MANAGE_DOCS: "Gérer les documents"
+            }
+        },
+
+        ASSIGNMENTS_OVERVIEW: {
+            TITLE: "Affectations",
+            DESCRIPTION: "Gérez et suivez toutes les affectations de mission sur la plateforme.",
+            STATS: {
+                TOTAL: "Total Affectations",
+                ACTIVE: "Actif",
+                COMPLETED: "Terminé",
+                CANCELLED: "Annulé"
+            },
+            DIALOG: {
+                TITLE: "Détails de l'Affectation",
+                SUBTITLE: "Informations de l'affectation #{{id}}",
+                ASSIGNED_WORKER: "Travailleur Assigné",
+                INSTITUTION: "Établissement",
+                MISSION: "Mission",
+                ASSIGNED_AT: "Assigné le",
+                MISSION_PERIOD: "Période de la Mission"
             }
         }
     }
