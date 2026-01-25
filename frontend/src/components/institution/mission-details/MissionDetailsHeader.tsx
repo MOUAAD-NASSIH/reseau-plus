@@ -14,45 +14,54 @@ export function MissionDetailsHeader({ title, missionId, onShare, t }: MissionDe
     const navigate = useNavigate();
 
     return (
-        <div className="flex items-center justify-between border-b pb-6 border-border/50">
-            <div className="flex items-center gap-4">
-                <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="rounded-full hover:bg-muted/50"
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 border-b pb-6 border-border/50">
+            {/* Left Section - Title and Breadcrumbs */}
+            <div className="flex items-start gap-3 sm:gap-4 min-w-0 flex-1">
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    className="rounded-full hover:bg-muted/70 shrink-0 transition-all hover:scale-110 active:scale-95"
                     onClick={() => navigate(-1)}
                 >
-                    <ArrowLeft className="h-6 w-6 text-foreground" />
+                    <ArrowLeft className="h-5 w-5 text-foreground" />
                 </Button>
-                <div className="space-y-1">
-                    <h1 className="text-3xl font-bold tracking-tight text-foreground">
+                <div className="space-y-2 min-w-0 flex-1">
+                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-foreground font-spline">
                         {title}
                     </h1>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
-                        <Link to="/institution" className="hover:text-primary transition-colors">{t("NAV.DASHBOARD")}</Link>
-                        <span>/</span>
-                        <Link to="/institution/missions" className="hover:text-primary transition-colors">{t("NAV.MISSIONS")}</Link>
-                        <span>/</span>
-                        <span className="text-foreground font-semibold">{t("COMMON.DETAILS")}</span>
+                    <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground font-medium flex-wrap">
+                        <Link to="/institution" className="hover:text-primary transition-colors hover:underline">
+                            {t("MISSION_DETAILS.BREADCRUMBS.DASHBOARD")}
+                        </Link>
+                        <span className="text-border">/</span>
+                        <Link to="/institution/missions" className="hover:text-primary transition-colors hover:underline">
+                            {t("MISSION_DETAILS.BREADCRUMBS.MISSIONS")}
+                        </Link>
+                        <span className="text-border">/</span>
+                        <span className="text-foreground font-semibold">
+                            {t("MISSION_DETAILS.BREADCRUMBS.MISSION_DETAILS")}#{missionId}
+                        </span>
                     </div>
                 </div>
             </div>
-            <div className="flex items-center gap-3">
-                <Button 
-                    variant="outline" 
-                    className="h-10 rounded-xl font-bold px-4 border-border/60 hover:bg-muted transition-all" 
+
+            {/* Right Section - Action Buttons */}
+            <div className="flex items-center justify-end gap-3 shrink-0">
+                <Button
+                    variant="outline"
+                    className="h-10 sm:h-11 rounded-xl font-semibold px-4 sm:px-5 border-border/60 hover:bg-muted/70 hover:border-border transition-all hover:scale-[1.02] active:scale-95"
                     onClick={onShare}
                 >
                     <Share2 className="h-4 w-4 mr-2" />
-                    {t("MISSION_DETAILS.SHARE")}
+                    <span className="hidden sm:inline">{t("MISSION_DETAILS.SHARE")}</span>
                 </Button>
-                <Button 
-                    className="h-10 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-4 shadow-lg shadow-primary/20 transition-all hover:scale-[1.02]" 
+                <Button
+                    className="h-10 sm:h-11 rounded-xl bg-linear-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-primary-foreground font-semibold px-4 sm:px-5 shadow-lg shadow-primary/25 transition-all hover:shadow-xl hover:shadow-primary/35 hover:scale-[1.02] active:scale-95"
                     asChild
                 >
                     <Link to={`/institution/missions/${missionId}/edit`}>
                         <Edit className="h-4 w-4 mr-2" />
-                        {t("MISSION_DETAILS.EDIT_MISSION")}
+                        <span className="hidden sm:inline">{t("MISSION_DETAILS.EDIT_MISSION")}</span>
                     </Link>
                 </Button>
             </div>

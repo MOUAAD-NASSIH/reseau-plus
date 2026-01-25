@@ -1,13 +1,20 @@
 import { Link } from "react-router";
 import { useTranslation } from "react-i18next";
-import { User, ChevronLeft, ChevronRight } from "lucide-react";
+import { User, ChevronLeft, ChevronRight, SlidersHorizontal, Filter } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { useMissionApplicants } from "@/features/hooks/InstitutionHooks/useMissionApplicants";
 import { ApplicantsHeader } from "@/components/institution/mission-applicants/ApplicantsHeader";
 import { ApplicantsStats } from "@/components/institution/mission-applicants/ApplicantsStats";
-import { ApplicantsFilter } from "@/components/institution/mission-applicants/ApplicantsFilter";
+import { ApplicantsFilter, FilterFields } from "@/components/institution/mission-applicants/ApplicantsFilter";
 import { ApplicantCard } from "@/components/institution/mission-applicants/ApplicantCard";
 import { ApplicantProfileDialog } from "@/components/institution/mission-applicants/ApplicantProfileDialog";
 
@@ -18,6 +25,7 @@ export default function MissionApplicants() {
     missionLoading,
     applicationsLoading,
     specialities,
+    domains,
     filteredApplications,
     paginatedApplications,
     stats,
@@ -29,6 +37,8 @@ export default function MissionApplicants() {
     setStatusFilter,
     specialtyFilter,
     setSpecialtyFilter,
+    domainFilter,
+    setDomainFilter,
     experienceRange,
     setExperienceRange,
     selectedApplicant,
@@ -75,7 +85,24 @@ export default function MissionApplicants() {
   }
 
   return (
-    <div className="space-y-6 pb-10 animate-in fade-in duration-500">
+    <div className="space-y-6 pb-4 animate-in fade-in duration-500">
+      {/* Breadcrumbs */}
+      <div className="px-4 md:px-6 lg:px-8 pb-4 border-b border-border">
+        <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm">
+          <Link to="/institution" className="text-muted-foreground hover:text-primary transition-colors">
+            {t("MISSION_APPLICANTS.BREADCRUMBS.DASHBOARD")}
+          </Link>
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+          <Link to="/institution/missions" className="text-muted-foreground hover:text-primary transition-colors">
+            {t("MISSION_APPLICANTS.BREADCRUMBS.MISSIONS")}
+          </Link>
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+          <span className="text-foreground font-medium">
+            {t("MISSION_APPLICANTS.BREADCRUMBS.APPLICANTS")}#{mission.id}
+          </span>
+        </div>
+      </div>
+
       {/* Header */}
       <ApplicantsHeader mission={mission} />
 
@@ -90,28 +117,78 @@ export default function MissionApplicants() {
           setStatusFilter={setStatusFilter}
           specialtyFilter={specialtyFilter}
           setSpecialtyFilter={setSpecialtyFilter}
+          domainFilter={domainFilter}
+          setDomainFilter={setDomainFilter}
           experienceRange={experienceRange}
           setExperienceRange={setExperienceRange}
           hasActiveFilters={hasActiveFilters}
           resetFilters={resetFilters}
           specialities={specialities}
+          domains={domains}
         />
 
         {/* Applicants List */}
         <div className="space-y-4">
           {/* Header */}
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-center justify-between">
             <div>
-              <h2 className="text-lg font-bold text-foreground">
-                Applicants{" "}
+              <h2 className="text-lg font-bold text-foreground font-spline">
+                {t("MISSION_APPLICANTS.LABELS.APPLICANTS")}{" "}
                 <span className="text-muted-foreground font-normal">
                   ({filteredApplications.length}{" "}
                   {statusFilter !== "ALL"
                     ? statusFilter.toLowerCase()
-                    : "total"}
+                    : t("MISSION_APPLICANTS.LABELS.TOTAL")}
                   )
                 </span>
               </h2>
+            </div>
+
+            {/* Mobile Filter Toggle */}
+            <div className="lg:hidden w-full sm:w-auto">
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="outline" className="w-full mt-2 sm:w-auto sm:mt-0 font-bold rounded-xl border-border/60 hover:bg-muted shadow-sm h-11">
+                    <SlidersHorizontal className="h-4 w-4 mr-2" />
+                    {t("MISSION_APPLICANTS.FILTER.TITLE") || "Filters"}
+                    {hasActiveFilters && (
+                      <span className="ml-2 h-2 w-2 rounded-full bg-primary" />
+                    )}
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-full sm:w-[400px] p-0 border-l border-border/60 shadow-2xl sm:max-w-none">
+                  <div className="h-full flex flex-col bg-card">
+                    <SheetHeader className="px-6 py-4 border-b border-border/60 flex flex-row items-center justify-between bg-muted/10">
+                      <SheetTitle className="text-xl font-bold font-spline flex items-center gap-2">
+                        <Filter className="h-5 w-5 text-primary" />
+                        {t("MISSION_APPLICANTS.FILTER.TITLE")}
+                      </SheetTitle>
+                    </SheetHeader>
+                    <div className="flex-1 overflow-y-auto p-6">
+                      <FilterFields
+                        statusFilter={statusFilter}
+                        setStatusFilter={setStatusFilter}
+                        specialtyFilter={specialtyFilter}
+                        setSpecialtyFilter={setSpecialtyFilter}
+                        domainFilter={domainFilter}
+                        setDomainFilter={setDomainFilter}
+                        experienceRange={experienceRange}
+                        setExperienceRange={setExperienceRange}
+                        hasActiveFilters={hasActiveFilters}
+                        resetFilters={resetFilters}
+                        specialities={specialities}
+                        domains={domains}
+                        isMobile={true}
+                      />
+                    </div>
+                    <div className="p-6 border-t border-border/60 bg-muted/10">
+                      <Button className="w-full font-bold h-11" onClick={() => document.dispatchEvent(new KeyboardEvent('keydown', { 'key': 'Escape' }))}>
+                        {t("COMMON.SHOW_RESULTS") || "View Results"}
+                      </Button>
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
             </div>
           </div>
 
@@ -160,12 +237,14 @@ export default function MissionApplicants() {
               {totalPages > 1 && (
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4">
                   <p className="text-sm text-muted-foreground">
-                    Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
-                    {Math.min(
-                      currentPage * itemsPerPage,
-                      filteredApplications.length
-                    )}{" "}
-                    of {filteredApplications.length} results
+                    {t("MISSION_APPLICANTS.PAGINATION.SHOWING", {
+                      start: (currentPage - 1) * itemsPerPage + 1,
+                      end: Math.min(
+                        currentPage * itemsPerPage,
+                        filteredApplications.length
+                      ),
+                      total: filteredApplications.length
+                    })}
                   </p>
                   <div className="flex items-center gap-2">
                     <Button

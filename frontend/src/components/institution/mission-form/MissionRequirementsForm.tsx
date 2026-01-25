@@ -43,7 +43,6 @@ export function MissionRequirementsForm({
     useMissionFormResources();
 
   const selectedDomains = watch("domainIds") || [];
-  const selectedUrgency = watch("urgency");
 
   const handleDomainToggle = (domainId: number) => {
     const current = selectedDomains;
@@ -54,71 +53,86 @@ export function MissionRequirementsForm({
   };
 
   return (
-    <Card className="border shadow-sm bg-card/50 backdrop-blur-sm rounded-2xl">
-      <CardContent className="p-6 md:p-8 space-y-6">
+    <Card className="border border-border/50 shadow-lg bg-card/80 backdrop-blur-sm rounded-3xl overflow-hidden">
+      <CardContent className="p-6 sm:p-8 space-y-6">
         <div className="flex items-center gap-2 mb-2">
-          <span className="bg-primary/10 text-primary p-1.5 rounded-lg">
-            <TrendingUp className="h-4 w-4" />
+          <span className="bg-primary/10 text-primary p-2 rounded-xl">
+            <TrendingUp className="h-5 w-5" />
           </span>
-          <h3 className="font-bold text-lg font-spline">
+          <h3 className="font-bold text-lg sm:text-xl font-spline">
             {t("CREATE_MISSION.SECTIONS.CRITERIA")}
           </h3>
         </div>
 
         {/* Urgency */}
         <div className="space-y-2">
-          <Label htmlFor="urgency" className="font-medium">
+          <Label htmlFor="urgency" className="font-medium text-sm sm:text-base">
             {t("CREATE_MISSION.REQUIREMENTS.URGENCY_LABEL")}
           </Label>
-          <Select
-            value={selectedUrgency}
-            onValueChange={(value) =>
-              setValue("urgency", value as "HIGH" | "MEDIUM" | "LOW")
-            }
-          >
-            <SelectTrigger
-              className={cn(
-                "h-11 md:h-12 bg-background border-input focus:ring-2 focus:ring-primary/20 rounded-xl",
-                selectedUrgency === "HIGH" ? "border-destructive/50" : ""
-              )}
-            >
-              <div className="flex items-center gap-2">
-                {selectedUrgency === "HIGH" && (
-                  <AlertCircle className="h-4 w-4 text-destructive" />
-                )}
-                {selectedUrgency === "MEDIUM" && (
-                  <Clock className="h-4 w-4 text-orange-500" />
-                )}
-                {selectedUrgency === "LOW" && (
-                  <CheckCircle2 className="h-4 w-4 text-green-500" />
-                )}
-                <SelectValue
-                  placeholder={t(
-                    "CREATE_MISSION.REQUIREMENTS.URGENCY_PLACEHOLDER"
-                  )}
-                />
-              </div>
-            </SelectTrigger>
-            <SelectContent className="rounded-xl">
-              <SelectItem value="LOW" className="text-green-600 font-medium">
-                {t("CREATE_MISSION.REQUIREMENTS.URGENCY_LOW")}
-              </SelectItem>
-              <SelectItem
-                value="MEDIUM"
-                className="text-orange-600 font-medium"
-              >
-                {t("CREATE_MISSION.REQUIREMENTS.URGENCY_MEDIUM")}
-              </SelectItem>
-              <SelectItem value="HIGH" className="text-destructive font-medium">
-                {t("CREATE_MISSION.REQUIREMENTS.URGENCY_HIGH")}
-              </SelectItem>
-            </SelectContent>
-          </Select>
+          <Controller
+            name="urgency"
+            control={control}
+            render={({ field }) => {
+
+              const currentValue = field.value || "MEDIUM";
+              return (
+                <Select
+                  value={currentValue}
+                  onValueChange={(value) => {
+                    // Only update if the value is valid
+                    if (value && ["HIGH", "MEDIUM", "LOW"].includes(value)) {
+                      field.onChange(value);
+                    } else {
+
+                    }
+                  }}
+                >
+                  <SelectTrigger
+                    className={cn(
+                      "h-11 sm:h-12 bg-background border-input focus:ring-2 focus:ring-primary/20 rounded-xl",
+                      currentValue === "HIGH" ? "border-destructive/50" : ""
+                    )}
+                  >
+                    <div className="flex items-center gap-2">
+                      {currentValue === "HIGH" && (
+                        <AlertCircle className="h-4 w-4 text-destructive" />
+                      )}
+                      {currentValue === "MEDIUM" && (
+                        <Clock className="h-4 w-4 text-orange-500" />
+                      )}
+                      {currentValue === "LOW" && (
+                        <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      )}
+                      <SelectValue
+                        placeholder={t(
+                          "CREATE_MISSION.REQUIREMENTS.URGENCY_PLACEHOLDER"
+                        )}
+                      />
+                    </div>
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl">
+                    <SelectItem value="LOW" className="text-green-600 font-medium">
+                      {t("CREATE_MISSION.REQUIREMENTS.URGENCY_LOW")}
+                    </SelectItem>
+                    <SelectItem
+                      value="MEDIUM"
+                      className="text-orange-600 font-medium"
+                    >
+                      {t("CREATE_MISSION.REQUIREMENTS.URGENCY_MEDIUM")}
+                    </SelectItem>
+                    <SelectItem value="HIGH" className="text-destructive font-medium">
+                      {t("CREATE_MISSION.REQUIREMENTS.URGENCY_HIGH")}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              );
+            }}
+          />
         </div>
 
         {/* Specialty */}
         <div className="space-y-2">
-          <Label htmlFor="requiredSpecialityId" className="font-medium">
+          <Label htmlFor="requiredSpecialityId" className="font-medium text-sm sm:text-base">
             {t("CREATE_MISSION.REQUIREMENTS.SPECIALITY_LABEL")} <span className="text-destructive">*</span>
           </Label>
           {specialitiesLoading ? (
@@ -127,38 +141,44 @@ export function MissionRequirementsForm({
             <Controller
               name="requiredSpecialityId"
               control={control}
-              render={({ field }) => (
-                <Select
-                  value={field.value?.toString() || "0"}
-                  onValueChange={(val) =>
-                    field.onChange(val === "0" ? null : parseInt(val))
-                  }
-                >
-                  <SelectTrigger className="h-11 md:h-12 bg-background border-input focus:ring-2 focus:ring-primary/20 rounded-xl">
-                    <SelectValue
-                      placeholder={t(
-                        "CREATE_MISSION.REQUIREMENTS.SPECIALITY_PLACEHOLDER"
-                      )}
-                    />
-                  </SelectTrigger>
-                  <SelectContent className="rounded-xl">
-                    <SelectItem
-                      value="0"
-                      className="italic text-muted-foreground"
-                    >
-                      {t("CREATE_MISSION.REQUIREMENTS.SPECIALITY_PLACEHOLDER")}
-                    </SelectItem>
-                    {specialities.map((speciality) => (
+              render={({ field }) => {
+                const currentValue = field.value?.toString() || "0";
+                return (
+                  <Select
+                    value={currentValue}
+                    onValueChange={(val) => {
+                      // Only update if the value is valid
+                      if (val && val !== "") {
+                        field.onChange(val === "0" ? null : parseInt(val));
+                      }
+                    }}
+                  >
+                    <SelectTrigger className="h-11 sm:h-12 bg-background border-input focus:ring-2 focus:ring-primary/20 rounded-xl">
+                      <SelectValue
+                        placeholder={t(
+                          "CREATE_MISSION.REQUIREMENTS.SPECIALITY_PLACEHOLDER"
+                        )}
+                      />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl">
                       <SelectItem
-                        key={speciality.id}
-                        value={speciality.id.toString()}
+                        value="0"
+                        className="italic text-muted-foreground"
                       >
-                        {speciality.name}
+                        {t("CREATE_MISSION.REQUIREMENTS.SPECIALITY_PLACEHOLDER")}
                       </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
+                      {specialities.map((speciality) => (
+                        <SelectItem
+                          key={speciality.id}
+                          value={speciality.id.toString()}
+                        >
+                          {speciality.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                );
+              }}
             />
           )}
           {errors.requiredSpecialityId && (
@@ -170,7 +190,7 @@ export function MissionRequirementsForm({
 
         {/* Domains */}
         <div className="space-y-3">
-          <Label className="flex items-center gap-2 font-medium">
+          <Label className="flex items-center gap-2 font-medium text-sm sm:text-base">
             <Tag className="h-4 w-4 text-muted-foreground" />
             {t("CREATE_MISSION.REQUIREMENTS.DOMAINS_LABEL")} <span className="text-destructive">*</span>
           </Label>
@@ -189,15 +209,15 @@ export function MissionRequirementsForm({
                     key={domain.id}
                     variant={isSelected ? "default" : "outline"}
                     className={cn(
-                      "cursor-pointer px-3 py-1.5 transition-all text-sm border-2 rounded-xl",
+                      "cursor-pointer px-3 py-2 transition-all text-xs sm:text-sm border-2 rounded-xl hover:scale-105",
                       isSelected
-                        ? "bg-primary text-primary-foreground hover:bg-primary/90 border-primary shadow-sm"
+                        ? "bg-primary text-primary-foreground hover:bg-primary/90 border-primary shadow-md shadow-primary/20"
                         : "bg-background hover:bg-muted border-input hover:border-primary/50 text-muted-foreground"
                     )}
                     onClick={() => handleDomainToggle(domain.id)}
                   >
                     {domain.name}
-                    {isSelected && <CheckCircle2 className="ml-1 h-3 w-3" />}
+                    {isSelected && <CheckCircle2 className="ml-1.5 h-3.5 w-3.5" />}
                   </Badge>
                 );
               })}

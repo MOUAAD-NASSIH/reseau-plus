@@ -230,7 +230,12 @@ export const getMissionApplications = async (
             include: {
                 worker: {
                     include: {
+                        user: { select: { profilePicture: true } },
                         speciality: true,
+                        documents: {
+                            where: { type: "DIPLOMA", status: "APPROVED" },
+                            select: { id: true, title: true, type: true, status: true, fileUrl: true }
+                        },
                         experiences: {
                             orderBy: { startDate: "desc" },
                             take: 5
@@ -412,6 +417,10 @@ export const getApplicationById = async (applicationId: number) => {
             worker: {
                 include: {
                     speciality: true,
+                    documents: {
+                        where: { type: "DIPLOMA", status: "APPROVED" },
+                        select: { id: true, title: true, type: true, status: true, fileUrl: true }
+                    },
                     experiences: true,
                     domains: { include: { domain: true } }
                 }

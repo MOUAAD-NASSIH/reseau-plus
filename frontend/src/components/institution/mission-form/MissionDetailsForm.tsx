@@ -1,17 +1,10 @@
-import { type UseFormReturn, Controller } from "react-hook-form";
+import { type UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { AlertCircle, LayoutDashboard } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 import type { CreateMissionInput, UpdateMissionInput } from "@/features/validation/missionSchemas";
 
 interface MissionDetailsFormProps {
@@ -19,28 +12,28 @@ interface MissionDetailsFormProps {
     showStatus?: boolean;
 }
 
-export function MissionDetailsForm({ form, showStatus = false }: MissionDetailsFormProps) {
+export function MissionDetailsForm({ form }: MissionDetailsFormProps) {
     const { t } = useTranslation();
-    const { register, formState: { errors }, control } = form;
+    const { register, formState: { errors } } = form;
 
     return (
-        <Card className="border shadow-sm bg-card/50 backdrop-blur-sm rounded-2xl">
-            <CardContent className="p-6 md:p-8 space-y-6">
+        <Card className="border border-border/50 shadow-lg bg-card/80 backdrop-blur-sm rounded-3xl overflow-hidden">
+            <CardContent className="p-6 sm:p-8 space-y-6">
                 <div className="flex items-center gap-2 mb-2">
-                    <span className="bg-primary/10 text-primary p-1.5 rounded-lg">
-                        <LayoutDashboard className="h-4 w-4" />
+                    <span className="bg-primary/10 text-primary p-2 rounded-xl">
+                        <LayoutDashboard className="h-5 w-5" />
                     </span>
-                    <h3 className="font-bold text-lg font-spline">{t("CREATE_MISSION.SECTIONS.DETAILS")}</h3>
+                    <h3 className="font-bold text-lg sm:text-xl font-spline">{t("CREATE_MISSION.SECTIONS.DETAILS")}</h3>
                 </div>
 
                 {/* Title */}
                 <div className="space-y-2">
-                    <Label htmlFor="title" className="font-medium text-foreground">
+                    <Label htmlFor="title" className="font-medium text-foreground text-sm sm:text-base">
                         {t("CREATE_MISSION.DETAILS.TITLE_LABEL")} <span className="text-destructive">*</span>
                     </Label>
                     <Input
                         id="title"
-                        className="h-11 md:h-12 bg-background border-input focus:ring-2 focus:ring-primary/20 transition-all rounded-xl placeholder:text-sm"
+                        className="h-11 sm:h-12 bg-background border-input focus:ring-2 focus:ring-primary/20 transition-all rounded-xl placeholder:text-sm"
                         placeholder={t("CREATE_MISSION.DETAILS.TITLE_PLACEHOLDER")}
                         {...register("title")}
                     />
@@ -54,12 +47,12 @@ export function MissionDetailsForm({ form, showStatus = false }: MissionDetailsF
 
                 {/* Description */}
                 <div className="space-y-2">
-                    <Label htmlFor="description" className="font-medium text-foreground">
+                    <Label htmlFor="description" className="font-medium text-foreground text-sm sm:text-base">
                         {t("CREATE_MISSION.DETAILS.DESCRIPTION_LABEL")}
                     </Label>
                     <Textarea
                         id="description"
-                        className="min-h-[160px] bg-background border-input focus:ring-2 focus:ring-primary/20 transition-all resize-y rounded-xl placeholder:opacity-60 placeholder:text-sm"
+                        className="min-h-[140px] sm:min-h-[160px] bg-background border-input focus:ring-2 focus:ring-primary/20 transition-all resize-y rounded-xl placeholder:opacity-60 placeholder:text-sm"
                         placeholder={t("CREATE_MISSION.DETAILS.DESCRIPTION_PLACEHOLDER")}
                         {...register("description")}
                     />
@@ -70,35 +63,6 @@ export function MissionDetailsForm({ form, showStatus = false }: MissionDetailsF
                         </p>
                     )}
                 </div>
-
-                {/* Status (Optional - mostly for Edit) */}
-                {showStatus && (
-                    <div className="space-y-2">
-                        <Label className="font-medium flex items-center gap-2">
-                            {t("EDIT_MISSION.ACTIONS.STATUS_LABEL")}
-                        </Label>
-                        <Controller
-                            name="status"
-                            control={control}
-                            render={({ field }) => (
-                                <Select
-                                    value={field.value}
-                                    onValueChange={field.onChange}
-                                >
-                                    <SelectTrigger className="h-11 md:h-12 bg-background border-input focus:ring-2 focus:ring-primary/20 rounded-xl">
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent className="rounded-xl">
-                                        <SelectItem value="OPEN" className="text-emerald-600 font-medium">{t("MY_MISSIONS.FILTER.STATUS_OPEN") || "OPEN"}</SelectItem>
-                                        <SelectItem value="ONGOING" className="text-blue-600 font-medium">{t("MY_MISSIONS.FILTER.STATUS_ONGOING") || "ONGOING"}</SelectItem>
-                                        <SelectItem value="CLOSED" className="text-muted-foreground font-medium">{t("MY_MISSIONS.FILTER.STATUS_CLOSED") || "CLOSED"}</SelectItem>
-                                        <SelectItem value="CANCELLED" className="text-destructive font-medium">{t("MY_MISSIONS.FILTER.STATUS_CANCELLED") || "CANCELLED"}</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            )}
-                        />
-                    </div>
-                )}
             </CardContent>
         </Card>
     );

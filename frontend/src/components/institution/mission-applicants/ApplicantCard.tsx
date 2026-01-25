@@ -1,12 +1,15 @@
-import { User, Check, Briefcase, Star, MapPin, Clock, Eye, X, Loader2 } from "lucide-react";
+import { Check, Briefcase, Star, MapPin, Clock, Eye, X, Loader2, Award } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { WorkerRating } from "@/components/common/WorkerRating";
 import { format } from "date-fns";
+import { fr, enUS } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
 import type { MissionApplication } from "@/types/application.types";
+import { Separator } from "@/components/ui/separator";
 
 interface ApplicantCardProps {
     application: MissionApplication;
@@ -17,144 +20,134 @@ interface ApplicantCardProps {
 }
 
 export function ApplicantCard({ application, isProcessing, onViewProfile, onReject, onAccept }: ApplicantCardProps) {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const worker = application.worker;
     const canProcess = application.status === "SUBMITTED";
 
+    // Format dates safely
+    const appliedDate = new Date(application.appliedAt);
+    const dateLocale = i18n.language === 'fr' ? fr : enUS;
+    const formattedDate = !isNaN(appliedDate.getTime()) ? format(appliedDate, "d MMM yyyy", { locale: dateLocale }) : "N/A";
+
     return (
-        <Card className="border-border/60 bg-card hover:border-primary/50 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group">
+        <Card className="group border shadow-sm hover:shadow-lg hover:border-primary/40 transition-all duration-300 bg-card overflow-hidden">
             <CardContent className="p-0">
-                <div className="flex flex-col md:flex-row items-stretch">
-                    {/* Left Panel: Avatar */}
-                    <div className="md:w-32 bg-muted/20 flex flex-col items-center justify-center p-6 border-b md:border-b-0 md:border-r border-border/60">
-                        <div className="relative group-hover:scale-110 transition-transform duration-300">
-                            <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center ring-4 ring-background shadow-sm">
-                                <User className="h-10 w-10 text-primary" />
-                            </div>
+                <div className="flex flex-col md:flex-row">
+                    {/* Left Section: Profile & Quick Info */}
+                    <div className="flex flex-col items-center p-6 bg-muted/10 md:w-60 lg:w-72 shrink-0 border-b md:border-b-0 md:border-r border-border/50">
+                        <div className="relative mb-4">
+                            <Avatar className="h-24 w-24 border-4 border-background shadow-md ring-1 ring-border/20 group-hover:scale-105 transition-transform duration-300">
+                                <AvatarImage src={worker?.profilePicture || worker?.user?.profilePicture || undefined} alt={`${worker?.firstName} ${worker?.lastName}`} className="object-cover" />
+                                <AvatarFallback className="text-xl font-bold bg-primary/10 text-primary">
+                                    {worker?.firstName?.[0]}{worker?.lastName?.[0]}
+                                </AvatarFallback>
+                            </Avatar>
                             {worker?.status === "VERIFIED" && (
-                                <div className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full bg-primary flex items-center justify-center ring-2 ring-background shadow-md">
-                                    <Check className="h-4 w-4 text-white" />
+                                <div className="absolute bottom-0 right-0 bg-primary text-primary-foreground rounded-full p-1 ring-2 ring-background shadow-sm" title="Verified Worker">
+                                    <Check className="h-3.5 w-3.5 stroke-[3px]" />
                                 </div>
                             )}
+                        </div>
+
+                        <div className="text-center w-full space-y-1">
+                            <h3 className="text-lg font-bold font-spline text-foreground truncate" title={`${worker?.firstName} ${worker?.lastName}`}>
+                                {worker?.firstName} {worker?.lastName}
+                            </h3>
+                            {worker?.speciality && (
+                                <div className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground font-medium">
+                                    <Briefcase className="h-3.5 w-3.5 shrink-0" />
+                                    <span className="truncate">{worker.speciality.name}</span>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="mt-4 w-full text-center">
+                            <StatusBadge status={application.status} className="justify-center" />
                         </div>
                     </div>
 
-                    {/* Middle Panel: Info */}
-                    <div className="flex-1 p-6 min-w-0">
-                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-5">
-                            <div className="min-w-0 flex-1">
-                                <div className="flex items-center gap-2 flex-wrap mb-1">
-                                    <h3 className="text-xl font-bold text-foreground truncate group-hover:text-primary transition-colors">
-                                        {worker?.firstName} {worker?.lastName}
-                                    </h3>
-                                    <Badge variant="secondary" className="bg-primary/10 text-primary border-none text-[10px] font-bold uppercase tracking-wider px-2">
-                                        {t("MISSION_APPLICANTS.CARD.EXCELLENT_MATCH")}
-                                    </Badge>
+                    {/* Right Section: Details & Actions */}
+                    <div className="flex-1 p-6 flex flex-col justify-between min-w-0">
+                        <div>
+                            {/* Header Row */}
+                            <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+                                <Badge variant="secondary" className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-0 font-bold px-2.5 py-0.5">
+                                    {t("MISSION_APPLICANTS.CARD.EXCELLENT_MATCH")}
+                                </Badge>
+                                <div className="flex items-center text-xs text-muted-foreground font-medium bg-muted/30 px-2.5 py-1 rounded-md">
+                                    <Clock className="h-3.5 w-3.5 mr-1.5" />
+                                    {t("MISSION_APPLICANTS.CARD.APPLIED_ON")} {formattedDate}
                                 </div>
-                                {worker?.speciality && (
-                                    <p className="text-sm text-muted-foreground font-medium flex items-center">
-                                        <Briefcase className="h-3.5 w-3.5 mr-1.5 opacity-70" />
-                                        {worker.speciality.name}
-                                    </p>
-                                )}
                             </div>
-                            <div className="shrink-0">
-                                <StatusBadge status={application.status} />
-                            </div>
-                        </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-                            {worker?.experienceYears && (
-                                <div className="flex items-center gap-3 p-2.5 rounded-xl bg-muted/40 border border-border/40 group-hover:bg-muted/60 transition-colors">
-                                    <div className="h-8 w-8 rounded-lg bg-chart-1/10 flex items-center justify-center shrink-0">
-                                        <Briefcase className="h-4 w-4 text-chart-1" />
-                                    </div>
-                                    <div className="min-w-0">
-                                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-tighter">Exp.</p>
-                                        <p className="text-xs font-bold text-foreground truncate">
-                                            {worker.experienceYears} Years
-                                        </p>
-                                    </div>
+                            {/* Info Grid */}
+                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                                {/* Experience */}
+                                <div className="space-y-1">
+                                    <p className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground flex items-center gap-1.5">
+                                        <Award className="h-3.5 w-3.5" />
+                                        {t("MISSION_APPLICANTS.CARD.EXP_LABEL")}
+                                    </p>
+                                    <p className="font-bold text-sm">
+                                        {worker?.experienceYears || 0} {t("MISSION_APPLICANTS.CARD.YEARS")}
+                                    </p>
                                 </div>
-                            )}
-                                <div className="flex items-center gap-3 p-2.5 rounded-xl bg-muted/40 border border-border/40 group-hover:bg-muted/60 transition-colors">
-                                    <div className="h-8 w-8 rounded-lg bg-chart-4/10 flex items-center justify-center shrink-0">
-                                        <Star className="h-4 w-4 text-chart-4" />
-                                    </div>
-                                    <div className="min-w-0 flex flex-col justify-center">
-                                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-tighter leading-none mb-1">{t("MISSION_DETAILS.RATING")}</p>
-                                        <WorkerRating workerId={worker!.id} showLabel={true} className="p-0 border-none bg-transparent h-auto" />
-                                    </div>
+                                {/* Rating */}
+                                <div className="space-y-1">
+                                    <p className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground flex items-center gap-1.5">
+                                        <Star className="h-3.5 w-3.5" />
+                                        {t("MISSION_APPLICANTS.CARD.RATING_LABEL")}
+                                    </p>
+                                    <WorkerRating workerId={worker!.id} showLabel={false} className="p-0 h-auto gap-0.5 border-none" />
                                 </div>
-                            {worker?.city && (
-                                <div className="flex items-center gap-3 p-2.5 rounded-xl bg-muted/40 border border-border/40 group-hover:bg-muted/60 transition-colors">
-                                    <div className="h-8 w-8 rounded-lg bg-chart-5/10 flex items-center justify-center shrink-0">
-                                        <MapPin className="h-4 w-4 text-chart-5" />
-                                    </div>
-                                    <div className="min-w-0">
-                                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-tighter">{t("MISSION_APPLICANTS.DIALOG.LOCATION")}</p>
-                                        <p className="text-xs font-bold text-foreground truncate">{worker.city}</p>
-                                    </div>
-                                </div>
-                            )}
-                            <div className="flex items-center gap-3 p-2.5 rounded-xl bg-muted/40 border border-border/40 group-hover:bg-muted/60 transition-colors">
-                                <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                                    <Clock className="h-4 w-4 text-primary" />
-                                </div>
-                                <div className="min-w-0">
-                                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-tighter">{t("MISSION_APPLICANTS.DIALOG.APPLIED")}</p>
-                                    <p className="text-xs font-bold text-foreground">
-                                        {format(new Date(application.appliedAt), "MMM d")}
+                                {/* Location */}
+                                <div className="space-y-1 col-span-2 sm:col-span-1">
+                                    <p className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground flex items-center gap-1.5">
+                                        <MapPin className="h-3.5 w-3.5" />
+                                        {t("MISSION_APPLICANTS.CARD.LOCATION_LABEL")}
+                                    </p>
+                                    <p className="font-bold text-sm truncate" title={worker?.city || "Remote"}>
+                                        {worker?.city || "Remote"}
                                     </p>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-border/40">
+                        <Separator className="my-4 md:hidden" />
+
+                        {/* Actions Footer */}
+                        <div className="flex flex-col sm:flex-row items-center gap-3 mt-auto pt-2">
                             <Button
                                 variant="outline"
-                                size="sm"
                                 onClick={() => onViewProfile(application)}
-                                className="h-9 px-4 border-border/60 bg-transparent hover:bg-muted text-foreground font-semibold rounded-lg"
+                                className="w-full sm:w-auto font-bold border-border/60 hover:bg-muted/50"
                             >
                                 <Eye className="h-4 w-4 mr-2 opacity-70" />
                                 {t("MISSION_APPLICANTS.ACTIONS.VIEW_PROFILE")}
                             </Button>
-                            <div className="flex-1" />
+
+                            <div className="flex-1 hidden sm:block" />
+
                             {canProcess && (
-                                <>
+                                <div className="grid grid-cols-2 sm:flex items-center gap-3 w-full sm:w-auto">
                                     <Button
-                                        variant="ghost"
-                                        size="sm"
+                                        variant="outline"
                                         onClick={() => onReject(application.id)}
                                         disabled={isProcessing}
-                                        className="h-9 px-4 text-destructive hover:bg-destructive/10 font-bold"
+                                        className="w-full sm:w-auto text-destructive border-destructive/20 hover:bg-destructive/10 hover:border-destructive/30 font-bold"
                                     >
-                                        {isProcessing ? (
-                                            <Loader2 className="h-4 w-4 animate-spin" />
-                                        ) : (
-                                            <>
-                                                <X className="h-4 w-4 mr-2" />
-                                                {t("MISSION_APPLICANTS.ACTIONS.REJECT")}
-                                            </>
-                                        )}
+                                        {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : <X className="h-4 w-4 mr-2" />}
+                                        {t("MISSION_APPLICANTS.ACTIONS.REJECT")}
                                     </Button>
                                     <Button
-                                        size="sm"
                                         onClick={() => onAccept(application.id)}
                                         disabled={isProcessing}
-                                        className="h-9 px-6 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20 font-bold rounded-lg transition-all hover:scale-[1.02]"
+                                        className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-md hover:shadow-lg transition-all"
                                     >
-                                        {isProcessing ? (
-                                            <Loader2 className="h-4 w-4 animate-spin" />
-                                        ) : (
-                                            <>
-                                                <Check className="h-4 w-4 mr-2" />
-                                                {t("MISSION_APPLICANTS.ACTIONS.ACCEPT")}
-                                            </>
-                                        )}
+                                        {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4 mr-2" />}
+                                        {t("MISSION_APPLICANTS.ACTIONS.ACCEPT")}
                                     </Button>
-                                </>
+                                </div>
                             )}
                         </div>
                     </div>

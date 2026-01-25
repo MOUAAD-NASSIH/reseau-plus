@@ -47,6 +47,7 @@ export const fr = {
             WORKER: "Intervenant",
             N_A: "N/D",
             DELETE_PROFILE_PIC: "Supprimer la photo",
+            SHOW_RESULTS: "Voir les résultats",
             STATUS: {
                 SUBMITTED: "Soumis",
                 REJECTED: "Rejeté",
@@ -664,7 +665,6 @@ export const fr = {
                 ERROR: "Échec de la création de la mission",
                 NOT_FOUND: "Mission Non Trouvée",
                 NOT_FOUND_DESC: "La mission que vous essayez de créer n'existe pas ou a été supprimée.",
-                SYNC_NOTICE: "Les modifications sont synchronisées immédiatement avec les intervenants actifs."
             }
         },
         EDIT_MISSION: {
@@ -678,7 +678,7 @@ export const fr = {
                 CRITERIA: "Critères"
             },
             ACTIONS: {
-                SAVE: "Enregistrer les modifications",
+                SAVE: "Enregistrer",
                 SAVING: "Enregistrement...",
                 CANCEL: "Annuler",
                 STATUS_LABEL: "Statut de la Mission"
@@ -688,6 +688,7 @@ export const fr = {
                 SUCCESS_DESC: "Votre mission a été mise à jour avec succès.",
                 ERROR: "Échec de la mise à jour de la mission",
                 NOT_FOUND: "Mission Non Trouvée",
+                SYNC_NOTICE: "Les modifications sont synchronisées immédiatement avec les intervenants actifs."
             }
         },
         MY_MISSIONS: {
@@ -715,7 +716,9 @@ export const fr = {
                 VIEW_DETAILS: "Voir les Détails",
                 EDIT: "Modifier",
                 DELETE: "Supprimer",
-                POSTED: "Publié le {{date}}",
+                POSTED: "Publié le",
+                REMOTE: "À distance",
+                REF: "RÉF",
                 ACTIVE_HIRING: "Recrutement Actif"
             },
             ACTIONS: {
@@ -740,6 +743,11 @@ export const fr = {
             BACK_TO_MISSIONS: "Retour aux Missions",
             APPLICANTS_COUNT: "{{count}} candidat",
             APPLICANTS_COUNT_plural: "{{count}} candidats",
+            BREADCRUMBS: {
+                DASHBOARD: "Tableau de Bord",
+                MISSIONS: "Missions",
+                APPLICANTS: "Candidats"
+            },
             STATS: {
                 TOTAL: "Total Candidats",
                 PENDING: "À Examiner",
@@ -749,6 +757,7 @@ export const fr = {
                 ASSIGNED_WORKERS: "Travailleurs assignés"
             },
             FILTER: {
+                TITLE: "Filtres",
                 LABEL: "Filtrer par statut",
                 ALL: "Tous les Statuts",
                 SUBMITTED: "Soumis",
@@ -756,10 +765,12 @@ export const fr = {
                 REJECTED: "Rejetés",
                 SPECIALTY: "Spécialité",
                 ALL_SPECIALTIES: "Toutes les Spécialités",
+                DOMAINS: "Domaines",
                 EXPERIENCE: "Expérience",
                 YEARS: "{{count}} an",
                 YEARS_plural: "{{count}} ans",
-                EXPERIENCE_VAL: "{{min}}-{{max}}+ ans"
+                EXPERIENCE_VAL: "{{min}}-{{max}}+ ans",
+                RESET: "Réinitialiser les filtres"
             },
             TABLE: {
                 APPLICANT: "Candidat",
@@ -775,25 +786,40 @@ export const fr = {
                 CLEAR_FILTER: "Effacer les Filtres",
                 VIEW_PROFILE: "Voir le Profil",
                 REJECT: "Rejeter",
-                ACCEPT: "Accepter le Travailleur",
+                ACCEPT: "Accepter",
                 INVITE: "Inviter un Travailleur"
+            },
+            LABELS: {
+                APPLICANTS: "Candidats",
+                TOTAL: "total"
             },
             DIALOG: {
                 TITLE: "Profil du Candidat",
                 DESCRIPTION: "Examinez les qualifications et l'expérience du travailleur",
                 SPECIALITY: "Spécialité",
-                EXPERIENCE: "EXPÉRIENCE",
-                LOCATION: "EMPLACEMENT",
-                APPLIED: "POSTULÉ LE",
-                BIO: "BIOGRAPHIE",
-                DOMAINS: "DOMAINES",
-                REJECT_APPLICATION: "Rejeter la Candidature",
-                ACCEPT_APPLICATION: "Accepter la Candidature"
+                EXPERIENCE: "Expérience",
+                EXPERIENCE_EMPTY_STATE: "Aucune expérience",
+                LOCATION: "Localisation",
+                APPLIED: "Postulé le",
+                BIO: "Biographie",
+                DOMAINS: "Domaines",
+                DIPLOMAS: "Diplômes Vérifiés",
+                NO_DIPLOMAS: "Aucun diplôme vérifié",
+                REJECT_APPLICATION: "Rejeter",
+                ACCEPT_APPLICATION: "Accepter",
+                OVERVIEW: "Aperçu",
+                VERIFIED_BADGE: "Vérifié",
+                SCORE: "Score"
             },
             CARD: {
                 TITLE: "Candidats",
                 DESCRIPTION: "Examinez et gérez les candidatures pour cette mission",
-                EXCELLENT_MATCH: "Excellent Match"
+                EXCELLENT_MATCH: "Match parfait",
+                APPLIED_ON: "Postulé le",
+                EXP_LABEL: "Exp.",
+                RATING_LABEL: "Éval.",
+                LOCATION_LABEL: "Lieu",
+                YEARS: "Ans"
             },
             EMPTY: {
                 TITLE: "Aucun candidat pour le moment",
@@ -821,6 +847,22 @@ export const fr = {
             MISSION_CONTROL: "Contrôle de Mission",
             SHARE: "Partager",
             EDIT_MISSION: "Modifier la Mission",
+            STATUS: {
+                OPEN: "Ouvert",
+                ONGOING: "En cours",
+                CLOSED: "Fermé",
+                CANCELLED: "Annulé"
+            },
+            URGENCY: {
+                LOW: "Faible",
+                MEDIUM: "Moyenne",
+                HIGH: "Élevée"
+            },
+            BREADCRUMBS: {
+                DASHBOARD: "Tableau de Bord",
+                MISSIONS: "Missions",
+                MISSION_DETAILS: "Détails"
+            },
             TOTAL_BUDGET: "Budget Total",
             MISSION_TIMELINE: "Calendrier de la Mission",
             MISSION_TIMELINE_DAYS: "{{count}} Jours de durée",
@@ -831,7 +873,10 @@ export const fr = {
             NO_DESCRIPTION: "Aucune description fournie.",
             TECHNICAL_REQUIREMENTS: "Exigences Techniques",
             REQUIRED: "(Requis)",
-            SPECIALIZATION_DESC: "spécialisation : Axée sur l'excellence en {{name}} et la contribution professionnelle.",
+            OPTIONAL: "(Optionnel)",
+            REQUIRED_SPECIALTY: "Spécialité Requise",
+            SPECIALIZATION_DESC: "spécialité : Axée sur l'excellence en {{name}} et la contribution professionnelle.",
+            DOMAIN_DESC: "domaine : Axée sur l'excellence en {{name}} et la contribution professionnelle.",
             LOCATION: "Localisation",
             URGENCY_LEVEL: "Niveau d'Urgence",
             PRIORITY: "Priorité {{priority}}",
@@ -849,6 +894,7 @@ export const fr = {
             RATING: "Évaluation",
             MESSAGES: {
                 NOT_FOUND: "Mission introuvable",
+                NOT_FOUND_DESC: "La mission que vous recherchez n'existe pas ou a été supprimée.",
                 LINK_COPIED: "Le lien de la mission a été copié dans le presse-papiers."
             },
             BACK_TO_MISSIONS: "Retour aux Missions"

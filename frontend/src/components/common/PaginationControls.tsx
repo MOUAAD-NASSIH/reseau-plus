@@ -29,7 +29,7 @@ export function PaginationControls({
     const endItem = Math.min(currentPage * pageSize, totalItems);
 
     return (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-2 py-4">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <span>Rows per page:</span>
                 <select

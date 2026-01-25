@@ -47,6 +47,7 @@ export const en = {
             WORKER: "Worker",
             N_A: "N/A",
             DELETE_PROFILE_PIC: "Remove photo",
+            SHOW_RESULTS: "Show results",
             STATUS: {
                 SUBMITTED: "Submitted",
                 REJECTED: "Rejected",
@@ -663,7 +664,6 @@ export const en = {
                 ERROR: "Failed to create mission",
                 NOT_FOUND: "Mission Not Found",
                 NOT_FOUND_DESC: "The mission you are trying to edit doesn't exist or has been removed.",
-                SYNC_NOTICE: "Changes are synchronized immediately with active workers."
             }
         },
         EDIT_MISSION: {
@@ -677,7 +677,7 @@ export const en = {
                 CRITERIA: "Criteria"
             },
             ACTIONS: {
-                SAVE: "Save Changes",
+                SAVE: "Save",
                 SAVING: "Saving...",
                 CANCEL: "Cancel",
                 STATUS_LABEL: "Mission Status"
@@ -687,6 +687,7 @@ export const en = {
                 SUCCESS_DESC: "Your mission has been updated successfully.",
                 ERROR: "Failed to update mission",
                 NOT_FOUND: "Mission Not Found",
+                SYNC_NOTICE: "Changes are synchronized immediately with active workers."
             }
         },
         MY_MISSIONS: {
@@ -714,7 +715,9 @@ export const en = {
                 VIEW_DETAILS: "View Details",
                 EDIT: "Edit",
                 DELETE: "Delete",
-                POSTED: "Posted {{date}}",
+                POSTED: "Posted",
+                REMOTE: "Remote",
+                REF: "REF",
                 ACTIVE_HIRING: "Active Hiring"
             },
             ACTIONS: {
@@ -739,6 +742,11 @@ export const en = {
             BACK_TO_MISSIONS: "Back to Missions",
             APPLICANTS_COUNT: "{{count}} applicant",
             APPLICANTS_COUNT_plural: "{{count}} applicants",
+            BREADCRUMBS: {
+                DASHBOARD: "Dashboard",
+                MISSIONS: "Missions",
+                APPLICANTS: "Applicants"
+            },
             STATS: {
                 TOTAL: "Total Applicants",
                 PENDING: "Pending Review",
@@ -748,6 +756,7 @@ export const en = {
                 ASSIGNED_WORKERS: "Assigned workers"
             },
             FILTER: {
+                TITLE: "Filters",
                 LABEL: "Filter by status",
                 ALL: "All Statuses",
                 SUBMITTED: "Submitted",
@@ -755,10 +764,12 @@ export const en = {
                 REJECTED: "Rejected",
                 SPECIALTY: "Specialty",
                 ALL_SPECIALTIES: "All Specialties",
+                DOMAINS: "Domains",
                 EXPERIENCE: "Experience",
                 YEARS: "{{count}} year",
                 YEARS_plural: "{{count}} years",
-                EXPERIENCE_VAL: "{{min}}-{{max}}+ yrs"
+                EXPERIENCE_VAL: "{{min}}-{{max}}+ yrs",
+                RESET: "Reset Filters"
             },
             TABLE: {
                 APPLICANT: "Applicant",
@@ -774,25 +785,40 @@ export const en = {
                 CLEAR_FILTER: "Clear Filter",
                 VIEW_PROFILE: "View Profile",
                 REJECT: "Reject",
-                ACCEPT: "Accept Worker",
+                ACCEPT: "Accept",
                 INVITE: "Invite Worker"
+            },
+            LABELS: {
+                APPLICANTS: "Applicants",
+                TOTAL: "total"
             },
             DIALOG: {
                 TITLE: "Applicant Profile",
                 DESCRIPTION: "Review the worker's qualifications and experience",
                 SPECIALITY: "Speciality",
-                EXPERIENCE: "EXPERIENCE",
-                LOCATION: "LOCATION",
-                APPLIED: "APPLIED",
-                BIO: "BIO",
-                DOMAINS: "DOMAINS",
-                REJECT_APPLICATION: "Reject Application",
-                ACCEPT_APPLICATION: "Accept Application"
+                EXPERIENCE: "Experience",
+                LOCATION: "Location",
+                APPLIED: "Applied on",
+                BIO: "Biography",
+                DOMAINS: "Domains",
+                EXPERIENCE_EMPTY_STATE: "No experience yet",
+                DIPLOMAS: "Verified Diplomas",
+                NO_DIPLOMAS: "No verified diplomas",
+                REJECT_APPLICATION: "Reject",
+                ACCEPT_APPLICATION: "Accept",
+                OVERVIEW: "Overview",
+                VERIFIED_BADGE: "Verified",
+                SCORE: "Score"
             },
             CARD: {
                 TITLE: "Applicants",
                 DESCRIPTION: "Review and manage applications for this mission",
-                EXCELLENT_MATCH: "Excellent Match"
+                EXCELLENT_MATCH: "Excellent Match",
+                APPLIED_ON: "Applied on",
+                EXP_LABEL: "Exp.",
+                RATING_LABEL: "Rating",
+                LOCATION_LABEL: "Location",
+                YEARS: "Years"
             },
             EMPTY: {
                 TITLE: "No applicants yet",
@@ -820,6 +846,22 @@ export const en = {
             MISSION_CONTROL: "Mission Control",
             SHARE: "Share",
             EDIT_MISSION: "Edit Mission",
+            STATUS: {
+                OPEN: "Open",
+                ONGOING: "Ongoing",
+                CLOSED: "Closed",
+                CANCELLED: "Cancelled"
+            },
+            URGENCY: {
+                LOW: "Low",
+                MEDIUM: "Medium",
+                HIGH: "High"
+            },
+            BREADCRUMBS: {
+                DASHBOARD: "Dashboard",
+                MISSIONS: "Missions",
+                MISSION_DETAILS: "Details"
+            },
             TOTAL_BUDGET: "Total Budget",
             MISSION_TIMELINE: "Mission Timeline",
             MISSION_TIMELINE_DAYS: "{{count}} Days duration",
@@ -830,7 +872,10 @@ export const en = {
             NO_DESCRIPTION: "No description provided.",
             TECHNICAL_REQUIREMENTS: "Technical Requirements",
             REQUIRED: "(Required)",
-            SPECIALIZATION_DESC: "specialization: Focused on {{name}} excellence and professional contribution.",
+            OPTIONAL: "(Optional)",
+            REQUIRED_SPECIALTY: "Required Specialty",
+            SPECIALIZATION_DESC: "speciality: Focused on {{name}} excellence and professional contribution.",
+            DOMAIN_DESC: "domain: Focused on {{name}} excellence and professional contribution.",
             LOCATION: "Location",
             URGENCY_LEVEL: "Urgency Level",
             PRIORITY: "{{priority}} Priority",
@@ -848,6 +893,7 @@ export const en = {
             RATING: "Rating",
             MESSAGES: {
                 NOT_FOUND: "Mission not found",
+                NOT_FOUND_DESC: "The mission you are looking for does not exist or has been deleted.",
                 LINK_COPIED: "Mission link has been copied to your clipboard."
             },
             BACK_TO_MISSIONS: "Back to Missions"
