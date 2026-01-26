@@ -32,6 +32,7 @@ export const en = {
             DELETE: "Delete",
             CONFIRM: "Confirm",
             PAID: "Paid",
+            REVIEW: "Review",
             ANONYMOUS: "Anonymous",
             COMPLETED_MISSION: "Completed Mission",
             MISSION: "Mission",
@@ -911,9 +912,10 @@ export const en = {
                 PENDING_REVIEW: "Pending Review"
             },
             FILTER: {
+                ALL: "All Assignments",
                 LABEL: "Filter Assignments",
                 SEARCH_WORKER: "Search Worker",
-                SEARCH_PLACEHOLDER: "Search by name, email...",
+                SEARCH_PLACEHOLDER: "Search by worker...",
                 STATUS: "Status",
                 STATUS_ALL: "All Statuses",
                 MISSION_TYPE: "Mission Type",
@@ -935,7 +937,9 @@ export const en = {
                     PENDING: "Pending",
                     PAID: "Paid",
                     PROCESSING: "Processing",
-                    SCHEDULED: "Scheduled"
+                    SCHEDULED: "Scheduled",
+                    LOCKED: "Locked",
+                    CANCELLED: "Cancelled"
                 },
                 EMPTY_STATE: {
                     TITLE: "No assignments found",
@@ -952,12 +956,36 @@ export const en = {
         },
         ASSIGNED_MISSION_VIEW: {
             HEADER: {
-                ASSIGNMENT_ID: "Assignment #{{id}}",
+                BREADCRUMBS: {
+                    DASHBOARD: "Dashboard",
+                    ASSIGNMENTS: "Assignments",
+                    ASSIGNMENT_ID: "Assignment #{{id}}",
+                },
                 CREATED_ON: "Created {{date}}",
                 EXPORT: "Export",
                 EDIT: "Edit",
                 PROCESS_PAYMENT: "Process Payment",
                 NOT_FOUND: "Assignment not found"
+            },
+            BADGES: {
+                REVIEW_SUBMITTED: "Review Submitted",
+                PAYMENT_COMPLETED: "Payment Completed",
+                PAYMENT_PROCESSING: "Payment Processing..."
+            },
+            REVIEW: {
+                FORM_TITLE: "Rate Worker Performance",
+                FORM_DESC: "Share your experience working with {{name}}",
+                CLICK_TO_RATE: "Click to rate",
+                FEEDBACK_LABEL: "Your Feedback",
+                OPTIONAL: "(Optional)",
+                PLACEHOLDER: "Share your thoughts about the worker's performance...",
+                SUBMIT_BTN: "Submit Review",
+                SUBMITTING: "Submitting...",
+                SUCCESS_TITLE: "Review Submitted",
+                SUCCESS_DESC: "Your review has been submitted successfully.",
+                ERROR_TITLE: "Failed to submit review",
+                WORKER_FEEDBACK_TITLE: "Worker's Feedback",
+                YOUR_REVIEW_TITLE: "Your Review"
             },
             TIMELINE: {
                 TITLE: "Mission Timeline",
@@ -999,7 +1027,8 @@ export const en = {
                 PLATFORM_FEE: "Platform Fee",
                 PAID_ON: "Paid On",
                 NO_PAYMENT: "No payment has been made yet.",
-                COMPLETE_FOR_PAYMENT: "Complete the assignment to enable payment."
+                COMPLETE_FOR_PAYMENT: "Please complete the mission to enable payment.",
+                READY_FOR_PAYMENT: "Mission completed. You can now proceed to payment."
             },
             WORKER_PROFILE: {
                 TITLE: "Worker Profile",
@@ -1007,7 +1036,7 @@ export const en = {
                 RELIABILITY: "Reliability Score: {{score}}%",
                 MESSAGE: "Message",
                 PROFILE: "Profile"
-            }
+            },
         },
         FINANCIAL: {
             TITLE: "Financial Overview",

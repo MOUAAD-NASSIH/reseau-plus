@@ -32,6 +32,7 @@ export const fr = {
             DELETE: "Supprimer",
             CONFIRM: "Confirmer",
             PAID: "Payé",
+            REVIEW: "Évaluer",
             ANONYMOUS: "Anonyme",
             COMPLETED_MISSION: "Mission terminée",
             MISSION: "Mission",
@@ -912,9 +913,10 @@ export const fr = {
                 PENDING_REVIEW: "En Attente d'Avis"
             },
             FILTER: {
+                ALL: "Toutes les affectations",
                 LABEL: "Filtrer les Affectations",
                 SEARCH_WORKER: "Rechercher Travailleur",
-                SEARCH_PLACEHOLDER: "Nom, email...",
+                SEARCH_PLACEHOLDER: "Rechercher par travailleur...",
                 STATUS: "Statut",
                 STATUS_ALL: "Tous les Statuts",
                 MISSION_TYPE: "Type de Mission",
@@ -936,7 +938,9 @@ export const fr = {
                     PENDING: "En attente",
                     PAID: "Payé",
                     PROCESSING: "En cours",
-                    SCHEDULED: "Programmé"
+                    SCHEDULED: "Programmé",
+                    LOCKED: "Verrouillé",
+                    CANCELLED: "Annulé"
                 },
                 EMPTY_STATE: {
                     TITLE: "Aucune affectation trouvée",
@@ -953,12 +957,36 @@ export const fr = {
         },
         ASSIGNED_MISSION_VIEW: {
             HEADER: {
-                ASSIGNMENT_ID: "Affectation #{{id}}",
+                BREADCRUMBS: {
+                    DASHBOARD: "Tableau de Bord",
+                    ASSIGNMENTS: "Affectations",
+                    ASSIGNMENT_ID: "Affectation #{{id}}",
+                },
                 CREATED_ON: "Créée le {{date}}",
                 EXPORT: "Exporter",
                 EDIT: "Modifier",
                 PROCESS_PAYMENT: "Procéder au Paiement",
                 NOT_FOUND: "Affectation introuvable"
+            },
+            BADGES: {
+                REVIEW_SUBMITTED: "Avis Soumis",
+                PAYMENT_COMPLETED: "Paiement Effectué",
+                PAYMENT_PROCESSING: "Paiement en Cours..."
+            },
+            REVIEW: {
+                FORM_TITLE: "Évaluer la Performance de l'Intervenant",
+                FORM_DESC: "Partagez votre expérience de travail avec {{name}}",
+                CLICK_TO_RATE: "Cliquez pour évaluer",
+                FEEDBACK_LABEL: "Votre Avis",
+                OPTIONAL: "(Optionnel)",
+                PLACEHOLDER: "Partagez vos impressions sur la performance de l'intervenant...",
+                SUBMIT_BTN: "Soumettre l'Avis",
+                SUBMITTING: "Soumission...",
+                SUCCESS_TITLE: "Avis Soumis",
+                SUCCESS_DESC: "Votre avis a été soumis avec succès.",
+                ERROR_TITLE: "Échec de la soumission de l'avis",
+                WORKER_FEEDBACK_TITLE: "Avis de l'Intervenant",
+                YOUR_REVIEW_TITLE: "Votre Avis"
             },
             TIMELINE: {
                 TITLE: "Chronologie de la Mission",
@@ -1000,7 +1028,8 @@ export const fr = {
                 PLATFORM_FEE: "Frais de Plateforme",
                 PAID_ON: "Payé le",
                 NO_PAYMENT: "Aucun paiement n'a encore été effectué.",
-                COMPLETE_FOR_PAYMENT: "Terminez la mission pour activer le paiement."
+                COMPLETE_FOR_PAYMENT: "Terminez la mission pour activer le paiement.",
+                READY_FOR_PAYMENT: "Mission terminée. Vous pouvez maintenant procéder au paiement."
             },
             WORKER_PROFILE: {
                 TITLE: "Profil de l'Intervenant",

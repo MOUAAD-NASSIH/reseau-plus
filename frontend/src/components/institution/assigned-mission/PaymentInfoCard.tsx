@@ -1,5 +1,6 @@
 import { DollarSign, ShieldCheck, CreditCard } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatusBadge } from "@/components/common/StatusBadge";
@@ -20,66 +21,78 @@ export function PaymentInfoCard({ assignment, payment, isLoading, canPay, onPaym
     const { t } = useTranslation();
 
     return (
-        <Card className="border-border/40 shadow-xl rounded-[2rem] overflow-hidden bg-card/50 backdrop-blur-sm">
-            <CardHeader className="p-8">
-                <CardTitle className="text-xl font-bold flex items-center gap-3">
-                    <DollarSign className="h-5 w-5 text-emerald-500" />
-                    {t("ASSIGNED_MISSION_VIEW.PAYMENT_STATUS.TITLE")}
-                </CardTitle>
+        <Card className="border-border shadow-xs overflow-hidden">
+            <CardHeader className="bg-muted/30 pb-4 border-b border-border/50">
+                <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-background border border-border/60 shadow-xs text-emerald-600 dark:text-emerald-400">
+                        <DollarSign className="h-5 w-5" />
+                    </div>
+                    <CardTitle className="text-lg font-bold font-spline">
+                        {t("ASSIGNED_MISSION_VIEW.PAYMENT_STATUS.TITLE")}
+                    </CardTitle>
+                </div>
             </CardHeader>
-            <CardContent className="p-8 pt-0 space-y-6">
+            <CardContent className="p-6">
                 {isLoading ? (
-                    <Skeleton className="h-40 w-full rounded-2xl" />
+                    <Skeleton className="h-32 w-full" />
                 ) : payment ? (
-                    <div className="space-y-4">
-                        <div className="p-6 rounded-3xl bg-muted/30 border border-border/40 space-y-4">
-                            <div className="flex items-center justify-between">
-                                <span className="text-[10px] font-black uppercase text-muted-foreground/60 tracking-widest">{t("INSTITUTION_ASSIGNMENTS.TABLE.COLUMNS.STATUS")}</span>
+                    <div className="space-y-6">
+                        {/* Main Amount */}
+                        <div>
+                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">{t("ASSIGNED_MISSION_VIEW.PAYMENT_STATUS.TOTAL_AMOUNT")}</p>
+                            <div className="flex items-baseline justify-between">
+                                <p className="text-2xl font-black text-foreground tabular-nums tracking-tight">
+                                    {formatCurrency(payment.amountTotal)}
+                                </p>
                                 <StatusBadge status={payment.status} />
                             </div>
-                            <div className="flex items-center justify-between pt-4 border-t border-border/40">
-                                <span className="text-sm font-bold text-muted-foreground">{t("ASSIGNED_MISSION_VIEW.PAYMENT_STATUS.TOTAL_AMOUNT")}</span>
-                                <span className="text-xl font-black text-foreground">
-                                    {formatCurrency(payment.amountTotal)}
-                                </span>
-                            </div>
                         </div>
-                        
-                        <div className="space-y-3 px-2">
+
+                        <Separator />
+
+                        {/* Breakdown */}
+                        <div className="space-y-2">
                             <div className="flex items-center justify-between text-sm">
                                 <span className="text-muted-foreground">{t("ASSIGNED_MISSION_VIEW.PAYMENT_STATUS.WORKER_AMOUNT")}</span>
-                                <span className="font-bold">{formatCurrency(payment.workerAmount)}</span>
+                                <span className="font-medium">{formatCurrency(payment.workerAmount)}</span>
                             </div>
                             <div className="flex items-center justify-between text-sm">
                                 <span className="text-muted-foreground">{t("ASSIGNED_MISSION_VIEW.PAYMENT_STATUS.PLATFORM_FEE")}</span>
-                                <span className="font-bold text-muted-foreground">{formatCurrency(payment.platformFee)}</span>
+                                <span className="font-medium text-muted-foreground">{formatCurrency(payment.platformFee)}</span>
                             </div>
                             {payment.paidAt && (
-                                <div className="flex items-center justify-between text-sm pt-3 border-t border-border/40">
-                                    <span className="text-muted-foreground font-medium flex items-center gap-2">
-                                        <ShieldCheck className="h-4 w-4 text-emerald-500" />
+                                <div className="flex items-center justify-between text-sm pt-2 text-emerald-600 dark:text-emerald-400">
+                                    <span className="flex items-center gap-1.5 font-medium">
+                                        <ShieldCheck className="h-3.5 w-3.5" />
                                         {t("ASSIGNED_MISSION_VIEW.PAYMENT_STATUS.PAID_ON")}
                                     </span>
-                                    <span className="font-bold text-emerald-600 dark:text-emerald-400">{formatDate(payment.paidAt)}</span>
+                                    <span className="font-bold">{formatDate(payment.paidAt)}</span>
                                 </div>
                             )}
                         </div>
                     </div>
                 ) : (
-                    <div className="text-center py-8 space-y-6 bg-muted/20 rounded-[2rem] border-2 border-dashed border-border/40">
-                        <div className="h-16 w-16 bg-muted rounded-full flex items-center justify-center mx-auto">
-                            <CreditCard className="h-8 w-8 text-muted-foreground/50" />
+                    <div className="text-center py-6 space-y-4">
+                        <div className="size-12 rounded-full bg-muted flex items-center justify-center mx-auto">
+                            <CreditCard className="h-6 w-6 text-muted-foreground" />
                         </div>
-                        <p className="text-sm font-medium text-muted-foreground px-6">
-                            {assignment.status === "COMPLETED"
-                                ? t("ASSIGNED_MISSION_VIEW.PAYMENT_STATUS.NO_PAYMENT")
-                                : t("ASSIGNED_MISSION_VIEW.PAYMENT_STATUS.COMPLETE_FOR_PAYMENT")}
-                        </p>
-                        {canPay && (
-                            <Button onClick={onPayment} className="rounded-2xl font-black px-8 py-6 h-auto shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all">
-                                <CreditCard className="h-5 w-5 mr-3" />
+                        <div className="space-y-1">
+                            <p className="text-sm font-medium">
+                                {assignment.status === "COMPLETED"
+                                    ? t("ASSIGNED_MISSION_VIEW.PAYMENT_STATUS.NO_PAYMENT")
+                                    : t("ASSIGNED_MISSION_VIEW.PAYMENT_STATUS.COMPLETE_FOR_PAYMENT")}
+                            </p>
+                        </div>
+
+                        {canPay ? (
+                            <Button onClick={onPayment} className="w-full font-bold">
+                                <DollarSign className="h-4 w-4 mr-2" />
                                 {t("ASSIGNED_MISSION_VIEW.HEADER.PROCESS_PAYMENT")}
                             </Button>
+                        ) : (
+                            <p className="text-xs text-muted-foreground italic">
+                                * Payment available after completion
+                            </p>
                         )}
                     </div>
                 )}

@@ -4,6 +4,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { AssignmentsTable } from "@/components/institution/assignments/AssignmentsTable";
 import { AssignmentsFilter } from "@/components/institution/assignments/AssignmentsFilter";
 import { useInstitutionAssignments } from "@/features/hooks/InstitutionHooks/useInstitutionAssignments";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 export default function InstitutionAssignments() {
   const {
@@ -18,72 +20,95 @@ export default function InstitutionAssignments() {
     handlePayment,
     handleReview,
     t,
+    searchQuery,
+    setSearchQuery,
   } = useInstitutionAssignments();
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
+    <div className="space-y-8 animate-in fade-in duration-500">
       {/* Page Header */}
-      <div className="space-y-2">
-        <h1 className="text-4xl font-extrabold tracking-tight text-foreground lg:text-5xl">
-          {t("INSTITUTION_ASSIGNMENTS.TITLE")}
-        </h1>
-        <p className="text-muted-foreground text-lg max-w-[700px]">
-          {t("INSTITUTION_ASSIGNMENTS.DESCRIPTION")}
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/40 pb-6">
+        <div className="space-y-2">
+          <div className="flex items-center gap-3">
+            <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-foreground font-spline">
+              {t("INSTITUTION_ASSIGNMENTS.TITLE")}
+            </h1>
+            {assignments.length > 0 && (
+              <Badge variant="outline" className="h-7 px-3 rounded-full text-primary border-primary/20 bg-primary/5 font-mono">
+                {assignments.length}
+              </Badge>
+            )}
+          </div>
+          <p className="text-muted-foreground text-lg max-w-[700px] font-medium leading-relaxed">
+            {t("INSTITUTION_ASSIGNMENTS.DESCRIPTION")}
+          </p>
+        </div>
       </div>
 
       {/* Stats Overview */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           title={t("INSTITUTION_ASSIGNMENTS.STATS.TOTAL")}
           value={stats.total}
           icon={ListTodo}
           isLoading={isLoading}
-          color="text-primary"
-          bg="bg-primary/5"
+          gradient="from-primary/10 to-primary/5"
+          iconColor="text-primary"
+          borderColor="border-primary/20"
         />
         <StatCard
           title={t("INSTITUTION_ASSIGNMENTS.STATS.ACTIVE")}
           value={stats.active}
           icon={Clock}
           isLoading={isLoading}
-          color="text-blue-500"
-          bg="bg-blue-500/5"
+          gradient="from-blue-500/10 to-blue-500/5"
+          iconColor="text-blue-500"
+          borderColor="border-blue-500/20"
         />
         <StatCard
           title={t("INSTITUTION_ASSIGNMENTS.STATS.COMPLETED")}
           value={stats.completed}
           icon={CheckCircle2}
           isLoading={isLoading}
-          color="text-emerald-500"
-          bg="bg-emerald-500/5"
+          gradient="from-emerald-500/10 to-emerald-500/5"
+          iconColor="text-emerald-500"
+          borderColor="border-emerald-500/20"
         />
         <StatCard
           title={t("INSTITUTION_ASSIGNMENTS.STATS.PENDING_REVIEW")}
           value={stats.pendingReview}
           icon={Briefcase}
           isLoading={isLoading}
-          color="text-amber-500"
-          bg="bg-amber-500/5"
+          gradient="from-amber-500/10 to-amber-500/5"
+          iconColor="text-amber-500"
+          borderColor="border-amber-500/20"
         />
       </div>
 
-      {/* Filter Section */}
-      <AssignmentsFilter
-        statusFilter={statusFilter}
-        onStatusChange={setStatusFilter}
-      />
+      <div className="space-y-6">
+        {/* Filter Section */}
+        <div className="sticky top-16 z-10 bg-background/80 backdrop-blur-md pb-4 pt-2 -mx-4 px-4 sm:mx-0 sm:px-0">
+          <AssignmentsFilter
+            statusFilter={statusFilter}
+            onStatusChange={setStatusFilter}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+          />
+        </div>
 
-      {/* Table Section */}
-      <AssignmentsTable
-        data={assignments}
-        isLoading={isLoading}
-        reviewedAssignmentIds={reviewedAssignmentIds}
-        paidAssignmentIds={paidAssignmentIds}
-        onViewAssignment={handleViewAssignment}
-        onPayment={handlePayment}
-        onReview={handleReview}
-      />
+        {/* Table Section */}
+        <Card className="border-border/60 shadow-lg shadow-black/5 overflow-hidden rounded-2xl bg-card">
+          <AssignmentsTable
+            data={assignments}
+            isLoading={isLoading}
+            reviewedAssignmentIds={reviewedAssignmentIds}
+            paidAssignmentIds={paidAssignmentIds}
+            onViewAssignment={handleViewAssignment}
+            onPayment={handlePayment}
+            onReview={handleReview}
+          />
+        </Card>
+      </div>
     </div>
   );
 }
@@ -93,8 +118,9 @@ interface StatCardProps {
   value: number;
   icon: any;
   isLoading: boolean;
-  color: string;
-  bg: string;
+  gradient: string;
+  iconColor: string;
+  borderColor: string;
 }
 
 function StatCard({
@@ -102,26 +128,30 @@ function StatCard({
   value,
   icon: Icon,
   isLoading,
-  color,
-  bg,
+  gradient,
+  iconColor,
+  borderColor,
 }: StatCardProps) {
   return (
-    <Card className="border-border/40 shadow-xl shadow-primary/5 bg-card/60 backdrop-blur-xl group hover:shadow-2xl transition-all duration-300 rounded-2xl overflow-hidden hover:-translate-y-1">
-      <CardContent className="p-6">
-        <div className="flex items-center justify-between">
-          <div className="space-y-1.5 min-w-0">
-            <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-60 truncate">
-              {title}
-            </p>
+    <Card className={cn(
+      "border overflow-hidden relative group hover:shadow-lg transition-all duration-300 hover:-translate-y-1",
+      borderColor
+    )}>
+      <div className={cn("absolute inset-0 bg-linear-to-br opacity-50", gradient)} />
+      <CardContent className="p-6 relative">
+        <div className="flex items-center justify-between gap-4">
+          <div className="space-y-1">
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{title}</p>
             {isLoading ? (
-              <Skeleton className="h-9 w-12 rounded-lg" />
+              <Skeleton className="h-9 w-16 rounded-lg bg-background/50" />
             ) : (
-              <p className="text-3xl font-black tracking-tight">{value}</p>
+              <p className="text-3xl font-black tracking-tight font-spline text-foreground">{value}</p>
             )}
           </div>
-          <div
-            className={`h-12 w-12 rounded-2xl ${bg} ${color} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-sm shadow-black/5`}
-          >
+          <div className={cn(
+            "h-12 w-12 rounded-xl flex items-center justify-center bg-background/60 backdrop-blur-sm shadow-sm border border-black/5 dark:border-white/10 group-hover:scale-110 transition-transform duration-300",
+            iconColor
+          )}>
             <Icon className="h-6 w-6" />
           </div>
         </div>

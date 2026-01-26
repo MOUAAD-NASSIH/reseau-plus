@@ -10,6 +10,7 @@ export function useInstitutionAssignments() {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const [statusFilter, setStatusFilter] = useState<string>("ALL");
+    const [searchQuery, setSearchQuery] = useState<string>("");
 
     const { data: assignmentsData, isLoading: assignmentsLoading } = useGetInstitutionAssignmentsQuery();
     const { data: reviewsData, isLoading: reviewsLoading } = useGetMyWrittenReviewsQuery();
@@ -32,9 +33,25 @@ export function useInstitutionAssignments() {
     );
 
     const filteredAssignments = useMemo(() => {
-        if (statusFilter === "ALL") return assignments;
-        return assignments.filter((a) => a.status === statusFilter);
-    }, [assignments, statusFilter]);
+        let result = assignments;
+
+        // Status Filter
+        if (statusFilter !== "ALL") {
+            result = result.filter((a) => a.status === statusFilter);
+        }
+
+        // Search Filter
+        if (searchQuery.trim()) {
+            const query = searchQuery.toLowerCase();
+            result = result.filter((a) =>
+                (a.worker?.firstName?.toLowerCase() || "").includes(query) ||
+                (a.worker?.lastName?.toLowerCase() || "").includes(query) ||
+                (a.mission?.title?.toLowerCase() || "").includes(query)
+            );
+        }
+
+        return result;
+    }, [assignments, statusFilter, searchQuery]);
 
     const stats = useMemo(() => {
         return {
@@ -56,7 +73,7 @@ export function useInstitutionAssignments() {
     };
 
     const handleReview = (assignmentId: number) => {
-        navigate(`/institution/reviews?assignmentId=${assignmentId}`);
+        navigate(`/institution/assignments/${assignmentId}`);
     };
 
     return {
@@ -71,5 +88,7 @@ export function useInstitutionAssignments() {
         handlePayment,
         handleReview,
         t,
+        searchQuery,
+        setSearchQuery,
     };
 }

@@ -27,11 +27,12 @@ interface AuthenticatedRequest extends Request {
  */
 export const getPayments = asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
     const user = req.user!;
-    const { page = 1, limit = 10, status, paidAfter, paidBefore, minAmount, maxAmount } = req.query;
+    const { page = 1, limit = 10, status, missionAssignmentId, paidAfter, paidBefore, minAmount, maxAmount } = req.query;
 
     const filters: any = {};
 
     if (status) filters.status = status as string;
+    if (missionAssignmentId) filters.missionAssignmentId = Number(missionAssignmentId);
     if (paidAfter) filters.paidAfter = paidAfter as string;
     if (paidBefore) filters.paidBefore = paidBefore as string;
     if (minAmount) filters.minAmount = Number(minAmount);
@@ -42,9 +43,11 @@ export const getPayments = asyncHandler(async (req: AuthenticatedRequest, res: R
     if (user.role === 'admin') {
         result = await paymentService.getPayments(filters, Number(page), Number(limit));
     } else if (user.role === 'institution' && user.institutionId) {
-        result = await paymentService.getInstitutionPayments(user.institutionId, Number(page), Number(limit));
+        filters.institutionId = user.institutionId;
+        result = await paymentService.getPayments(filters, Number(page), Number(limit));
     } else if (user.role === 'worker' && user.workerId) {
-        result = await paymentService.getWorkerPayments(user.workerId, Number(page), Number(limit));
+        filters.workerId = user.workerId;
+        result = await paymentService.getPayments(filters, Number(page), Number(limit));
     } else {
         res.status(403).json({
             success: false,

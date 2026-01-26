@@ -1,6 +1,7 @@
 import { Link } from "react-router";
-import { ArrowLeft, AlertCircle } from "lucide-react";
+import { ArrowLeft, AlertCircle, Star, BadgeCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "react-i18next";
 import { useAssignedMission } from "@/features/hooks/InstitutionHooks/useAssignedMission";
@@ -9,6 +10,11 @@ import { MissionDetailsCard } from "@/components/institution/assigned-mission/Mi
 import { WorkerProfileCard } from "@/components/institution/assigned-mission/WorkerProfileCard";
 import { StatusControlCard } from "@/components/institution/assigned-mission/StatusControlCard";
 import { PaymentInfoCard } from "@/components/institution/assigned-mission/PaymentInfoCard";
+import {
+  InstitutionReviewForm,
+  WorkerReviewDisplay,
+  InstitutionReviewDisplay
+} from "@/components/institution/assigned-mission/ReviewComponents";
 
 export default function AssignedMissionView() {
   const { t } = useTranslation();
@@ -22,6 +28,9 @@ export default function AssignedMissionView() {
     handlePayment,
     canPay,
     isPaid,
+    isReviewed,
+    writtenReview,
+    receivedReview,
   } = useAssignedMission();
 
   if (assignmentLoading) {
@@ -71,42 +80,80 @@ export default function AssignedMissionView() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8 pb-12 font-spline animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {/* ADAPTIVE PREMIUM HEADER */}
-      <AssignmentHeader
-        assignment={assignment}
-        isPaid={isPaid}
-        canPay={canPay}
-        onPayment={handlePayment}
-      />
+    <div className="min-h-screen bg-background font-spline">
+      {/* Header Section */}
+      <div className="bg-card/40 border-b border-border pb-8">
+        <AssignmentHeader
+          assignment={assignment}
+          canPay={canPay}
+          onPayment={handlePayment}
+        />
 
-      <div className="grid gap-8 lg:grid-cols-3">
-        {/* LEFT MAIN COLUMN */}
-        <div className="lg:col-span-2 space-y-8">
-          {/* MISSION DETAILS CARD */}
-          <MissionDetailsCard assignment={assignment} />
-
-          {/* WORKER DETAILS CARD */}
-          <WorkerProfileCard assignment={assignment} />
+        {/* Status Badges */}
+        <div className="container mx-auto mt-4">
+          <div className="flex flex-wrap items-center gap-2">
+            {isReviewed && (
+              <Badge variant="outline" className="px-3 py-1 text-xs font-bold gap-1.5 border border-purple-200 bg-purple-50 text-purple-700 dark:border-purple-900/50 dark:bg-purple-900/20 dark:text-purple-400">
+                <Star className="h-3.5 w-3.5 fill-current" />
+                {t("ASSIGNED_MISSION_VIEW.BADGES.REVIEW_SUBMITTED") || "Review Submitted"}
+              </Badge>
+            )}
+            {isPaid && (
+              <Badge variant="outline" className="px-3 py-1 text-xs font-bold gap-1.5 border border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/50 dark:bg-emerald-900/20 dark:text-emerald-400">
+                <BadgeCheck className="h-3.5 w-3.5" />
+                {t("ASSIGNED_MISSION_VIEW.BADGES.PAYMENT_COMPLETED")}
+              </Badge>
+            )}
+          </div>
         </div>
+      </div>
 
-        {/* RIGHT SIDEBAR COLUMN */}
-        <div className="space-y-8">
-          {/* STATUS CONTROL CARD */}
-          <StatusControlCard
-            assignment={assignment}
-            isUpdating={isUpdating}
-            onStatusChange={handleStatusChange}
-          />
+      <div className="py-8">
+        <div className="grid gap-8 lg:grid-cols-3">
+          {/* LEFT MAIN COLUMN */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* REVIEW SECTION (Conditional) */}
+            {assignment.status === "COMPLETED" && (
+              <div className="animate-in fade-in slide-in-from-top-4 duration-500 space-y-4">
+                {/* Worker's Review (Received) */}
+                {receivedReview && (
+                  <WorkerReviewDisplay review={receivedReview} />
+                )}
 
-          {/* PAYMENT INFO CARD */}
-          <PaymentInfoCard
-            assignment={assignment}
-            payment={payment}
-            isLoading={paymentsLoading}
-            canPay={canPay}
-            onPayment={handlePayment}
-          />
+                {/* Institution's Review (Written or Form) */}
+                {!isReviewed ? (
+                  <InstitutionReviewForm assignment={assignment} onSuccess={() => { }} />
+                ) : (
+                  writtenReview && <InstitutionReviewDisplay review={writtenReview} />
+                )}
+              </div>
+            )}
+
+            {/* MISSION DETAILS CARD */}
+            <MissionDetailsCard assignment={assignment} />
+
+            {/* WORKER DETAILS CARD */}
+            <WorkerProfileCard assignment={assignment} />
+          </div>
+
+          {/* RIGHT SIDEBAR COLUMN */}
+          <div className="space-y-6">
+            {/* STATUS CONTROL CARD */}
+            <StatusControlCard
+              assignment={assignment}
+              isUpdating={isUpdating}
+              onStatusChange={handleStatusChange}
+            />
+
+            {/* PAYMENT INFO CARD */}
+            <PaymentInfoCard
+              assignment={assignment}
+              payment={payment}
+              isLoading={paymentsLoading}
+              canPay={canPay}
+              onPayment={handlePayment}
+            />
+          </div>
         </div>
       </div>
     </div>
