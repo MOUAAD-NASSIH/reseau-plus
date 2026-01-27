@@ -47,11 +47,8 @@ export default function ChatWindow({ conversation, onBack }: ChatWindowProps) {
 
   const otherUser = conversation.otherUser;
 
-  // Get current user's profile info for avatar display
-  // For workers: profilePicture is directly on the worker object
-  // For institutions: logo is directly on the institution object
-  const currentUserAvatar = (currentUser as any)?.profilePicture || (currentUser as any)?.logo;
-  const currentUserIsWorker = !!(currentUser as any)?.firstName;
+  const currentUserAvatar = (currentUser as any)?.worker?.profilePicture || (currentUser as any)?.institution?.logo || (currentUser as any)?.profilePicture || (currentUser as any)?.logo;
+  const currentUserIsWorker = !!(currentUser as any)?.worker || !!(currentUser as any)?.firstName;
 
   // Build sender info for optimistic updates
   const senderInfo: MessageUser = useMemo(() => ({
@@ -73,7 +70,9 @@ export default function ChatWindow({ conversation, onBack }: ChatWindowProps) {
   const name = isWorker
     ? `${otherUser?.worker?.firstName} ${otherUser?.worker?.lastName}`
     : otherUser?.institution?.institutionName || "Unknown";
-  const avatar = isWorker ? otherUser?.worker?.profilePicture : otherUser?.institution?.logo;
+  const avatar = isWorker
+    ? (otherUser?.worker?.profilePicture || (otherUser as any)?.profilePicture)
+    : (otherUser?.institution?.logo || (otherUser as any)?.logo);
 
   // Auto-scroll to bottom
   const scrollToBottom = () => {
@@ -218,43 +217,47 @@ export default function ChatWindow({ conversation, onBack }: ChatWindowProps) {
             const isMe = message.senderId === currentUserId;
 
             return (
-              <div key={message.id} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
-                <div className={`flex items-end gap-2 max-w-[70%] ${isMe ? "flex-row-reverse" : ""}`}>
-                  {/* Avatar */}
-                  {isMe ? (
-                    // Current user's avatar
-                    <UserAvatar
-                      src={currentUserAvatar}
-                      name={currentUserIsWorker
-                        ? `${(currentUser as any)?.firstName || ''} ${(currentUser as any)?.lastName || ''}`.trim() || 'You'
-                        : (currentUser as any)?.institutionName || 'You'
-                      }
-                      size="sm"
-                    />
-                  ) : (
-                    // Other user's avatar
-                    <UserAvatar
-                      src={avatar}
-                      name={name}
-                      size="sm"
-                    />
-                  )}
+              <div key={message.id} className={`flex ${isMe ? "justify-start" : "justify-end"}`}>
+                <div className={`flex items-end gap-2 max-w-[70%] ${!isMe ? "flex-row-reverse" : "flex-row"}`}>
+                  <UserAvatar
+                    src={isMe ? currentUserAvatar : avatar}
+                    name={isMe
+                      ? (currentUserIsWorker
+                        ? `${(currentUser as any)?.worker?.firstName || (currentUser as any)?.firstName || ''} ${(currentUser as any)?.worker?.lastName || (currentUser as any)?.lastName || ''}`
+                        : (currentUser as any)?.institution?.institutionName || (currentUser as any)?.institutionName || 'You')
+                      : name
+                    }
+                    size="sm"
+                  />
 
                   {/* Message bubble */}
-                  <div className="flex flex-col">
+                  <div className="flex flex-col relative group">
                     <div
-                      className={`rounded-2xl px-4 py-2 ${isMe
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-card-dark border border-card-border"
+                      className={`rounded-2xl px-4 py-2 relative ${isMe
+                        ? "bg-primary text-primary-foreground rounded-tl-2xl rounded-bl-none ml-2"
+                        : "bg-muted text-foreground rounded-tr-2xl rounded-br-none mr-2"
                         }`}
                     >
-                      <p className="text-sm wrap-break-word">{message.content}</p>
+                      {/* Tail for Me (Left) - Green */}
+                      {isMe && (
+                        <svg className="absolute bottom-0 -left-2 w-3 h-3 text-primary fill-current" viewBox="0 0 10 10">
+                          <path d="M10 0 Q10 10 0 10 L10 10 Z" />
+                        </svg>
+                      )}
+                      {/* Tail for Them (Right) - Gray */}
+                      {!isMe && (
+                        <svg className="absolute bottom-0 -right-2 w-3 h-3 fill-muted transform scale-x-[-1]" viewBox="0 0 10 10" style={{ color: "hsl(var(--muted))" }}>
+                          <path d="M10 0 Q10 10 0 10 L10 10 Z" />
+                        </svg>
+                      )}
+
+                      <p className="text-sm wrap-break-word whitespace-pre-wrap">{message.content}</p>
                     </div>
-                    <div className={`flex items-center gap-1 mt-1 px-2 ${isMe ? "justify-end" : ""}`}>
+                    <div className={`flex items-center gap-1 mt-1 px-2 ${!isMe ? "justify-end" : ""}`}>
                       <span className="text-xs text-muted-foreground">
                         {new Date(message.createdAt).toLocaleString(i18n.language, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                       </span>
-                      <MessageStatus status={message.status} isOwnMessage={isMe} />
+                      {isMe && <MessageStatus status={message.status} isOwnMessage={isMe} />}
                     </div>
                   </div>
                 </div>

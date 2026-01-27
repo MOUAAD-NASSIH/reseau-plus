@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Star, MessageSquare, Send } from "lucide-react";
+import { Star, MessageSquare, Send, Trophy } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ReviewsGlobalStats } from "@/components/institution/reviews/ReviewsGlobalStats";
 import { PendingReviews } from "@/components/institution/reviews/PendingReviews";
@@ -27,6 +27,16 @@ const InstitutionReviews = () => {
   return (
     <div className="space-y-8 p-1">
       {/* Header / Stats Section */}
+      <div className="flex flex-col gap-2 p-4">
+        <h1 className="text-3xl font-black font-spline tracking-tight flex items-center gap-3">
+          <Trophy className="h-8 w-8 text-primary" />
+          {t("REVIEWS.TITLE")}
+        </h1>
+        <p className="text-muted-foreground">
+          {t("REVIEWS.SUBTITLE")}
+        </p>
+      </div>
+
       <div className="space-y-6">
         <ReviewsGlobalStats
           stats={stats}
@@ -43,9 +53,9 @@ const InstitutionReviews = () => {
       </div>
 
       {/* Main Tabs Section */}
-      <div className="bg-card/30 backdrop-blur-md rounded-2xl border border-border/40 p-1">
+      <div className="bg-card/30 backdrop-blur-md rounded-2xl border border-border/40">
         <Tabs defaultValue="received" className="w-full">
-          <div className="px-5 pt-5 pb-1 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="px-2 sm:px-5 pt-2 sm:pt-5 pb-1 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <TabsList className="bg-muted/50 p-1 rounded-xl">
               <TabsTrigger
                 value="received"
@@ -68,13 +78,13 @@ const InstitutionReviews = () => {
                 <span className="sm:hidden">{t("REVIEWS.TABS.WRITTEN")}</span>
               </TabsTrigger>
             </TabsList>
-            <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground bg-muted/30 px-3 py-1.5 rounded-full border border-border/40">
+            <div className="flex items-center justify-center gap-2 text-xs font-bold text-muted-foreground bg-muted/30 px-3 py-1.5 rounded-full border border-border/40">
               <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
               {totalReviews} {t("REVIEWS.SUMMARY.TOTAL_REVIEWS")}
             </div>
           </div>
 
-          <div className="p-6">
+          <div className="p-2 sm:p-6">
             <TabsContent
               value="received"
               className="mt-0 focus-visible:outline-none focus-visible:ring-0"

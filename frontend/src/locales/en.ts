@@ -33,6 +33,8 @@ export const en = {
             CONFIRM: "Confirm",
             PAID: "Paid",
             REVIEW: "Review",
+            SUBMIT: "Submit",
+            SUBMITTING: "Submitting...",
             ANONYMOUS: "Anonymous",
             COMPLETED_MISSION: "Completed Mission",
             MISSION: "Mission",
@@ -1128,6 +1130,23 @@ export const en = {
                 COMMENT_OPTIONAL: "Optional",
                 COMMENT_PLACEHOLDER: "Describe the worker's performance, punctuality, and professional attitude...",
                 SUBMITTING: "Submitting..."
+            },
+            FORM: {
+                TITLE: "Review",
+                REVIEWING_WORKER: "Reviewing",
+                RATING_LABEL: "Your overall rating",
+                FEEDBACK_LABEL: "Detailed feedback",
+                OPTIONAL: "(Optional)",
+                PLACEHOLDER: "Share your experience with this worker...",
+                SUBMIT: "Submit Review",
+                SUBMITTING: "Submitting...",
+                SUBMIT_SUCCESS: "Review submitted successfully",
+                SUBMIT_ERROR: "Error submitting review"
+            },
+            TOASTS: {
+                SUCCESS_TITLE: "Review submitted!",
+                SUCCESS_DESC: "Thank you for your feedback.",
+                ERROR: "Error submitting review."
             }
         },
         INSTITUTION_PROFILE: {

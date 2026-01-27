@@ -2,6 +2,7 @@ import { Bell, Check, Trash2, ExternalLink, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { EmptyState } from "@/components/common/EmptyState";
 import { NOTIFICATION_METADATA } from "@/features/hooks/InstitutionHooks/useInstitutionNotifications";
 import type { Notification } from "@/types/notification.types";
 
@@ -26,22 +27,11 @@ export function NotificationsList({
 }: NotificationsListProps) {
   if (notifications.length === 0) {
     return (
-      <div className="py-20 flex flex-col items-center justify-center text-center space-y-4 bg-muted/20 border-2 border-dashed border-border/60 rounded-3xl animate-in zoom-in-95 duration-500">
-        <div className="relative">
-          <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full" />
-          <div className="relative h-24 w-24 rounded-full bg-background border shadow-2xl flex items-center justify-center">
-            <Bell className="h-12 w-12 text-primary" />
-          </div>
-        </div>
-        <div className="space-y-1">
-          <h3 className="text-xl font-bold text-foreground">
-            {t("NOTIFICATIONS.EMPTY.TITLE")}
-          </h3>
-          <p className="text-muted-foreground max-w-xs mx-auto">
-            {t("NOTIFICATIONS.EMPTY.SUBTITLE")}
-          </p>
-        </div>
-      </div>
+      <EmptyState
+        icon={Bell}
+        title={t("NOTIFICATIONS.EMPTY.TITLE")}
+        description={t("NOTIFICATIONS.EMPTY.SUBTITLE")}
+      />
     );
   }
 

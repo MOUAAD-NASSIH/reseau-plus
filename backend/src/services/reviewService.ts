@@ -106,16 +106,18 @@ export const createReview = async (
         select: {
           id: true,
           email: true,
-          worker: { select: { firstName: true, lastName: true } },
-          institution: { select: { institutionName: true } }
+          profilePicture: true,
+          worker: { select: { firstName: true, lastName: true, speciality: true } },
+          institution: { select: { institutionName: true, logo: true } }
         }
       },
       reviewee: {
         select: {
           id: true,
           email: true,
-          worker: { select: { firstName: true, lastName: true } },
-          institution: { select: { institutionName: true } }
+          profilePicture: true,
+          worker: { select: { firstName: true, lastName: true, speciality: true } },
+          institution: { select: { institutionName: true, logo: true } }
         }
       },
       missionAssignment: {
@@ -154,8 +156,9 @@ export const getReviewsReceived = async (userId: number) => {
         select: {
           id: true,
           email: true,
-          worker: { select: { firstName: true, lastName: true } },
-          institution: { select: { institutionName: true } }
+          profilePicture: true,
+          worker: { select: { firstName: true, lastName: true, speciality: true } },
+          institution: { select: { institutionName: true, logo: true } }
         }
       },
       missionAssignment: {
@@ -179,8 +182,9 @@ export const getReviewsWritten = async (userId: number) => {
         select: {
           id: true,
           email: true,
-          worker: { select: { firstName: true, lastName: true } },
-          institution: { select: { institutionName: true } }
+          profilePicture: true,
+          worker: { select: { firstName: true, lastName: true, speciality: true } },
+          institution: { select: { institutionName: true, logo: true } }
         }
       },
       missionAssignment: {
@@ -229,7 +233,7 @@ export const getWorkerReviews = async (
         reviewer: {
           select: {
             id: true,
-            institution: { select: { institutionName: true } }
+            institution: { select: { institutionName: true, logo: true } }
           }
         },
         missionAssignment: {
@@ -292,7 +296,8 @@ export const getInstitutionReviews = async (
         reviewer: {
           select: {
             id: true,
-            worker: { select: { firstName: true, lastName: true } }
+            profilePicture: true,
+            worker: { select: { firstName: true, lastName: true, speciality: true } }
           }
         },
         missionAssignment: {
@@ -350,16 +355,18 @@ export const getAllReviews = async (filters?: ReviewFilters, page = 1, limit = 1
           select: {
             id: true,
             email: true,
-            worker: { select: { firstName: true, lastName: true } },
-            institution: { select: { institutionName: true } }
+            profilePicture: true,
+            worker: { select: { firstName: true, lastName: true, speciality: true } },
+            institution: { select: { institutionName: true, logo: true } }
           }
         },
         reviewee: {
           select: {
             id: true,
             email: true,
-            worker: { select: { firstName: true, lastName: true } },
-            institution: { select: { institutionName: true } }
+            profilePicture: true,
+            worker: { select: { firstName: true, lastName: true, speciality: true } },
+            institution: { select: { institutionName: true, logo: true } }
           }
         },
         missionAssignment: {
@@ -397,16 +404,18 @@ export const getReviewById = async (id: number) => {
         select: {
           id: true,
           email: true,
-          worker: { select: { firstName: true, lastName: true } },
-          institution: { select: { institutionName: true } }
+          profilePicture: true,
+          worker: { select: { firstName: true, lastName: true, speciality: true } },
+          institution: { select: { institutionName: true, logo: true } }
         }
       },
       reviewee: {
         select: {
           id: true,
           email: true,
-          worker: { select: { firstName: true, lastName: true } },
-          institution: { select: { institutionName: true } }
+          profilePicture: true,
+          worker: { select: { firstName: true, lastName: true, speciality: true } },
+          institution: { select: { institutionName: true, logo: true } }
         }
       },
       missionAssignment: {

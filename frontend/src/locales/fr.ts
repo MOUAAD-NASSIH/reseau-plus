@@ -33,6 +33,8 @@ export const fr = {
             CONFIRM: "Confirmer",
             PAID: "Payé",
             REVIEW: "Évaluer",
+            SUBMIT: "Soumettre",
+            SUBMITTING: "Envoi...",
             ANONYMOUS: "Anonyme",
             COMPLETED_MISSION: "Mission terminée",
             MISSION: "Mission",
@@ -1129,6 +1131,24 @@ export const fr = {
                 COMMENT_OPTIONAL: "Optionnel",
                 COMMENT_PLACEHOLDER: "Décrivez la performance, la ponctualité et l'attitude professionnelle de l'intervenant...",
                 SUBMITTING: "Envoi..."
+            },
+            FORM: {
+                TITLE: "Évaluer",
+                REVIEWING_WORKER: "Notation de",
+                RATING_LABEL: "Votre note globale",
+                FEEDBACK_LABEL: "Commentaire détaillé",
+                OPTIONAL: "(Optionnel)",
+                PLACEHOLDER: "Partagez votre expérience avec cet intervenant...",
+                SUBMIT: "Envoyer l'avis",
+                SUBMITTING: "Envoi...",
+                SUBMIT_SUCCESS: "Avis envoyé avec succès",
+                SUBMIT_ERROR: "Erreur lors de l'envoi de l'avis"
+
+            },
+            TOASTS: {
+                SUCCESS_TITLE: "Avis soumis !",
+                SUCCESS_DESC: "Merci pour votre retour.",
+                ERROR: "Erreur lors de la soumission."
             }
         },
         INSTITUTION_PROFILE: {
