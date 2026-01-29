@@ -15,7 +15,6 @@ export function AdminReviewCard({ review }: AdminReviewCardProps) {
     
     const reviewerName = `${reviewer?.firstName || ''} ${reviewer?.lastName || ''}`.trim() || reviewer?.email;
     const revieweeName = `${reviewee?.firstName || ''} ${reviewee?.lastName || ''}`.trim() || reviewee?.email;
-
     return (
         <Card className="group border-border/40 hover:border-primary/20 transition-all duration-300 bg-card/60 backdrop-blur-xl overflow-hidden rounded-3xl">
             <CardContent className="p-0">
@@ -24,6 +23,7 @@ export function AdminReviewCard({ review }: AdminReviewCardProps) {
                     <div className="w-full lg:w-80 p-6 bg-muted/30 border-b lg:border-b-0 lg:border-r border-border/40 flex flex-col gap-6">
                         {/* Reviewer */}
                         <div className="flex items-center gap-3">
+                            
                             <Avatar className="h-10 w-10 ring-2 ring-primary/5">
                                 <AvatarImage src={reviewer?.profilePicture} />
                                 <AvatarFallback className="bg-primary/5 text-primary">

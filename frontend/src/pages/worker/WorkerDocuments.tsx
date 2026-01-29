@@ -457,7 +457,7 @@ export default function WorkerDocuments() {
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center gap-2 mb-1 flex-wrap">
                                                     <h4 className="text-foreground font-bold text-base">
-                                                        {doc.type}
+                                                        {t(`WORKER_DOCUMENTS.DIALOG.TYPES.${doc.type}` as any) || doc.type}
                                                     </h4>
                                                     {doc.title && (
                                                         <span className="text-sm text-muted-foreground font-medium truncate max-w-[200px]">

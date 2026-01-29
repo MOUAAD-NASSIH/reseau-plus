@@ -5,6 +5,14 @@ export const fr = {
             TAGLINE: "Mise en relation des travailleurs indépendants et des établissements."
         },
         COMMON: {
+            UNKNOWN: "Inconnu",
+            GENERAL_SOCIAL_WORK: "Travail Social Général",
+            INSTITUTION: "Institution",
+            UNTITLED_MISSION: "Mission Sans Titre",
+            UNTITLED_APPLICATION: "Candidature Sans Titre",
+            UNKNOWN_INSTITUTION: "Institution Inconnue",
+            THERE: "là",
+            LOADING: "Chargement...",
             UNEXPECTED_ERROR: "Une erreur inattendue s'est produite. Veuillez réessayer.",
             PASSWORD_STRENGTH: {
                 STRENGTH_LABEL: "Force du mot de passe",
@@ -1187,6 +1195,20 @@ export const fr = {
                 NO_COMMENT: "Aucun commentaire fourni.",
                 SEARCH_PLACEHOLDER: "Rechercher des avis..."
             },
+            ADMIN_CARD: {
+                MISSION_CONTEXT: "Contexte de la Mission",
+                MISSION_TITLE: "Titre de la Mission",
+                LOCATION: "Lieu",
+                PARTICIPANTS: "Participants",
+                REVIEWS_EXCHANGED: "{{count}} avis échangé",
+                REVIEWS_EXCHANGED_plural: "{{count}} avis échangés",
+                REVIEWER: "Évaluateur",
+                REVIEWEE: "Évalué",
+                NO_COMMENT: "Aucun commentaire fourni.",
+                UNTITLED_MISSION: "Mission Sans Titre",
+                WORKER: "Intervenant",
+                INSTITUTION: "Institution"
+            },
             PENDING: {
                 TITLE: "Intervenants à évaluer",
                 SUBTITLE: "Laissez un avis pour les intervenants ayant terminé des missions",
@@ -1424,7 +1446,13 @@ export const fr = {
                 ACTION_TYPE: "Type d'Action",
                 ALL_ACTIONS: "Toute les Actions",
                 CLEAR: "Effacer les Filtres",
-                FOUND: "{{count}} journal(aux) trouvé(s)"
+                FOUND: "{{count}} journal(aux) trouvé(s)",
+                PERIOD: "Période",
+                ALL_TIME: "Tout le temps",
+                TODAY: "Aujourd'hui",
+                YESTERDAY: "Hier",
+                LAST_7_DAYS: "7 derniers jours",
+                LAST_30_DAYS: "30 derniers jours"
             },
             LIST: {
                 TITLE: "Journaux Système",
@@ -1432,7 +1460,7 @@ export const fr = {
                     ID: "ID",
                     ACTION: "ACTION",
                     ADMIN: "ADMIN",
-                    TARGET: "UTILISATEUR CIBLE",
+                    TARGET: "CIBLE",
                     DETAILS: "DÉTAILS",
                     DATE: "DATE",
                     ACTIONS: "ACTIONS"
@@ -1458,8 +1486,36 @@ export const fr = {
                 ADMIN_ID: "ID de l'Admin",
                 TARGET_USER: "ID de l'Utilisateur Cible",
                 DETAILS: "Détails",
-                CREATED_AT: "Horodatage"
+                CREATED_AT: "Horodatage",
+                NO_CONTEXT: "Aucun contexte supplémentaire fourni pour cette action.",
+                REJECTION_REASON: "Motif de rejet",
+                EXECUTED_BY: "Exécuté par",
+                CONTEXT_DATA: "Données de contexte",
+                ADDITIONAL_DETAILS: "Détails supplémentaires",
+                AFFECTED_DOCUMENT: "Document concerné",
+                AFFECTED_MISSION: "Mission concernée"
             }
+        },
+        ADMIN_MISSIONS: {
+            TITLE: "Aperçu des Missions",
+            SUBTITLE: "Surveillez et gérez toutes les activités de mission sur la plateforme.",
+            SEARCH_PLACEHOLDER: "Rechercher par titre, institution ou lieu...",
+            FILTERS: {
+                ALL: "Tous les Statuts",
+                OPEN: "Ouvert",
+                ONGOING: "En cours",
+                CLOSED: "Fermé",
+                SPECIALITY: "Spécialité",
+                ALL_SPECIALITIES: "Toutes les Spécialités",
+                URGENCY: "Urgence",
+                ALL_URGENCY: "Toutes les Urgences",
+                LOW: "Faible",
+                MEDIUM: "Moyen",
+                HIGH: "Élevé"
+            },
+            NO_MISSIONS: "Aucune mission trouvée",
+            NO_MISSIONS_DESC: "Aucune mission ne correspond à vos critères de filtrage actuels. Essayez d'ajuster vos filtres ou vos termes de recherche.",
+            CLEAR_FILTERS: "Effacer les Filtres"
         },
         ADMIN_PROFILE: {
             TITLE: "Profil Administrateur",
@@ -1602,7 +1658,9 @@ export const fr = {
                     PIC_UPLOAD_SUCCESS: "Photo de profil mise à jour",
                     PIC_UPLOAD_DESC: "Votre photo de profil a été téléchargée avec succès.",
                     PIC_DELETE_SUCCESS: "Photo de profil supprimée",
-                    PIC_DELETE_DESC: "Votre photo de profil a été supprimée."
+                    PIC_DELETE_DESC: "Votre photo de profil a été supprimée.",
+                    UPLOAD_ERROR: "Échec du téléchargement de la photo",
+                    DELETE_ERROR: "Échec de la suppression de la photo"
                 }
             },
 
@@ -1862,7 +1920,8 @@ export const fr = {
                 REQUIREMENTS: {
                     TITLE: "Exigences de la Mission",
                     REQUIRED_SPECIALTY: "Spécialité Requise",
-                    FOCUS_DOMAINS: "Domaines Cibles",
+                    PRIMARY_SPECIALITY: "Spécialité Principale",
+                    FOCUS_DOMAINS: "Domaines de Concentration",
                     MANDATORY_MSG: "Exigence obligatoire pour cette mission"
                 },
                 APPLICATION_STATUS: {
@@ -2171,6 +2230,6 @@ export const fr = {
                 TITLE: "Vous y êtes presque !",
                 MESSAGE: "Notre équipe examine votre profil et vos documents. Cela prend généralement 24 à 48 heures. Nous vous informerons dès que votre compte sera approuvé."
             }
-        }
+        },
     }
 };

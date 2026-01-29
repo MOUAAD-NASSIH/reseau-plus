@@ -87,11 +87,12 @@ export const getAdminLogs = async (
                     select: { 
                         id: true, 
                         email: true,
+                        role: { select: { name: true } },
                         worker: { select: { firstName: true, lastName: true } },
                         institution: { select: { institutionName: true } }
                     } 
                 },
-                targetDocument: { select: { id: true, type: true, workerId: true } },
+                targetDocument: { select: { id: true, type: true, workerId: true, fileUrl: true } },
                 targetReview: { select: { id: true, rating: true } },
                 targetMission: { select: { id: true, title: true } },
             },

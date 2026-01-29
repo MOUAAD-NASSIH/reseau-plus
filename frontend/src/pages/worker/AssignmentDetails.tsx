@@ -500,9 +500,9 @@ export default function AssignmentDetails() {
                             <CardContent className="p-6 space-y-6">
                                 {/* Speciality */}
                                 <div>
-                                    <h4 className="text-sm font-bold font-spline uppercase tracking-wider text-muted-foreground mb-3">Primary Speciality</h4>
+                                    <h4 className="text-sm font-bold font-spline uppercase tracking-wider text-muted-foreground mb-3">{t("ASSIGNMENT_DETAILS.REQUIREMENTS.PRIMARY_SPECIALITY")}</h4>
                                     <Badge variant="outline" className="px-3 py-1 bg-background">
-                                        {mission.requiredSpeciality?.name || "General Social Work"}
+                                        {mission.requiredSpeciality?.name || t("COMMON.GENERAL_SOCIAL_WORK")}
                                     </Badge>
                                 </div>
 

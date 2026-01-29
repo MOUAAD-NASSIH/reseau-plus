@@ -8,21 +8,34 @@ export function useAdminLogs() {
     const [dateFilter, setDateFilter] = useState<string>("ALL");
     const [selectedLog, setSelectedLog] = useState<AdminLog | null>(null);
     const [dialogOpen, setDialogOpen] = useState(false);
+    
+    // Pagination state
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
 
-    // Fetch data
-    const { data: logsData, isLoading } = useGetAdminLogsQuery(
-        actionTypeFilter !== "ALL" ? { actionType: actionTypeFilter } : undefined
-    );
+    // Fetch data with pagination
+    const { data: logsData, isLoading } = useGetAdminLogsQuery({
+        actionType: actionTypeFilter !== "ALL" ? actionTypeFilter : undefined,
+        page,
+        limit: pageSize,
+        // Backend filtering can be added here if the API supports it
+        // For now filtering is client-side for search/date but pagination is server-side
+        // Note: Ideally search/date filtering should also be server-side for true pagination
+    });
 
     const allLogs = useMemo(() => logsData?.data || [], [logsData?.data]);
+    const pagination = logsData?.pagination;
 
-    // Get unique action types for filter dropdown
+    // Get unique action types from all potential logs (optimistic or fetched)
+    // Note: With server-side pagination this might only show types from current page
+    // Using a separate metadata endpoint for filters would be better, but we'll use what we have
     const actionTypes = useMemo(() => {
         const types = new Set(allLogs.map((log) => log.actionType));
         return Array.from(types).sort();
     }, [allLogs]);
 
-    // Filtered logs
+    // Client-side filtering logic remains for search/date until API supports it
+    // If API supports search/date, these should be passed to useGetAdminLogsQuery instead
     const filteredLogs = useMemo(() => {
         let logs = allLogs;
 
@@ -34,7 +47,7 @@ export function useAdminLogs() {
                     log.adminId.toString().includes(query) ||
                     log.targetUserId?.toString().includes(query) ||
                     log.actionType.toLowerCase().includes(query) ||
-                    log.details?.toLowerCase().includes(query) ||
+                    log.reason?.toLowerCase().includes(query) ||
                     log.admin?.email.toLowerCase().includes(query) ||
                     log.targetUser?.email.toLowerCase().includes(query)
             );
@@ -53,7 +66,7 @@ export function useAdminLogs() {
         }
 
         return logs;
-    }, [allLogs, searchQuery]);
+    }, [allLogs, searchQuery, dateFilter]);
 
     // Calculate stats
     const stats = useMemo(() => {
@@ -87,13 +100,13 @@ export function useAdminLogs() {
         const mostFrequentAction = Object.entries(actionCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || "N/A";
 
         return {
-            total: allLogs.length,
+            total: pagination?.total || allLogs.length, // Use server total if available
             today: todayCount,
             yesterday: yesterdayCount,
             last7Days: sevenDaysCount,
             mostFrequentAction: mostFrequentAction.replace(/_/g, " ")
         };
-    }, [allLogs]);
+    }, [allLogs, pagination]);
 
     const handleViewLog = (log: AdminLog) => {
         setSelectedLog(log);
@@ -126,6 +139,12 @@ export function useAdminLogs() {
         stats,
         handleViewLog,
         clearFilters,
-        hasActiveFilters
+        hasActiveFilters,
+        // Pagination exports
+        page,
+        setPage,
+        pageSize,
+        setPageSize,
+        pagination
     };
 }

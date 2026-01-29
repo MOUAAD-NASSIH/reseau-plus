@@ -15,7 +15,7 @@ export default function AdminProfile() {
     const stats = dashboardData?.data;
 
     const formatDate = (dateString?: string) => {
-        if (!dateString) return "Unknown";
+        if (!dateString) return t("COMMON.UNKNOWN");
         return new Date(dateString).toLocaleDateString(undefined, {
             year: "numeric",
             month: "long",
@@ -24,7 +24,7 @@ export default function AdminProfile() {
     };
 
     const getRoleName = () => {
-        if (!user) return "Unknown";
+        if (!user) return t("COMMON.UNKNOWN");
         if ("role" in user && user.role) {
             if (typeof user.role === "object" && "name" in user.role) {
                 return user.role.name;
@@ -35,14 +35,14 @@ export default function AdminProfile() {
     };
 
     const getEmail = () => {
-        if (!user) return "Unknown";
+        if (!user) return t("COMMON.UNKNOWN");
         if ("email" in user) {
             return user.email;
         }
         if ("user" in user && user.user && "email" in user.user) {
             return user.user.email;
         }
-        return "Unknown";
+        return t("COMMON.UNKNOWN");
     };
 
     const getCreatedAt = () => {

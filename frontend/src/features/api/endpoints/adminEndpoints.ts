@@ -43,7 +43,7 @@ export interface AdminLog {
     adminId: number;
     actionType: string;
     targetUserId?: number | null;
-    details?: string | null;
+    reason?: string | null;
     createdAt: string;
     // Joined relations
     admin?: {
@@ -53,12 +53,14 @@ export interface AdminLog {
     targetUser?: {
         id: number;
         email: string;
+        role?: { name: string };
         worker?: { firstName: string; lastName: string };
         institution?: { institutionName: string };
     } | null;
     targetDocument?: {
         id: number;
         type: string;
+        fileUrl?: string;
     } | null;
     targetMission?: {
         id: number;

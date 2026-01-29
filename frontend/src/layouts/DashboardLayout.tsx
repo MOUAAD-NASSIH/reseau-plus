@@ -240,7 +240,6 @@ export default function DashboardLayout({
 
                             {/* Notification bell */}
                             <NotificationBell />
-
                             {/* Theme toggle */}
                             <ThemeToggle />
 
