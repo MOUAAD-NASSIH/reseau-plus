@@ -1,17 +1,13 @@
-/**
- * Stripe Checkout Form Component
- * Handles the payment form using Stripe Elements
- */
-
-import { useState } from "react";
+import React, { useState } from "react";
 import {
     PaymentElement,
     useStripe,
     useElements,
 } from "@stripe/react-stripe-js";
-import { Loader2, CreditCard, Lock } from "lucide-react";
+import { Loader2, ShieldCheck, ArrowRight, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useTranslation } from "react-i18next";
 
 interface StripeCheckoutFormProps {
     amount: number;
@@ -22,6 +18,7 @@ interface StripeCheckoutFormProps {
 export function StripeCheckoutForm({ amount, onSuccess, onError }: StripeCheckoutFormProps) {
     const stripe = useStripe();
     const elements = useElements();
+    const { t } = useTranslation();
     const [isProcessing, setIsProcessing] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -36,7 +33,6 @@ export function StripeCheckoutForm({ amount, onSuccess, onError }: StripeCheckou
         e.preventDefault();
 
         if (!stripe || !elements) {
-            // Stripe.js hasn't loaded yet
             return;
         }
 
@@ -46,33 +42,22 @@ export function StripeCheckoutForm({ amount, onSuccess, onError }: StripeCheckou
         try {
             const { error, paymentIntent } = await stripe.confirmPayment({
                 elements,
-                confirmParams: {
-                    return_url: `${window.location.origin}/institution/payments/success`,
-                },
                 redirect: "if_required",
             });
 
             if (error) {
-                // Show error to customer
-                if (error.type === "card_error" || error.type === "validation_error") {
-                    setErrorMessage(error.message || "An error occurred with your payment.");
-                } else {
-                    setErrorMessage("An unexpected error occurred.");
-                }
-                onError(error.message || "Payment failed");
+                const msg = error.message || t("PAYMENT.ERRORS.GENERIC");
+                setErrorMessage(msg);
+                onError(msg);
             } else if (paymentIntent && paymentIntent.status === "succeeded") {
-                // Payment succeeded
                 onSuccess();
-            } else if (paymentIntent && paymentIntent.status === "requires_action") {
-                // 3D Secure or other authentication required
-                // Stripe will handle the redirect automatically
-                setErrorMessage("Additional authentication required. Please complete the verification.");
             } else {
-                // Payment is processing or requires further action
-                setErrorMessage("Payment is being processed. Please wait...");
+                setErrorMessage(t("PAYMENT.ERRORS.UNEXPECTED"));
+                onError("Payment status unexpected");
             }
         } catch {
-            setErrorMessage("An unexpected error occurred. Please try again.");
+            const msg = t("PAYMENT.ERRORS.UNEXPECTED");
+            setErrorMessage(msg);
             onError("Payment processing failed");
         } finally {
             setIsProcessing(false);
@@ -80,9 +65,15 @@ export function StripeCheckoutForm({ amount, onSuccess, onError }: StripeCheckou
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Payment Element */}
-            <div className="p-4 border rounded-lg bg-background">
+        <form onSubmit={handleSubmit} className="space-y-8">
+            <div className="bg-muted/5 p-5 rounded-xl border border-border/40">
+                <div className="flex items-center gap-2 mb-4 text-muted-foreground/80">
+                    <ShieldCheck className="h-4 w-4 text-primary/70" />
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                        {t("PAYMENT.SECURE_CHECKOUT")}
+                    </span>
+                </div>
+
                 <PaymentElement
                     options={{
                         layout: "tabs",
@@ -90,39 +81,37 @@ export function StripeCheckoutForm({ amount, onSuccess, onError }: StripeCheckou
                 />
             </div>
 
-            {/* Error Message */}
             {errorMessage && (
-                <Alert variant="destructive">
-                    <AlertDescription>{errorMessage}</AlertDescription>
+                <Alert variant="destructive" className="rounded-xl border-destructive/20 bg-destructive/5">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription className="text-xs font-semibold">
+                        {errorMessage}
+                    </AlertDescription>
                 </Alert>
             )}
 
-            {/* Security Notice */}
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Lock className="h-4 w-4" />
-                <span>Your payment is secured by Stripe</span>
-            </div>
-
-            {/* Submit Button */}
             <Button
                 type="submit"
-                className="w-full"
-                size="lg"
-                disabled={!stripe || !elements || isProcessing}
+                disabled={!stripe || isProcessing}
+                className="w-full h-10 rounded-lg text-sm font-bold font-spline shadow-md shadow-primary/20 hover:shadow-primary/30 hover:scale-[1.01] active:scale-[0.99] transition-all bg-primary text-primary-foreground group"
             >
                 {isProcessing ? (
-                    <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Processing Payment...
-                    </>
+                    <div className="flex items-center gap-2">
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <span>{t("PAYMENT.ACTIONS.PROCESSING")}</span>
+                    </div>
                 ) : (
-                    <>
-                        <CreditCard className="h-4 w-4 mr-2" />
-                        Pay {formatCurrency(amount)}
-                    </>
+                    <div className="flex items-center justify-center gap-2">
+                        <span>{t("PAYMENT.ACTIONS.PAY_NOW", { amount: formatCurrency(amount) })}</span>
+                        <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                    </div>
                 )}
             </Button>
+
+            <div className="flex items-center justify-center gap-2 text-[10px] font-bold text-muted-foreground uppercase tracking-widest pt-2">
+                <ShieldCheck className="h-3 w-3 text-primary/60" />
+                <span>{t("PAYMENT.SECURE_BY_STRIPE") || "Secure Payment by Stripe"}</span>
+            </div>
         </form>
     );
 }
-

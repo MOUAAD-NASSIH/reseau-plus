@@ -42,6 +42,7 @@ export const fr = {
             COMPLETED: "Terminé",
             FAILED: "Échoué",
             REMOTE: "À distance",
+            LOCATION: "Localisation",
             CURRENCY: "MAD",
             DETAILS: "Détails",
             VIEW_DETAILS: "Voir les détails",
@@ -138,6 +139,69 @@ export const fr = {
             PAYMENT_DESC: "Effectuer le paiement pour l'affectation",
             PAYMENT_HISTORY: "Historique des paiements",
             PAYMENT_HISTORY_DESC: "Consultez vos transactions de paiement"
+        },
+        PAYMENT: {
+            TITLE: "Paiement Sécurisé",
+            SUBTITLE: "Consultez les détails de votre mission et complétez votre paiement en toute sécurité.",
+            SECURE_CHECKOUT: "Paiement Sécurisé",
+            MISSION_REVIEW: "Récapitulatif",
+            SECURE_BY_STRIPE: "Paiement sécurisé par Stripe",
+            SUMMARY: {
+                TITLE: "Résumé du paiement",
+                SUBTOTAL: "Sous-total",
+                PLATFORM_FEE: "Frais de plateforme",
+                FEES_DEDUCTED: "Montant net pour l'intervenant",
+                TOTAL: "Montant Total",
+                SECURE_DESC: "Paiement crypté SSL 256 bits"
+            },
+            MISSION: {
+                TITLE: "Détails de la Mission",
+                WORKER: "Intervenant assigné",
+                SPECIALITY: "Spécialité",
+                DATES: "Dates de la mission",
+                REF: "Référence ID",
+                NOTE: "Votre paiement garantit une rémunération équitable pour un service dévoué."
+            },
+            CARDS: {
+                INSTANT: "Confirmation Instantanée",
+                INSTANT_DESC: "Traitement en Temps Réel",
+                SECURITY: "Sécurité Bancaire",
+                SUPPORT: "Support 24/7",
+                GUARANTEE: "Satisfait ou Remboursé"
+            },
+            SUCCESS: {
+                BADGE: "Transaction Terminée",
+                TITLE: "Paiement Réussi !",
+                SUBTITLE: "Le paiement a été traité avec succès. Vous pouvez maintenant télécharger le reçu.",
+                ORDER_DETAILS: "Résumé du Reçu",
+                INSTITUTION: "Institution",
+                YOUR_INSTITUTION: "Votre Institution",
+                PROFESSIONAL: "Professionnel",
+                ASSIGNED_WORKER: "Intervenant Assigné",
+                DATE: "Date",
+                TOTAL_PAID: "Total Payé",
+                GOTO_HISTORY: "Voir l'Historique des Paiements",
+                DOWNLOAD_RECEIPT: "Télécharger le Reçu",
+                EMAIL_SENT: "Une copie du reçu a été envoyée à votre email.",
+                ALREADY_PAID: "Paiement Effectué",
+                ALREADY_PAID_DESC: "Cette affectation a déjà été payée.",
+                VIEW_ASSIGNMENT: "Voir l'affectation",
+                VIEW_HISTORY: "Voir l'historique",
+                NEXT_STEPS: "Prochaines étapes ?",
+                NEXT_STEPS_DESC: "L'intervenant a été informé du paiement. Vous pouvez suivre cette mission dans votre historique."
+            },
+            ERROR: {
+                TITLE: "Échec du Paiement",
+                DESC: "Une erreur s'est produite lors du paiement. Veuillez réessayer.",
+                TRY_AGAIN: "Réessayer",
+                SUPPORT: "Contacter le support"
+            },
+            ACTIONS: {
+                PAY_NOW: "Payer maintenant",
+                PROCEED: "Procéder au paiement",
+                CANCEL: "Annuler et revenir",
+                PROCESSING: "Traitement en cours..."
+            }
         },
         DASHBOARD_NAV: {
             DASHBOARD: "Tableau de bord",
@@ -1057,6 +1121,7 @@ export const fr = {
                 VS_LAST_MONTH: "vs mois dernier"
             },
             TABLE: {
+                TITLE: "Paiements",
                 COLUMNS: {
                     STATUS: "STATUT",
                     MISSION: "NOM DE LA MISSION",

@@ -1,8 +1,10 @@
-
+import React from "react";
 import { useTranslation } from "react-i18next";
-import { CheckCircle2, Clock, Globe, TrendingUp, TrendingDown } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CheckCircle2, Clock, Globe } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 interface PaymentKPIsProps {
     totals: {
@@ -19,79 +21,104 @@ export function PaymentKPIs({ totals, pendingCount, isLoading, formatCurrency }:
     const { t } = useTranslation();
 
     return (
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {/* TOTAL PAID */}
-            <Card className="border-border/40 shadow-xl shadow-primary/5 bg-card/60 backdrop-blur-xl group hover:shadow-2xl transition-all duration-300">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-xs font-bold text-muted-foreground uppercase tracking-widest opacity-70">
-                        {t("FINANCIAL.KPI.TOTAL_PAID")}
-                    </CardTitle>
-                    <div className="h-10 w-10 bg-emerald-500/10 text-emerald-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <CheckCircle2 className="h-5 w-5" />
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    {isLoading ? (
-                        <Skeleton className="h-10 w-32" />
-                    ) : (
-                        <p className="text-3xl font-black text-foreground tracking-tight">
-                            {formatCurrency(totals.totalPaid)}
-                        </p>
-                    )}
-                    <div className="flex items-center text-xs text-emerald-500 mt-2 font-bold bg-emerald-500/5 w-fit px-2 py-0.5 rounded-full">
-                        <TrendingUp className="h-3 w-3 mr-1" /> +12% <span className="ml-1 opacity-60 font-medium">{t("FINANCIAL.KPI.VS_LAST_MONTH")}</span>
-                    </div>
-                </CardContent>
-            </Card>
+            <StatCard
+                title={t("FINANCIAL.KPI.TOTAL_PAID")}
+                value={formatCurrency(totals.totalPaid)}
+                icon={<CheckCircle2 />}
+                iconColor="text-emerald-500"
+                trend="+12%"
+                trendUp={true}
+                description={t("FINANCIAL.KPI.VS_LAST_MONTH")}
+                isLoading={isLoading}
+            />
 
             {/* PENDING INVOICES */}
-            <Card className="border-border/40 shadow-xl shadow-primary/5 bg-card/60 backdrop-blur-xl group hover:shadow-2xl transition-all duration-300">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-xs font-bold text-muted-foreground uppercase tracking-widest opacity-70">
-                        {t("FINANCIAL.KPI.AWAITING_PAYMENT")}
-                    </CardTitle>
-                    <div className="h-10 w-10 bg-amber-500/10 text-amber-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <Clock className="h-5 w-5" />
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    {isLoading ? (
-                        <Skeleton className="h-10 w-32" />
-                    ) : (
-                        <p className="text-3xl font-black text-foreground tracking-tight">
-                            {formatCurrency(totals.totalPending)}
-                        </p>
-                    )}
-                    <p className="text-xs text-muted-foreground mt-2 font-bold bg-muted/50 w-fit px-2 py-0.5 rounded-full flex items-center gap-1.5">
-                        <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
-                        {t("FINANCIAL.KPI.INVOICES_COUNT", { count: pendingCount })}
-                    </p>
-                </CardContent>
-            </Card>
+            <StatCard
+                title={t("FINANCIAL.KPI.AWAITING_PAYMENT")}
+                value={formatCurrency(totals.totalPending)}
+                icon={<Clock />}
+                iconColor="text-amber-500"
+                description={t("FINANCIAL.KPI.INVOICES_COUNT", { count: pendingCount })}
+                isLoading={isLoading}
+            />
 
             {/* ACTIVE MISSIONS */}
-            <Card className="border-border/40 shadow-xl shadow-primary/5 bg-card/60 backdrop-blur-xl group hover:shadow-2xl transition-all duration-300">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-xs font-bold text-muted-foreground uppercase tracking-widest opacity-70">
-                        {t("FINANCIAL.KPI.ACTIVE_MISSIONS")}
-                    </CardTitle>
-                    <div className="h-10 w-10 bg-indigo-500/10 text-indigo-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <Globe className="h-5 w-5" />
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    {isLoading ? (
-                        <Skeleton className="h-10 w-16" />
-                    ) : (
-                        <p className="text-3xl font-black text-foreground tracking-tight">
-                            {totals.activeMissions}
-                        </p>
-                    )}
-                    <div className="flex items-center text-xs text-rose-500 mt-2 font-bold bg-rose-500/5 w-fit px-2 py-0.5 rounded-full">
-                        <TrendingDown className="h-3 w-3 mr-1" /> -2% <span className="ml-1 opacity-60 font-medium">{t("FINANCIAL.KPI.VS_LAST_MONTH")}</span>
-                    </div>
-                </CardContent>
-            </Card>
+            <StatCard
+                title={t("FINANCIAL.KPI.ACTIVE_MISSIONS")}
+                value={totals.activeMissions}
+                icon={<Globe />}
+                iconColor="text-indigo-500"
+                trend="-2%"
+                trendUp={false}
+                description={t("FINANCIAL.KPI.VS_LAST_MONTH")}
+                isLoading={isLoading}
+            />
         </div>
+    );
+}
+
+// Reusable StatCard to match DashboardStats exactly
+interface StatCardProps {
+    title: string;
+    value: React.ReactNode;
+    icon: React.ReactNode;
+    iconColor?: string;
+    description?: string;
+    trend?: string;
+    trendUp?: boolean;
+    className?: string;
+    isLoading?: boolean;
+}
+
+function StatCard({
+    title,
+    value,
+    icon,
+    iconColor = "text-primary",
+    description,
+    trend,
+    trendUp,
+    className,
+    isLoading
+}: StatCardProps) {
+    return (
+        <Card className={cn(
+            "relative overflow-hidden border-none shadow-md bg-card group transition-all hover:shadow-lg",
+            className
+        )}>
+            {/* Background watermark icon */}
+            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                {React.isValidElement(icon) ? React.cloneElement(icon as React.ReactElement<{ className?: string }>, {
+                    className: `w-24 h-24 ${iconColor} transform rotate-12`
+                }) : null}
+            </div>
+
+            <CardContent className="p-6">
+                <div className="flex items-start justify-between">
+                    <div className="space-y-4 relative z-10 w-full">
+                        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                            {title}
+                        </h3>
+                        <div className="flex items-baseline gap-2">
+                            <div className="text-3xl font-bold tracking-tight text-foreground">
+                                {isLoading ? <Skeleton className="h-8 w-32" /> : value}
+                            </div>
+                        </div>
+                        {(description || trend) && (
+                            <div className="flex items-center gap-2 text-xs">
+                                {trend && (
+                                    <Badge variant={trendUp ? "default" : "destructive"} className={cn("h-5 px-1.5 font-medium", trendUp ? "bg-green-500/15 text-green-700 dark:text-green-400 hover:bg-green-500/25" : "")}>
+                                        {trend}
+                                    </Badge>
+                                )}
+                                {description && <span className="text-muted-foreground font-medium">{description}</span>}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
     );
 }

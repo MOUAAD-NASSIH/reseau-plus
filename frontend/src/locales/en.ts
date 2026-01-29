@@ -42,6 +42,7 @@ export const en = {
             COMPLETED: "Completed",
             FAILED: "Failed",
             REMOTE: "Remote",
+            LOCATION: "Location",
             CURRENCY: "MAD",
             DETAILS: "Details",
             VIEW_DETAILS: "View details",
@@ -138,6 +139,69 @@ export const en = {
             PAYMENT_DESC: "Complete payment for assignment",
             PAYMENT_HISTORY: "Payment History",
             PAYMENT_HISTORY_DESC: "View your payment transactions"
+        },
+        PAYMENT: {
+            TITLE: "Secure Payment",
+            SUBTITLE: "Review your mission details and complete your payment securely.",
+            SECURE_CHECKOUT: "Secure Checkout",
+            MISSION_REVIEW: "Mission Review",
+            SECURE_BY_STRIPE: "Secure Payment by Stripe",
+            SUMMARY: {
+                TITLE: "Payment Summary",
+                SUBTOTAL: "Subtotal",
+                PLATFORM_FEE: "Platform Fee",
+                FEES_DEDUCTED: "Net amount for worker",
+                TOTAL: "Total Amount",
+                SECURE_DESC: "256-bit SSL Encrypted Payment"
+            },
+            MISSION: {
+                TITLE: "Mission Details",
+                WORKER: "Assigned Worker",
+                SPECIALITY: "Speciality",
+                DATES: "Mission Dates",
+                REF: "Reference ID",
+                NOTE: "Your payment ensures fair compensation for dedicated service."
+            },
+            CARDS: {
+                INSTANT: "Instant Confirmation",
+                INSTANT_DESC: "Real-time Processing",
+                SECURITY: "Bank-grade Security",
+                SUPPORT: "24/7 Support",
+                GUARANTEE: "Money-back Guarantee"
+            },
+            SUCCESS: {
+                BADGE: "Transaction Complete",
+                TITLE: "Payment Successful!",
+                SUBTITLE: "The payment has been processed successfully. You can now download the receipt.",
+                ORDER_DETAILS: "Receipt Summary",
+                INSTITUTION: "Institution",
+                YOUR_INSTITUTION: "Your Institution",
+                PROFESSIONAL: "Professional",
+                ASSIGNED_WORKER: "Assigned Worker",
+                DATE: "Date",
+                TOTAL_PAID: "Total Paid",
+                GOTO_HISTORY: "View Payment History",
+                DOWNLOAD_RECEIPT: "Download Receipt",
+                EMAIL_SENT: "A copy of the receipt was sent to your email.",
+                ALREADY_PAID: "Payment Completed",
+                ALREADY_PAID_DESC: "This assignment has already been paid.",
+                VIEW_ASSIGNMENT: "View Assignment",
+                VIEW_HISTORY: "View Payment History",
+                NEXT_STEPS: "What's next?",
+                NEXT_STEPS_DESC: "The worker has been notified of the payment. You can track this mission in your history."
+            },
+            ERROR: {
+                TITLE: "Payment Failed",
+                DESC: "Something went wrong during the payment process. Please try again.",
+                TRY_AGAIN: "Try Again",
+                SUPPORT: "Contact Support"
+            },
+            ACTIONS: {
+                PAY_NOW: "Pay Now",
+                PROCEED: "Proceed to pay",
+                CANCEL: "Cancel and Go Back",
+                PROCESSING: "Processing..."
+            }
         },
         DASHBOARD_NAV: {
             DASHBOARD: "Dashboard",
@@ -1056,6 +1120,7 @@ export const en = {
                 VS_LAST_MONTH: "vs last month"
             },
             TABLE: {
+                TITLE: "Payments",
                 COLUMNS: {
                     STATUS: "STATUS",
                     MISSION: "MISSION NAME",

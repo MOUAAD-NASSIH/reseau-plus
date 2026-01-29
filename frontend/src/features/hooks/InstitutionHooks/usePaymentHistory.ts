@@ -12,7 +12,38 @@ export const usePaymentHistory = () => {
   const { data: paymentsData, isLoading: paymentsLoading } = useGetPaymentsQuery({ limit: 100 });
   const { data: assignmentsData, isLoading: assignmentsLoading } = useGetInstitutionAssignmentsQuery();
 
-  const payments = useMemo(() => paymentsData?.data || [], [paymentsData]);
+  const payments = useMemo(() => {
+    const rawPayments = paymentsData?.data || [];
+
+    // Deduplicate payments: keep the most relevant one per assignment
+    const uniquePaymentsMap = new Map();
+
+    rawPayments.forEach((p: any) => {
+      const existing = uniquePaymentsMap.get(p.missionAssignmentId);
+
+      if (!existing) {
+        uniquePaymentsMap.set(p.missionAssignmentId, p);
+        return;
+      }
+
+      // Hierarchy: COMPLETED > PENDING with Intent > PENDING
+      if (p.status === 'COMPLETED' && existing.status !== 'COMPLETED') {
+        uniquePaymentsMap.set(p.missionAssignmentId, p);
+      } else if (p.status === 'PENDING' && existing.status === 'PENDING') {
+        // If both pending, prefer the one with a stripe ID
+        if (p.stripePaymentId && !existing.stripePaymentId) {
+          uniquePaymentsMap.set(p.missionAssignmentId, p);
+        } else if (p.stripePaymentId && existing.stripePaymentId) {
+          // If both have stripe ID, prefer the newer one
+          if (new Date(p.createdAt) > new Date(existing.createdAt)) {
+            uniquePaymentsMap.set(p.missionAssignmentId, p);
+          }
+        }
+      }
+    });
+
+    return Array.from(uniquePaymentsMap.values());
+  }, [paymentsData]);
   const assignments = useMemo(() => assignmentsData?.data || [], [assignmentsData]);
 
   const isLoading = paymentsLoading || assignmentsLoading;
@@ -23,10 +54,7 @@ export const usePaymentHistory = () => {
       // 1. Status Filter
       if (statusFilter !== "ALL") {
 
-        const isInitiated = (payment as any).stripePaymentId !== null;
-        const visualStatus = (payment.status === "PENDING" && isInitiated) ? "COMPLETED" : payment.status;
-
-        if (visualStatus !== statusFilter) return false;
+        if (payment.status !== statusFilter) return false;
       }
 
       // 2. Search Query (Mission Title or Worker Name)
@@ -47,13 +75,15 @@ export const usePaymentHistory = () => {
   }, [payments, statusFilter, searchQuery]);
 
   // Derived Data for KPIs
+  // Derived Data for KPIs
   const totals = useMemo(() => {
     const totalPaid = payments
-      .filter((p) => p.status === "COMPLETED" || (p as any).stripePaymentId !== null)
+      .filter((p) => p.status === "COMPLETED")
       .reduce((sum, p) => sum + p.amountTotal, 0);
 
+    // FIX: Include all pending payments regardless of stripe status
     const totalPending = payments
-      .filter((p) => p.status === "PENDING" && (p as any).stripePaymentId === null)
+      .filter((p) => p.status === "PENDING")
       .reduce((sum, p) => sum + p.amountTotal, 0);
 
     const activeMissions = assignments.filter((a) => a.status === "ACTIVE" || a.status === "ONGOING").length;
@@ -69,17 +99,17 @@ export const usePaymentHistory = () => {
 
       // 1. Check reactive global payments list (for real-time updates after payment)
       const paymentInGlobalList = payments.find(p => p.missionAssignmentId === assignment.id);
-      const isPaidOrInitiatedGlobal = paymentInGlobalList && (paymentInGlobalList.status === "COMPLETED" || (paymentInGlobalList as any).stripePaymentId !== null);
+      const isPaidGlobal = paymentInGlobalList && paymentInGlobalList.status === "COMPLETED";
 
-      if (isPaidOrInitiatedGlobal) return false;
+      if (isPaidGlobal) return false;
 
       // 2. Check robust nested payments list (source of truth from backend, includes all records)
       const paymentsForThisAssignment = assignment.payments || [];
-      const isPaidOrInitiatedNested = paymentsForThisAssignment.some(
-        p => p.status === "COMPLETED" || (p as any).stripePaymentId !== null
+      const isPaidNested = paymentsForThisAssignment.some(
+        p => p.status === "COMPLETED"
       );
 
-      return !isPaidOrInitiatedNested;
+      return !isPaidNested;
     });
   }, [assignments, payments]);
 

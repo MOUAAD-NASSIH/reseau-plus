@@ -300,17 +300,26 @@ export const updateAssignmentStatus = async (
                 const platformFee = Math.round(amount * PLATFORM_FEE_PERCENTAGE * 100) / 100;
                 const workerAmount = Math.round((amount - platformFee) * 100) / 100;
 
-                await tx.payment.create({
-                    data: {
-                        missionAssignmentId: savedAssignment.id,
-                        institutionId: savedAssignment.institutionId,
-                        workerId: savedAssignment.workerId,
-                        amountTotal: amount,
-                        platformFee: platformFee,
-                        workerAmount: workerAmount,
-                        status: 'PENDING'
+                // Check for existing payment to avoid duplicates
+                const existingPayment = await tx.payment.findFirst({
+                    where: {
+                        missionAssignmentId: savedAssignment.id
                     }
                 });
+
+                if (!existingPayment) {
+                    await tx.payment.create({
+                        data: {
+                            missionAssignmentId: savedAssignment.id,
+                            institutionId: savedAssignment.institutionId,
+                            workerId: savedAssignment.workerId,
+                            amountTotal: amount,
+                            platformFee: platformFee,
+                            workerAmount: workerAmount,
+                            status: 'PENDING'
+                        }
+                    });
+                }
             }
         } else if (newStatus === 'CANCELLED') {
             // Update mission status to CANCELLED

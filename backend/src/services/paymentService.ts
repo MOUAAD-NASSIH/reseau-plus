@@ -58,6 +58,15 @@ export const createPaymentRecord = async (
 ) => {
     const fees = calculateFees(amount);
 
+    // Check if payment already exists
+    const existingPayment = await prisma.payment.findFirst({
+        where: { missionAssignmentId: assignmentId }
+    });
+
+    if (existingPayment) {
+        return existingPayment;
+    }
+
     return await prisma.payment.create({
         data: {
             missionAssignmentId: assignmentId,
@@ -81,7 +90,7 @@ export const getPaymentById = async (id: number) => {
             missionAssignment: {
                 include: {
                     mission: true,
-                    worker: { include: { user: true } },
+                    worker: { include: { user: true, speciality: true } },
                     institution: { include: { user: true } }
                 }
             },
@@ -147,7 +156,7 @@ export const getPayments = async (filters?: PaymentFilters, page: number = 1, li
                 missionAssignment: {
                     include: {
                         mission: true,
-                        worker: { include: { user: true } }
+                        worker: { include: { user: true, speciality: true } }
                     }
                 },
                 institution: { include: { user: true } }
@@ -312,7 +321,7 @@ const handlePaymentSuccess = async (paymentIntent: Stripe.PaymentIntent) => {
             missionAssignment: {
                 include: {
                     mission: true,
-                    worker: { include: { user: true } },
+                    worker: { include: { user: true, speciality: true } },
                     institution: { include: { user: true } }
                 }
             }

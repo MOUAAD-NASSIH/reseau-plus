@@ -21,19 +21,16 @@ export default function PaymentHistory() {
   } = usePaymentHistory();
 
   return (
-    <div className="max-w-[1400px] mx-auto space-y-8 pb-8 font-spline">
+    <div className="max-w-[1400px] mx-auto space-y-8 pb-8">
       {/* HEADER */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div className="space-y-1">
-          <h1 className="text-4xl font-extrabold tracking-tight text-foreground lg:text-5xl">
+          <h1 className="text-3xl lg:text-4xl font-extrabold tracking-tight text-foreground font-spline">
             {t("FINANCIAL.TITLE")}
           </h1>
-          <p className="text-muted-foreground text-lg max-w-[600px]">
+          <p className="text-muted-foreground text-sm lg:text-lg max-w-[600px]">
             {t("FINANCIAL.SUBTITLE")}
           </p>
-        </div>
-        <div className="flex items-center gap-3">
-          {/* Optional secondary actions can go here */}
         </div>
       </div>
 
@@ -42,7 +39,7 @@ export default function PaymentHistory() {
         totals={totals}
         pendingCount={
           payments.filter(
-            (p) => p.status === "PENDING" && (p as any).stripePaymentId === null
+            (p) => p.status === "PENDING"
           ).length
         }
         isLoading={isLoading}
