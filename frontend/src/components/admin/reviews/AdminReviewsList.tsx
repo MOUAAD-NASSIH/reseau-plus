@@ -1,9 +1,10 @@
+import { useMemo } from "react";
 import { EmptyState } from "@/components/common/EmptyState";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
 import { Star } from "lucide-react";
 import type { Review } from "@/types/review.types";
-import { AdminReviewCard } from "./AdminReviewCard";
+import { AdminReviewGroupCard } from "./AdminReviewGroupCard";
 
 interface AdminReviewsListProps {
     reviews: Review[];
@@ -11,6 +12,25 @@ interface AdminReviewsListProps {
 }
 
 export function AdminReviewsList({ reviews, isLoading }: AdminReviewsListProps) {
+    // Group reviews by missionAssignmentId
+    const groupedReviews = useMemo(() => {
+        const groups: Record<number, Review[]> = {};
+        reviews.forEach(review => {
+            const assignmentId = review.missionAssignmentId;
+            if (!groups[assignmentId]) {
+                groups[assignmentId] = [];
+            }
+            groups[assignmentId].push(review);
+        });
+        
+        // Convert to array and sort by most recent review in the group
+        return Object.values(groups).sort((groupA, groupB) => {
+            const dateA = Math.max(...groupA.map(r => new Date(r.createdAt).getTime()));
+            const dateB = Math.max(...groupB.map(r => new Date(r.createdAt).getTime()));
+            return dateB - dateA;
+        });
+    }, [reviews]);
+
     if (isLoading) {
         return (
             <div className="space-y-4">
@@ -45,8 +65,8 @@ export function AdminReviewsList({ reviews, isLoading }: AdminReviewsListProps) 
 
     return (
         <div className="space-y-6">
-            {reviews.map((review) => (
-                <AdminReviewCard key={review.id} review={review} />
+            {groupedReviews.map((group) => (
+                <AdminReviewGroupCard key={group[0].missionAssignmentId || group[0].id} reviews={group} />
             ))}
         </div>
     );

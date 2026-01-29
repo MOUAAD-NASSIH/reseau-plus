@@ -31,8 +31,8 @@ export interface Notification {
     userId: number;
     type: string;
     message: string;
-    entityId?: number;
-    entityType?: string;
+    entityId: number | null;
+    entityType: string | null;
     isRead: boolean;
     createdAt: Date;
 }

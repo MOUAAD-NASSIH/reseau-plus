@@ -7,6 +7,7 @@ export const en = {
         COMMON: {
             UNKNOWN: "Unknown",
             GENERAL_SOCIAL_WORK: "General Social Work",
+            INSTITUTION: "Institution",
             UNTITLED_MISSION: "Untitled Mission",
             UNTITLED_APPLICATION: "Untitled Application",
             UNKNOWN_INSTITUTION: "Unknown Institution",
@@ -930,6 +931,20 @@ export const en = {
                 NO_COMMENT: "No comment provided.",
                 SEARCH_PLACEHOLDER: "Search reviews..."
             },
+            ADMIN_CARD: {
+                MISSION_CONTEXT: "Mission Context",
+                MISSION_TITLE: "Mission Title",
+                LOCATION: "Location",
+                PARTICIPANTS: "Participants",
+                REVIEWS_EXCHANGED: "{{count}} review exchanged",
+                REVIEWS_EXCHANGED_plural: "{{count}} reviews exchanged",
+                REVIEWER: "Reviewer",
+                REVIEWEE: "Reviewee",
+                NO_COMMENT: "No comment provided.",
+                UNTITLED_MISSION: "Untitled Mission",
+                WORKER: "Worker",
+                INSTITUTION: "Institution"
+            },
             PENDING: {
                 TITLE: "Workers to Review",
                 SUBTITLE: "Leave a review for workers who completed missions",
@@ -1158,7 +1173,7 @@ export const en = {
                     ID: "ID",
                     ACTION: "ACTION",
                     ADMIN: "ADMIN",
-                    TARGET: "TARGET USER",
+                    TARGET: "TARGET",
                     DETAILS: "DETAILS",
                     DATE: "DATE",
                     ACTIONS: "ACTIONS"
@@ -1185,8 +1200,35 @@ export const en = {
                 TARGET_USER: "Target User ID",
                 DETAILS: "Details",
                 CREATED_AT: "Timestamp",
-                NO_CONTEXT: "No additional context provided for this action."
+                NO_CONTEXT: "No additional context provided for this action.",
+                REJECTION_REASON: "Rejection Reason",
+                EXECUTED_BY: "Executed By",
+                CONTEXT_DATA: "Context Data",
+                ADDITIONAL_DETAILS: "Additional Details",
+                AFFECTED_DOCUMENT: "Affected Document",
+                AFFECTED_MISSION: "Affected Mission"
             }
+        },
+        ADMIN_MISSIONS: {
+            TITLE: "Missions Overview",
+            SUBTITLE: "Monitor and manage all mission activities across the platform.",
+            SEARCH_PLACEHOLDER: "Search by title, institution, or location...",
+            FILTERS: {
+                ALL: "All Status",
+                OPEN: "Open",
+                ONGOING: "Ongoing",
+                CLOSED: "Closed",
+                SPECIALITY: "Speciality",
+                ALL_SPECIALITIES: "All Specialities",
+                URGENCY: "Urgency",
+                ALL_URGENCY: "All Urgency",
+                LOW: "Low",
+                MEDIUM: "Medium",
+                HIGH: "High"
+            },
+            NO_MISSIONS: "No missions found",
+            NO_MISSIONS_DESC: "No missions match your current filter criteria. Try adjusting your filters or search terms.",
+            CLEAR_FILTERS: "Clear Filters"
         },
         ADMIN_PROFILE: {
             TITLE: "Admin Profile",
@@ -1896,6 +1938,6 @@ export const en = {
                 GO_PROFILE: "Go to Profile",
                 MANAGE_DOCS: "Manage Documents"
             }
-        }
+        },
     }
 };

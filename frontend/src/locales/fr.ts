@@ -7,6 +7,7 @@ export const fr = {
         COMMON: {
             UNKNOWN: "Inconnu",
             GENERAL_SOCIAL_WORK: "Travail Social Général",
+            INSTITUTION: "Institution",
             UNTITLED_MISSION: "Mission Sans Titre",
             UNTITLED_APPLICATION: "Candidature Sans Titre",
             UNKNOWN_INSTITUTION: "Institution Inconnue",
@@ -912,6 +913,20 @@ export const fr = {
                 NO_COMMENT: "Aucun commentaire fourni.",
                 SEARCH_PLACEHOLDER: "Rechercher des avis..."
             },
+            ADMIN_CARD: {
+                MISSION_CONTEXT: "Contexte de la Mission",
+                MISSION_TITLE: "Titre de la Mission",
+                LOCATION: "Lieu",
+                PARTICIPANTS: "Participants",
+                REVIEWS_EXCHANGED: "{{count}} avis échangé",
+                REVIEWS_EXCHANGED_plural: "{{count}} avis échangés",
+                REVIEWER: "Évaluateur",
+                REVIEWEE: "Évalué",
+                NO_COMMENT: "Aucun commentaire fourni.",
+                UNTITLED_MISSION: "Mission Sans Titre",
+                WORKER: "Intervenant",
+                INSTITUTION: "Institution"
+            },
             PENDING: {
                 TITLE: "Intervenants à évaluer",
                 SUBTITLE: "Laissez un avis pour les intervenants ayant terminé des missions",
@@ -1140,7 +1155,7 @@ export const fr = {
                     ID: "ID",
                     ACTION: "ACTION",
                     ADMIN: "ADMIN",
-                    TARGET: "UTILISATEUR CIBLE",
+                    TARGET: "CIBLE",
                     DETAILS: "DÉTAILS",
                     DATE: "DATE",
                     ACTIONS: "ACTIONS"
@@ -1167,8 +1182,35 @@ export const fr = {
                 TARGET_USER: "ID de l'Utilisateur Cible",
                 DETAILS: "Détails",
                 CREATED_AT: "Horodatage",
-                NO_CONTEXT: "Aucun contexte supplémentaire fourni pour cette action."
+                NO_CONTEXT: "Aucun contexte supplémentaire fourni pour cette action.",
+                REJECTION_REASON: "Motif de rejet",
+                EXECUTED_BY: "Exécuté par",
+                CONTEXT_DATA: "Données de contexte",
+                ADDITIONAL_DETAILS: "Détails supplémentaires",
+                AFFECTED_DOCUMENT: "Document concerné",
+                AFFECTED_MISSION: "Mission concernée"
             }
+        },
+        ADMIN_MISSIONS: {
+            TITLE: "Aperçu des Missions",
+            SUBTITLE: "Surveillez et gérez toutes les activités de mission sur la plateforme.",
+            SEARCH_PLACEHOLDER: "Rechercher par titre, institution ou lieu...",
+            FILTERS: {
+                ALL: "Tous les Statuts",
+                OPEN: "Ouvert",
+                ONGOING: "En cours",
+                CLOSED: "Fermé",
+                SPECIALITY: "Spécialité",
+                ALL_SPECIALITIES: "Toutes les Spécialités",
+                URGENCY: "Urgence",
+                ALL_URGENCY: "Toutes les Urgences",
+                LOW: "Faible",
+                MEDIUM: "Moyen",
+                HIGH: "Élevé"
+            },
+            NO_MISSIONS: "Aucune mission trouvée",
+            NO_MISSIONS_DESC: "Aucune mission ne correspond à vos critères de filtrage actuels. Essayez d'ajuster vos filtres ou vos termes de recherche.",
+            CLEAR_FILTERS: "Effacer les Filtres"
         },
         ADMIN_PROFILE: {
             TITLE: "Profil Administrateur",
@@ -1880,25 +1922,5 @@ export const fr = {
                 MANAGE_DOCS: "Gérer les documents"
             }
         },
-
-        ASSIGNMENTS_OVERVIEW: {
-            TITLE: "Affectations",
-            DESCRIPTION: "Gérez et suivez toutes les affectations de mission sur la plateforme.",
-            STATS: {
-                TOTAL: "Total Affectations",
-                ACTIVE: "Actif",
-                COMPLETED: "Terminé",
-                CANCELLED: "Annulé"
-            },
-            DIALOG: {
-                TITLE: "Détails de l'Affectation",
-                SUBTITLE: "Informations de l'affectation #{{id}}",
-                ASSIGNED_WORKER: "Travailleur Assigné",
-                INSTITUTION: "Établissement",
-                MISSION: "Mission",
-                ASSIGNED_AT: "Assigné le",
-                MISSION_PERIOD: "Période de la Mission"
-            }
-        }
     }
 };

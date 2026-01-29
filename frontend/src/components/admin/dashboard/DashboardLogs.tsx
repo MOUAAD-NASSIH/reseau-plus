@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useGetAdminLogsQuery } from '@/features/api/endpoints/adminEndpoints';
-import { Loader2, FileText, Activity, ArrowRight, Clock } from 'lucide-react';
+import { Loader2, FileText, Activity, ArrowRight, Clock, Eye } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
@@ -93,15 +93,33 @@ export function DashboardLogs() {
                                             </Badge>
                                         </div>
                                         <p className="text-xs font-medium text-foreground truncate">
-                                            {log.details}
+                                            {log.admin?.email || `Admin #${log.adminId}`}
                                         </p>
                                     </div>
                                     
                                     <div className="md:col-span-6 hidden md:flex items-center gap-2">
-                                        <p className="text-xs text-muted-foreground truncate">
-                                            <span className="opacity-70">Details: </span>
-                                            {log.details || "No additional details"}
-                                        </p>
+                                        {log.targetDocument ? (
+                                            <div className="flex items-center gap-2 bg-blue-500/5 border border-blue-500/20 rounded-lg px-3 py-1.5 group hover:bg-blue-500/10 transition-colors">
+                                                <FileText className="h-3.5 w-3.5 text-blue-500" />
+                                                <span className="text-xs font-semibold text-blue-600">{log.targetDocument.type}</span>
+                                                {log.targetDocument.fileUrl && (
+                                                    <button
+                                                        onClick={() => window.open(log.targetDocument!.fileUrl, '_blank')}
+                                                        className="ml-1 inline-flex items-center justify-center h-5 w-5 rounded-md hover:bg-blue-500/20 text-blue-500 hover:text-blue-600 transition-colors"
+                                                        title="View document"
+                                                    >
+                                                        <Eye className="h-3.5 w-3.5" />
+                                                    </button>
+                                                )}
+                                            </div>
+                                        ) : log.targetMission ? (
+                                            <div className="flex items-center gap-2 bg-indigo-500/5 border border-indigo-500/20 rounded-lg px-3 py-1.5">
+                                                <Activity className="h-3.5 w-3.5 text-indigo-500" />
+                                                <span className="text-xs font-semibold text-indigo-600 truncate max-w-[200px]">{log.targetMission.title}</span>
+                                            </div>
+                                        ) : (
+                                            <span className="text-xs text-muted-foreground/50 italic">—</span>
+                                        )}
                                     </div>
                                     
                                     <div className="md:col-span-2 flex items-center justify-end">
