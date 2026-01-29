@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { format } from "date-fns";
+
 import {
     ClipboardList,
     Calendar,
@@ -194,11 +194,11 @@ export default function AssignmentsOverview() {
     const filteredAssignments = useMemo(() => {
         return assignments.filter((a) => {
             const matchesStatus = statusFilter === "ALL" || a.status === statusFilter;
-            const matchesSearch = searchQuery === "" || 
+            const matchesSearch = searchQuery === "" ||
                 `${a.worker?.firstName} ${a.worker?.lastName}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 a.mission?.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 a.institution?.institutionName.toLowerCase().includes(searchQuery.toLowerCase());
-            
+
             return matchesStatus && matchesSearch;
         });
     }, [assignments, statusFilter, searchQuery]);
@@ -225,50 +225,50 @@ export default function AssignmentsOverview() {
                 <h1 className="text-4xl font-extrabold tracking-tight text-foreground lg:text-5xl">
                     {t("ASSIGNMENTS_OVERVIEW.TITLE")}
                 </h1>
-                <p className="text-muted-foreground text-lg max-w-[700px]">
-                    {t("ASSIGNMENTS_OVERVIEW.DESCRIPTION")}
+                <p className="text-muted-foreground text-lg max-w-175">
+                    {t("INSTITUTION_ASSIGNMENTS.DESCRIPTION", "Manage and track all mission assignments across the platform.")}
                 </p>
             </div>
 
-             {/* Stats Overview */}
-             <div className="grid gap-4 md:grid-cols-4">
-                <StatCard 
-                    title={t("ASSIGNMENTS_OVERVIEW.STATS.TOTAL")} 
-                    value={stats.total} 
-                    icon={ListTodo} 
-                    isLoading={assignmentsLoading} 
+            {/* Stats Overview */}
+            <div className="grid gap-4 md:grid-cols-4">
+                <StatCard
+                    title={t("INSTITUTION_ASSIGNMENTS.STATS.TOTAL", "Total Assignments")}
+                    value={stats.total}
+                    icon={ListTodo}
+                    isLoading={assignmentsLoading}
                     color="text-primary"
                     bg="bg-primary/5"
                 />
-                <StatCard 
-                    title={t("ASSIGNMENTS_OVERVIEW.STATS.ACTIVE")} 
-                    value={stats.active} 
-                    icon={Clock} 
-                    isLoading={assignmentsLoading} 
+                <StatCard
+                    title={t("INSTITUTION_ASSIGNMENTS.STATS.ACTIVE", "Active")}
+                    value={stats.active}
+                    icon={Clock}
+                    isLoading={assignmentsLoading}
                     color="text-blue-500"
                     bg="bg-blue-500/5"
                 />
-                <StatCard 
-                    title={t("ASSIGNMENTS_OVERVIEW.STATS.COMPLETED")} 
-                    value={stats.completed} 
-                    icon={CheckCircle2} 
-                    isLoading={assignmentsLoading} 
+                <StatCard
+                    title={t("INSTITUTION_ASSIGNMENTS.STATS.COMPLETED", "Completed")}
+                    value={stats.completed}
+                    icon={CheckCircle2}
+                    isLoading={assignmentsLoading}
                     color="text-emerald-500"
                     bg="bg-emerald-500/5"
                 />
-                <StatCard 
-                    title={t("ASSIGNMENTS_OVERVIEW.STATS.CANCELLED")} 
-                    value={stats.cancelled} 
-                    icon={XCircle} 
-                    isLoading={assignmentsLoading} 
+                <StatCard
+                    title={t("INSTITUTION_ASSIGNMENTS.STATS.CANCELLED", "Cancelled")}
+                    value={stats.cancelled}
+                    icon={XCircle}
+                    isLoading={assignmentsLoading}
                     color="text-rose-500"
                     bg="bg-rose-500/5"
                 />
             </div>
 
             {/* Filter Section */}
-            <AdminAssignmentsFilter 
-                statusFilter={statusFilter} 
+            <AdminAssignmentsFilter
+                statusFilter={statusFilter}
                 onStatusChange={setStatusFilter}
                 searchQuery={searchQuery}
                 onSearchChange={setSearchQuery}

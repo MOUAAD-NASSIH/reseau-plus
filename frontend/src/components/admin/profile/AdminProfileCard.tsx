@@ -17,29 +17,25 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface AdminProfileCardProps {
-    user: any;
     stats: any;
     t: (key: string) => string;
     formatDate: (date?: string) => string;
     getRoleName: () => string;
     getEmail: () => string;
     getCreatedAt: () => string | undefined;
-    getStatus: () => string;
 }
 
 export function AdminProfileCard({
-    user,
     stats,
     t,
     formatDate,
     getRoleName,
     getEmail,
     getCreatedAt,
-    getStatus,
 }: AdminProfileCardProps) {
     return (
         <div className="grid gap-8">
-            <Card className="border-border/40 shadow-2xl shadow-primary/5 bg-card/60 backdrop-blur-xl overflow-hidden rounded-[2rem]">
+            <Card className="border-border/40 shadow-2xl shadow-primary/5 bg-card/60 backdrop-blur-xl overflow-hidden rounded-4xl">
                 {/* SECTION: ACCOUNT INFO */}
                 <CardHeader className="flex flex-row items-center justify-between border-b border-border/40 bg-muted/20 pb-4">
                     <div className="flex items-center gap-2">
@@ -124,7 +120,7 @@ export function AdminProfileCard({
 
                         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
                             <div className="p-5 rounded-2xl bg-primary/5 border border-primary/10 space-y-2 group hover:bg-primary/10 transition-colors duration-300">
-                                <Users className="h-5 w-5 text-primary opacity-50 flex-shrink-0" />
+                                <Users className="h-5 w-5 text-primary opacity-50 shrink-0" />
                                 <div>
                                     <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60">{t("ADMIN_PROFILE.STATS.TOTAL_WORKERS")}</p>
                                     <p className="text-2xl font-black">{stats?.totalWorkers || 0}</p>
@@ -132,14 +128,14 @@ export function AdminProfileCard({
                                 </div>
                             </div>
                             <div className="p-5 rounded-2xl bg-amber-500/5 border border-amber-500/10 space-y-2 group hover:bg-amber-500/10 transition-colors duration-300">
-                                <Building2 className="h-5 w-5 text-amber-500 opacity-50 flex-shrink-0" />
+                                <Building2 className="h-5 w-5 text-amber-500 opacity-50 shrink-0" />
                                 <div>
                                     <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60">{t("ADMIN_PROFILE.STATS.TOTAL_INSTITUTIONS")}</p>
                                     <p className="text-2xl font-black">{stats?.totalInstitutions || 0}</p>
                                 </div>
                             </div>
                             <div className="p-5 rounded-2xl bg-blue-500/5 border border-blue-500/10 space-y-2 group hover:bg-blue-500/10 transition-colors duration-300">
-                                <FileText className="h-5 w-5 text-blue-500 opacity-50 flex-shrink-0" />
+                                <FileText className="h-5 w-5 text-blue-500 opacity-50 shrink-0" />
                                 <div>
                                     <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60">{t("ADMIN_PROFILE.STATS.TOTAL_MISSIONS")}</p>
                                     <p className="text-2xl font-black">{stats?.totalMissions || 0}</p>
@@ -147,7 +143,7 @@ export function AdminProfileCard({
                                 </div>
                             </div>
                             <div className="p-5 rounded-2xl bg-emerald-500/5 border border-emerald-500/10 space-y-2 group hover:bg-emerald-500/10 transition-colors duration-300">
-                                <Wallet className="h-5 w-5 text-emerald-500 opacity-50 flex-shrink-0" />
+                                <Wallet className="h-5 w-5 text-emerald-500 opacity-50 shrink-0" />
                                 <div>
                                     <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-60">{t("ADMIN_PROFILE.STATS.TOTAL_PAYMENTS")}</p>
                                     <p className="text-2xl font-black">{stats?.totalPayments || 0}</p>

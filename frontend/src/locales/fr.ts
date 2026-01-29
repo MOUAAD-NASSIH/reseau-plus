@@ -40,6 +40,9 @@ export const fr = {
             DELETE: "Supprimer",
             CONFIRM: "Confirmer",
             PAID: "Payé",
+            REVIEW: "Évaluer",
+            SUBMIT: "Soumettre",
+            SUBMITTING: "Envoi...",
             ANONYMOUS: "Anonyme",
             COMPLETED_MISSION: "Mission terminée",
             MISSION: "Mission",
@@ -55,6 +58,22 @@ export const fr = {
             WORKER: "Intervenant",
             N_A: "N/D",
             DELETE_PROFILE_PIC: "Supprimer la photo",
+            SHOW_RESULTS: "Voir les résultats",
+            STATUS: {
+                SUBMITTED: "Soumis",
+                REJECTED: "Rejeté",
+                ACCEPTED: "Accepté",
+                ACTIVE: "Actif",
+                ONGOING: "En cours",
+                COMPLETED: "Terminé",
+                CANCELLED: "Annulé",
+                PENDING: "En attente",
+                FAILED: "Échoué",
+                VERIFIED: "Vérifié",
+                OPEN: "Ouvert",
+                CLOSED: "Fermé",
+                APPROVED: "Approuvé"
+            }
         },
         NAV: {
             FEATURES: "Fonctionnalités",
@@ -69,6 +88,112 @@ export const fr = {
                 INSTITUTION: "Espace Recruteur",
                 WORKER_DESC: "Trouvez des missions",
                 INSTITUTION_DESC: "Recrutez des talents"
+            }
+        },
+        ROLES: {
+            WORKER: "Intervenant",
+            INSTITUTION: "Établissement",
+            ADMIN: "Administrateur",
+            GUEST: "Invité"
+        },
+        HEADER_TITLES: {
+            DASHBOARD: "Tableau de bord",
+            DASHBOARD_DESC: "Aperçu de votre activité et actions rapides",
+            WORKERS_VALIDATION: "Validation des travailleurs",
+            DOCUMENTS_VALIDATION: "Validation des documents",
+            DOMAINS: "Domaines",
+            SPECIALITIES: "Spécialités",
+            MISSIONS_OVERVIEW: "Aperçu des missions",
+            ASSIGNMENTS_OVERVIEW: "Aperçu des affectations",
+            PAYMENTS_OVERVIEW: "Aperçu des paiements",
+            REVIEWS_OVERVIEW: "Aperçu des avis",
+            ADMIN_LOGS: "Journaux d'administration",
+            AVAILABLE_MISSIONS: "Missions disponibles",
+            AVAILABLE_MISSIONS_DESC: "Parcourez et postulez aux missions ouvertes",
+            MY_APPLICATIONS: "Mes candidatures",
+            MY_APPLICATIONS_DESC: "Suivez vos candidatures aux missions",
+            ASSIGNED_MISSIONS: "Missions assignées",
+            ASSIGNED_MISSIONS_DESC: "Consultez vos affectations actuelles et passées",
+            REVIEWS: "Avis",
+            REVIEWS_DESC: "Consultez et rédigez des avis sur les missions terminées",
+            MESSAGES: "Messages",
+            MESSAGES_DESC: "Discutez avec les établissements concernant les missions",
+            NOTIFICATIONS: "Notifications",
+            NOTIFICATIONS_DESC: "Restez informé de votre activité",
+            PROFILE: "Profil",
+            PROFILE_DESC: "Gérez vos informations personnelles et professionnelles",
+            DOCUMENTS: "Documents",
+            DOCUMENTS_DESC: "Téléchargez et gérez vos documents de vérification",
+            AVAILABILITY: "Disponibilité",
+            AVAILABILITY_DESC: "Définissez vos dates de disponibilité pour les missions",
+            PENDING_APPROVAL: "En attente d'approbation",
+            PENDING_APPROVAL_DESC: "Votre compte est en attente de vérification",
+            CREATE_MISSION: "Créer une mission",
+            CREATE_MISSION_DESC: "Publiez une nouvelle mission pour les travailleurs sociaux",
+            EDIT_MISSION: "Modifier la mission",
+            EDIT_MISSION_DESC: "Mettre à jour les détails de la mission",
+            MY_MISSIONS: "Mes missions",
+            MY_MISSIONS_DESC: "Gérez vos missions publiées",
+            MISSION_DETAILS: "Détails de la mission",
+            MISSION_DETAILS_DESC: "Voir les informations de la mission",
+            MISSION_APPLICANTS: "Candidats à la mission",
+            MISSION_APPLICANTS_DESC: "Examiner et gérer les candidats",
+            ASSIGNMENTS: "Affectations",
+            ASSIGNMENTS_DESC: "Gérez vos affectations de mission",
+            ASSIGNMENT_DETAILS: "Détails de l'affectation",
+            ASSIGNMENT_DETAILS_DESC: "Voir les informations de l'affectation",
+            PAYMENT: "Paiement",
+            PAYMENT_DESC: "Effectuer le paiement pour l'affectation",
+            PAYMENT_HISTORY: "Historique des paiements",
+            PAYMENT_HISTORY_DESC: "Consultez vos transactions de paiement"
+        },
+        DASHBOARD_NAV: {
+            DASHBOARD: "Tableau de bord",
+            AVAILABLE_MISSIONS: "Missions disponibles",
+            MY_APPLICATIONS: "Mes candidatures",
+            ASSIGNED_MISSIONS: "Missions assignées",
+            MESSAGES: "Messages",
+            REVIEWS: "Avis",
+            NOTIFICATIONS: "Notifications",
+            AVAILABILITY: "Disponibilité",
+            DOCUMENTS: "Documents",
+            PROFILE: "Profil",
+            CREATE_MISSION: "Créer une mission",
+            MY_MISSIONS: "Mes missions",
+            ASSIGNMENTS: "Affectations",
+            PAYMENTS: "Paiements",
+            WORKERS_VALIDATION: "Validation travailleurs",
+            DOCUMENTS_VALIDATION: "Validation documents",
+            DOMAINS: "Domaines",
+            SPECIALITIES: "Spécialités",
+            MISSIONS_OVERVIEW: "Aperçu missions",
+            ASSIGNMENTS_OVERVIEW: "Aperçu affectations",
+            PAYMENTS_OVERVIEW: "Aperçu paiements",
+            REVIEWS_OVERVIEW: "Aperçu avis",
+            ADMIN_LOGS: "Journaux admin",
+            MENU: "Menu",
+            ACCOUNT: "Compte",
+            SETTINGS: "Paramètres",
+            SIGN_OUT: "Déconnexion"
+        },
+        LOGOUT: {
+            CONFIRM_TITLE: "Déconnexion",
+            CONFIRM_MESSAGE: "Êtes-vous sûr de vouloir vous déconnecter ? Vous devrez vous reconnecter pour accéder à votre compte.",
+            CANCEL: "Annuler",
+            CONFIRM: "Se déconnecter"
+        },
+        REGISTRATION: {
+            SUCCESS: {
+                DEFAULT_TITLE: "Inscription terminée !",
+                DEFAULT_MESSAGE: "Votre compte a été créé avec succès. Vous pouvez maintenant vous connecter pour accéder à votre tableau de bord.",
+                DEFAULT_REDIRECT: "Aller à la connexion",
+                WORKER_TITLE: "Bienvenue dans le réseau ! 🎉",
+                WORKER_MESSAGE: "Votre profil de travailleur a été créé avec succès. Vous pouvez maintenant parcourir les missions disponibles et commencer à postuler.",
+                WORKER_REDIRECT: "Aller au tableau de bord",
+                INSTITUTION_TITLE: "Institution enregistrée ! 🎉",
+                INSTITUTION_MESSAGE: "Votre compte d'institution a été créé avec succès. Vous pouvez maintenant publier des missions et trouver des travailleurs qualifiés.",
+                INSTITUTION_REDIRECT: "Aller au tableau de bord",
+                EMAIL_CONFIRMATION: "Un email de confirmation a été envoyé à votre boîte de réception"
             }
         },
         HERO: {
@@ -438,8 +563,12 @@ export const fr = {
             }
         },
         INSTITUTION_DASHBOARD: {
-            WELCOME: "Bon retour, {{name}}",
-            SUBTITLE: "Voici ce qui se passe avec vos missions aujourd'hui.",
+            WELCOME: {
+                GREETING_MORNING: "Bonjour",
+                GREETING_AFTERNOON: "Bon après-midi",
+                GREETING_EVENING: "Bonsoir",
+                SUBTITLE: "Voici ce qui se passe avec vos missions aujourd'hui."
+            },
             STATS: {
                 ACTIVE_MISSIONS: "Missions actives",
                 PENDING_APPLICANTS: "Candidats en attente",
@@ -452,6 +581,21 @@ export const fr = {
                 CLOSED_MISSIONS: "Missions Clôturées",
                 CANCELLED_MISSIONS: "Missions Annulées",
                 RATING: "Évaluation"
+            },
+            QUICK_ACTIONS: {
+                TITLE: "Actions rapides",
+                CREATE_MISSION: "Créer une mission",
+                VIEW_MISSIONS: "Voir les missions",
+                VIEW_APPLICATIONS: "Candidatures",
+                VIEW_ASSIGNMENTS: "Affectations",
+                VIEW_MESSAGES: "Messages"
+            },
+            MISSIONS: {
+                TITLE: "Missions récentes",
+                VIEW_ALL: "Voir tout",
+                NO_MISSIONS_TITLE: "Aucune mission pour le moment",
+                NO_MISSIONS_DESC: "Créez votre première mission pour commencer à trouver des travailleurs qualifiés",
+                CREATE_FIRST: "Créer une mission"
             },
             SECTIONS: {
                 RECENT_MISSIONS: "Missions récentes",
@@ -500,7 +644,7 @@ export const fr = {
                 START_DATE_LABEL: "Date de Début",
                 END_DATE_LABEL: "Date de Fin",
                 LOCATION_LABEL: "Lieu",
-                LOCATION_PLACEHOLDER: "Ville, Code Postal ou Adresse",
+                LOCATION_PLACEHOLDER: "Ville",
                 BUDGET_LABEL: "Budget Total",
                 BUDGET_PLACEHOLDER: "0.00"
             },
@@ -532,7 +676,6 @@ export const fr = {
                 ERROR: "Échec de la création de la mission",
                 NOT_FOUND: "Mission Non Trouvée",
                 NOT_FOUND_DESC: "La mission que vous essayez de créer n'existe pas ou a été supprimée.",
-                SYNC_NOTICE: "Les modifications sont synchronisées immédiatement avec les intervenants actifs."
             }
         },
         EDIT_MISSION: {
@@ -546,7 +689,7 @@ export const fr = {
                 CRITERIA: "Critères"
             },
             ACTIONS: {
-                SAVE: "Enregistrer les modifications",
+                SAVE: "Enregistrer",
                 SAVING: "Enregistrement...",
                 CANCEL: "Annuler",
                 STATUS_LABEL: "Statut de la Mission"
@@ -556,6 +699,7 @@ export const fr = {
                 SUCCESS_DESC: "Votre mission a été mise à jour avec succès.",
                 ERROR: "Échec de la mise à jour de la mission",
                 NOT_FOUND: "Mission Non Trouvée",
+                SYNC_NOTICE: "Les modifications sont synchronisées immédiatement avec les intervenants actifs."
             }
         },
         MY_MISSIONS: {
@@ -583,7 +727,9 @@ export const fr = {
                 VIEW_DETAILS: "Voir les Détails",
                 EDIT: "Modifier",
                 DELETE: "Supprimer",
-                POSTED: "Publié le {{date}}",
+                POSTED: "Publié le",
+                REMOTE: "À distance",
+                REF: "RÉF",
                 ACTIVE_HIRING: "Recrutement Actif"
             },
             ACTIONS: {
@@ -608,6 +754,11 @@ export const fr = {
             BACK_TO_MISSIONS: "Retour aux Missions",
             APPLICANTS_COUNT: "{{count}} candidat",
             APPLICANTS_COUNT_plural: "{{count}} candidats",
+            BREADCRUMBS: {
+                DASHBOARD: "Tableau de Bord",
+                MISSIONS: "Missions",
+                APPLICANTS: "Candidats"
+            },
             STATS: {
                 TOTAL: "Total Candidats",
                 PENDING: "À Examiner",
@@ -617,6 +768,7 @@ export const fr = {
                 ASSIGNED_WORKERS: "Travailleurs assignés"
             },
             FILTER: {
+                TITLE: "Filtres",
                 LABEL: "Filtrer par statut",
                 ALL: "Tous les Statuts",
                 SUBMITTED: "Soumis",
@@ -624,10 +776,12 @@ export const fr = {
                 REJECTED: "Rejetés",
                 SPECIALTY: "Spécialité",
                 ALL_SPECIALTIES: "Toutes les Spécialités",
+                DOMAINS: "Domaines",
                 EXPERIENCE: "Expérience",
                 YEARS: "{{count}} an",
                 YEARS_plural: "{{count}} ans",
-                EXPERIENCE_VAL: "{{min}}-{{max}}+ ans"
+                EXPERIENCE_VAL: "{{min}}-{{max}}+ ans",
+                RESET: "Réinitialiser les filtres"
             },
             TABLE: {
                 APPLICANT: "Candidat",
@@ -643,25 +797,40 @@ export const fr = {
                 CLEAR_FILTER: "Effacer les Filtres",
                 VIEW_PROFILE: "Voir le Profil",
                 REJECT: "Rejeter",
-                ACCEPT: "Accepter le Travailleur",
+                ACCEPT: "Accepter",
                 INVITE: "Inviter un Travailleur"
+            },
+            LABELS: {
+                APPLICANTS: "Candidats",
+                TOTAL: "total"
             },
             DIALOG: {
                 TITLE: "Profil du Candidat",
                 DESCRIPTION: "Examinez les qualifications et l'expérience du travailleur",
                 SPECIALITY: "Spécialité",
-                EXPERIENCE: "EXPÉRIENCE",
-                LOCATION: "EMPLACEMENT",
-                APPLIED: "POSTULÉ LE",
-                BIO: "BIOGRAPHIE",
-                DOMAINS: "DOMAINES",
-                REJECT_APPLICATION: "Rejeter la Candidature",
-                ACCEPT_APPLICATION: "Accepter la Candidature"
+                EXPERIENCE: "Expérience",
+                EXPERIENCE_EMPTY_STATE: "Aucune expérience",
+                LOCATION: "Localisation",
+                APPLIED: "Postulé le",
+                BIO: "Biographie",
+                DOMAINS: "Domaines",
+                DIPLOMAS: "Diplômes Vérifiés",
+                NO_DIPLOMAS: "Aucun diplôme vérifié",
+                REJECT_APPLICATION: "Rejeter",
+                ACCEPT_APPLICATION: "Accepter",
+                OVERVIEW: "Aperçu",
+                VERIFIED_BADGE: "Vérifié",
+                SCORE: "Score"
             },
             CARD: {
                 TITLE: "Candidats",
                 DESCRIPTION: "Examinez et gérez les candidatures pour cette mission",
-                EXCELLENT_MATCH: "Excellent Match"
+                EXCELLENT_MATCH: "Match parfait",
+                APPLIED_ON: "Postulé le",
+                EXP_LABEL: "Exp.",
+                RATING_LABEL: "Éval.",
+                LOCATION_LABEL: "Lieu",
+                YEARS: "Ans"
             },
             EMPTY: {
                 TITLE: "Aucun candidat pour le moment",
@@ -689,6 +858,22 @@ export const fr = {
             MISSION_CONTROL: "Contrôle de Mission",
             SHARE: "Partager",
             EDIT_MISSION: "Modifier la Mission",
+            STATUS: {
+                OPEN: "Ouvert",
+                ONGOING: "En cours",
+                CLOSED: "Fermé",
+                CANCELLED: "Annulé"
+            },
+            URGENCY: {
+                LOW: "Faible",
+                MEDIUM: "Moyenne",
+                HIGH: "Élevée"
+            },
+            BREADCRUMBS: {
+                DASHBOARD: "Tableau de Bord",
+                MISSIONS: "Missions",
+                MISSION_DETAILS: "Détails"
+            },
             TOTAL_BUDGET: "Budget Total",
             MISSION_TIMELINE: "Calendrier de la Mission",
             MISSION_TIMELINE_DAYS: "{{count}} Jours de durée",
@@ -699,7 +884,10 @@ export const fr = {
             NO_DESCRIPTION: "Aucune description fournie.",
             TECHNICAL_REQUIREMENTS: "Exigences Techniques",
             REQUIRED: "(Requis)",
-            SPECIALIZATION_DESC: "spécialisation : Axée sur l'excellence en {{name}} et la contribution professionnelle.",
+            OPTIONAL: "(Optionnel)",
+            REQUIRED_SPECIALTY: "Spécialité Requise",
+            SPECIALIZATION_DESC: "spécialité : Axée sur l'excellence en {{name}} et la contribution professionnelle.",
+            DOMAIN_DESC: "domaine : Axée sur l'excellence en {{name}} et la contribution professionnelle.",
             LOCATION: "Localisation",
             URGENCY_LEVEL: "Niveau d'Urgence",
             PRIORITY: "Priorité {{priority}}",
@@ -717,6 +905,7 @@ export const fr = {
             RATING: "Évaluation",
             MESSAGES: {
                 NOT_FOUND: "Mission introuvable",
+                NOT_FOUND_DESC: "La mission que vous recherchez n'existe pas ou a été supprimée.",
                 LINK_COPIED: "Le lien de la mission a été copié dans le presse-papiers."
             },
             BACK_TO_MISSIONS: "Retour aux Missions"
@@ -734,9 +923,10 @@ export const fr = {
                 PENDING_REVIEW: "En Attente d'Avis"
             },
             FILTER: {
+                ALL: "Toutes les affectations",
                 LABEL: "Filtrer les Affectations",
                 SEARCH_WORKER: "Rechercher Travailleur",
-                SEARCH_PLACEHOLDER: "Nom, email...",
+                SEARCH_PLACEHOLDER: "Rechercher par travailleur...",
                 STATUS: "Statut",
                 STATUS_ALL: "Tous les Statuts",
                 MISSION_TYPE: "Type de Mission",
@@ -758,7 +948,9 @@ export const fr = {
                     PENDING: "En attente",
                     PAID: "Payé",
                     PROCESSING: "En cours",
-                    SCHEDULED: "Programmé"
+                    SCHEDULED: "Programmé",
+                    LOCKED: "Verrouillé",
+                    CANCELLED: "Annulé"
                 },
                 EMPTY_STATE: {
                     TITLE: "Aucune affectation trouvée",
@@ -775,12 +967,36 @@ export const fr = {
         },
         ASSIGNED_MISSION_VIEW: {
             HEADER: {
-                ASSIGNMENT_ID: "Affectation #{{id}}",
+                BREADCRUMBS: {
+                    DASHBOARD: "Tableau de Bord",
+                    ASSIGNMENTS: "Affectations",
+                    ASSIGNMENT_ID: "Affectation #{{id}}",
+                },
                 CREATED_ON: "Créée le {{date}}",
                 EXPORT: "Exporter",
                 EDIT: "Modifier",
                 PROCESS_PAYMENT: "Procéder au Paiement",
                 NOT_FOUND: "Affectation introuvable"
+            },
+            BADGES: {
+                REVIEW_SUBMITTED: "Avis Soumis",
+                PAYMENT_COMPLETED: "Paiement Effectué",
+                PAYMENT_PROCESSING: "Paiement en Cours..."
+            },
+            REVIEW: {
+                FORM_TITLE: "Évaluer la Performance de l'Intervenant",
+                FORM_DESC: "Partagez votre expérience de travail avec {{name}}",
+                CLICK_TO_RATE: "Cliquez pour évaluer",
+                FEEDBACK_LABEL: "Votre Avis",
+                OPTIONAL: "(Optionnel)",
+                PLACEHOLDER: "Partagez vos impressions sur la performance de l'intervenant...",
+                SUBMIT_BTN: "Soumettre l'Avis",
+                SUBMITTING: "Soumission...",
+                SUCCESS_TITLE: "Avis Soumis",
+                SUCCESS_DESC: "Votre avis a été soumis avec succès.",
+                ERROR_TITLE: "Échec de la soumission de l'avis",
+                WORKER_FEEDBACK_TITLE: "Avis de l'Intervenant",
+                YOUR_REVIEW_TITLE: "Votre Avis"
             },
             TIMELINE: {
                 TITLE: "Chronologie de la Mission",
@@ -822,7 +1038,8 @@ export const fr = {
                 PLATFORM_FEE: "Frais de Plateforme",
                 PAID_ON: "Payé le",
                 NO_PAYMENT: "Aucun paiement n'a encore été effectué.",
-                COMPLETE_FOR_PAYMENT: "Terminez la mission pour activer le paiement."
+                COMPLETE_FOR_PAYMENT: "Terminez la mission pour activer le paiement.",
+                READY_FOR_PAYMENT: "Mission terminée. Vous pouvez maintenant procéder au paiement."
             },
             WORKER_PROFILE: {
                 TITLE: "Profil de l'Intervenant",
@@ -936,11 +1153,29 @@ export const fr = {
                 COMMENT_OPTIONAL: "Optionnel",
                 COMMENT_PLACEHOLDER: "Décrivez la performance, la ponctualité et l'attitude professionnelle de l'intervenant...",
                 SUBMITTING: "Envoi..."
+            },
+            FORM: {
+                TITLE: "Évaluer",
+                REVIEWING_WORKER: "Notation de",
+                RATING_LABEL: "Votre note globale",
+                FEEDBACK_LABEL: "Commentaire détaillé",
+                OPTIONAL: "(Optionnel)",
+                PLACEHOLDER: "Partagez votre expérience avec cet intervenant...",
+                SUBMIT: "Envoyer l'avis",
+                SUBMITTING: "Envoi...",
+                SUBMIT_SUCCESS: "Avis envoyé avec succès",
+                SUBMIT_ERROR: "Erreur lors de l'envoi de l'avis"
+
+            },
+            TOASTS: {
+                SUCCESS_TITLE: "Avis soumis !",
+                SUCCESS_DESC: "Merci pour votre retour.",
+                ERROR: "Erreur lors de la soumission."
             }
         },
         INSTITUTION_PROFILE: {
             TITLE: "Profil de l'Institution",
-            SUBTITLE: "Mettez à jour les informations de votre institution. Ces informations seront visibles par les intervenants.",
+            SUBTITLE: "Mettez à jour les informations de votre institution.",
             SECTIONS: {
                 ORGANIZATION: "Détails de l'Organisation",
                 ACCOUNT: "Informations du Compte"
@@ -964,12 +1199,17 @@ export const fr = {
                 ADDRESS_LINE2: "Complément d'Adresse (Optionnel)",
                 CITY: "Ville",
                 STATE: "État/Province",
-                ZIP: "Code Postal"
+                ZIP: "Code Postal",
+                MEMBER_SINCE: "Membre depuis"
             },
             ACTIONS: {
                 CANCEL: "Annuler",
                 SAVE: "Enregistrer",
                 SAVING: "Enregistrement..."
+            },
+            ALERTS: {
+                LOGO_UPLOAD_SUCCESS: "Votre logo a été téléversé avec succès.",
+                LOGO_DELETE_SUCCESS: "Votre logo a été supprimé."
             }
         },
         NOTIFICATIONS: {
@@ -1863,7 +2103,7 @@ export const fr = {
                 DELETE: "Supprimer"
             },
             TABS: {
-                ALL: "Toutes les Notifications",
+                ALL: "Toutes",
                 UNREAD: "Non lues"
             },
             NEW: "Nouveau",
@@ -1920,6 +2160,10 @@ export const fr = {
                 DOCS_DESC: "Assurez-vous que tous les documents nécessaires sont téléchargés pour une approbation plus rapide",
                 GO_PROFILE: "Aller au profil",
                 MANAGE_DOCS: "Gérer les documents"
+            },
+            MOTIVATIONAL: {
+                TITLE: "Vous y êtes presque !",
+                MESSAGE: "Notre équipe examine votre profil et vos documents. Cela prend généralement 24 à 48 heures. Nous vous informerons dès que votre compte sera approuvé."
             }
         },
     }

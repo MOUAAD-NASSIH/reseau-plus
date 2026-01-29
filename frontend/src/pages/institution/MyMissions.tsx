@@ -47,7 +47,7 @@ export default function MyMissions() {
   }, [missions, page, pageSize]);
 
   return (
-    <div className="space-y-6 pb-10 animate-in fade-in duration-500">
+    <div className="space-y-6 animate-in fade-in duration-500">
       {/* Header */}
       <MissionsHeader />
 
@@ -75,7 +75,7 @@ export default function MyMissions() {
                 <Search className="h-10 w-10 text-muted-foreground/50" />
               </div>
               <div className="space-y-1">
-                <h3 className="text-xl font-semibold">
+                <h3 className="text-xl font-semibold font-spline">
                   {t("MY_MISSIONS.EMPTY.TITLE")}
                 </h3>
                 <p className="text-muted-foreground max-w-sm mx-auto">

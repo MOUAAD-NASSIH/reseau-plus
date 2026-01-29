@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "react-i18next";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import type { AdminDashboardStats } from "@/features/api/endpoints/adminEndpoints";
 
 interface PlatformGrowthChartProps {
@@ -9,7 +9,7 @@ interface PlatformGrowthChartProps {
     isLoading: boolean;
 }
 
-export function PlatformGrowthChart({ stats, isLoading }: PlatformGrowthChartProps) {
+export function PlatformGrowthChart({ isLoading }: PlatformGrowthChartProps) {
     const { t } = useTranslation();
 
     // Mock data for growth chart - in production, this would come from backend
@@ -55,35 +55,35 @@ export function PlatformGrowthChart({ stats, isLoading }: PlatformGrowthChartPro
                     <ResponsiveContainer width="100%" height={300}>
                         <LineChart data={data} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
                             <CartesianGrid strokeDasharray="3 3" className="stroke-border/20" />
-                            <XAxis 
-                                dataKey="month" 
+                            <XAxis
+                                dataKey="month"
                                 className="text-xs text-muted-foreground"
                                 tick={{ fill: 'hsl(var(--muted-foreground))' }}
                             />
-                            <YAxis 
+                            <YAxis
                                 className="text-xs text-muted-foreground"
                                 tick={{ fill: 'hsl(var(--muted-foreground))' }}
                             />
-                            <Tooltip 
-                                contentStyle={{ 
+                            <Tooltip
+                                contentStyle={{
                                     backgroundColor: 'hsl(var(--card))',
                                     border: '1px solid hsl(var(--border))',
                                     borderRadius: '8px',
                                     boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
                                 }}
                             />
-                            <Line 
-                                type="monotone" 
-                                dataKey="actual" 
-                                stroke="hsl(var(--primary))" 
+                            <Line
+                                type="monotone"
+                                dataKey="actual"
+                                stroke="hsl(var(--primary))"
                                 strokeWidth={3}
                                 dot={{ fill: 'hsl(var(--primary))', r: 4 }}
                                 activeDot={{ r: 6 }}
                             />
-                            <Line 
-                                type="monotone" 
-                                dataKey="target" 
-                                stroke="hsl(var(--muted-foreground))" 
+                            <Line
+                                type="monotone"
+                                dataKey="target"
+                                stroke="hsl(var(--muted-foreground))"
                                 strokeWidth={2}
                                 strokeDasharray="5 5"
                                 dot={{ fill: 'hsl(var(--muted-foreground))', r: 3 }}

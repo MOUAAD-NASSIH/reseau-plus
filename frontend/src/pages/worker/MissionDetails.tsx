@@ -408,41 +408,32 @@ export default function MissionDetails() {
                                     {t("WORKER_MISSION_DETAILS.TABS.REQUIREMENTS.TITLE")}
                                 </h2>
 
-                                <div className="space-y-6">
-                                    {/* Required Specialty */}
-                                    {mission.requiredSpeciality && (
-                                        <div>
-                                            <p className="text-muted-foreground text-xs uppercase tracking-wider font-bold mb-3">{t("WORKER_MISSION_DETAILS.TABS.REQUIREMENTS.REQUIRED_SPECIALTY")}</p>
-                                            <Badge
-                                                variant="outline"
-                                                className="px-3 py-1.5 text-sm border-primary/30 bg-primary/5 hover:bg-primary/10 transition-colors rounded-full font-semibold text-primary"
-                                            >
-                                                {mission.requiredSpeciality.name}
-                                                <span className="text-red-500 ml-1.5">*</span>
-                                            </Badge>
-                                        </div>
-                                    )}
+                                <div className="space-y-4">
+                                    <ul className="space-y-3 sm:space-y-4">
+                                        {/* Required Specialty */}
+                                        {mission.requiredSpeciality && (
+                                            <li className="flex items-start gap-4">
+                                                <div className="h-2 w-2 rounded-full bg-primary mt-2 shrink-0" />
+                                                <span className="text-muted-foreground text-sm sm:text-base font-medium leading-relaxed flex-1">
+                                                    <span className="text-primary font-semibold">{t("MISSION_DETAILS.REQUIRED")} </span>
+                                                    {t("MISSION_DETAILS.SPECIALIZATION_DESC", { name: mission.requiredSpeciality.name })}
+                                                </span>
+                                            </li>
+                                        )}
 
-                                    {/* domains */}
-                                    {mission.domains && mission.domains.length > 0 && (
-                                        <div>
-                                            <p className="text-muted-foreground text-xs uppercase tracking-wider font-bold mb-3">{t("WORKER_MISSION_DETAILS.TABS.REQUIREMENTS.FOCUS_DOMAINS")}</p>
-                                            <div className="flex flex-wrap gap-2">
-                                                {mission.domains.map((md) => (
-                                                    <Badge
-                                                        key={md.id}
-                                                        variant="outline"
-                                                        className="px-3 py-1.5 text-sm border-border bg-muted/30 hover:bg-muted/50 transition-colors"
-                                                    >
-                                                        {md.domain?.name}
-                                                        {md.isRequired && (
-                                                            <span className="text-red-500 ml-1">*</span>
-                                                        )}
-                                                    </Badge>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
+                                        {/* Domains */}
+                                        {mission.domains && mission.domains.length > 0 && (
+                                            mission.domains.map((md: any) => (
+                                                <li key={md.id} className="flex items-start gap-4">
+                                                    <div className="h-2 w-2 rounded-full bg-primary mt-2 shrink-0" />
+                                                    <span className="text-muted-foreground text-sm sm:text-base font-medium leading-relaxed flex-1">
+                                                        {md.isRequired ? <span className="text-primary font-semibold">{t("MISSION_DETAILS.REQUIRED")} </span> : ""}
+                                                        {t("MISSION_DETAILS.DOMAIN_DESC", { name: md.domain?.name })}
+                                                    </span>
+                                                </li>
+                                            ))
+                                        )}
+                                    </ul>
                                 </div>
 
                                 {(mission.requiredSpeciality || mission.domains?.some((md) => md.isRequired)) && (

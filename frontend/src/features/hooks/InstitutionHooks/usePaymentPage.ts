@@ -36,7 +36,7 @@ export const usePaymentPage = () => {
     const [paymentAmount, setPaymentAmount] = useState<number>(0);
 
     // Only fetch data if we have a valid assignment ID
-    const { data: assignmentData, isLoading: assignmentLoading } = useGetAssignmentQuery(
+    const { data: assignmentData, isLoading: assignmentLoading, refetch: refetchAssignment } = useGetAssignmentQuery(
         assignmentId,
         { skip: !isValidAssignmentId }
     );
@@ -85,6 +85,7 @@ export const usePaymentPage = () => {
     const handlePaymentSuccess = () => {
         setPaymentState("success");
         refetchPayments();
+        refetchAssignment();
     };
 
     const handlePaymentError = (message: string) => {

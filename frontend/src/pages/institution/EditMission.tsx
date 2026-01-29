@@ -34,7 +34,7 @@ export default function EditMission() {
         <div className="bg-muted/30 p-6 rounded-full mb-6">
           <AlertCircle className="h-12 w-12 text-muted-foreground" />
         </div>
-        <h2 className="text-2xl font-bold text-foreground mb-2">
+        <h2 className="text-2xl font-bold text-foreground mb-2 font-spline">
           {t("EDIT_MISSION.MESSAGES.NOT_FOUND")}
         </h2>
         <p className="text-muted-foreground mb-8">
@@ -65,7 +65,7 @@ export default function EditMission() {
           {t("EDIT_MISSION.ACTIONS.CANCEL")}
         </Button>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground font-spline">
             {t("EDIT_MISSION.HEADER.TITLE")}
           </h1>
           <p className="text-muted-foreground text-lg mt-1">
@@ -93,7 +93,7 @@ export default function EditMission() {
 
           {/* Actions Card */}
           <Card className="border-none shadow-2xl bg-card rounded-3xl overflow-hidden shadow-primary/10">
-            <div className="h-2 bg-primary w-full" />
+            <div className="h-1 bg-primary w-full" />
             <CardContent className="p-8 space-y-4">
               <Button
                 type="submit"

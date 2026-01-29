@@ -68,6 +68,7 @@ export const institutionApi = api.injectEndpoints({
             invalidatesTags: [
                 { type: "Institutions", id: "PROFILE" },
                 { type: "Institutions", id: "LIST" },
+                { type: "Auth", id: "ME" },
             ],
         }),
 

@@ -10,7 +10,7 @@ import type { MissionStatus } from "@/types/mission.types";
 
 export const useMyMissions = () => {
     const { t } = useTranslation();
-    const [view, setView] = useState<"grid" | "list">("list");
+    const [view, setView] = useState<"grid" | "list">("grid");
     const [search, setSearch] = useState("");
     const [statusFilter, setStatusFilter] = useState<MissionStatus | "ALL">("ALL");
     const [domainFilter, setDomainFilter] = useState<string>("ALL");

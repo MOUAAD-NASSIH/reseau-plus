@@ -343,14 +343,18 @@ const handlePaymentSuccess = async (paymentIntent: Stripe.PaymentIntent) => {
     await notificationService.createNotification(
         workerUserId,
         'PAYMENT_RECEIVED',
-        `Payment of ${amount.toFixed(2)} MAD received for mission: ${missionTitle}`
+        `Payment of ${amount.toFixed(2)} MAD received for mission: ${missionTitle}`,
+        payment.missionAssignmentId,
+        'ASSIGNMENT'
     );
 
     // Notify institution
     await notificationService.createNotification(
         institutionUserId,
         'PAYMENT_COMPLETED',
-        `Payment of ${payment.amountTotal.toFixed(2)} MAD completed for mission: ${missionTitle}`
+        `Payment of ${payment.amountTotal.toFixed(2)} MAD completed for mission: ${missionTitle}`,
+        payment.missionAssignmentId,
+        'ASSIGNMENT'
     );
 };
 
@@ -388,7 +392,9 @@ const handlePaymentFailure = async (paymentIntent: Stripe.PaymentIntent) => {
     await notificationService.createNotification(
         institutionUserId,
         'PAYMENT_FAILED',
-        `Payment failed for mission: ${missionTitle}. Please try again.`
+        `Payment failed for mission: ${missionTitle}. Please try again.`,
+        payment.missionAssignmentId,
+        'ASSIGNMENT'
     );
 };
 

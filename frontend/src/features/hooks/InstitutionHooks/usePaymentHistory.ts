@@ -22,10 +22,10 @@ export const usePaymentHistory = () => {
     return payments.filter((payment) => {
       // 1. Status Filter
       if (statusFilter !== "ALL") {
-        const isActuallyCompleted = payment.status === "COMPLETED";
+
         const isInitiated = (payment as any).stripePaymentId !== null;
         const visualStatus = (payment.status === "PENDING" && isInitiated) ? "COMPLETED" : payment.status;
-        
+
         if (visualStatus !== statusFilter) return false;
       }
 
@@ -33,10 +33,10 @@ export const usePaymentHistory = () => {
       if (searchQuery) {
         const lowerQ = searchQuery.toLowerCase();
         const missionTitle = (payment as any).missionAssignment?.mission?.title?.toLowerCase() || "";
-        const workerName = (payment as any).missionAssignment?.worker 
-            ? `${(payment as any).missionAssignment.worker.firstName} ${(payment as any).missionAssignment.worker.lastName}`.toLowerCase()
-            : "";
-        
+        const workerName = (payment as any).missionAssignment?.worker
+          ? `${(payment as any).missionAssignment.worker.firstName} ${(payment as any).missionAssignment.worker.lastName}`.toLowerCase()
+          : "";
+
         if (!missionTitle.includes(lowerQ) && !workerName.includes(lowerQ)) {
           return false;
         }
@@ -66,11 +66,11 @@ export const usePaymentHistory = () => {
     // Find completed assignments that don't have a COMPLETED or initiated payment yet
     return assignments.filter((assignment) => {
       if (assignment.status !== "COMPLETED") return false;
-      
+
       // 1. Check reactive global payments list (for real-time updates after payment)
       const paymentInGlobalList = payments.find(p => p.missionAssignmentId === assignment.id);
       const isPaidOrInitiatedGlobal = paymentInGlobalList && (paymentInGlobalList.status === "COMPLETED" || (paymentInGlobalList as any).stripePaymentId !== null);
-      
+
       if (isPaidOrInitiatedGlobal) return false;
 
       // 2. Check robust nested payments list (source of truth from backend, includes all records)
@@ -78,7 +78,7 @@ export const usePaymentHistory = () => {
       const isPaidOrInitiatedNested = paymentsForThisAssignment.some(
         p => p.status === "COMPLETED" || (p as any).stripePaymentId !== null
       );
-      
+
       return !isPaidOrInitiatedNested;
     });
   }, [assignments, payments]);

@@ -86,8 +86,10 @@ export const applyToMission = async (workerId: number, missionId: number) => {
     // Notify institution about new application
     await createNotification(
         mission.institution.userId,
-        "APPLICATION_RECEIVED",
-        `New application received from ${application.worker.firstName} ${application.worker.lastName} for mission "${mission.title}"`
+        "APPLICATION_SUBMITTED",
+        `New application received from ${application.worker.firstName} ${application.worker.lastName} for mission "${mission.title}"`,
+        application.id,
+        'APPLICATION'
     );
 
     return application;
@@ -228,7 +230,12 @@ export const getMissionApplications = async (
             include: {
                 worker: {
                     include: {
+                        user: { select: { profilePicture: true } },
                         speciality: true,
+                        documents: {
+                            where: { type: "DIPLOMA", status: "APPROVED" },
+                            select: { id: true, title: true, type: true, status: true, fileUrl: true }
+                        },
                         experiences: {
                             orderBy: { startDate: "desc" },
                             take: 5
@@ -325,7 +332,9 @@ export const acceptApplication = async (institutionId: number, applicationId: nu
     await createNotification(
         application.worker.userId,
         "APPLICATION_ACCEPTED",
-        `Your application for mission "${application.mission.title}" has been accepted!`
+        `Your application for mission "${application.mission.title}" has been accepted!`,
+        result.assignment.id,
+        'ASSIGNMENT'
     );
 
     // Notify other applicants about rejection
@@ -342,7 +351,9 @@ export const acceptApplication = async (institutionId: number, applicationId: nu
         await createNotification(
             rejected.worker.userId,
             "APPLICATION_REJECTED",
-            `Your application for mission "${application.mission.title}" was not selected.`
+            `Your application for mission "${application.mission.title}" was not selected.`,
+            application.missionId,
+            'MISSION'
         );
     }
 
@@ -406,6 +417,10 @@ export const getApplicationById = async (applicationId: number) => {
             worker: {
                 include: {
                     speciality: true,
+                    documents: {
+                        where: { type: "DIPLOMA", status: "APPROVED" },
+                        select: { id: true, title: true, type: true, status: true, fileUrl: true }
+                    },
                     experiences: true,
                     domains: { include: { domain: true } }
                 }

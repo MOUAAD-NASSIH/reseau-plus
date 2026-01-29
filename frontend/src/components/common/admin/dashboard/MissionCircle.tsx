@@ -1,3 +1,4 @@
+import React from "react";
 import type { MissionStats } from "./MissionBreakdown";
 
 interface Props {
@@ -51,7 +52,7 @@ export default function MissionCircle({ stats, isLoading }: Props) {
                 acc.offset -= p;
                 return acc;
               },
-              { offset: 0, list: [] as JSX.Element[] }
+              { offset: 0, list: [] as React.JSX.Element[] }
             ).list
           }
         </svg>

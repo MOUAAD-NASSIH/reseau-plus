@@ -27,7 +27,7 @@ export default function CreateMission() {
         </Button>
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            <h1 className="text-3xl font-bold tracking-tight text-foreground font-spline">
               {t("CREATE_MISSION.HEADER.TITLE")}
             </h1>
             <p className="text-muted-foreground text-lg mt-1">
@@ -56,18 +56,19 @@ export default function CreateMission() {
           <MissionRequirementsForm form={form} />
 
           {/* Actions Card */}
-          <Card className="border shadow-md bg-card sticky top-6">
+          <Card className="border shadow-md bg-card sticky top-6 transition-all hover:shadow-lg">
             <CardContent className="p-6 space-y-4">
               <h3 className="font-semibold text-sm uppercase text-muted-foreground tracking-wider">
-                Publish Mission
+                {t("CREATE_MISSION.ACTIONS.PUBLISH_MISSION")}
               </h3>
               <div className="space-y-2 text-sm text-muted-foreground">
                 <p className="flex justify-between">
-                  Status:{" "}
-                  <span className="text-orange-500 font-medium">Draft</span>
+                  {t("CREATE_MISSION.ACTIONS.STATUS_LABEL")}{" "}
+                  <span className="text-orange-500 font-medium">{t("CREATE_MISSION.ACTIONS.DRAFT")}</span>
                 </p>
                 <p className="flex justify-between">
-                  Visibility: <span className="font-medium">Public</span>
+                  {t("CREATE_MISSION.ACTIONS.VISIBILITY_LABEL")}{" "}
+                  <span className="font-medium">{t("CREATE_MISSION.ACTIONS.PUBLIC")}</span>
                 </p>
               </div>
               <div className="pt-4 flex flex-col gap-3">

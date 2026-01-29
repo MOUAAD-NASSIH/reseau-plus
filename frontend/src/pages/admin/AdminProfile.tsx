@@ -10,8 +10,6 @@ export default function AdminProfile() {
     const { t } = useTranslation();
     const { data: userData, isLoading: userLoading } = useGetCurrentUserQuery();
     const { data: dashboardData, isLoading: dashboardLoading } = useGetAdminDashboardQuery();
-    // const [uploadProfilePicture, { isLoading: isUploading }] = useUploadAdminProfilePictureMutation();
-    // const [deleteProfilePicture, { isLoading: isDeleting }] = useDeleteAdminProfilePictureMutation();
 
     const user = userData?.data?.user;
     const stats = dashboardData?.data;
@@ -55,19 +53,11 @@ export default function AdminProfile() {
         return undefined;
     };
 
-    const getStatus = () => {
-        if (!user) return t("COMMON.UNKNOWN");
-        if ("status" in user) {
-            return user.status;
-        }
-        return "ACTIVE";
-    };
-
     if (userLoading || dashboardLoading) {
         return (
             <div className="max-w-4xl mx-auto space-y-6 pb-12 font-spline">
                 <Skeleton className="h-10 w-64" />
-                <Card className="border-border/40 shadow-xl rounded-[2rem]">
+                <Card className="border-border/40 shadow-xl rounded-4xl">
                     <CardHeader className="flex flex-row items-center justify-between pb-2">
                         <Skeleton className="h-6 w-48" />
                         <Skeleton className="h-6 w-24" />
@@ -107,14 +97,12 @@ export default function AdminProfile() {
             <AdminProfileHeader t={t} />
 
             <AdminProfileCard
-                user={user}
                 stats={stats}
                 t={t}
                 formatDate={formatDate}
                 getRoleName={getRoleName}
                 getEmail={getEmail}
                 getCreatedAt={getCreatedAt}
-                getStatus={getStatus}
             />
         </div>
     );

@@ -38,6 +38,21 @@ export interface Mission {
         applications: number;
         assignments: number;
     };
+    applications?: {
+        id: number;
+        missionId: number;
+        workerId: number;
+        status: string;
+        appliedAt: string;
+        worker: {
+            id: number;
+            firstName: string;
+            lastName: string;
+            user: {
+                profilePicture: string | null;
+            };
+        };
+    }[];
 }
 
 /**

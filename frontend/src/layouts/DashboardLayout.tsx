@@ -1,21 +1,24 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router";
+import { useNavigate, Link } from "react-router";
 import {
     Menu,
-    X,
     LogOut,
     ChevronDown,
-    ChevronLeft,
+    Settings,
     type LucideIcon,
 } from "lucide-react";
-import Logo from "@/assets/Logo";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/common/ThemeToggle";
 import { NotificationBell } from "@/components/common/NotificationBell";
+import { LanguageSwitcher } from "@/components/common/LanguageSwitcher";
 import { UserAvatar } from "@/components/ui/avatar";
 import { ConnectionStatusIndicator } from "@/components/common/ConnectionStatusIndicator";
 import { Button } from "@/components/ui/button";
 import { useGetCurrentUserQuery, useLogoutMutation } from "@/features/api/endpoints/authEndpoints";
+import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { DashboardSidebar } from "@/components/dashboard/DashboardSidebar";
+import { useTranslation } from "react-i18next";
+import { LogoutConfirmDialog } from "@/components/common/LogoutConfirmDialog";
 
 // Key for persisting sidebar collapsed state
 const SIDEBAR_COLLAPSED_KEY = "sidebar-collapsed";
@@ -58,10 +61,10 @@ interface ApiUser {
 export default function DashboardLayout({
     children,
     navItems,
-    title = "Dashboard",
+    title = "HEADER_TITLES.DASHBOARD",
     description,
 }: DashboardLayoutProps) {
-    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const { t } = useTranslation();
     const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
         // Initialize from localStorage
         if (typeof window !== "undefined") {
@@ -71,7 +74,8 @@ export default function DashboardLayout({
         return false;
     });
     const [userMenuOpen, setUserMenuOpen] = useState(false);
-    const location = useLocation();
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [showLogoutDialog, setShowLogoutDialog] = useState(false);
     const navigate = useNavigate();
 
     // Get user data from RTK Query (single source of truth)
@@ -89,6 +93,17 @@ export default function DashboardLayout({
         // Use RTK Query logout mutation which clears cache
         await logoutMutation();
         navigate("/login");
+    };
+
+    // Get settings path based on user role
+    const getSettingsPath = () => {
+        const apiUser = user as ApiUser;
+        switch (apiUser?.role?.toLowerCase()) {
+            case 'worker': return '/worker/profile';
+            case 'institution': return '/institution/profile';
+            case 'admin': return '/admin/profile';
+            default: return '/profile';
+        }
     };
 
     const getUserDisplayName = () => {
@@ -114,12 +129,13 @@ export default function DashboardLayout({
         if (!user) return "";
 
         const apiUser = user as ApiUser;
+        const role = apiUser.role?.toUpperCase();
 
-        if (apiUser.role === "worker") return "Worker";
-        if (apiUser.role === "institution") return "Institution";
-        if (apiUser.role === "admin") return "Admin";
+        if (role === "WORKER" || role === "INSTITUTION" || role === "ADMIN") {
+            return t(`ROLES.${role}`);
+        }
 
-        return "";
+        return apiUser.role || "";
     };
 
     const getUserProfilePicture = (): string | null => {
@@ -150,220 +166,78 @@ export default function DashboardLayout({
         return null;
     };
 
-    // Check if a nav item is active (exact match or child route)
-    // Uses a more precise matching algorithm to avoid false positives
-    const isNavItemActive = (href: string) => {
-        const currentPath = location.pathname;
-
-        // Exact match always wins
-        if (href === currentPath) return true;
-
-        // For dashboard root routes, only exact match
-        if (href.endsWith("/admin") || href.endsWith("/worker") || href.endsWith("/institution")) {
-            return currentPath === href;
-        }
-
-        // For other routes, check if current path starts with href
-        // But ensure we're matching complete path segments to avoid
-        // /institution/missions matching /institution/missions/create
-        if (currentPath.startsWith(href)) {
-            // Check if the next character after href is either end of string or a slash
-            const nextChar = currentPath.charAt(href.length);
-            // If href ends with a slash or the next char is a slash or end of string
-            if (href.endsWith("/") || nextChar === "" || nextChar === "/") {
-                // Additional check: find the most specific match among all nav items
-                // This prevents parent routes from being highlighted when a child is active
-                const isMoreSpecificRouteActive = navItems.some(item => {
-                    if (item.href === href) return false; // Skip self
-                    if (item.href.startsWith(href) && item.href.length > href.length) {
-                        // There's a more specific route that starts with this href
-                        // Check if current path matches that more specific route
-                        if (currentPath.startsWith(item.href)) {
-                            const nextCharSpecific = currentPath.charAt(item.href.length);
-                            return nextCharSpecific === "" || nextCharSpecific === "/";
-                        }
-                    }
-                    return false;
-                });
-
-                return !isMoreSpecificRouteActive;
-            }
-        }
-
-        return false;
-    };
-
     return (
-        <div className="min-h-screen bg-background">
-            {/* Mobile sidebar overlay */}
-            <div
-                className={cn(
-                    "fixed inset-0 z-40 bg-black/50 lg:hidden transition-opacity duration-300",
-                    sidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-                )}
-                onClick={() => setSidebarOpen(false)}
-            />
+        <div className="min-h-screen bg-background/95">
+            {/* Mobile Sidebar (Sheet) */}
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+                <SheetContent side="left" className="p-0 w-70 border-r-0">
+                    <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
+                    <SheetDescription className="sr-only">Navigation menu for mobile devices</SheetDescription>
+                    <DashboardSidebar
+                        navItems={navItems}
+                        collapsed={false}
+                        isMobile={true}
+                        onItemClick={() => setMobileMenuOpen(false)}
+                        onLogout={handleLogout}
+                        userRole={(user as ApiUser)?.role}
+                    />
+                </SheetContent>
+            </Sheet>
 
-            {/* Sidebar */}
+            {/* Desktop Sidebar */}
             <aside
                 className={cn(
-                    "fixed inset-y-0 left-0 z-50 bg-card border-r border-border shadow-lg",
-                    "transform transition-all duration-300 ease-in-out",
-                    "lg:translate-x-0 lg:shadow-none",
-                    sidebarOpen ? "translate-x-0" : "-translate-x-full",
-                    sidebarCollapsed ? "lg:w-18" : "w-64"
+                    "hidden lg:block fixed inset-y-0 left-0 z-40 bg-card border-r border-border shadow-sm",
+                    "transition-all duration-300 ease-in-out",
+                    sidebarCollapsed ? "w-18" : "w-72"
                 )}
             >
-                {/* Sidebar header */}
-                <div className={cn(
-                    "flex items-center h-16 px-4 border-b border-border bg-card/50 backdrop-blur-sm",
-                    sidebarCollapsed ? "lg:justify-center" : "justify-between"
-                )}>
-                    <Link to="/" className={cn("flex items-center gap-2", sidebarCollapsed && "lg:hidden")}>
-                        <div className="flex h-9 w-9 items-center justify-center rounded-lg text-primary bg-primary/10">
-                            <Logo />
-                        </div>
-                        <span className="inline-block font-semibold text-lg font-spline">
-                            Réseau+
-                        </span>
-                    </Link>
-                    <div className={cn(
-                        "flex items-center gap-1",
-                        sidebarCollapsed && "lg:justify-center"
-                    )}>
-                        {/* Desktop collapse button */}
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="hidden lg:flex h-8 w-8 hover:bg-primary/10 transition-colors duration-200"
-                            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                            aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-                        >
-                            <ChevronLeft
-                                className={cn(
-                                    "h-4 w-4 transition-transform duration-300",
-                                    sidebarCollapsed && "rotate-180"
-                                )}
-                            />
-                        </Button>
-                        {/* Mobile close button */}
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="lg:hidden h-8 w-8 hover:bg-primary/10 transition-colors duration-200"
-                            onClick={() => setSidebarOpen(false)}
-                            aria-label="Close sidebar"
-                        >
-                            <X className="h-5 w-5" />
-                        </Button>
-                    </div>
-                </div>
-
-                {/* Navigation */}
-                <nav className={cn(
-                    "p-3 space-y-1",
-                    "max-h-[calc(100vh-4rem)]",
-                    sidebarCollapsed ? "lg:overflow-hidden lg:flex lg:flex-col lg:items-center" : "overflow-y-auto"
-                )}>
-                    {navItems.map((item) => {
-                        const isActive = isNavItemActive(item.href);
-                        const Icon = item.icon;
-                        return (
-                            <Link
-                                key={item.href}
-                                to={item.href}
-                                onClick={() => setSidebarOpen(false)}
-                                title={sidebarCollapsed ? item.label : undefined}
-                                className={cn(
-                                    "group relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium",
-                                    "transition-all duration-200 ease-in-out",
-                                    sidebarCollapsed && "lg:justify-center lg:px-2 lg:w-12",
-                                    isActive
-                                        ? "bg-primary text-primary-foreground shadow-md"
-                                        : "text-muted-foreground hover:bg-primary/10 hover:text-foreground"
-                                )}
-                            >
-                                {/* Active indicator bar */}
-                                {isActive && (
-                                    <span
-                                        className={cn(
-                                            "absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-primary-foreground rounded-r-full",
-                                            "transition-all duration-200",
-                                            sidebarCollapsed && "lg:hidden"
-                                        )}
-                                    />
-                                )}
-                                <Icon className={cn(
-                                    "h-5 w-5 shrink-0",
-                                    "transition-transform duration-200",
-                                    !isActive && "group-hover:scale-110"
-                                )} />
-                                <span className={cn(
-                                    "transition-all duration-300 flex-1",
-                                    sidebarCollapsed && "lg:hidden lg:opacity-0 lg:w-0"
-                                )}>
-                                    {item.label}
-                                </span>
-                                {/* Badge indicator */}
-                                {item.badge && (
-                                    <span className={cn(
-                                        "flex items-center justify-center px-2 min-w-5 h-5 text-xs font-bold rounded-full",
-                                        "transition-all duration-200",
-                                        isActive
-                                            ? "bg-primary-foreground text-primary"
-                                            : "bg-red-500 text-white",
-                                        sidebarCollapsed && "lg:absolute lg:top-0 lg:right-0 lg:min-w-4 lg:h-4 lg:text-[10px]"
-                                    )}>
-                                        {item.badge}
-                                    </span>
-                                )}
-                                {/* Tooltip for collapsed state */}
-                                {sidebarCollapsed && (
-                                    <span className={cn(
-                                        "absolute left-full ml-2 px-2 py-1 bg-popover text-popover-foreground text-xs rounded-md shadow-lg",
-                                        "opacity-0 invisible group-hover:opacity-100 group-hover:visible",
-                                        "transition-all duration-200 whitespace-nowrap z-50",
-                                        "hidden lg:block"
-                                    )}>
-                                        {item.label}
-                                        {item.badge && ` (${item.badge})`}
-                                    </span>
-                                )}
-                            </Link>
-                        );
-                    })}
-                </nav>
+                <DashboardSidebar
+                    navItems={navItems}
+                    collapsed={sidebarCollapsed}
+                    setCollapsed={setSidebarCollapsed}
+                    onLogout={handleLogout}
+                    userRole={(user as ApiUser)?.role}
+                />
             </aside>
 
             {/* Main content area */}
             <div className={cn(
-                "transition-all duration-300 ease-in-out",
-                sidebarCollapsed ? "lg:pl-18" : "lg:pl-64"
+                "transition-all duration-300 ease-in-out min-h-screen flex flex-col",
+                sidebarCollapsed ? "lg:pl-18" : "lg:pl-72"
             )}>
                 {/* Header */}
-                <header className="sticky top-0 z-30 h-16 bg-card/95 backdrop-blur-sm border-b border-border shadow-sm">
+                <header className="sticky top-0 z-30 h-16 w-full bg-background/80 backdrop-blur-md border-b border-border supports-backdrop-filter:bg-background/60">
                     <div className="flex items-center justify-between h-full px-4 md:px-6">
                         {/* Left side - mobile menu button and title */}
                         <div className="flex items-center gap-4">
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className="lg:hidden h-9 w-9 hover:bg-primary/10 transition-colors duration-200"
-                                onClick={() => setSidebarOpen(true)}
+                                className="lg:hidden h-9 w-9 hover:bg-primary/10 transition-colors"
+                                onClick={() => setMobileMenuOpen(true)}
                                 aria-label="Open sidebar menu"
                             >
                                 <Menu className="h-5 w-5" />
                             </Button>
-                            <div className="flex flex-col">
-                                <h1 className="text-lg font-semibold tracking-tight">{title}</h1>
+
+                            <div
+                                key={title + t(title)} // Trigger animation on title/language change
+                                className="flex flex-col animate-in fade-in slide-in-from-left-2 duration-300"
+                            >
+                                <h1 className="text-lg font-bold tracking-tight text-foreground transition-all duration-300">{t(title)}</h1>
                                 {description && (
-                                    <p className="text-sm text-muted-foreground hidden sm:block">{description}</p>
+                                    <p className="text-xs text-muted-foreground hidden sm:block font-medium transition-all duration-300">{t(description)}</p>
                                 )}
                             </div>
                         </div>
 
                         {/* Right side - notifications, theme, user menu */}
-                        <div className="flex items-center gap-1 md:gap-2">
+                        <div className="flex items-center gap-1.5 md:gap-3">
+                            <div className="hidden sm:block">
+                                <LanguageSwitcher />
+                            </div>
+
                             {/* Notification bell */}
                             <NotificationBell />
                             {/* Theme toggle */}
@@ -374,8 +248,8 @@ export default function DashboardLayout({
                                 <Button
                                     variant="ghost"
                                     className={cn(
-                                        "flex items-center gap-2 px-2 h-10",
-                                        "hover:bg-primary/10 transition-colors duration-200"
+                                        "flex items-center gap-2 pl-2 pr-2 h-10 rounded-full",
+                                        "hover:bg-accent transition-colors duration-200 border border-transparent hover:border-border"
                                     )}
                                     onClick={() => setUserMenuOpen(!userMenuOpen)}
                                 >
@@ -383,14 +257,14 @@ export default function DashboardLayout({
                                         src={getUserProfilePicture()}
                                         name={getUserDisplayName()}
                                         size="sm"
-                                        className="ring-2 ring-primary/20"
+                                        className="ring-2 ring-background border border-border"
                                     />
-                                    <div className="hidden md:block text-left">
-                                        <p className="text-sm font-medium leading-tight">{getUserDisplayName()}</p>
-                                        <p className="text-xs text-muted-foreground">{getUserRole()}</p>
+                                    <div className="hidden md:block text-left mr-1">
+                                        <p className="text-sm font-semibold leading-none">{getUserDisplayName()}</p>
+                                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold mt-0.5">{getUserRole()}</p>
                                     </div>
                                     <ChevronDown className={cn(
-                                        "h-4 w-4 text-muted-foreground transition-transform duration-200",
+                                        "h-3.5 w-3.5 text-muted-foreground transition-transform duration-200",
                                         userMenuOpen && "rotate-180"
                                     )} />
                                 </Button>
@@ -398,23 +272,40 @@ export default function DashboardLayout({
                                 {/* Dropdown menu */}
                                 <div
                                     className={cn(
-                                        "absolute right-0 mt-2 w-48 bg-card rounded-lg border border-border shadow-lg z-50",
-                                        "transition-all duration-200 origin-top-right",
+                                        "absolute right-0 mt-2 w-56 bg-card rounded-xl border border-border shadow-lg shadow-black/5 z-50",
+                                        "transition-all duration-200 origin-top-right ring-1 ring-black/5",
                                         userMenuOpen
-                                            ? "opacity-100 scale-100 visible"
-                                            : "opacity-0 scale-95 invisible"
+                                            ? "opacity-100 scale-100 visible translate-y-0"
+                                            : "opacity-0 scale-95 invisible -translate-y-2"
                                     )}
                                 >
-                                    <div className="p-2">
-                                        <button
-                                            onClick={handleLogout}
+                                    <div className="p-2 space-y-1">
+                                        {/* Settings Link */}
+                                        <Link
+                                            to={getSettingsPath()}
+                                            onClick={() => setUserMenuOpen(false)}
                                             className={cn(
-                                                "flex items-center gap-2 w-full px-3 py-2 text-sm text-destructive rounded-md",
+                                                "flex items-center gap-2 w-full px-3 py-2 text-sm font-medium rounded-lg",
+                                                "hover:bg-muted transition-colors duration-200"
+                                            )}
+                                        >
+                                            <Settings className="h-4 w-4" />
+                                            {t("DASHBOARD_NAV.SETTINGS")}
+                                        </Link>
+
+                                        {/* Sign Out Button */}
+                                        <button
+                                            onClick={() => {
+                                                setUserMenuOpen(false);
+                                                setShowLogoutDialog(true);
+                                            }}
+                                            className={cn(
+                                                "flex items-center gap-2 w-full px-3 py-2 text-sm text-destructive font-medium rounded-lg",
                                                 "hover:bg-destructive/10 transition-colors duration-200"
                                             )}
                                         >
                                             <LogOut className="h-4 w-4" />
-                                            Sign out
+                                            {t("DASHBOARD_NAV.SIGN_OUT")}
                                         </button>
                                     </div>
                                 </div>
@@ -430,13 +321,24 @@ export default function DashboardLayout({
                     </div>
                 </header>
 
-                {/* Page content */}
-                <main className="p-4 md:p-6 lg:p-8">{children}</main>
+                {/* Page content - Wrapped in max-width container for larger screens */}
+                <main className="flex-1 p-4 md:p-6 lg:p-8 w-full max-w-400 mx-auto animate-in fade-in duration-500">
+                    {children}
+                </main>
             </div>
 
-            {/* Connection status indicator - shows when socket connection fails repeatedly */}
+            {/* Logout Confirmation Dialog */}
+            <LogoutConfirmDialog
+                open={showLogoutDialog}
+                onOpenChange={setShowLogoutDialog}
+                onConfirm={() => {
+                    setShowLogoutDialog(false);
+                    handleLogout();
+                }}
+            />
+
+            {/* Connection status indicator */}
             <ConnectionStatusIndicator />
         </div>
     );
 }
-

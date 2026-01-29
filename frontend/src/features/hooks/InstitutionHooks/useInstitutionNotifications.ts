@@ -9,6 +9,7 @@ import {
     useDeleteNotificationMutation,
 } from "@/features/api/endpoints/notificationEndpoints";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
+import { getNotificationRedirectUrl } from "@/utils/notificationUtils";
 import type { NotificationType } from "@/types/notification.types";
 import {
     Bell,
@@ -96,20 +97,11 @@ export const useInstitutionNotifications = () => {
         }
     };
 
-    const getRedirectUrl = (notification: { type: NotificationType, entityId?: number }): string | null => {
-        const { type, entityId } = notification;
-        switch (type) {
-            case "APPLICATION_SUBMITTED": return "/institution/missions";
-            case "APPLICATION_ACCEPTED":
-            case "ASSIGNMENT_CREATED":
-            case "ASSIGNMENT_COMPLETED":
-            case "ASSIGNMENT_CANCELLED":
-                return entityId ? `/institution/assignments/${entityId}` : "/institution/assignments";
-            case "PAYMENT_RECEIVED":
-            case "PAYMENT_FAILED": return "/institution/payments/history";
-            case "REVIEW_RECEIVED": return "/institution/reviews";
-            default: return null;
-        }
+
+
+    const getRedirectUrl = (notification: { type: NotificationType, entityId?: number, entityType?: string }): string | null => {
+        // Use the shared utility, defaulting role to 'institution'
+        return getNotificationRedirectUrl(notification as any, "institution");
     };
 
     const formatDate = (dateString: string) => {

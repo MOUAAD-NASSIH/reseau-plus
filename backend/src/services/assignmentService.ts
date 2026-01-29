@@ -118,7 +118,7 @@ export const getAssignmentById = async (id: number) => {
     const assignment = await prisma.missionAssignment.findUnique({
         where: { id },
         include: {
-            mission: true,
+            mission: { include: { requiredSpeciality: true } },
             worker: { include: { user: true, speciality: true } },
             institution: { include: { user: true } },
             reviews: true,
@@ -155,7 +155,7 @@ export const getWorkerAssignments = async (workerId: number, filters?: Assignmen
         where,
         include: {
             mission: {
-                include: { institution: true }
+                include: { institution: true, requiredSpeciality: true }
             },
             payments: true
         },
@@ -184,7 +184,7 @@ export const getInstitutionAssignments = async (institutionId: number, filters?:
     return await prisma.missionAssignment.findMany({
         where,
         include: {
-            mission: true,
+            mission: { include: { requiredSpeciality: true } },
             worker: { include: { user: true, speciality: true } },
             payments: true
         },
@@ -225,7 +225,7 @@ export const getAllAssignments = async (filters?: AssignmentFilters) => {
     return await prisma.missionAssignment.findMany({
         where,
         include: {
-            mission: true,
+            mission: { include: { requiredSpeciality: true } },
             worker: { include: { user: true } },
             institution: { include: { user: true } }
         },

@@ -96,7 +96,7 @@ export function DashboardLogs() {
                                             {log.admin?.email || `Admin #${log.adminId}`}
                                         </p>
                                     </div>
-                                    
+
                                     <div className="md:col-span-6 hidden md:flex items-center gap-2">
                                         {log.targetDocument ? (
                                             <div className="flex items-center gap-2 bg-blue-500/5 border border-blue-500/20 rounded-lg px-3 py-1.5 group hover:bg-blue-500/10 transition-colors">
@@ -121,7 +121,7 @@ export function DashboardLogs() {
                                             <span className="text-xs text-muted-foreground/50 italic">—</span>
                                         )}
                                     </div>
-                                    
+
                                     <div className="md:col-span-2 flex items-center justify-end">
                                         <span className="text-[10px] uppercase font-bold text-muted-foreground flex items-center gap-1 bg-muted/40 px-2 py-0.5 rounded-full border border-border/50 whitespace-nowrap">
                                             <Clock className="h-3 w-3" />

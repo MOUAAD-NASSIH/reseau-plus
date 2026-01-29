@@ -40,6 +40,9 @@ export const en = {
             DELETE: "Delete",
             CONFIRM: "Confirm",
             PAID: "Paid",
+            REVIEW: "Review",
+            SUBMIT: "Submit",
+            SUBMITTING: "Submitting...",
             ANONYMOUS: "Anonymous",
             COMPLETED_MISSION: "Completed Mission",
             MISSION: "Mission",
@@ -54,7 +57,23 @@ export const en = {
             SOCIAL_WORKER: "Social Worker",
             WORKER: "Worker",
             N_A: "N/A",
-            DELETE_PROFILE_PIC: "Remove photo"
+            DELETE_PROFILE_PIC: "Remove photo",
+            SHOW_RESULTS: "Show results",
+            STATUS: {
+                SUBMITTED: "Submitted",
+                REJECTED: "Rejected",
+                ACCEPTED: "Accepted",
+                ACTIVE: "Active",
+                ONGOING: "Ongoing",
+                COMPLETED: "Completed",
+                CANCELLED: "Cancelled",
+                PENDING: "Pending",
+                FAILED: "Failed",
+                VERIFIED: "Verified",
+                OPEN: "Open",
+                CLOSED: "Closed",
+                APPROVED: "Approved"
+            }
         },
         NAV: {
             FEATURES: "Features",
@@ -69,6 +88,112 @@ export const en = {
                 INSTITUTION: "As an Institution",
                 WORKER_DESC: "Find missions & get paid",
                 INSTITUTION_DESC: "Hire professionals"
+            }
+        },
+        ROLES: {
+            WORKER: "Worker",
+            INSTITUTION: "Institution",
+            ADMIN: "Admin",
+            GUEST: "Guest"
+        },
+        HEADER_TITLES: {
+            DASHBOARD: "Dashboard",
+            DASHBOARD_DESC: "Overview of your activity and quick actions",
+            WORKERS_VALIDATION: "Workers Validation",
+            DOCUMENTS_VALIDATION: "Documents Validation",
+            DOMAINS: "Domains",
+            SPECIALITIES: "Specialities",
+            MISSIONS_OVERVIEW: "Missions Overview",
+            ASSIGNMENTS_OVERVIEW: "Assignments Overview",
+            PAYMENTS_OVERVIEW: "Payments Overview",
+            REVIEWS_OVERVIEW: "Reviews Overview",
+            ADMIN_LOGS: "Admin Logs",
+            AVAILABLE_MISSIONS: "Available Missions",
+            AVAILABLE_MISSIONS_DESC: "Browse and apply for open missions",
+            MY_APPLICATIONS: "My Applications",
+            MY_APPLICATIONS_DESC: "Track your mission applications",
+            ASSIGNED_MISSIONS: "Assigned Missions",
+            ASSIGNED_MISSIONS_DESC: "View your current and past assignments",
+            REVIEWS: "Reviews",
+            REVIEWS_DESC: "View and write reviews for completed missions",
+            MESSAGES: "Messages",
+            MESSAGES_DESC: "Chat with institutions about missions",
+            NOTIFICATIONS: "Notifications",
+            NOTIFICATIONS_DESC: "Stay updated with your activity",
+            PROFILE: "Profile",
+            PROFILE_DESC: "Manage your personal and professional information",
+            DOCUMENTS: "Documents",
+            DOCUMENTS_DESC: "Upload and manage your verification documents",
+            AVAILABILITY: "Availability",
+            AVAILABILITY_DESC: "Set your available dates for missions",
+            PENDING_APPROVAL: "Pending Approval",
+            PENDING_APPROVAL_DESC: "Your account is awaiting verification",
+            CREATE_MISSION: "Create Mission",
+            CREATE_MISSION_DESC: "Post a new mission for social workers",
+            EDIT_MISSION: "Edit Mission",
+            EDIT_MISSION_DESC: "Update mission details",
+            MY_MISSIONS: "My Missions",
+            MY_MISSIONS_DESC: "Manage your posted missions",
+            MISSION_DETAILS: "Mission Details",
+            MISSION_DETAILS_DESC: "View mission information",
+            MISSION_APPLICANTS: "Mission Applicants",
+            MISSION_APPLICANTS_DESC: "Review and manage applicants",
+            ASSIGNMENTS: "Assignments",
+            ASSIGNMENTS_DESC: "Manage your mission assignments",
+            ASSIGNMENT_DETAILS: "Assignment Details",
+            ASSIGNMENT_DETAILS_DESC: "View assignment information",
+            PAYMENT: "Payment",
+            PAYMENT_DESC: "Complete payment for assignment",
+            PAYMENT_HISTORY: "Payment History",
+            PAYMENT_HISTORY_DESC: "View your payment transactions"
+        },
+        DASHBOARD_NAV: {
+            DASHBOARD: "Dashboard",
+            AVAILABLE_MISSIONS: "Available Missions",
+            MY_APPLICATIONS: "My Applications",
+            ASSIGNED_MISSIONS: "Assigned Missions",
+            MESSAGES: "Messages",
+            REVIEWS: "Reviews",
+            NOTIFICATIONS: "Notifications",
+            AVAILABILITY: "Availability",
+            DOCUMENTS: "Documents",
+            PROFILE: "Profile",
+            CREATE_MISSION: "Create Mission",
+            MY_MISSIONS: "My Missions",
+            ASSIGNMENTS: "Assignments",
+            PAYMENTS: "Payments",
+            WORKERS_VALIDATION: "Workers Validation",
+            DOCUMENTS_VALIDATION: "Documents Validation",
+            DOMAINS: "Domains",
+            SPECIALITIES: "Specialities",
+            MISSIONS_OVERVIEW: "Missions Overview",
+            ASSIGNMENTS_OVERVIEW: "Assignments Overview",
+            PAYMENTS_OVERVIEW: "Payments Overview",
+            REVIEWS_OVERVIEW: "Reviews Overview",
+            ADMIN_LOGS: "Admin Logs",
+            MENU: "Menu",
+            ACCOUNT: "Account",
+            SETTINGS: "Settings",
+            SIGN_OUT: "Sign Out"
+        },
+        LOGOUT: {
+            CONFIRM_TITLE: "Sign Out",
+            CONFIRM_MESSAGE: "Are you sure you want to sign out? You will need to log in again to access your account.",
+            CANCEL: "Cancel",
+            CONFIRM: "Sign Out"
+        },
+        REGISTRATION: {
+            SUCCESS: {
+                DEFAULT_TITLE: "Registration Complete!",
+                DEFAULT_MESSAGE: "Your account has been created successfully. You can now log in to access your dashboard.",
+                DEFAULT_REDIRECT: "Go to Login",
+                WORKER_TITLE: "Welcome to the Network! 🎉",
+                WORKER_MESSAGE: "Your worker profile has been created successfully. You can now browse available missions and start applying.",
+                WORKER_REDIRECT: "Go to Dashboard",
+                INSTITUTION_TITLE: "Institution Registered! 🎉",
+                INSTITUTION_MESSAGE: "Your institution account has been created successfully. You can now post missions and find qualified workers.",
+                INSTITUTION_REDIRECT: "Go to Dashboard",
+                EMAIL_CONFIRMATION: "A confirmation email has been sent to your inbox"
             }
         },
         HERO: {
@@ -438,8 +563,12 @@ export const en = {
             }
         },
         INSTITUTION_DASHBOARD: {
-            WELCOME: "Welcome back, {{name}} 👋",
-            SUBTITLE: "Here's what's happening with your missions today.",
+            WELCOME: {
+                GREETING_MORNING: "Good morning",
+                GREETING_AFTERNOON: "Good afternoon",
+                GREETING_EVENING: "Good evening",
+                SUBTITLE: "Here's what's happening with your missions today."
+            },
             STATS: {
                 ACTIVE_MISSIONS: "Active Missions",
                 PENDING_APPLICANTS: "Pending Applicants",
@@ -451,6 +580,21 @@ export const en = {
                 LAST_30_DAYS: "Last 30 days",
                 CLOSED_MISSIONS: "Closed Missions",
                 CANCELLED_MISSIONS: "Cancelled Missions"
+            },
+            QUICK_ACTIONS: {
+                TITLE: "Quick Actions",
+                CREATE_MISSION: "Create Mission",
+                VIEW_MISSIONS: "View Missions",
+                VIEW_APPLICATIONS: "Applications",
+                VIEW_ASSIGNMENTS: "Assignments",
+                VIEW_MESSAGES: "Messages"
+            },
+            MISSIONS: {
+                TITLE: "Recent Missions",
+                VIEW_ALL: "View all",
+                NO_MISSIONS_TITLE: "No missions yet",
+                NO_MISSIONS_DESC: "Create your first mission to start finding qualified workers",
+                CREATE_FIRST: "Create Mission"
             },
             SECTIONS: {
                 RECENT_MISSIONS: "Recent Missions",
@@ -499,7 +643,7 @@ export const en = {
                 START_DATE_LABEL: "Start Date",
                 END_DATE_LABEL: "End Date",
                 LOCATION_LABEL: "Location",
-                LOCATION_PLACEHOLDER: "City, Zip Code, or Address",
+                LOCATION_PLACEHOLDER: "City",
                 BUDGET_LABEL: "Total Budget",
                 BUDGET_PLACEHOLDER: "0.00"
             },
@@ -531,7 +675,6 @@ export const en = {
                 ERROR: "Failed to create mission",
                 NOT_FOUND: "Mission Not Found",
                 NOT_FOUND_DESC: "The mission you are trying to edit doesn't exist or has been removed.",
-                SYNC_NOTICE: "Changes are synchronized immediately with active workers."
             }
         },
         EDIT_MISSION: {
@@ -545,7 +688,7 @@ export const en = {
                 CRITERIA: "Criteria"
             },
             ACTIONS: {
-                SAVE: "Save Changes",
+                SAVE: "Save",
                 SAVING: "Saving...",
                 CANCEL: "Cancel",
                 STATUS_LABEL: "Mission Status"
@@ -555,6 +698,7 @@ export const en = {
                 SUCCESS_DESC: "Your mission has been updated successfully.",
                 ERROR: "Failed to update mission",
                 NOT_FOUND: "Mission Not Found",
+                SYNC_NOTICE: "Changes are synchronized immediately with active workers."
             }
         },
         MY_MISSIONS: {
@@ -582,7 +726,9 @@ export const en = {
                 VIEW_DETAILS: "View Details",
                 EDIT: "Edit",
                 DELETE: "Delete",
-                POSTED: "Posted {{date}}",
+                POSTED: "Posted",
+                REMOTE: "Remote",
+                REF: "REF",
                 ACTIVE_HIRING: "Active Hiring"
             },
             ACTIONS: {
@@ -607,6 +753,11 @@ export const en = {
             BACK_TO_MISSIONS: "Back to Missions",
             APPLICANTS_COUNT: "{{count}} applicant",
             APPLICANTS_COUNT_plural: "{{count}} applicants",
+            BREADCRUMBS: {
+                DASHBOARD: "Dashboard",
+                MISSIONS: "Missions",
+                APPLICANTS: "Applicants"
+            },
             STATS: {
                 TOTAL: "Total Applicants",
                 PENDING: "Pending Review",
@@ -616,6 +767,7 @@ export const en = {
                 ASSIGNED_WORKERS: "Assigned workers"
             },
             FILTER: {
+                TITLE: "Filters",
                 LABEL: "Filter by status",
                 ALL: "All Statuses",
                 SUBMITTED: "Submitted",
@@ -623,10 +775,12 @@ export const en = {
                 REJECTED: "Rejected",
                 SPECIALTY: "Specialty",
                 ALL_SPECIALTIES: "All Specialties",
+                DOMAINS: "Domains",
                 EXPERIENCE: "Experience",
                 YEARS: "{{count}} year",
                 YEARS_plural: "{{count}} years",
-                EXPERIENCE_VAL: "{{min}}-{{max}}+ yrs"
+                EXPERIENCE_VAL: "{{min}}-{{max}}+ yrs",
+                RESET: "Reset Filters"
             },
             TABLE: {
                 APPLICANT: "Applicant",
@@ -642,25 +796,40 @@ export const en = {
                 CLEAR_FILTER: "Clear Filter",
                 VIEW_PROFILE: "View Profile",
                 REJECT: "Reject",
-                ACCEPT: "Accept Worker",
+                ACCEPT: "Accept",
                 INVITE: "Invite Worker"
+            },
+            LABELS: {
+                APPLICANTS: "Applicants",
+                TOTAL: "total"
             },
             DIALOG: {
                 TITLE: "Applicant Profile",
                 DESCRIPTION: "Review the worker's qualifications and experience",
                 SPECIALITY: "Speciality",
-                EXPERIENCE: "EXPERIENCE",
-                LOCATION: "LOCATION",
-                APPLIED: "APPLIED",
-                BIO: "BIO",
-                DOMAINS: "DOMAINS",
-                REJECT_APPLICATION: "Reject Application",
-                ACCEPT_APPLICATION: "Accept Application"
+                EXPERIENCE: "Experience",
+                LOCATION: "Location",
+                APPLIED: "Applied on",
+                BIO: "Biography",
+                DOMAINS: "Domains",
+                EXPERIENCE_EMPTY_STATE: "No experience yet",
+                DIPLOMAS: "Verified Diplomas",
+                NO_DIPLOMAS: "No verified diplomas",
+                REJECT_APPLICATION: "Reject",
+                ACCEPT_APPLICATION: "Accept",
+                OVERVIEW: "Overview",
+                VERIFIED_BADGE: "Verified",
+                SCORE: "Score"
             },
             CARD: {
                 TITLE: "Applicants",
                 DESCRIPTION: "Review and manage applications for this mission",
-                EXCELLENT_MATCH: "Excellent Match"
+                EXCELLENT_MATCH: "Excellent Match",
+                APPLIED_ON: "Applied on",
+                EXP_LABEL: "Exp.",
+                RATING_LABEL: "Rating",
+                LOCATION_LABEL: "Location",
+                YEARS: "Years"
             },
             EMPTY: {
                 TITLE: "No applicants yet",
@@ -688,6 +857,22 @@ export const en = {
             MISSION_CONTROL: "Mission Control",
             SHARE: "Share",
             EDIT_MISSION: "Edit Mission",
+            STATUS: {
+                OPEN: "Open",
+                ONGOING: "Ongoing",
+                CLOSED: "Closed",
+                CANCELLED: "Cancelled"
+            },
+            URGENCY: {
+                LOW: "Low",
+                MEDIUM: "Medium",
+                HIGH: "High"
+            },
+            BREADCRUMBS: {
+                DASHBOARD: "Dashboard",
+                MISSIONS: "Missions",
+                MISSION_DETAILS: "Details"
+            },
             TOTAL_BUDGET: "Total Budget",
             MISSION_TIMELINE: "Mission Timeline",
             MISSION_TIMELINE_DAYS: "{{count}} Days duration",
@@ -698,7 +883,10 @@ export const en = {
             NO_DESCRIPTION: "No description provided.",
             TECHNICAL_REQUIREMENTS: "Technical Requirements",
             REQUIRED: "(Required)",
-            SPECIALIZATION_DESC: "specialization: Focused on {{name}} excellence and professional contribution.",
+            OPTIONAL: "(Optional)",
+            REQUIRED_SPECIALTY: "Required Specialty",
+            SPECIALIZATION_DESC: "speciality: Focused on {{name}} excellence and professional contribution.",
+            DOMAIN_DESC: "domain: Focused on {{name}} excellence and professional contribution.",
             LOCATION: "Location",
             URGENCY_LEVEL: "Urgency Level",
             PRIORITY: "{{priority}} Priority",
@@ -716,6 +904,7 @@ export const en = {
             RATING: "Rating",
             MESSAGES: {
                 NOT_FOUND: "Mission not found",
+                NOT_FOUND_DESC: "The mission you are looking for does not exist or has been deleted.",
                 LINK_COPIED: "Mission link has been copied to your clipboard."
             },
             BACK_TO_MISSIONS: "Back to Missions"
@@ -733,9 +922,10 @@ export const en = {
                 PENDING_REVIEW: "Pending Review"
             },
             FILTER: {
+                ALL: "All Assignments",
                 LABEL: "Filter Assignments",
                 SEARCH_WORKER: "Search Worker",
-                SEARCH_PLACEHOLDER: "Search by name, email...",
+                SEARCH_PLACEHOLDER: "Search by worker...",
                 STATUS: "Status",
                 STATUS_ALL: "All Statuses",
                 MISSION_TYPE: "Mission Type",
@@ -757,7 +947,9 @@ export const en = {
                     PENDING: "Pending",
                     PAID: "Paid",
                     PROCESSING: "Processing",
-                    SCHEDULED: "Scheduled"
+                    SCHEDULED: "Scheduled",
+                    LOCKED: "Locked",
+                    CANCELLED: "Cancelled"
                 },
                 EMPTY_STATE: {
                     TITLE: "No assignments found",
@@ -774,12 +966,36 @@ export const en = {
         },
         ASSIGNED_MISSION_VIEW: {
             HEADER: {
-                ASSIGNMENT_ID: "Assignment #{{id}}",
+                BREADCRUMBS: {
+                    DASHBOARD: "Dashboard",
+                    ASSIGNMENTS: "Assignments",
+                    ASSIGNMENT_ID: "Assignment #{{id}}",
+                },
                 CREATED_ON: "Created {{date}}",
                 EXPORT: "Export",
                 EDIT: "Edit",
                 PROCESS_PAYMENT: "Process Payment",
                 NOT_FOUND: "Assignment not found"
+            },
+            BADGES: {
+                REVIEW_SUBMITTED: "Review Submitted",
+                PAYMENT_COMPLETED: "Payment Completed",
+                PAYMENT_PROCESSING: "Payment Processing..."
+            },
+            REVIEW: {
+                FORM_TITLE: "Rate Worker Performance",
+                FORM_DESC: "Share your experience working with {{name}}",
+                CLICK_TO_RATE: "Click to rate",
+                FEEDBACK_LABEL: "Your Feedback",
+                OPTIONAL: "(Optional)",
+                PLACEHOLDER: "Share your thoughts about the worker's performance...",
+                SUBMIT_BTN: "Submit Review",
+                SUBMITTING: "Submitting...",
+                SUCCESS_TITLE: "Review Submitted",
+                SUCCESS_DESC: "Your review has been submitted successfully.",
+                ERROR_TITLE: "Failed to submit review",
+                WORKER_FEEDBACK_TITLE: "Worker's Feedback",
+                YOUR_REVIEW_TITLE: "Your Review"
             },
             TIMELINE: {
                 TITLE: "Mission Timeline",
@@ -821,7 +1037,8 @@ export const en = {
                 PLATFORM_FEE: "Platform Fee",
                 PAID_ON: "Paid On",
                 NO_PAYMENT: "No payment has been made yet.",
-                COMPLETE_FOR_PAYMENT: "Complete the assignment to enable payment."
+                COMPLETE_FOR_PAYMENT: "Please complete the mission to enable payment.",
+                READY_FOR_PAYMENT: "Mission completed. You can now proceed to payment."
             },
             WORKER_PROFILE: {
                 TITLE: "Worker Profile",
@@ -829,7 +1046,7 @@ export const en = {
                 RELIABILITY: "Reliability Score: {{score}}%",
                 MESSAGE: "Message",
                 PROFILE: "Profile"
-            }
+            },
         },
         ASSIGNMENTS_OVERVIEW: {
             TITLE: "Assignments",
@@ -954,11 +1171,28 @@ export const en = {
                 COMMENT_OPTIONAL: "Optional",
                 COMMENT_PLACEHOLDER: "Describe the worker's performance, punctuality, and professional attitude...",
                 SUBMITTING: "Submitting..."
+            },
+            FORM: {
+                TITLE: "Review",
+                REVIEWING_WORKER: "Reviewing",
+                RATING_LABEL: "Your overall rating",
+                FEEDBACK_LABEL: "Detailed feedback",
+                OPTIONAL: "(Optional)",
+                PLACEHOLDER: "Share your experience with this worker...",
+                SUBMIT: "Submit Review",
+                SUBMITTING: "Submitting...",
+                SUBMIT_SUCCESS: "Review submitted successfully",
+                SUBMIT_ERROR: "Error submitting review"
+            },
+            TOASTS: {
+                SUCCESS_TITLE: "Review submitted!",
+                SUCCESS_DESC: "Thank you for your feedback.",
+                ERROR: "Error submitting review."
             }
         },
         INSTITUTION_PROFILE: {
             TITLE: "Institution Profile",
-            SUBTITLE: "Update your institution's information. This information will be visible to workers.",
+            SUBTITLE: "Update your institution's information.",
             SECTIONS: {
                 ORGANIZATION: "Organization Details",
                 ACCOUNT: "Account Information"
@@ -982,12 +1216,17 @@ export const en = {
                 ADDRESS_LINE2: "Street Address (Optional)",
                 CITY: "City",
                 STATE: "State/Prov",
-                ZIP: "Zip/Postal"
+                ZIP: "Zip/Postal",
+                MEMBER_SINCE: "Member Since"
             },
             ACTIONS: {
                 CANCEL: "Cancel",
                 SAVE: "Save Changes",
                 SAVING: "Saving..."
+            },
+            ALERTS: {
+                LOGO_UPLOAD_SUCCESS: "Your logo has been uploaded successfully.",
+                LOGO_DELETE_SUCCESS: "Your logo has been deleted."
             }
         },
         NOTIFICATIONS: {
@@ -1880,7 +2119,7 @@ export const en = {
                 DELETE: "Delete"
             },
             TABS: {
-                ALL: "All Notifications",
+                ALL: "All",
                 UNREAD: "Unread"
             },
             NEW: "New",
@@ -1937,6 +2176,10 @@ export const en = {
                 DOCS_DESC: "Ensure all necessary documents are uploaded for faster approval",
                 GO_PROFILE: "Go to Profile",
                 MANAGE_DOCS: "Manage Documents"
+            },
+            MOTIVATIONAL: {
+                TITLE: "You're almost there!",
+                MESSAGE: "Our team is reviewing your profile and documents. This usually takes 24-48 hours. We'll notify you as soon as your account is approved."
             }
         },
     }

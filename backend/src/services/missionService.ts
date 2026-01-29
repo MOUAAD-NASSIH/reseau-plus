@@ -30,8 +30,26 @@ const missionInclude = {
             applications: true,
             assignments: true
         }
+    },
+    applications: {
+        take: 3,
+        orderBy: { appliedAt: 'desc' },
+        include: {
+            worker: {
+                select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    user: {
+                        select: {
+                            profilePicture: true
+                        }
+                    }
+                }
+            }
+        }
     }
-};
+} as const;
 
 /**
  * Create a new mission

@@ -10,7 +10,7 @@ export function MissionsHeader() {
     return (
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="space-y-1">
-                <h1 className="text-3xl font-bold tracking-tight text-foreground">{t("MY_MISSIONS.TITLE")}</h1>
+                <h1 className="text-3xl font-bold tracking-tight text-foreground font-spline">{t("MY_MISSIONS.TITLE")}</h1>
                 <p className="text-muted-foreground text-lg">
                     {t("MY_MISSIONS.SUBTITLE")}
                 </p>

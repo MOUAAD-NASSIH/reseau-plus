@@ -26,17 +26,20 @@ export default function MissionDetails() {
 
   if (!mission) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-6">
-        <div className="bg-destructive/10 p-4 rounded-full mb-4">
-          <AlertTriangle className="h-12 w-12 text-destructive" />
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-6 animate-in fade-in duration-500">
+        <div className="bg-destructive/10 p-6 rounded-full mb-6 animate-pulse">
+          <AlertTriangle className="h-16 w-16 text-destructive" />
         </div>
-        <h1 className="text-2xl font-bold mb-2">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-3 font-spline text-foreground">
           {t("MISSION_DETAILS.MESSAGES.NOT_FOUND")}
         </h1>
+        <p className="text-muted-foreground mb-6 max-w-md">
+          {t("MISSION_DETAILS.MESSAGES.NOT_FOUND_DESC")}
+        </p>
         <Button
           variant="outline"
           onClick={() => navigate("/institution/missions")}
-          className="gap-2"
+          className="gap-2 h-11 px-6 rounded-xl font-semibold hover:bg-primary/5 hover:border-primary/40 transition-all"
         >
           <ArrowLeft className="h-4 w-4" />
           {t("MISSION_DETAILS.BACK_TO_MISSIONS")}
@@ -46,7 +49,7 @@ export default function MissionDetails() {
   }
 
   return (
-    <div className="space-y-8 pb-12 animate-in fade-in duration-500">
+    <div className="space-y-6 animate-in fade-in duration-500">
       <MissionDetailsHeader
         title={mission.title}
         missionId={missionId}
@@ -70,20 +73,23 @@ export default function MissionDetails() {
         t={t}
       />
 
-      <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
+      <div className="grid gap-8 lg:grid-cols-[1fr_400px]">
         <div className="space-y-8">
           <MissionInfo
             description={mission.description}
             domains={mission.domains}
+            requiredSpeciality={mission.requiredSpeciality}
             t={t}
           />
         </div>
 
-        <MissionSidebar
-          mission={mission}
-          applicationsCount={applications.length}
-          t={t}
-        />
+        <div className="lg:sticky lg:top-6 lg:self-start">
+          <MissionSidebar
+            mission={mission}
+            applicationsCount={applications.length}
+            t={t}
+          />
+        </div>
       </div>
     </div>
   );
@@ -91,18 +97,34 @@ export default function MissionDetails() {
 
 function MissionDetailsSkeleton() {
   return (
-    <div className="space-y-8 animate-pulse p-4">
-      <div className="h-8 w-64 bg-muted rounded-lg" />
-      <div className="h-12 w-full bg-muted rounded-xl" />
-      <div className="grid gap-6 md:grid-cols-3">
+    <div className="max-w-7xl mx-auto space-y-8 pb-12 animate-pulse">
+      {/* Header Skeleton */}
+      <div className="space-y-4 border-b pb-6 border-border/50">
+        <div className="h-10 w-96 bg-muted/60 rounded-xl" />
+        <div className="h-5 w-64 bg-muted/40 rounded-lg" />
+      </div>
+
+      {/* Status Tags Skeleton */}
+      <div className="flex gap-3">
+        <div className="h-10 w-32 bg-muted/60 rounded-xl" />
+        <div className="h-10 w-32 bg-muted/60 rounded-xl" />
+      </div>
+
+      {/* KPIs Skeleton */}
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-32 bg-muted rounded-2xl" />
+          <div key={i} className="h-40 bg-muted/60 rounded-3xl" />
         ))}
       </div>
-      <div className="grid gap-8 lg:grid-cols-[1fr_380px]">
-        <div className="h-96 bg-muted rounded-2xl" />
-        <div className="space-y-8">
-          <div className="h-64 bg-muted rounded-2xl" />
+
+      {/* Content Skeleton */}
+      <div className="grid gap-8 lg:grid-cols-[1fr_400px]">
+        <div className="space-y-6">
+          <div className="h-96 bg-muted/60 rounded-3xl" />
+        </div>
+        <div className="space-y-6">
+          <div className="h-64 bg-muted/60 rounded-3xl" />
+          <div className="h-48 bg-muted/60 rounded-3xl" />
         </div>
       </div>
     </div>

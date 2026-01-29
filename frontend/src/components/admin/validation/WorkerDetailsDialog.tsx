@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-  Users,
   Eye,
   CheckCircle,
   XCircle,
@@ -10,7 +9,6 @@ import {
   Calendar,
   Briefcase,
   Loader2,
-  Download,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -137,13 +135,13 @@ export function WorkerDetailsDialog(props: WorkerDetailsDialogProps) {
                 {new Date(worker.createdAt).toLocaleDateString()}
               </div>
             </div>
-             <div className="space-y-1">
+            <div className="space-y-1">
               <Label className="text-xs text-muted-foreground uppercase tracking-wider">
-               {t("ADMIN_VALIDATION.WORKERS.STATS.TOTAL")}
+                {t("ADMIN_VALIDATION.WORKERS.STATS.TOTAL")}
               </Label>
               <div className="flex items-center gap-2 font-medium">
                 <FileText className="h-4 w-4 text-primary" />
-                 {worker.documents?.length || 0} {t("ADMIN_VALIDATION.WORKERS.TABLE.DOCS")}
+                {worker.documents?.length || 0} {t("ADMIN_VALIDATION.WORKERS.TABLE.DOCS")}
               </div>
             </div>
           </div>
@@ -162,7 +160,7 @@ export function WorkerDetailsDialog(props: WorkerDetailsDialogProps) {
             </div>
           )}
 
-           {worker.bio && <Separator />}
+          {worker.bio && <Separator />}
 
           {/* Documents Section */}
           <div className="space-y-4">
@@ -198,19 +196,19 @@ export function WorkerDetailsDialog(props: WorkerDetailsDialogProps) {
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                           {isApproved && (
-                              <Badge variant="default" className="bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 border-emerald-500/20">
-                                <CheckCircle className="h-3 w-3 mr-1" />
-                                {t("ADMIN_DASHBOARD.PENDING_DOCS.APPROVE")}
-                              </Badge>
-                           )}
-                           {isRejected && (
-                              <Badge variant="destructive" className="bg-red-500/10 text-red-600 hover:bg-red-500/20 border-red-500/20">
-                                <XCircle className="h-3 w-3 mr-1" />
-                                {t("ADMIN_DASHBOARD.PENDING_DOCS.REJECT")}
-                              </Badge>
-                           )}
-                           
+                          {isApproved && (
+                            <Badge variant="default" className="bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 border-emerald-500/20">
+                              <CheckCircle className="h-3 w-3 mr-1" />
+                              {t("ADMIN_DASHBOARD.PENDING_DOCS.APPROVE")}
+                            </Badge>
+                          )}
+                          {isRejected && (
+                            <Badge variant="destructive" className="bg-red-500/10 text-red-600 hover:bg-red-500/20 border-red-500/20">
+                              <XCircle className="h-3 w-3 mr-1" />
+                              {t("ADMIN_DASHBOARD.PENDING_DOCS.REJECT")}
+                            </Badge>
+                          )}
+
                           <Button
                             variant="ghost"
                             size="icon"
@@ -232,7 +230,7 @@ export function WorkerDetailsDialog(props: WorkerDetailsDialogProps) {
                             onClick={() => onApproveDocument(doc.id)}
                             disabled={working || isApprovingDocument}
                           >
-                             {working && isApprovingDocument ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-2"/> : <CheckCircle className="h-3.5 w-3.5 mr-2"/>}
+                            {working && isApprovingDocument ? <Loader2 className="h-3.5 w-3.5 animate-spin mr-2" /> : <CheckCircle className="h-3.5 w-3.5 mr-2" />}
                             {t("ADMIN_DASHBOARD.PENDING_DOCS.APPROVE")}
                           </Button>
                           <Button
@@ -252,7 +250,7 @@ export function WorkerDetailsDialog(props: WorkerDetailsDialogProps) {
                       {rejecting && (
                         <div className="mt-4 space-y-3 p-3 bg-muted/30 rounded-lg border border-border/50">
                           <Label className="text-xs font-semibold text-red-600">
-                             {t("ADMIN_VALIDATION.DOCUMENTS.DIALOG.REJECT_COMMENT")}
+                            {t("ADMIN_VALIDATION.DOCUMENTS.DIALOG.REJECT_COMMENT")}
                           </Label>
                           <Textarea
                             className="min-h-[60px] text-sm bg-background resize-none focus-visible:ring-red-500/20"
@@ -277,7 +275,7 @@ export function WorkerDetailsDialog(props: WorkerDetailsDialogProps) {
                               disabled={!documentRejectComment.trim() || isRejectingDocument}
                               onClick={() => applyDocReject(doc.id)}
                             >
-                               {isRejectingDocument && <Loader2 className="h-3 w-3 animate-spin mr-1" />}
+                              {isRejectingDocument && <Loader2 className="h-3 w-3 animate-spin mr-1" />}
                               {t("ADMIN_VALIDATION.WORKERS.DIALOG.CONFIRM_REJECT")}
                             </Button>
                           </div>
@@ -287,12 +285,12 @@ export function WorkerDetailsDialog(props: WorkerDetailsDialogProps) {
                   </Card>
                 );
               })}
-              
+
               {(!worker.documents || worker.documents.length === 0) && (
-                 <div className="py-8 text-center text-muted-foreground bg-muted/10 rounded-xl border border-dashed border-border">
-                    <FileText className="h-8 w-8 mx-auto opacity-20 mb-2" />
-                    <p className="text-sm">{t("ADMIN_VALIDATION.DOCUMENTS.EMPTY_TITLE")}</p>
-                 </div>
+                <div className="py-8 text-center text-muted-foreground bg-muted/10 rounded-xl border border-dashed border-border">
+                  <FileText className="h-8 w-8 mx-auto opacity-20 mb-2" />
+                  <p className="text-sm">{t("ADMIN_VALIDATION.DOCUMENTS.EMPTY_TITLE")}</p>
+                </div>
               )}
             </div>
           </div>
@@ -301,38 +299,38 @@ export function WorkerDetailsDialog(props: WorkerDetailsDialogProps) {
         <DialogFooter className="p-4 border-t bg-muted/5">
           {!showRejectForm ? (
             <div className="flex w-full justify-between gap-4">
-               <Button
-                  variant="ghost"
-                  onClick={closeDialog}
-               >
-                  {t("COMMON.CANCEL")}
-               </Button>
-               <div className="flex gap-2">
-                  {(worker.status === 'PENDING' || worker.status === 'VERIFIED') && (
-                    <Button
-                      variant="destructive"
-                      onClick={() => setShowRejectForm(true)}
-                    >
-                      {t("ADMIN_VALIDATION.WORKERS.DIALOG.REJECT_BTN")}
-                    </Button>
-                  )}
-                  {(worker.status === 'PENDING' || worker.status === 'REJECTED') && (
-                    <Button
-                      className="bg-emerald-600 hover:bg-emerald-700"
-                      onClick={() => onApprove(worker.id)}
-                      disabled={isApproving}
-                    >
-                      {isApproving && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-                      {t("ADMIN_VALIDATION.WORKERS.DIALOG.APPROVE_BTN")}
-                    </Button>
-                  )}
+              <Button
+                variant="ghost"
+                onClick={closeDialog}
+              >
+                {t("COMMON.CANCEL")}
+              </Button>
+              <div className="flex gap-2">
+                {(worker.status === 'PENDING' || worker.status === 'VERIFIED') && (
+                  <Button
+                    variant="destructive"
+                    onClick={() => setShowRejectForm(true)}
+                  >
+                    {t("ADMIN_VALIDATION.WORKERS.DIALOG.REJECT_BTN")}
+                  </Button>
+                )}
+                {(worker.status === 'PENDING' || worker.status === 'REJECTED') && (
+                  <Button
+                    className="bg-emerald-600 hover:bg-emerald-700"
+                    onClick={() => onApprove(worker.id)}
+                    disabled={isApproving}
+                  >
+                    {isApproving && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                    {t("ADMIN_VALIDATION.WORKERS.DIALOG.APPROVE_BTN")}
+                  </Button>
+                )}
               </div>
             </div>
           ) : (
             <div className="w-full space-y-3">
-               <Label className="text-destructive font-medium">
-                  {t("ADMIN_VALIDATION.WORKERS.DIALOG.REJECT_REASON")}
-               </Label>
+              <Label className="text-destructive font-medium">
+                {t("ADMIN_VALIDATION.WORKERS.DIALOG.REJECT_REASON")}
+              </Label>
               <Textarea
                 className="min-h-[100px] resize-none"
                 placeholder={t("ADMIN_VALIDATION.WORKERS.DIALOG.REJECT_REASON")}

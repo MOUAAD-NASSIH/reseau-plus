@@ -1,5 +1,5 @@
-import { useTranslation } from "react-i18next";
-import { Star, MessageSquare, Search, Filter, X } from "lucide-react";
+
+import { MessageSquare, Search, Filter, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -14,7 +14,6 @@ import { AdminReviewsList } from "@/components/admin/reviews/AdminReviewsList";
 import { useAdminReviews } from "@/features/hooks/AdminHooks/useAdminReviews";
 
 const ReviewsOverview = () => {
-  const { t } = useTranslation();
   const {
     filteredReviews,
     stats,
@@ -45,7 +44,7 @@ const ReviewsOverview = () => {
                 <MessageSquare className="h-5 w-5" />
               </div>
               <div>
-                <h3 className="text-xl font-black tracking-tight tracking-[-0.02em]">
+                <h3 className="text-xl font-black tracking-tight">
                   Global Feed
                 </h3>
                 <div className="flex items-center gap-2">

@@ -1,6 +1,5 @@
 import {
     LayoutDashboard,
-    User,
     FileText,
     Calendar,
     Briefcase,
@@ -12,6 +11,7 @@ import {
 } from "lucide-react";
 import DashboardLayout, { type NavItem } from "./DashboardLayout";
 import { useUnreadMessageCount } from "@/socket/hooks/useUnreadMessageCount";
+import { useTranslation } from "react-i18next";
 
 interface WorkerLayoutProps {
     children: React.ReactNode;
@@ -21,58 +21,54 @@ interface WorkerLayoutProps {
 
 export default function WorkerLayout({ children, title, description }: WorkerLayoutProps) {
     const unreadCount = useUnreadMessageCount();
+    const { t } = useTranslation();
 
     const workerNavItems: NavItem[] = [
         {
-            label: "Dashboard",
+            label: t("DASHBOARD_NAV.DASHBOARD"),
             href: "/worker",
             icon: LayoutDashboard,
         },
         {
-            label: "Available Missions",
+            label: t("DASHBOARD_NAV.AVAILABLE_MISSIONS"),
             href: "/worker/missions",
             icon: Briefcase,
         },
         {
-            label: "My Applications",
+            label: t("DASHBOARD_NAV.MY_APPLICATIONS"),
             href: "/worker/applications",
             icon: ClipboardList,
         },
         {
-            label: "Assigned Missions",
+            label: t("DASHBOARD_NAV.ASSIGNED_MISSIONS"),
             href: "/worker/assignments",
             icon: CheckSquare,
         },
         {
-            label: "Messages",
+            label: t("DASHBOARD_NAV.MESSAGES"),
             href: "/worker/messages",
             icon: MessageSquare,
             badge: unreadCount > 0 ? unreadCount : undefined,
         },
         {
-            label: "Reviews",
+            label: t("DASHBOARD_NAV.REVIEWS"),
             href: "/worker/reviews",
             icon: Star,
         },
         {
-            label: "Notifications",
+            label: t("DASHBOARD_NAV.NOTIFICATIONS"),
             href: "/worker/notifications",
             icon: Bell,
         },
         {
-            label: "Availability",
+            label: t("DASHBOARD_NAV.AVAILABILITY"),
             href: "/worker/availability",
             icon: Calendar,
         },
         {
-            label: "Documents",
+            label: t("DASHBOARD_NAV.DOCUMENTS"),
             href: "/worker/documents",
             icon: FileText,
-        },
-        {
-            label: "Profile",
-            href: "/worker/profile",
-            icon: User,
         },
     ];
 

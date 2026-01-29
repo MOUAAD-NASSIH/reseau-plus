@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -6,14 +5,20 @@ import { useTranslation } from "react-i18next";
 import {
     useGetInstitutionProfileQuery,
     useUpdateInstitutionProfileMutation,
+    useUploadInstitutionLogoMutation,
+    useDeleteInstitutionLogoMutation,
 } from "@/features/api/endpoints/institutionEndpoints";
 import { updateInstitutionProfileSchema, type UpdateInstitutionProfileInput } from "@/features/validation/institutionSchemas";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 
 export const useInstitutionProfile = () => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { data: profileData, isLoading } = useGetInstitutionProfileQuery();
     const [updateProfile] = useUpdateInstitutionProfileMutation();
+
+    // Logo mutations
+    const [uploadLogo, { isLoading: isUploadingLogo }] = useUploadInstitutionLogoMutation();
+    const [deleteLogo, { isLoading: isDeletingLogo }] = useDeleteInstitutionLogoMutation();
 
     const institution = profileData?.data;
 
@@ -52,11 +57,37 @@ export const useInstitutionProfile = () => {
         }
     };
 
+    const handleLogoUpload = async (file: File) => {
+        try {
+            const formData = new FormData();
+            formData.append("logo", file);
+
+            await uploadLogo(formData).unwrap();
+            showSuccessToast(t("COMMON.SUCCESS"), t("INSTITUTION_PROFILE.ALERTS.LOGO_UPLOAD_SUCCESS"));
+        } catch (error) {
+            showErrorToast(error, t("COMMON.ERROR"));
+        }
+    };
+
+    const handleLogoDelete = async () => {
+        try {
+            await deleteLogo().unwrap();
+            showSuccessToast(t("COMMON.SUCCESS"), t("INSTITUTION_PROFILE.ALERTS.LOGO_DELETE_SUCCESS"));
+        } catch (error) {
+            showErrorToast(error, t("COMMON.ERROR"));
+        }
+    };
+
     return {
         form,
         institution,
         isLoading,
         onSubmit,
+        handleLogoUpload,
+        handleLogoDelete,
+        isUploadingLogo,
+        isDeletingLogo,
         t,
+        i18n,
     };
 };

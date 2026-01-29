@@ -7,7 +7,7 @@ import {
     useAcceptApplicationMutation,
     useRejectApplicationMutation,
 } from "@/features/api/endpoints/applicationEndpoints";
-import { useGetSpecialitiesQuery } from "@/features/api/endpoints/domainEndpoints";
+import { useGetSpecialitiesQuery, useGetDomainsQuery } from "@/features/api/endpoints/domainEndpoints";
 import type { ApplicationStatus, MissionApplication } from "@/types/application.types";
 import { showSuccessToast, showErrorToast } from "@/lib/toast";
 
@@ -18,6 +18,7 @@ export function useMissionApplicants() {
 
     const [statusFilter, setStatusFilter] = useState<ApplicationStatus | "ALL">("ALL");
     const [specialtyFilter, setSpecialtyFilter] = useState<string>("ALL");
+    const [domainFilter, setDomainFilter] = useState<number[]>([]);
     const [experienceRange, setExperienceRange] = useState<number[]>([0, 20]);
     const [selectedApplicant, setSelectedApplicant] = useState<MissionApplication | null>(null);
     const [processingId, setProcessingId] = useState<number | null>(null);
@@ -35,30 +36,38 @@ export function useMissionApplicants() {
         { skip: !missionId }
     );
     const { data: specialitiesData } = useGetSpecialitiesQuery();
+    const { data: domainsData } = useGetDomainsQuery();
+
     const [acceptApplication, { isLoading: isAccepting }] = useAcceptApplicationMutation();
     const [rejectApplication, { isLoading: isRejecting }] = useRejectApplicationMutation();
 
     const mission = missionData?.data;
     const applications = applicationsData?.data || [];
     const specialities = specialitiesData?.data || [];
+    const domains = domainsData?.data || [];
 
     // Client-side filtering
     const filteredApplications = useMemo(() => {
         return applications.filter((app) => {
             const matchesSpecialty = specialtyFilter === "ALL" || app.worker?.speciality?.id.toString() === specialtyFilter;
+
+            // Domain filtering
+            const matchesDomains = domainFilter.length === 0 ||
+                (app.worker?.domains?.some(wd => domainFilter.includes(wd.domainId)) ?? false);
+
             const experience = app.worker?.experienceYears || 0;
             const matchesExperience = experience >= experienceRange[0] && experience <= experienceRange[1];
-            
-            return matchesSpecialty && matchesExperience;
+
+            return matchesSpecialty && matchesExperience && matchesDomains;
         });
-    }, [applications, specialtyFilter, experienceRange]);
+    }, [applications, specialtyFilter, experienceRange, domainFilter]);
 
     // Calculate stats
     const stats = useMemo(() => {
         const total = filteredApplications.length;
         const pending = filteredApplications.filter(app => app.status === "SUBMITTED").length;
         const accepted = filteredApplications.filter(app => app.status === "ACCEPTED").length;
-        
+
         return { total, pending, accepted };
     }, [filteredApplications]);
 
@@ -107,11 +116,12 @@ export function useMissionApplicants() {
         setSelectedApplicant(application);
     }, []);
 
-    const hasActiveFilters = statusFilter !== "ALL" || specialtyFilter !== "ALL" || experienceRange[0] !== 0 || experienceRange[1] !== 20;
+    const hasActiveFilters = statusFilter !== "ALL" || specialtyFilter !== "ALL" || experienceRange[0] !== 0 || experienceRange[1] !== 20 || domainFilter.length > 0;
 
     const resetFilters = () => {
         setStatusFilter("ALL");
         setSpecialtyFilter("ALL");
+        setDomainFilter([]);
         setExperienceRange([0, 20]);
     };
 
@@ -121,6 +131,7 @@ export function useMissionApplicants() {
         applications,
         applicationsLoading,
         specialities,
+        domains,
         filteredApplications,
         paginatedApplications,
         stats,
@@ -132,6 +143,8 @@ export function useMissionApplicants() {
         setStatusFilter,
         specialtyFilter,
         setSpecialtyFilter,
+        domainFilter,
+        setDomainFilter,
         experienceRange,
         setExperienceRange,
         selectedApplicant,

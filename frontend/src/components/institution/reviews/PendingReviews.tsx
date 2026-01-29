@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { MissionAssignment } from "@/types/assignment.types";
-import { EmptyState } from "@/components/common/EmptyState";
 
 interface PendingReviewsProps {
     assignments: MissionAssignment[];
@@ -14,7 +13,7 @@ interface PendingReviewsProps {
 }
 
 export function PendingReviews({ assignments, isLoading, onReview }: PendingReviewsProps) {
-    const { t } = useTranslation();
+    useTranslation();
 
     if (isLoading) {
         return (

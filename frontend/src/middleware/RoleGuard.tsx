@@ -8,21 +8,7 @@ interface RoleGuardProps {
   fallbackPath?: string;
 }
 
-/**
- * API response structure from /auth/me endpoint:
- * - Workers: { userId, email, role: 'worker', workerId, worker: {...} }
- * - Institutions: { userId, email, role: 'institution', institutionId, institution: {...} }
- * - Admins: { userId, email, role: 'admin' }
- */
-interface ApiUser {
-  userId?: number;
-  email?: string;
-  role?: UserRole;
-  workerId?: number;
-  institutionId?: number;
-  worker?: object;
-  institution?: object;
-}
+
 
 /**
  * Extracts the user role from the authenticated user object.

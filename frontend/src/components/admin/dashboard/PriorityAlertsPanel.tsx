@@ -11,7 +11,7 @@ interface PriorityAlertsPanelProps {
     isLoading: boolean;
 }
 
-export function PriorityAlertsPanel({ pendingWorkers, isLoading }: PriorityAlertsPanelProps) {
+export function PriorityAlertsPanel({ isLoading }: PriorityAlertsPanelProps) {
     const { t } = useTranslation();
 
     // Mock priority alerts - in production, this would come from backend
@@ -111,7 +111,7 @@ export function PriorityAlertsPanel({ pendingWorkers, isLoading }: PriorityAlert
                                     className={`p-4 rounded-lg border ${styles.bg} ${styles.border} hover:shadow-md transition-shadow`}
                                 >
                                     <div className="flex items-start gap-3">
-                                        <Icon className={`h-5 w-5 ${styles.text} mt-0.5 flex-shrink-0`} />
+                                        <Icon className={`h-5 w-5 ${styles.text} mt-0.5 shrink-0`} />
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-start justify-between gap-2 mb-2">
                                                 <div className="flex items-center gap-2 flex-wrap">
@@ -122,7 +122,7 @@ export function PriorityAlertsPanel({ pendingWorkers, isLoading }: PriorityAlert
                                                         {alert.type.toUpperCase()}
                                                     </span>
                                                 </div>
-                                                <span className="text-xs text-muted-foreground flex items-center gap-1 flex-shrink-0">
+                                                <span className="text-xs text-muted-foreground flex items-center gap-1 shrink-0">
                                                     <Clock className="h-3 w-3" />
                                                     {formatDistanceToNow(alert.time, { addSuffix: true })}
                                                 </span>

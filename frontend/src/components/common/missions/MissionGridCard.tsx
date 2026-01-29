@@ -34,8 +34,6 @@ export function MissionGridCard({
   status,
   mode = "worker",
   onView,
-  onApplicants,
-  onEdit,
   onDelete,
 }: {
   m: any;
@@ -43,7 +41,6 @@ export function MissionGridCard({
   status?: React.ReactNode;
   mode?: Mode;
   onView?: () => void;
-  onApplicants?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
 }) {
