@@ -1313,6 +1313,15 @@ export const en = {
             }
         },
         ADMIN_DASHBOARD: {
+            ROLE_LABEL: "Administrator Portal",
+            WELCOME: {
+                GREETING_MORNING: "Good morning",
+                GREETING_AFTERNOON: "Good afternoon",
+                GREETING_EVENING: "Good evening"
+            },
+            SETTINGS: "Settings",
+            VALIDATE_USER: "Validate User",
+            INVITE_USER: "Invite User",
             TITLE: "Ecosystem Overview",
             SUBTITLE: "Real-time performance monitoring and platform metrics.",
             ACTIONS: {
@@ -1360,22 +1369,50 @@ export const en = {
             PENDING_WORKERS: {
                 TITLE: "Pending Validations",
                 AWAITING: "awaiting validation",
-                VIEW_ALL: "View all",
-                EMPTY: "No pending validations found",
+                VIEW_ALL: "View All",
+                EMPTY: "No pending validations",
                 VALIDATE: "Validate",
                 REJECT: "Reject"
             },
             PENDING_DOCS: {
                 TITLE: "Pending Documents",
                 AWAITING: "documents to review",
-                VIEW_ALL: "View all",
-                EMPTY: "No pending documents found",
+                VIEW_ALL: "View All",
+                EMPTY: "No pending documents",
                 APPROVE: "Approve",
                 REJECT: "Reject",
                 TYPE_ID: "ID Card",
                 TYPE_DIPLOMA: "Diploma",
                 TYPE_LICENSE: "Professional License",
                 TYPE_CERTIFICATE: "Certificate"
+            },
+            CHART: {
+                TITLE: "Mission Status Distribution",
+                OPEN: "Open",
+                ONGOING: "Ongoing",
+                COMPLETED: "Completed",
+                CANCELLED: "Cancelled",
+                NO_DATA: "No data available"
+            },
+            MISSION_STATUS: {
+                TITLE: "Mission Status",
+                SUBTITLE: "Current mission distribution"
+            },
+            LOGS: {
+                TITLE: "Recent Activities",
+                EMPTY: "No logs found",
+                ACTION: {
+                    WORKER_VERIFIED: "Worker Verified",
+                    WORKER_REJECTED: "Worker Rejected",
+                    DOCUMENT_APPROVED: "Document Approved",
+                    DOCUMENT_REJECTED: "Document Rejected",
+                    USER_SUSPENDED: "User Suspended",
+                    USER_BANNED: "User Banned",
+                    USER_ACTIVATED: "User Activated",
+                    CREATE_DOMAIN: "Create Domain",
+                    UPDATE_DOMAIN: "Update Domain",
+                    DELETE_DOMAIN: "Delete Domain"
+                }
             },
         },
         ADMIN_VALIDATION: {
@@ -1615,6 +1652,7 @@ export const en = {
                 SYNC_DESC: "Your calendar is being synchronized..."
             }
         },
+
         WORKER_PROFILE: {
             TITLE: "My Profile",
             SUBTITLE: "Manage your personal information and privacy.",

@@ -7,7 +7,7 @@ function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
         <div
             data-slot="card"
             className={cn(
-                "rounded-lg border bg-card text-card-foreground shadow-[var(--shadow-card)] transition-shadow duration-(--transition-normal) hover:shadow-md",
+                "rounded-lg border bg-card text-card-foreground shadow-(--shadow-card) transition-shadow duration-(--transition-normal) hover:shadow-md",
                 className
             )}
             {...props}
@@ -22,7 +22,7 @@ function CardHeader({
     return (
         <div
             data-slot="card-header"
-            className={cn("flex flex-col space-y-1.5 p-6", className)}
+            className={cn("flex flex-col p-6", className)}
             {...props}
         />
     )

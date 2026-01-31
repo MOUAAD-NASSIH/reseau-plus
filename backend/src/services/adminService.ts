@@ -41,7 +41,7 @@ export const createAdminLog = async (
             reason,
         },
         include: {
-            admin: { select: { id: true, email: true } },
+            admin: { select: { id: true, email: true, profilePicture: true } },
             targetUser: { select: { id: true, email: true } },
             targetDocument: { select: { id: true, type: true } },
         },
@@ -82,15 +82,15 @@ export const getAdminLogs = async (
         prisma.adminLog.findMany({
             where,
             include: {
-                admin: { select: { id: true, email: true } },
-                targetUser: { 
-                    select: { 
-                        id: true, 
+                admin: { select: { id: true, email: true, profilePicture: true } },
+                targetUser: {
+                    select: {
+                        id: true,
                         email: true,
                         role: { select: { name: true } },
                         worker: { select: { firstName: true, lastName: true } },
                         institution: { select: { institutionName: true } }
-                    } 
+                    }
                 },
                 targetDocument: { select: { id: true, type: true, workerId: true, fileUrl: true } },
                 targetReview: { select: { id: true, rating: true } },
@@ -219,7 +219,7 @@ export const getPendingWorkers = async (page = 1, limit = 10) => {
         prisma.worker.findMany({
             where: { status: "PENDING" },
             include: {
-                user: { select: { id: true, email: true, createdAt: true } },
+                user: { select: { id: true, email: true, createdAt: true, profilePicture: true } },
                 speciality: { select: { id: true, name: true } },
                 documents: {
                     select: {
@@ -354,7 +354,7 @@ export const getPendingDocuments = async (
             include: {
                 worker: {
                     include: {
-                        user: { select: { id: true, email: true } },
+                        user: { select: { id: true, email: true, profilePicture: true } },
                     },
                 },
             },

@@ -49,6 +49,7 @@ export interface AdminLog {
     admin?: {
         id: number;
         email: string;
+        profilePicture?: string | null;
     };
     targetUser?: {
         id: number;

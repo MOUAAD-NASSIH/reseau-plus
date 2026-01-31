@@ -413,7 +413,7 @@ export default function WorkerDashboardPage() {
                         >
                           <div className="flex items-start justify-between gap-3">
                             <div>
-                                <h4 className="font-semibold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
+                              <h4 className="font-semibold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
                                 {app.mission?.title || t("COMMON.UNTITLED")}
                               </h4>
                               <p className="text-sm text-muted-foreground flex items-center gap-1.5 mt-1">

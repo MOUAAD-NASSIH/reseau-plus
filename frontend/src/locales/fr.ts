@@ -1296,6 +1296,15 @@ export const fr = {
             }
         },
         ADMIN_DASHBOARD: {
+            ROLE_LABEL: "Portail Administrateur",
+            WELCOME: {
+                GREETING_MORNING: "Bonjour",
+                GREETING_AFTERNOON: "Bon après-midi",
+                GREETING_EVENING: "Bonsoir"
+            },
+            SETTINGS: "Paramètres",
+            VALIDATE_USER: "Valider Utilisateur",
+            INVITE_USER: "Inviter Utilisateur",
             TITLE: "Vue d'ensemble de l'écosystème",
             SUBTITLE: "Surveillance des performances en temps réel et métriques de la plateforme.",
             ACTIONS: {
@@ -1341,24 +1350,55 @@ export const fr = {
                 VIEW_ALL: "Voir tout"
             },
             PENDING_WORKERS: {
-                TITLE: "Validations en attente",
+                TITLE: "Validations en Attente",
                 AWAITING: "en attente de validation",
-                VIEW_ALL: "Voir tout",
-                EMPTY: "Aucune validation en attente",
+                VIEW_ALL: "Voir Toutes les Demandes",
+                EMPTY: "À jour !",
+                EMPTY_DESC: "Aucune validation de travailleur en attente.",
                 VALIDATE: "Valider",
                 REJECT: "Rejeter"
             },
             PENDING_DOCS: {
-                TITLE: "Documents en attente",
+                TITLE: "Documents en Attente",
                 AWAITING: "documents à examiner",
-                VIEW_ALL: "Voir tout",
-                EMPTY: "Aucun document en attente",
+                VIEW_ALL: "Revoir les Documents",
+                EMPTY: "Aucun document",
+                EMPTY_DESC: "Tous les documents ont été revus.",
                 APPROVE: "Approuver",
                 REJECT: "Rejeter",
                 TYPE_ID: "Carte d'identité",
                 TYPE_DIPLOMA: "Diplôme",
                 TYPE_LICENSE: "Licence professionnelle",
                 TYPE_CERTIFICATE: "Certificat"
+            },
+            CHART: {
+                TITLE: "Distribution des Missions",
+                OPEN: "Ouverte",
+                ONGOING: "En cours",
+                COMPLETED: "Terminée",
+                CANCELLED: "Annulée",
+                NO_DATA: "Aucune donnée disponible"
+            },
+            MISSION_STATUS: {
+                TITLE: "Statut des Missions",
+                SUBTITLE: "Distribution actuelle des missions"
+            },
+            LOGS: {
+                TITLE: "Activités Récentes",
+                EMPTY: "Aucun journal trouvé",
+                ACTION: {
+                    WORKER_VERIFIED: "Intervenant Vérifié",
+                    WORKER_REJECTED: "Intervenant Rejeté",
+                    DOCUMENT_APPROVED: "Document Approuvé",
+                    DOCUMENT_REJECTED: "Document Rejeté",
+                    USER_SUSPENDED: "Utilisateur Suspendu",
+                    USER_BANNED: "Utilisateur Banni",
+                    USER_ACTIVATED: "Utilisateur Activé",
+                    UPDATE_USER_STATUS: "Mise à jour Statut Utilisateur",
+                    CREATE_DOMAIN: "Domaine Créé",
+                    UPDATE_DOMAIN: "Domaine Mis à jour",
+                    DELETE_DOMAIN: "Domaine Supprimé"
+                }
             },
         },
         ADMIN_VALIDATION: {
@@ -1598,6 +1638,7 @@ export const fr = {
                 SYNC_DESC: "Votre calendrier est en cours de synchronisation..."
             }
         },
+
         WORKER_PROFILE: {
             TITLE: "Mon Profil",
             SUBTITLE: "Gérez vos informations personnelles et votre confidentialité.",

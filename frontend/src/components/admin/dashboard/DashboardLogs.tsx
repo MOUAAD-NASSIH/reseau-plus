@@ -1,38 +1,40 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useGetAdminLogsQuery } from '@/features/api/endpoints/adminEndpoints';
-import { Loader2, FileText, Activity, ArrowRight, Clock, Eye } from 'lucide-react';
+import { FileText, ArrowRight, Clock, User, FileCheck, XCircle, Shield, FolderPlus, FolderEdit, FolderMinus } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { fr, enUS } from 'date-fns/locale';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router';
 import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Skeleton } from '@/components/ui/skeleton';
 
-// Action type badge colors matching AdminLogs.tsx
-const actionTypeColors: Record<string, string> = {
-    VERIFY_WORKER: "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
-    REJECT_WORKER: "bg-rose-500/10 text-rose-500 border-rose-500/20",
-    APPROVE_DOCUMENT: "bg-blue-500/10 text-blue-500 border-blue-500/20",
-    REJECT_DOCUMENT: "bg-amber-500/10 text-amber-500 border-amber-500/20",
-    UPDATE_USER_STATUS: "bg-purple-500/10 text-purple-500 border-purple-500/20",
-    CREATE_DOMAIN: "bg-cyan-500/10 text-cyan-500 border-cyan-500/20",
-    UPDATE_DOMAIN: "bg-cyan-500/10 text-cyan-500 border-cyan-500/20",
-    DELETE_DOMAIN: "bg-rose-500/10 text-rose-500 border-rose-500/20",
+// Action type configurations with icons and colors
+const actionConfig: Record<string, { icon: typeof User; color: string; bgColor: string }> = {
+    WORKER_VERIFIED: { icon: User, color: 'text-emerald-600', bgColor: 'bg-emerald-500/10 border-emerald-500/20' },
+    WORKER_REJECTED: { icon: XCircle, color: 'text-rose-600', bgColor: 'bg-rose-500/10 border-rose-500/20' },
+    DOCUMENT_APPROVED: { icon: FileCheck, color: 'text-blue-600', bgColor: 'bg-blue-500/10 border-blue-500/20' },
+    DOCUMENT_REJECTED: { icon: FileText, color: 'text-amber-600', bgColor: 'bg-amber-500/10 border-amber-500/20' },
+    USER_SUSPENDED: { icon: Shield, color: 'text-orange-600', bgColor: 'bg-orange-500/10 border-orange-500/20' },
+    USER_BANNED: { icon: Shield, color: 'text-red-600', bgColor: 'bg-red-500/10 border-red-500/20' },
+    USER_ACTIVATED: { icon: Shield, color: 'text-green-600', bgColor: 'bg-green-500/10 border-green-500/20' },
+    CREATE_DOMAIN: { icon: FolderPlus, color: 'text-cyan-600', bgColor: 'bg-cyan-500/10 border-cyan-500/20' },
+    UPDATE_DOMAIN: { icon: FolderEdit, color: 'text-indigo-600', bgColor: 'bg-indigo-500/10 border-indigo-500/20' },
+    DELETE_DOMAIN: { icon: FolderMinus, color: 'text-rose-600', bgColor: 'bg-rose-500/10 border-rose-500/20' },
 };
 
 export function DashboardLogs() {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { data, isLoading } = useGetAdminLogsQuery({ limit: 5 });
     const logs = data?.data || [];
+    const dateLocale = i18n.language === 'fr' ? fr : enUS;
 
     return (
-        <Card className="border-border/40 shadow-2xl bg-card/60 backdrop-blur-xl h-full flex flex-col overflow-hidden">
-            <CardHeader className="flex flex-row items-center justify-between pb-3 bg-muted/20 border-b border-border/40">
-                <CardTitle className="text-lg font-bold tracking-tight flex items-center gap-2">
-                    <div className="p-2 bg-indigo-500/10 rounded-lg">
-                        <Activity className="h-5 w-5 text-indigo-500" />
-                    </div>
+        <Card className="border-none shadow-md bg-card flex flex-col h-full overflow-hidden">
+            <CardHeader className="flex flex-row items-center justify-between pb-4 pt-6 px-6">
+                <CardTitle className="text-base font-semibold font-spline text-muted-foreground uppercase tracking-wider flex items-center gap-2">
                     {t("ADMIN_DASHBOARD.LOGS.TITLE", "Recent Activities")}
                 </CardTitle>
                 <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-indigo-500" asChild>
@@ -43,104 +45,132 @@ export function DashboardLogs() {
             </CardHeader>
             <CardContent className="flex-1 p-0">
                 {isLoading ? (
-                    <div className="space-y-4 p-6">
-                        {[1, 2, 3].map((i) => (
-                            <div key={i} className="flex items-center gap-4">
-                                <div className="h-10 w-10 rounded-lg bg-muted animate-pulse" />
+                    <div className="space-y-1 p-2">
+                        {[1, 2, 3, 4].map((i) => (
+                            <div key={i} className="flex items-start gap-4 p-4">
+                                <Skeleton className="h-12 w-12 rounded-full shrink-0" />
                                 <div className="space-y-2 flex-1">
-                                    <div className="h-4 w-[200px] bg-muted animate-pulse rounded" />
-                                    <div className="h-3 w-[150px] bg-muted animate-pulse rounded" />
+                                    <Skeleton className="h-4 w-[60%]" />
+                                    <Skeleton className="h-3 w-[40%]" />
                                 </div>
+                                <Skeleton className="h-6 w-20" />
                             </div>
                         ))}
                     </div>
                 ) : logs.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-12 text-center px-4 bg-muted/5 h-full">
-                        <div className="bg-background p-4 rounded-full shadow-sm mb-4 border border-border/50">
+                    <div className="flex flex-col items-center justify-center py-16 text-center px-4">
+                        <div className="bg-muted/30 p-4 rounded-full mb-4">
                             <FileText className="h-8 w-8 text-muted-foreground/60" />
                         </div>
-                        <p className="text-base font-medium text-foreground">
+                        <p className="text-sm font-medium text-foreground">
                             {t("ADMIN_DASHBOARD.LOGS.EMPTY", "No logs found")}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                            {t("ADMIN_DASHBOARD.LOGS.EMPTY_DESC", "Activity will appear here")}
                         </p>
                     </div>
                 ) : (
-                    <div className="flex flex-col">
-                        {logs.map((log) => (
-                            <div
-                                key={log.id}
-                                className="flex items-center gap-4 p-4 hover:bg-muted/40 transition-all border-b border-border/40 last:border-none group relative overflow-hidden"
-                            >
-                                {/* Hover Effect Indicator */}
-                                <div className="absolute left-0 top-0 bottom-0 w-1 bg-indigo-500 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-200" />
+                    <div className="divide-y divide-border/30">
+                        {logs.map((log) => {
+                            const config = actionConfig[log.actionType] || {
+                                icon: FileText,
+                                color: 'text-muted-foreground',
+                                bgColor: 'bg-muted/30 border-border/40'
+                            };
+                            const Icon = config.icon;
 
-                                <Avatar className="h-10 w-10 border border-border/50 shadow-sm">
-                                    <AvatarFallback className="bg-indigo-500/5 text-indigo-500 font-bold text-xs">
-                                        #{log.adminId}
-                                    </AvatarFallback>
-                                </Avatar>
+                            return (
+                                <div
+                                    key={log.id}
+                                    className="flex items-start gap-4 p-4 hover:bg-muted/30 transition-all group"
+                                >
+                                    {/* Admin Avatar */}
+                                    <Avatar className="h-12 w-12 border-2 border-border/50 shadow-sm shrink-0 group-hover:border-primary/30 transition-colors">
+                                        <AvatarImage
+                                            src={log.admin?.profilePicture || undefined}
+                                            alt={log.admin?.email || `Admin #${log.adminId}`}
+                                        />
+                                        <AvatarFallback className="bg-linear-to-br from-indigo-500/10 to-purple-500/10 text-indigo-600 font-bold text-sm">
+                                            {log.admin?.email?.[0]?.toUpperCase() || 'A'}
+                                        </AvatarFallback>
+                                    </Avatar>
 
-                                <div className="flex-1 min-w-0 grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-                                    <div className="md:col-span-4 min-w-0">
-                                        <div className="flex items-center gap-2 mb-1">
+                                    {/* Content */}
+                                    <div className="flex-1 min-w-0 space-y-2">
+                                        {/* Action Badge & Title */}
+                                        <div className="flex items-center gap-2 flex-wrap">
                                             <Badge
                                                 variant="outline"
                                                 className={cn(
-                                                    "font-bold text-[10px] uppercase px-1.5 py-0.5 whitespace-nowrap shadow-sm border",
-                                                    actionTypeColors[log.actionType] || "bg-muted/30 text-muted-foreground border-border/40"
+                                                    "font-semibold text-[10px] uppercase px-2 py-0.5 border shadow-sm",
+                                                    config.bgColor
                                                 )}
                                             >
-                                                {log.actionType.replace(/_/g, ' ')}
+                                                <Icon className={cn("h-3 w-3 mr-1", config.color)} />
+                                                {t(`ADMIN_DASHBOARD.LOGS.ACTION.${log.actionType}`) || log.actionType.replace(/_/g, ' ')}
                                             </Badge>
                                         </div>
-                                        <p className="text-xs font-medium text-foreground truncate">
-                                            {log.admin?.email || `Admin #${log.adminId}`}
-                                        </p>
-                                    </div>
 
-                                    <div className="md:col-span-6 hidden md:flex items-center gap-2">
-                                        {log.targetDocument ? (
-                                            <div className="flex items-center gap-2 bg-blue-500/5 border border-blue-500/20 rounded-lg px-3 py-1.5 group hover:bg-blue-500/10 transition-colors">
-                                                <FileText className="h-3.5 w-3.5 text-blue-500" />
-                                                <span className="text-xs font-semibold text-blue-600">{log.targetDocument.type}</span>
-                                                {log.targetDocument.fileUrl && (
-                                                    <button
-                                                        onClick={() => window.open(log.targetDocument!.fileUrl, '_blank')}
-                                                        className="ml-1 inline-flex items-center justify-center h-5 w-5 rounded-md hover:bg-blue-500/20 text-blue-500 hover:text-blue-600 transition-colors"
-                                                        title="View document"
-                                                    >
-                                                        <Eye className="h-3.5 w-3.5" />
-                                                    </button>
-                                                )}
-                                            </div>
-                                        ) : log.targetMission ? (
-                                            <div className="flex items-center gap-2 bg-indigo-500/5 border border-indigo-500/20 rounded-lg px-3 py-1.5">
-                                                <Activity className="h-3.5 w-3.5 text-indigo-500" />
-                                                <span className="text-xs font-semibold text-indigo-600 truncate max-w-[200px]">{log.targetMission.title}</span>
-                                            </div>
-                                        ) : (
-                                            <span className="text-xs text-muted-foreground/50 italic">—</span>
+                                        {/* Details */}
+                                        <div className="flex items-center gap-2 text-sm flex-wrap">
+                                            <span className="text-muted-foreground">by</span>
+                                            <span className="font-medium text-foreground truncate max-w-[150px]" title={log.admin?.email}>
+                                                {log.admin?.email || `Admin #${log.adminId}`}
+                                            </span>
+
+                                            {log.targetUser && (
+                                                <>
+                                                    <ArrowRight className="h-3 w-3 text-muted-foreground/50 shrink-0" />
+                                                    <span className="font-medium text-foreground/90 truncate max-w-[150px]" title={log.targetUser.email}>
+                                                        {log.targetUser.worker
+                                                            ? `${log.targetUser.worker.firstName} ${log.targetUser.worker.lastName}`
+                                                            : log.targetUser.institution
+                                                                ? log.targetUser.institution.institutionName
+                                                                : log.targetUser.email}
+                                                    </span>
+                                                </>
+                                            )}
+
+                                            {log.targetDocument && (
+                                                <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-5">
+                                                    {log.targetDocument.type} #{log.targetDocument.id}
+                                                </Badge>
+                                            )}
+                                        </div>
+
+                                        {/* Reason if exists */}
+                                        {log.reason && (
+                                            <p className="text-xs text-muted-foreground italic line-clamp-1">
+                                                "{log.reason}"
+                                            </p>
                                         )}
                                     </div>
 
-                                    <div className="md:col-span-2 flex items-center justify-end">
-                                        <span className="text-[10px] uppercase font-bold text-muted-foreground flex items-center gap-1 bg-muted/40 px-2 py-0.5 rounded-full border border-border/50 whitespace-nowrap">
-                                            <Clock className="h-3 w-3" />
-                                            {formatDistanceToNow(new Date(log.createdAt), { addSuffix: true })}
-                                        </span>
+                                    {/* Timestamp */}
+                                    <div className="flex items-center gap-1.5 text-[10px] font-medium text-muted-foreground uppercase tracking-wide bg-muted/20 px-2.5 py-1.5 rounded-full border border-border/30 whitespace-nowrap shrink-0">
+                                        <Clock className="h-3 w-3" />
+                                        {formatDistanceToNow(new Date(log.createdAt), { addSuffix: true, locale: dateLocale })}
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 )}
             </CardContent>
-            <div className="p-3 bg-muted/20 border-t border-border/40 text-center">
-                <Button variant="link" size="sm" className="text-muted-foreground hover:text-indigo-500 text-xs" asChild>
-                    <Link to="/admin/logs">
-                        {t("COMMON.VIEW_ALL", "View all activities")}
-                    </Link>
-                </Button>
-            </div>
+            {logs.length > 0 && (
+                <div className="p-4 border-t border-border/40 bg-muted/5">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full text-xs h-9 hover:bg-indigo-500/5 hover:text-indigo-600 hover:border-indigo-500/30"
+                        asChild
+                    >
+                        <Link to="/admin/logs">
+                            {t("COMMON.VIEW_ALL", "View All Activities")}
+                        </Link>
+                    </Button>
+                </div>
+            )}
         </Card>
     );
 }
