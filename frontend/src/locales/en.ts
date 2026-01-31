@@ -1598,6 +1598,27 @@ export const en = {
                 ADMIN: "Admin",
                 ACTIVE: "Active"
             },
+            ACTIONS: {
+                SAVE: "Save Changes",
+                SAVING: "Saving...",
+                CANCEL: "Cancel",
+                MESSAGES: {
+                    SUCCESS: "Profile updated successfully",
+                    SUCCESS_DESC: "Your profile has been updated",
+                    ERROR: "Failed to update profile",
+                    PIC_UPLOAD_SUCCESS: "Profile picture uploaded",
+                    PIC_UPLOAD_DESC: "Your profile picture has been updated",
+                    PIC_DELETE_SUCCESS: "Profile picture removed",
+                    PIC_DELETE_DESC: "Your profile picture has been removed",
+                    UPLOAD_ERROR: "Failed to upload image",
+                    DELETE_ERROR: "Failed to delete image"
+                }
+            },
+            CARDS: {
+                PROFILE: {
+                    STRENGTH: "Profile Strength"
+                }
+            },
             SETTINGS_DESC: "Account settings and password management are handled through the main settings panel. Contact the system administrator for account-related changes."
         },
         WORKER_AVAILABILITY: {
@@ -2285,5 +2306,89 @@ export const en = {
                 MESSAGE: "Our team is reviewing your profile and documents. This usually takes 24-48 hours. We'll notify you as soon as your account is approved."
             }
         },
+        DOMAINS_MANAGEMENT: {
+            TITLE: "Domains",
+            SUBTITLE: "Manage professional domains and categories",
+            ADD_BUTTON: "Add Domain",
+            TABLE: {
+                TITLE: "Domain List",
+                SEARCH_PLACEHOLDER: "Search domains...",
+                COLUMNS: {
+                    DOMAIN: "Domain",
+                    DESCRIPTION: "Description",
+                    ACTIONS: "Actions"
+                },
+                EMPTY_TITLE: "No domains yet",
+                EMPTY_DESC: "Create your first domain to get started"
+            },
+            DIALOG: {
+                CREATE_TITLE: "Create Domain",
+                EDIT_TITLE: "Edit Domain",
+                CREATE_DESC: "Add a new domain to the platform",
+                EDIT_DESC: "Update the domain information",
+                NAME_LABEL: "Name",
+                NAME_PLACEHOLDER: "Enter domain name",
+                DESC_LABEL: "Description (optional)",
+                DESC_PLACEHOLDER: "Enter domain description",
+                CANCEL: "Cancel",
+                CREATE: "Create Domain",
+                UPDATE: "Update Domain",
+                CREATING: "Creating...",
+                UPDATING: "Updating..."
+            },
+            DELETE: {
+                TITLE: "Delete Domain",
+                MESSAGE: "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
+                CANCEL: "Cancel",
+                CONFIRM: "Delete",
+                DELETING: "Deleting..."
+            },
+            VALIDATION: {
+                NAME_MIN: "Name must be at least 2 characters",
+                NAME_REQUIRED: "Name is required"
+            }
+        },
+        SPECIALITIES_MANAGEMENT: {
+            TITLE: "Specialities",
+            SUBTITLE: "Manage worker specialities and expertise areas",
+            ADD_BUTTON: "Add Speciality",
+            TABLE: {
+                TITLE: "Speciality List",
+                SEARCH_PLACEHOLDER: "Search specialities...",
+                COLUMNS: {
+                    SPECIALITY: "Speciality",
+                    DESCRIPTION: "Description",
+                    ACTIONS: "Actions"
+                },
+                EMPTY_TITLE: "No specialities yet",
+                EMPTY_DESC: "Create your first speciality to get started"
+            },
+            DIALOG: {
+                CREATE_TITLE: "Create Speciality",
+                EDIT_TITLE: "Edit Speciality",
+                CREATE_DESC: "Add a new speciality to the platform",
+                EDIT_DESC: "Update the speciality information",
+                NAME_LABEL: "Name",
+                NAME_PLACEHOLDER: "Enter speciality name",
+                DESC_LABEL: "Description (optional)",
+                DESC_PLACEHOLDER: "Enter speciality description",
+                CANCEL: "Cancel",
+                CREATE: "Create Speciality",
+                UPDATE: "Update Speciality",
+                CREATING: "Creating...",
+                UPDATING: "Updating..."
+            },
+            DELETE: {
+                TITLE: "Delete Speciality",
+                MESSAGE: "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
+                CANCEL: "Cancel",
+                CONFIRM: "Delete",
+                DELETING: "Deleting..."
+            },
+            VALIDATION: {
+                NAME_MIN: "Name must be at least 2 characters",
+                NAME_REQUIRED: "Name is required"
+            }
+        }
     }
 };

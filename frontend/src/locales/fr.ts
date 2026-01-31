@@ -1584,6 +1584,27 @@ export const fr = {
                 ADMIN: "Admin",
                 ACTIVE: "Actif"
             },
+            ACTIONS: {
+                SAVE: "Enregistrer",
+                SAVING: "Enregistrement...",
+                CANCEL: "Annuler",
+                MESSAGES: {
+                    SUCCESS: "Profil mis à jour",
+                    SUCCESS_DESC: "Votre profil a été mis à jour",
+                    ERROR: "Échec de la mise à jour",
+                    PIC_UPLOAD_SUCCESS: "Photo de profil téléchargée",
+                    PIC_UPLOAD_DESC: "Votre photo de profil a été mise à jour",
+                    PIC_DELETE_SUCCESS: "Photo de profil supprimée",
+                    PIC_DELETE_DESC: "Votre photo de profil a été supprimée",
+                    UPLOAD_ERROR: "Échec du téléchargement",
+                    DELETE_ERROR: "Échec de la suppression"
+                }
+            },
+            CARDS: {
+                PROFILE: {
+                    STRENGTH: "Force du Profil"
+                }
+            },
             SETTINGS_DESC: "La gestion du compte et des mots de passe se fait via le panneau de configuration principal. Contactez l'administrateur système pour toute modification liée au compte."
         },
         WORKER_AVAILABILITY: {
@@ -2272,5 +2293,89 @@ export const fr = {
                 MESSAGE: "Notre équipe examine votre profil et vos documents. Cela prend généralement 24 à 48 heures. Nous vous informerons dès que votre compte sera approuvé."
             }
         },
+        DOMAINS_MANAGEMENT: {
+            TITLE: "Domaines",
+            SUBTITLE: "Gérer les domaines professionnels et les catégories",
+            ADD_BUTTON: "Ajouter un Domaine",
+            TABLE: {
+                TITLE: "Liste des Domaines",
+                SEARCH_PLACEHOLDER: "Rechercher des domaines...",
+                COLUMNS: {
+                    DOMAIN: "Domaine",
+                    DESCRIPTION: "Description",
+                    ACTIONS: "Actions"
+                },
+                EMPTY_TITLE: "Aucun domaine pour le moment",
+                EMPTY_DESC: "Créez votre premier domaine pour commencer"
+            },
+            DIALOG: {
+                CREATE_TITLE: "Créer un Domaine",
+                EDIT_TITLE: "Modifier le Domaine",
+                CREATE_DESC: "Ajouter un nouveau domaine à la plateforme",
+                EDIT_DESC: "Mettre à jour les informations du domaine",
+                NAME_LABEL: "Nom",
+                NAME_PLACEHOLDER: "Entrez le nom du domaine",
+                DESC_LABEL: "Description (optionnel)",
+                DESC_PLACEHOLDER: "Entrez la description du domaine",
+                CANCEL: "Annuler",
+                CREATE: "Créer le Domaine",
+                UPDATE: "Mettre à Jour",
+                CREATING: "Création...",
+                UPDATING: "Mise à jour..."
+            },
+            DELETE: {
+                TITLE: "Supprimer le Domaine",
+                MESSAGE: "Êtes-vous sûr de vouloir supprimer \"{{name}}\" ? Cette action est irréversible.",
+                CANCEL: "Annuler",
+                CONFIRM: "Supprimer",
+                DELETING: "Suppression..."
+            },
+            VALIDATION: {
+                NAME_MIN: "Le nom doit contenir au moins 2 caractères",
+                NAME_REQUIRED: "Le nom est requis"
+            }
+        },
+        SPECIALITIES_MANAGEMENT: {
+            TITLE: "Spécialités",
+            SUBTITLE: "Gérer les spécialités et domaines d'expertise des travailleurs",
+            ADD_BUTTON: "Ajouter une Spécialité",
+            TABLE: {
+                TITLE: "Liste des Spécialités",
+                SEARCH_PLACEHOLDER: "Rechercher des spécialités...",
+                COLUMNS: {
+                    SPECIALITY: "Spécialité",
+                    DESCRIPTION: "Description",
+                    ACTIONS: "Actions"
+                },
+                EMPTY_TITLE: "Aucune spécialité pour le moment",
+                EMPTY_DESC: "Créez votre première spécialité pour commencer"
+            },
+            DIALOG: {
+                CREATE_TITLE: "Créer une Spécialité",
+                EDIT_TITLE: "Modifier la Spécialité",
+                CREATE_DESC: "Ajouter une nouvelle spécialité à la plateforme",
+                EDIT_DESC: "Mettre à jour les informations de la spécialité",
+                NAME_LABEL: "Nom",
+                NAME_PLACEHOLDER: "Entrez le nom de la spécialité",
+                DESC_LABEL: "Description (optionnel)",
+                DESC_PLACEHOLDER: "Entrez la description de la spécialité",
+                CANCEL: "Annuler",
+                CREATE: "Créer la Spécialité",
+                UPDATE: "Mettre à Jour",
+                CREATING: "Création...",
+                UPDATING: "Mise à jour..."
+            },
+            DELETE: {
+                TITLE: "Supprimer la Spécialité",
+                MESSAGE: "Êtes-vous sûr de vouloir supprimer \"{{name}}\" ? Cette action est irréversible.",
+                CANCEL: "Annuler",
+                CONFIRM: "Supprimer",
+                DELETING: "Suppression..."
+            },
+            VALIDATION: {
+                NAME_MIN: "Le nom doit contenir au moins 2 caractères",
+                NAME_REQUIRED: "Le nom est requis"
+            }
+        }
     }
 };

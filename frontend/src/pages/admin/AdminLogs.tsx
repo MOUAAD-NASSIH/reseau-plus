@@ -299,7 +299,7 @@ export default function AdminLogs() {
       <AdminLogsStats stats={stats} isLoading={isLoading} />
 
       {/* Filters Section */}
-      <Card className="border-border/40 shadow-xl shadow-primary/5 bg-card/60 backdrop-blur-xl rounded-[2rem] overflow-hidden">
+      <Card className="border-border/40 shadow-xl shadow-primary/5 bg-card/60 backdrop-blur-xl rounded-4xl overflow-hidden">
         <CardContent className="p-6">
           <div className="flex flex-row items-center gap-4">
             <div className="flex-1 relative">
@@ -383,7 +383,7 @@ export default function AdminLogs() {
                 variant="outline"
                 onClick={clearFilters}
                 size="icon"
-                className="h-14 w-14 min-w-[3.5rem] rounded-2xl border-border/40 bg-muted/30 hover:bg-primary/5 hover:text-primary transition-all group"
+                className="h-14 w-14 min-w-14 rounded-2xl border-border/40 bg-muted/30 hover:bg-primary/5 hover:text-primary transition-all group"
                 title={t("ADMIN_LOGS.FILTERS.CLEAR")}
               >
                 <X className="h-5 w-5 group-hover:rotate-90 transition-transform duration-300" />
@@ -402,7 +402,7 @@ export default function AdminLogs() {
                 <FileText className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <CardTitle className="text-xl font-black tracking-tight tracking-tight">
+                <CardTitle className="text-xl font-black tracking-tight">
                   {t("ADMIN_LOGS.LIST.TITLE")}
                 </CardTitle>
                 <p className="text-xs font-bold text-muted-foreground opacity-60 uppercase tracking-widest mt-0.5">
@@ -483,7 +483,7 @@ export default function AdminLogs() {
                     return (
                       <TableRow
                         key={log.id}
-                        className="group border-border/40 hover:bg-primary/[0.04] transition-all duration-300"
+                        className="group border-border/40 hover:bg-primary/4 transition-all duration-300"
                       >
                         <TableCell className="pl-8 font-mono text-xs font-bold opacity-40">
                           #{log.id.toString().padStart(4, "0")}
