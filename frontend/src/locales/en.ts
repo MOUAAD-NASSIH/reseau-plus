@@ -1488,8 +1488,22 @@ export const en = {
                     SUBTITLE: "Verify document authenticity",
                     PREVIOUS_COMMENT: "Previous Comment",
                     REJECT_COMMENT: "Rejection Reason"
+                },
+                MESSAGES: {
+                    APPROVED: "Document approved successfully",
+                    REJECTED: "Document rejected"
                 }
             },
+        },
+        PENDING_DOCS: {
+            APPROVE: "Approve",
+            REJECT: "Reject",
+            PENDING: "Pending",
+            TYPE_DIPLOMA: "Diploma",
+            TYPE_ID: "ID Card",
+            TYPE_LICENSE: "Professional License",
+            TYPE_CV: "Resume/CV",
+            TYPE_CERTIFICATE: "Certificate"
         },
         ADMIN_LOGS: {
             TITLE: "Admin Action Audit",

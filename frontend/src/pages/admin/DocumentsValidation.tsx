@@ -4,6 +4,7 @@ import { DocumentValidationGrid } from "@/components/admin/validation/DocumentVa
 import { DocumentValidationTable } from "@/components/admin/validation/DocumentValidationTable";
 import { DocumentReviewDialog } from "@/components/admin/validation/DocumentReviewDialog";
 import { PaginationControls } from "@/components/common/PaginationControls";
+import { useGetPendingDocumentsQuery } from "@/features/api/endpoints/adminEndpoints";
 
 export default function DocumentsValidation() {
   const {
@@ -31,6 +32,19 @@ export default function DocumentsValidation() {
     handleReject,
   } = useDocumentsValidation();
 
+  // Fetch stats for header cards
+  const { data: pendingStatsData } = useGetPendingDocumentsQuery({
+    page: 1,
+    limit: 1,
+    status: 'PENDING'
+  });
+
+  const { data: rejectedStatsData } = useGetPendingDocumentsQuery({
+    page: 1,
+    limit: 1,
+    status: 'REJECTED'
+  });
+
   return (
     <div className="space-y-10 pb-12 font-spline animate-in fade-in duration-700">
       <DocumentValidationHeader
@@ -43,6 +57,8 @@ export default function DocumentsValidation() {
         viewMode={viewMode}
         setViewMode={setViewMode}
         totalDocuments={pagination?.total || 0}
+        pendingCount={pendingStatsData?.pagination.total}
+        rejectedCount={rejectedStatsData?.pagination.total}
       />
 
       {viewMode === "table" ? (

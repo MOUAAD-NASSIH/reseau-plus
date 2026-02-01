@@ -1474,8 +1474,22 @@ export const fr = {
                     SUBTITLE: "Vérifier l'authenticité du document",
                     PREVIOUS_COMMENT: "Commentaire précédent",
                     REJECT_COMMENT: "Raison du rejet"
+                },
+                MESSAGES: {
+                    APPROVED: "Document approuvé avec succès",
+                    REJECTED: "Document rejeté"
                 }
             },
+        },
+        PENDING_DOCS: {
+            APPROVE: "Approuvé",
+            REJECT: "Rejeté",
+            PENDING: "En attente",
+            TYPE_DIPLOMA: "Diplôme",
+            TYPE_ID: "Carte d'identité",
+            TYPE_LICENSE: "Licence / Permis",
+            TYPE_CV: "CV",
+            TYPE_CERTIFICATE: "Certificat"
         },
         ADMIN_LOGS: {
             TITLE: "Audit des Actions Admin",
