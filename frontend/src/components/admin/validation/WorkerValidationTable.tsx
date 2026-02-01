@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Eye, MapPin, Calendar, FileText, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { StatusBadge } from "@/components/common/StatusBadge";
 import { DataTable, DataTableColumnHeader } from "@/components/common/DataTable";
 import type { Worker } from "@/types/auth.types";
@@ -29,11 +30,19 @@ export function WorkerValidationTable({ workers, isLoading, onReview }: WorkerVa
         cell: ({ row }) => {
           const w = row.original;
           const initials = `${w.firstName?.[0] || ""}${w.lastName?.[0] || ""}`;
+          const fullName = `${w.firstName} ${w.lastName}`;
           return (
             <div className="flex items-center gap-4 py-1">
-              <div className="h-11 w-11 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-black text-xs border border-primary/20 shadow-sm transition-transform hover:scale-105">
-                {initials || <User className="h-4 w-4" />}
-              </div>
+              <Avatar className="h-11 w-11 border-2 border-background ring-2 ring-primary/5 shadow-md transition-transform hover:scale-110">
+                <AvatarImage
+                  src={w.profilePicture || w.user?.profilePicture || undefined}
+                  alt={fullName}
+                  className="object-cover"
+                />
+                <AvatarFallback className="bg-linear-to-br from-primary/20 to-primary/5 text-primary font-black text-xs">
+                  {initials || <User className="h-4 w-4" />}
+                </AvatarFallback>
+              </Avatar>
               <div className="flex flex-col">
                 <p className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">
                   {w.firstName} {w.lastName}
@@ -112,8 +121,8 @@ export function WorkerValidationTable({ workers, isLoading, onReview }: WorkerVa
           <DataTableColumnHeader title={t("ADMIN_VALIDATION.WORKERS.TABLE.STATUS")} column={column} />
         ),
         cell: ({ row }) => {
-           const status = row.getValue("status") as string;
-           return <StatusBadge status={status as any} className="text-[10px] font-bold uppercase tracking-wider h-6" />;
+          const status = row.getValue("status") as string;
+          return <StatusBadge status={status as any} className="text-[10px] font-bold uppercase tracking-wider h-6" />;
         },
       },
       {

@@ -59,45 +59,48 @@ export function WorkerValidationHeader({
           </p>
         </div>
 
-        <div className="grid grid-cols-3 gap-4 sm:w-[500px]">
-          <Card className="border-border/40 shadow-xl shadow-primary/5 bg-card/60 backdrop-blur-xl group hover:shadow-2xl transition-all duration-300">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full sm:w-[500px]">
+          {/* Pending Stats */}
+          <Card className="border-amber-200/60 dark:border-amber-500/10 bg-linear-to-br from-amber-50/80 to-amber-100/40 dark:from-amber-500/10 dark:to-amber-500/5 backdrop-blur-xl shadow-lg shadow-amber-500/5 dark:shadow-none group hover:shadow-xl hover:border-amber-300/50 dark:hover:border-amber-500/20 transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 px-4 pt-4">
-              <CardTitle className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-70">
+              <CardTitle className="text-[10px] font-black text-amber-700/70 dark:text-amber-400/70 uppercase tracking-widest">
                 {t("ADMIN_VALIDATION.WORKERS.STATS.PENDING")}
               </CardTitle>
-              <div className="h-8 w-8 bg-amber-500/10 text-amber-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <div className="h-8 w-8 bg-white/60 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300 border border-amber-200/50 dark:border-amber-500/20 shadow-sm">
                 <Clock className="h-4 w-4" />
               </div>
             </CardHeader>
             <CardContent className="px-4 pb-4">
-              <div className="text-2xl font-black text-foreground">
+              <div className="text-2xl font-black text-amber-900 dark:text-amber-100">
                 {stats.pending}
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-border/40 shadow-xl shadow-primary/5 bg-card/60 backdrop-blur-xl group hover:shadow-2xl transition-all duration-300">
+          {/* Rejected Stats */}
+          <Card className="border-red-200/60 dark:border-red-500/10 bg-linear-to-br from-red-50/80 to-red-100/40 dark:from-red-500/10 dark:to-red-500/5 backdrop-blur-xl shadow-lg shadow-red-500/5 dark:shadow-none group hover:shadow-xl hover:border-red-300/50 dark:hover:border-red-500/20 transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 px-4 pt-4">
-              <CardTitle className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-70">
+              <CardTitle className="text-[10px] font-black text-red-700/70 dark:text-red-400/70 uppercase tracking-widest">
                 {t("ADMIN_VALIDATION.WORKERS.STATS.REJECTED")}
               </CardTitle>
-              <div className="h-8 w-8 bg-destructive/10 text-destructive rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <div className="h-8 w-8 bg-white/60 dark:bg-red-500/10 text-red-600 dark:text-red-400 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300 border border-red-200/50 dark:border-red-500/20 shadow-sm">
                 <XCircle className="h-4 w-4" />
               </div>
             </CardHeader>
             <CardContent className="px-4 pb-4">
-              <div className="text-2xl font-black text-foreground">
+              <div className="text-2xl font-black text-red-900 dark:text-red-100">
                 {stats.rejected}
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-border/40 shadow-xl shadow-primary/5 bg-card/60 backdrop-blur-xl group hover:shadow-2xl transition-all duration-300">
+          {/* Total Stats */}
+          <Card className="border-primary/20 dark:border-primary/10 bg-linear-to-br from-primary/5 to-primary/10 dark:from-primary/10 dark:to-primary/5 backdrop-blur-xl shadow-lg shadow-primary/5 dark:shadow-none group hover:shadow-xl hover:border-primary/30 dark:hover:border-primary/20 transition-all duration-300">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 px-4 pt-4">
-              <CardTitle className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest opacity-70">
+              <CardTitle className="text-[10px] font-black text-primary/70 dark:text-primary/60 uppercase tracking-widest">
                 {t("ADMIN_VALIDATION.WORKERS.STATS.TOTAL")}
               </CardTitle>
-              <div className="h-8 w-8 bg-primary/10 text-primary rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <div className="h-8 w-8 bg-white/60 dark:bg-primary/10 text-primary rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300 border border-primary/20 dark:border-primary/10 shadow-sm">
                 <Users className="h-4 w-4" />
               </div>
             </CardHeader>
@@ -146,13 +149,13 @@ export function WorkerValidationHeader({
           </div>
         </div>
 
-        <div className="flex items-center bg-muted/30 p-1.5 rounded-xl border border-border/60 backdrop-blur-sm shadow-inner overflow-hidden">
+        <div className="flex items-center w-full md:w-auto bg-muted/30 p-1.5 rounded-xl border border-border/60 backdrop-blur-sm shadow-inner overflow-hidden">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setViewMode("table")}
             className={cn(
-              "h-8 px-4 gap-2 transition-all duration-300",
+              "h-8 px-4 gap-2 transition-all duration-300 flex-1 md:flex-initial",
               viewMode === "table"
                 ? "bg-background text-primary shadow-sm hover:bg-background font-bold rounded-lg"
                 : "text-muted-foreground hover:text-foreground hover:bg-transparent"
@@ -168,7 +171,7 @@ export function WorkerValidationHeader({
             size="sm"
             onClick={() => setViewMode("grid")}
             className={cn(
-              "h-8 px-4 gap-2 transition-all duration-300",
+              "h-8 px-4 gap-2 transition-all duration-300 flex-1 md:flex-initial",
               viewMode === "grid"
                 ? "bg-background text-primary shadow-sm hover:bg-background font-bold rounded-lg"
                 : "text-muted-foreground hover:text-foreground hover:bg-transparent"

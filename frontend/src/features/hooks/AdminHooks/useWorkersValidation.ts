@@ -12,19 +12,24 @@ export type ViewMode = "grid" | "table";
 
 export function useWorkersValidation() {
 
-  const [viewMode, setViewMode] = useState<ViewMode>("table");
+  const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [selectedWorker, setSelectedWorker] = useState<Worker | null>(null);
+  const [selectedWorkerId, setSelectedWorkerId] = useState<number | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [processingDocumentId, setProcessingDocumentId] = useState<number | null>(null);
-  
+
   // Pagination
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(9);
 
   const { data, isLoading, refetch } = useGetAllWorkersQuery({ limit: 100 });
   const allWorkers = data?.data || [];
+
+  const selectedWorker = useMemo(() => {
+    if (!selectedWorkerId) return null;
+    return allWorkers.find(w => w.id === selectedWorkerId) || null;
+  }, [allWorkers, selectedWorkerId]);
 
   // Filter logic
   const filteredWorkers = useMemo(() => {
@@ -45,7 +50,7 @@ export function useWorkersValidation() {
 
   // Reset page when filters change
   useEffect(() => {
-     setPage(1);
+    setPage(1);
   }, [searchQuery, statusFilter]);
 
   // Pagination logic
@@ -61,7 +66,7 @@ export function useWorkersValidation() {
   const [reviewDocumentMutation, { isLoading: isReviewingDocument }] = useReviewDocumentMutation();
 
   const openWorker = useCallback((worker: Worker) => {
-    setSelectedWorker(worker);
+    setSelectedWorkerId(worker.id);
     setDialogOpen(true);
   }, []);
 
@@ -69,7 +74,7 @@ export function useWorkersValidation() {
     try {
       await validateWorkerMutation(id).unwrap();
       setDialogOpen(false);
-      setSelectedWorker(null);
+      setSelectedWorkerId(null);
       showSuccessToast(
         "Worker Approved",
         "The worker has been successfully verified."
@@ -83,7 +88,7 @@ export function useWorkersValidation() {
     try {
       await rejectWorkerMutation({ workerId: id, reason }).unwrap();
       setDialogOpen(false);
-      setSelectedWorker(null);
+      setSelectedWorkerId(null);
       showSuccessToast(
         "Worker Rejected",
         "The worker registration has been rejected."
@@ -145,7 +150,7 @@ export function useWorkersValidation() {
     viewMode,
     setViewMode,
     selectedWorker,
-    setSelectedWorker,
+    setSelectedWorker: (w: Worker | null) => setSelectedWorkerId(w?.id ?? null),
     dialogOpen,
     setDialogOpen,
     processingDocumentId,

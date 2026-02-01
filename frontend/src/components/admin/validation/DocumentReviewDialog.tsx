@@ -177,7 +177,7 @@ export function DocumentReviewDialog({
                                 value={rejectComment}
                                 onChange={(e) => setRejectComment(e.target.value)}
                                 rows={3}
-                                className="resize-none"
+                                className="resize-none placeholder:opacity-55"
                             />
                         </div>
                     )}

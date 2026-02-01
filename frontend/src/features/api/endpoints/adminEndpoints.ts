@@ -6,6 +6,7 @@
  */
 
 import { api } from "../api";
+import { workerApi } from "./workerEndpoints";
 import type { ApiResponse } from "@/types/api.types";
 import type { Worker, WorkerDocument, DocumentStatus, UserStatus } from "@/types/auth.types";
 
@@ -229,11 +230,37 @@ export const adminApi = api.injectEndpoints({
                 method: "PUT",
                 data: { status, comment },
             }),
+            async onQueryStarted({ documentId, status }, { dispatch, queryFulfilled }) {
+                // Optimistic Update for getAllWorkers
+                // We need to find the worker that owns this document and update their document status in the list
+                const patchResult = dispatch(
+                    workerApi.util.updateQueryData("getAllWorkers", { limit: 100 }, (draft) => {
+                        if (draft?.data) {
+                            for (const worker of draft.data) {
+                                if (worker.documents) {
+                                    const docIndex = worker.documents.findIndex((d) => d.id === documentId);
+                                    if (docIndex !== -1) {
+                                        worker.documents[docIndex].status = status;
+                                        break; // Found the doc, stop searching
+                                    }
+                                }
+                            }
+                        }
+                    })
+                );
+                try {
+                    await queryFulfilled;
+                } catch {
+                    patchResult.undo();
+                }
+            },
             invalidatesTags: (_, __, { documentId }) => [
                 { type: "Admin", id: "PENDING_DOCUMENTS" },
                 { type: "Admin", id: `PENDING_DOCUMENT_${documentId}` },
                 { type: "Admin", id: "LOGS" },
                 { type: "Workers", id: "DOCUMENTS" },
+                { type: "Workers", id: "LIST" },
+                { type: "Workers", id: "PROFILE" },
             ],
         }),
 
