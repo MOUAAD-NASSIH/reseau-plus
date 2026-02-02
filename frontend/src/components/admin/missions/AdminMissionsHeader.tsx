@@ -6,7 +6,7 @@ export function AdminMissionsHeader() {
     return (
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="space-y-1">
-                <h1 className="text-4xl font-extrabold tracking-tight text-foreground lg:text-5xl font-spline">
+                <h1 className="text-3xl font-extrabold tracking-tight text-foreground lg:text-4xl font-spline">
                     {t("ADMIN_MISSIONS.TITLE", "Missions Overview")}
                 </h1>
                 <p className="text-muted-foreground text-lg">

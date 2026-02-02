@@ -73,7 +73,8 @@ export const fr = {
                 VERIFIED: "Vérifié",
                 OPEN: "Ouvert",
                 CLOSED: "Fermé",
-                APPROVED: "Approuvé"
+                APPROVED: "Approuvé",
+                APPLIED_ON: "Postulé le"
             }
         },
         NAV: {
@@ -135,7 +136,7 @@ export const fr = {
             EDIT_MISSION_DESC: "Mettre à jour les détails de la mission",
             MY_MISSIONS: "Mes missions",
             MY_MISSIONS_DESC: "Gérez vos missions publiées",
-            MISSION_DETAILS: "Détails de la mission",
+            MISSION_DETAILS_PAGE: "Détails de la mission",
             MISSION_DETAILS_DESC: "Voir les informations de la mission",
             MISSION_APPLICANTS: "Candidats à la mission",
             MISSION_APPLICANTS_DESC: "Examiner et gérer les candidats",
@@ -919,6 +920,15 @@ export const fr = {
         },
         MISSION_DETAILS: {
             TITLE: "Détails de la Mission",
+            DESCRIPTION: "Description",
+            DOMAINS: "Domaines",
+            UNKNOWN: "Inconnu",
+            NO_APPLICANTS: "Aucun candidat pour le moment",
+            KEY_INFO: "Informations Clés",
+            START_DATE: "Date de Début",
+            END_DATE: "Date de Fin",
+            NOT_SPECIFIED: "Non spécifié",
+            INSTITUTION: "Institution",
             MISSION_CONTROL: "Contrôle de Mission",
             SHARE: "Partager",
             EDIT_MISSION: "Modifier la Mission",
@@ -944,7 +954,6 @@ export const fr = {
             APPLICANTS: "Candidats",
             ACTIVE: "Actifs",
             TOTAL_ACROSS_STATUSES: "{{count}} au total pour tous les statuts",
-            DESCRIPTION: "Description",
             NO_DESCRIPTION: "Aucune description fournie.",
             TECHNICAL_REQUIREMENTS: "Exigences Techniques",
             REQUIRED: "(Requis)",
@@ -1569,8 +1578,16 @@ export const fr = {
             },
             NO_MISSIONS: "Aucune mission trouvée",
             NO_MISSIONS_DESC: "Aucune mission ne correspond à vos critères de filtrage actuels. Essayez d'ajuster vos filtres ou vos termes de recherche.",
-            CLEAR_FILTERS: "Effacer les Filtres"
+            CLEAR_FILTERS: "Effacer les Filtres",
+            CARD: {
+                APPLICANTS: "Candidats",
+                BUDGET: "Budget",
+                VIEW_DETAILS: "Voir les Détails",
+                REF: "RÉF",
+                REMOTE: "À distance"
+            }
         },
+
         ADMIN_PROFILE: {
             TITLE: "Profil Administrateur",
             SUBTITLE: "Gérez votre compte administratif et consultez l'état de la plateforme",

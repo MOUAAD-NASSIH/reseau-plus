@@ -13,13 +13,14 @@ import {
     ShieldCheck,
     FileCheck
 } from "lucide-react";
-import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { WorkerDocument } from "@/types/auth.types";
+import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 
 interface DocumentReviewDialogProps {
     document: WorkerDocument | null;
@@ -171,9 +172,12 @@ export function DocumentReviewDialog({
                                         {t("ADMIN_VALIDATION.DOCUMENTS.CARD.WORKER_ID")}
                                     </h4>
                                     <div className="p-3 bg-muted/30 rounded-xl border border-border/50 flex items-center gap-3">
-                                        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
-                                            {document.worker ? document.worker.firstName[0] : "#"}
-                                        </div>
+                                        <Avatar className="h-9 w-9 border border-border/50 rounded-full">
+                                            <AvatarImage src={document.worker?.profilePicture || document.worker?.user?.profilePicture || undefined} alt={document.worker?.firstName} className="rounded-full" />
+                                            <AvatarFallback className="bg-primary/5 text-primary text-xs font-bold rounded-full">
+                                                {document.worker?.firstName?.[0] || ""}{document.worker?.lastName?.[0] || ""}
+                                            </AvatarFallback>
+                                        </Avatar>
                                         <div>
                                             <p className="font-semibold text-sm text-foreground">
                                                 {document.worker

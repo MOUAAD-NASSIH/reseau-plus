@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { useGetAllMissionsQuery } from "@/features/api/endpoints/missionEndpoints";
 import { useGetSpecialitiesQuery } from "@/features/api/endpoints/domainEndpoints";
+import { useTranslation } from "react-i18next";
 
 import { AdminMissionsHeader } from "@/components/admin/missions/AdminMissionsHeader";
 import { AdminMissionsFilter } from "@/components/admin/missions/AdminMissionsFilter";
@@ -14,6 +15,7 @@ import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function AdminMissionsPage() {
+  const { t } = useTranslation();
   const [view, setView] = useState<"grid" | "list">("grid");
   const [open, setOpen] = useState(false);
   const [selectedMission, setSelectedMission] = useState<Mission | null>(null);
@@ -99,6 +101,7 @@ export default function AdminMissionsPage() {
         view={view}
         setView={setView}
         specialities={specialities}
+        onClearFilters={clearFilters}
       />
 
       {/* Content */}
@@ -112,13 +115,13 @@ export default function AdminMissionsPage() {
                 <Search className="h-10 w-10 text-muted-foreground/50" />
               </div>
               <div className="space-y-1">
-                <h3 className="text-xl font-semibold">No missions found</h3>
+                <h3 className="text-xl font-semibold">{t("ADMIN_MISSIONS.NO_MISSIONS")}</h3>
                 <p className="text-muted-foreground max-w-sm mx-auto">
-                  No missions match your current filter criteria. Try adjusting your filters or search terms.
+                  {t("ADMIN_MISSIONS.NO_MISSIONS_DESC")}
                 </p>
               </div>
               <Button variant="outline" className="mt-4" onClick={clearFilters}>
-                Clear Filters
+                {t("ADMIN_MISSIONS.CLEAR_FILTERS")}
               </Button>
             </div>
           ) : (

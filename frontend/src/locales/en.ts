@@ -73,7 +73,8 @@ export const en = {
                 VERIFIED: "Verified",
                 OPEN: "Open",
                 CLOSED: "Closed",
-                APPROVED: "Approved"
+                APPROVED: "Approved",
+                APPLIED_ON: "Applied on"
             }
         },
         NAV: {
@@ -135,7 +136,7 @@ export const en = {
             EDIT_MISSION_DESC: "Update mission details",
             MY_MISSIONS: "My Missions",
             MY_MISSIONS_DESC: "Manage your posted missions",
-            MISSION_DETAILS: "Mission Details",
+            MISSION_DETAILS_PAGE: "Mission Details",
             MISSION_DETAILS_DESC: "View mission information",
             MISSION_APPLICANTS: "Mission Applicants",
             MISSION_APPLICANTS_DESC: "Review and manage applicants",
@@ -918,6 +919,15 @@ export const en = {
         },
         MISSION_DETAILS: {
             TITLE: "Mission Details",
+            DESCRIPTION: "Description",
+            DOMAINS: "Domains",
+            UNKNOWN: "Unknown",
+            NO_APPLICANTS: "No applicants yet",
+            KEY_INFO: "Key Information",
+            START_DATE: "Start Date",
+            END_DATE: "End Date",
+            NOT_SPECIFIED: "Not specified",
+            INSTITUTION: "Institution",
             MISSION_CONTROL: "Mission Control",
             SHARE: "Share",
             EDIT_MISSION: "Edit Mission",
@@ -943,7 +953,6 @@ export const en = {
             APPLICANTS: "Applicants",
             ACTIVE: "Active",
             TOTAL_ACROSS_STATUSES: "{{count}} total across all statuses",
-            DESCRIPTION: "Description",
             NO_DESCRIPTION: "No description provided.",
             TECHNICAL_REQUIREMENTS: "Technical Requirements",
             REQUIRED: "(Required)",
@@ -1583,8 +1592,16 @@ export const en = {
             },
             NO_MISSIONS: "No missions found",
             NO_MISSIONS_DESC: "No missions match your current filter criteria. Try adjusting your filters or search terms.",
-            CLEAR_FILTERS: "Clear Filters"
+            CLEAR_FILTERS: "Clear Filters",
+            CARD: {
+                APPLICANTS: "Applicants",
+                BUDGET: "Budget",
+                VIEW_DETAILS: "View Details",
+                REF: "REF",
+                REMOTE: "Remote"
+            }
         },
+
         ADMIN_PROFILE: {
             TITLE: "Admin Profile",
             SUBTITLE: "Manage your administrative account and view platform status",

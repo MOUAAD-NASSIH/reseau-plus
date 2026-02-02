@@ -128,8 +128,7 @@ export function DocumentValidationGrid({
                 <div className="space-y-2 mt-3">
                   <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
                     <Avatar className="h-5 w-5 border border-border/50">
-                      {/* Assuming doc.worker has profilePicture, if not we fallback. I should check Worker type but standard Avatar usage is safe. */}
-                      <AvatarImage src={doc.worker?.user?.profilePicture || undefined} alt={doc.worker?.firstName} />
+                      <AvatarImage src={doc.worker?.profilePicture || doc.worker?.user?.profilePicture || undefined} alt={doc.worker?.firstName} />
                       <AvatarFallback className="text-[8px] font-bold">
                         {doc.worker?.firstName?.[0] || "#"}
                       </AvatarFallback>
