@@ -60,6 +60,7 @@ export const en = {
             N_A: "N/A",
             DELETE_PROFILE_PIC: "Remove photo",
             SHOW_RESULTS: "Show results",
+            VIEW: "View",
             STATUS: {
                 SUBMITTED: "Submitted",
                 REJECTED: "Rejected",
@@ -1130,14 +1131,51 @@ export const en = {
                 COMPLETED: "Completed",
                 CANCELLED: "Cancelled"
             },
+            FILTER: {
+                SEARCH_PLACEHOLDER: "Search assignments...",
+                STATUS: "Status",
+                ALL_STATUS: "All Status",
+                ACTIVE: "Active",
+                ONGOING: "Ongoing",
+                COMPLETED: "Completed",
+                CANCELLED: "Cancelled",
+                CLEAR: "Clear Filters"
+            },
+            TABLE: {
+                COLUMNS: {
+                    MISSION: "Mission",
+                    INSTITUTION: "Institution",
+                    WORKER: "Worker",
+                    STATUS: "Status",
+                    DATES: "Dates",
+                    ACTIONS: "Actions"
+                },
+                EMPTY_STATE: {
+                    TITLE: "No assignments found",
+                    DESCRIPTION: "No assignments match your current filter criteria."
+                },
+                DAYS: "{{count}} Day",
+                DAYS_plural: "{{count}} Days"
+            },
             DIALOG: {
                 TITLE: "Assignment Details",
                 SUBTITLE: "Assignment #{{id}} information",
-                ASSIGNED_WORKER: "Assigned Worker",
-                INSTITUTION: "Institution",
-                MISSION: "Mission",
-                ASSIGNED_AT: "Assigned At",
-                MISSION_PERIOD: "Mission Period"
+                SECTIONS: {
+                    MISSION_INFO: "Mission Information",
+                    WORKER_INFO: "Worker Information",
+                    TIMELINE: "Timeline",
+                    PAYMENT: "Payment Status"
+                },
+                ACTIONS: {
+                    VIEW_WORKER_PROFILE: "View Worker Profile",
+                    VIEW_MISSION_DETAILS: "View Mission Details",
+                    VIEW_INSTITUTION: "View Institution"
+                },
+                LABELS: {
+                    ASSIGNED_AT: "Assigned At",
+                    MISSION_PERIOD: "Mission Period",
+                    DURATION: "Duration"
+                }
             }
         },
         FINANCIAL: {

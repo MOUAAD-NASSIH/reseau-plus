@@ -1,12 +1,6 @@
 import { useState, useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-
 import {
-    ClipboardList,
-    Calendar,
-    User,
-    Building2,
-    Briefcase,
     ListTodo,
     Clock,
     CheckCircle2,
@@ -14,162 +8,55 @@ import {
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { StatusBadge } from "@/components/common/StatusBadge";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { useGetAllAssignmentsQuery } from "@/features/api/endpoints/assignmentEndpoints";
 import type { MissionAssignment, AssignmentStatus } from "@/types/assignment.types";
+import { cn } from "@/lib/utils";
 
 import { AdminAssignmentsFilter } from "@/components/admin/assignments/AdminAssignmentsFilter";
 import { AdminAssignmentsTable } from "@/components/admin/assignments/AdminAssignmentsTable";
+import { AssignmentDetailsDialog } from "@/components/admin/assignments/AssignmentDetailsDialog";
 
-interface AssignmentDetailsDialogProps {
-    assignment: MissionAssignment | null;
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
-}
-
-function AssignmentDetailsDialog({ assignment, open, onOpenChange }: AssignmentDetailsDialogProps) {
-    const { t } = useTranslation();
-    if (!assignment) return null;
-
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString("fr-FR", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-        });
-    };
-
-    return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto rounded-2xl">
-                <DialogHeader>
-                    <DialogTitle className="flex items-center gap-2">
-                        <ClipboardList className="h-5 w-5" />
-                        {t("ASSIGNMENTS_OVERVIEW.DIALOG.TITLE")}
-                    </DialogTitle>
-                    <DialogDescription>
-                        {t("ASSIGNMENTS_OVERVIEW.DIALOG.SUBTITLE", { id: assignment.id })}
-                    </DialogDescription>
-                </DialogHeader>
-
-                <div className="space-y-6">
-                    {/* Status */}
-                    <div className="flex items-center gap-3">
-                        <StatusBadge status={assignment.status} />
-                    </div>
-
-                    {/* Worker Info */}
-                    <div className="space-y-2">
-                        <Label className="text-muted-foreground flex items-center gap-1">
-                            <User className="h-3 w-3" />
-                            {t("ASSIGNMENTS_OVERVIEW.DIALOG.ASSIGNED_WORKER")}
-                        </Label>
-                        <div className="bg-muted/50 p-3 rounded-lg">
-                            <p className="font-medium">
-                                {assignment.worker?.firstName} {assignment.worker?.lastName}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                                {assignment.worker?.user?.email}
-                            </p>
-                        </div>
-                    </div>
-
-                    {/* Institution Info */}
-                    <div className="space-y-2">
-                        <Label className="text-muted-foreground flex items-center gap-1">
-                            <Building2 className="h-3 w-3" />
-                            {t("ASSIGNMENTS_OVERVIEW.DIALOG.INSTITUTION")}
-                        </Label>
-                        <div className="bg-muted/50 p-3 rounded-lg">
-                            <p className="font-medium">
-                                {assignment.institution?.institutionName || t("COMMON.UNKNOWN")}
-                            </p>
-                            {assignment.institution?.address && (
-                                <p className="text-sm text-muted-foreground">
-                                    {assignment.institution.address}
-                                </p>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Mission Info */}
-                    {assignment.mission && (
-                        <div className="space-y-2">
-                            <Label className="text-muted-foreground flex items-center gap-1">
-                                <Briefcase className="h-3 w-3" />
-                                {t("ASSIGNMENTS_OVERVIEW.DIALOG.MISSION")}
-                            </Label>
-                            <div className="bg-muted/50 p-3 rounded-lg">
-                                <p className="font-medium">{assignment.mission.title}</p>
-                                {assignment.mission.location && (
-                                    <p className="text-sm text-muted-foreground">
-                                        {assignment.mission.location}
-                                    </p>
-                                )}
-                                <div className="flex items-center gap-2 mt-2">
-                                    <StatusBadge status={assignment.mission.status} />
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Dates */}
-                    <div className="grid gap-4 sm:grid-cols-2">
-                        <div className="space-y-1">
-                            <Label className="text-muted-foreground flex items-center gap-1">
-                                <Calendar className="h-3 w-3" />
-                                {t("ASSIGNMENTS_OVERVIEW.DIALOG.ASSIGNED_AT")}
-                            </Label>
-                            <p className="font-medium">{formatDate(assignment.assignedAt)}</p>
-                        </div>
-                        {assignment.mission && (
-                            <div className="space-y-1">
-                                <Label className="text-muted-foreground">{t("ASSIGNMENTS_OVERVIEW.DIALOG.MISSION_PERIOD")}</Label>
-                                <p className="font-medium">
-                                    {formatDate(assignment.mission.startDate)} - {formatDate(assignment.mission.endDate)}
-                                </p>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </DialogContent>
-        </Dialog>
-    );
-}
-
+// Reusing the StatCard design from InstitutionAssignments for consistency
 interface StatCardProps {
     title: string;
     value: number;
     icon: any;
     isLoading: boolean;
-    color: string;
-    bg: string;
+    gradient: string;
+    iconColor: string;
+    borderColor: string;
 }
 
-function StatCard({ title, value, icon: Icon, isLoading, color, bg }: StatCardProps) {
+function StatCard({
+    title,
+    value,
+    icon: Icon,
+    isLoading,
+    gradient,
+    iconColor,
+    borderColor,
+}: StatCardProps) {
     return (
-        <Card className="border-border/40 shadow-xl shadow-primary/5 bg-card/60 backdrop-blur-xl group hover:shadow-2xl transition-all duration-300 rounded-2xl overflow-hidden hover:-translate-y-1">
-            <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                    <div className="space-y-1.5 min-w-0">
-                        <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-60 truncate">
-                            {title}
-                        </p>
+        <Card className={cn(
+            "border overflow-hidden relative group hover:shadow-lg transition-all duration-300 hover:-translate-y-1",
+            borderColor
+        )}>
+            <div className={cn("absolute inset-0 bg-linear-to-br opacity-50", gradient)} />
+            <CardContent className="p-6 relative">
+                <div className="flex items-center justify-between gap-4">
+                    <div className="space-y-1">
+                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{title}</p>
                         {isLoading ? (
-                            <Skeleton className="h-9 w-12 rounded-lg" />
+                            <Skeleton className="h-9 w-16 rounded-lg bg-background/50" />
                         ) : (
-                            <p className="text-3xl font-black tracking-tight">{value}</p>
+                            <p className="text-3xl font-black tracking-tight font-spline text-foreground">{value}</p>
                         )}
                     </div>
-                    <div className={`h-12 w-12 rounded-2xl ${bg} ${color} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-sm shadow-black/5`}>
+                    <div className={cn(
+                        "h-12 w-12 rounded-xl flex items-center justify-center bg-background/60 backdrop-blur-sm shadow-sm border border-black/5 dark:border-white/10 group-hover:scale-110 transition-transform duration-300",
+                        iconColor
+                    )}>
                         <Icon className="h-6 w-6" />
                     </div>
                 </div>
@@ -185,9 +72,7 @@ export default function AssignmentsOverview() {
     const [selectedAssignment, setSelectedAssignment] = useState<MissionAssignment | null>(null);
     const [dialogOpen, setDialogOpen] = useState(false);
 
-    // Fetch data (using client-side filtering logic for now to match current hook structure if API supports it later)
     const { data: assignmentsData, isLoading: assignmentsLoading } = useGetAllAssignmentsQuery();
-
     const assignments = assignmentsData?.data || [];
 
     // Filter Logic
@@ -210,6 +95,7 @@ export default function AssignmentsOverview() {
             active: assignments.filter((a) => a.status === "ACTIVE").length,
             completed: assignments.filter((a) => a.status === "COMPLETED").length,
             cancelled: assignments.filter((a) => a.status === "CANCELLED").length,
+            ongoing: assignments.filter((a) => a.status === "ONGOING").length,
         };
     }, [assignments]);
 
@@ -219,67 +105,84 @@ export default function AssignmentsOverview() {
     }, []);
 
     return (
-        <div className="space-y-6 animate-in fade-in duration-500 font-spline">
+        <div className="space-y-8 animate-in fade-in duration-500 font-spline">
             {/* Page Header */}
-            <div className="space-y-2">
-                <h1 className="text-4xl font-extrabold tracking-tight text-foreground lg:text-5xl">
-                    {t("ASSIGNMENTS_OVERVIEW.TITLE")}
-                </h1>
-                <p className="text-muted-foreground text-lg max-w-175">
-                    {t("INSTITUTION_ASSIGNMENTS.DESCRIPTION", "Manage and track all mission assignments across the platform.")}
-                </p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/40 pb-6">
+                <div className="space-y-2">
+                    <div className="flex items-center gap-3">
+                        <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-foreground font-spline">
+                            {t("ASSIGNMENTS_OVERVIEW.TITLE")}
+                        </h1>
+                        {assignments.length > 0 && (
+                            <Badge variant="outline" className="h-7 px-3 rounded-full text-primary border-primary/20 bg-primary/5 font-mono">
+                                {assignments.length}
+                            </Badge>
+                        )}
+                    </div>
+                    <p className="text-muted-foreground text-lg max-w-[700px] font-medium leading-relaxed">
+                        {t("ASSIGNMENTS_OVERVIEW.DESCRIPTION")}
+                    </p>
+                </div>
             </div>
 
             {/* Stats Overview */}
-            <div className="grid gap-4 md:grid-cols-4">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 <StatCard
-                    title={t("INSTITUTION_ASSIGNMENTS.STATS.TOTAL", "Total Assignments")}
+                    title={t("ASSIGNMENTS_OVERVIEW.STATS.TOTAL")}
                     value={stats.total}
                     icon={ListTodo}
                     isLoading={assignmentsLoading}
-                    color="text-primary"
-                    bg="bg-primary/5"
+                    gradient="from-primary/10 to-primary/5"
+                    iconColor="text-primary"
+                    borderColor="border-primary/20"
                 />
                 <StatCard
-                    title={t("INSTITUTION_ASSIGNMENTS.STATS.ACTIVE", "Active")}
-                    value={stats.active}
+                    title={t("ASSIGNMENTS_OVERVIEW.STATS.ACTIVE")}
+                    value={stats.active + stats.ongoing} // Combining Active + Ongoing for high-level stat
                     icon={Clock}
                     isLoading={assignmentsLoading}
-                    color="text-blue-500"
-                    bg="bg-blue-500/5"
+                    gradient="from-blue-500/10 to-blue-500/5"
+                    iconColor="text-blue-500"
+                    borderColor="border-blue-500/20"
                 />
                 <StatCard
-                    title={t("INSTITUTION_ASSIGNMENTS.STATS.COMPLETED", "Completed")}
+                    title={t("ASSIGNMENTS_OVERVIEW.STATS.COMPLETED")}
                     value={stats.completed}
                     icon={CheckCircle2}
                     isLoading={assignmentsLoading}
-                    color="text-emerald-500"
-                    bg="bg-emerald-500/5"
+                    gradient="from-emerald-500/10 to-emerald-500/5"
+                    iconColor="text-emerald-500"
+                    borderColor="border-emerald-500/20"
                 />
                 <StatCard
-                    title={t("INSTITUTION_ASSIGNMENTS.STATS.CANCELLED", "Cancelled")}
+                    title={t("ASSIGNMENTS_OVERVIEW.STATS.CANCELLED")}
                     value={stats.cancelled}
                     icon={XCircle}
                     isLoading={assignmentsLoading}
-                    color="text-rose-500"
-                    bg="bg-rose-500/5"
+                    gradient="from-rose-500/10 to-rose-500/5"
+                    iconColor="text-rose-500"
+                    borderColor="border-rose-500/20"
                 />
             </div>
 
-            {/* Filter Section */}
-            <AdminAssignmentsFilter
-                statusFilter={statusFilter}
-                onStatusChange={setStatusFilter}
-                searchQuery={searchQuery}
-                onSearchChange={setSearchQuery}
-            />
+            <div className="space-y-6">
+                {/* Filter Section */}
+                <div className="bg-background/80 backdrop-blur-md">
+                    <AdminAssignmentsFilter
+                        statusFilter={statusFilter}
+                        onStatusChange={setStatusFilter}
+                        searchQuery={searchQuery}
+                        onSearchChange={setSearchQuery}
+                    />
+                </div>
 
-            {/* Table Section */}
-            <AdminAssignmentsTable
-                data={filteredAssignments}
-                isLoading={assignmentsLoading}
-                onViewAssignment={handleViewAssignment}
-            />
+                {/* Table Section */}
+                <AdminAssignmentsTable
+                    data={filteredAssignments}
+                    isLoading={assignmentsLoading}
+                    onViewAssignment={handleViewAssignment}
+                />
+            </div>
 
             {/* Assignment Details Dialog */}
             <AssignmentDetailsDialog

@@ -60,6 +60,7 @@ export const fr = {
             N_A: "N/D",
             DELETE_PROFILE_PIC: "Supprimer la photo",
             SHOW_RESULTS: "Voir les résultats",
+            VIEW: "Voir",
             STATUS: {
                 SUBMITTED: "Soumis",
                 REJECTED: "Rejeté",
@@ -1120,6 +1121,62 @@ export const fr = {
                 RELIABILITY: "Score de Fiabilité : {{score}}%",
                 MESSAGE: "Message",
                 PROFILE: "Profil"
+            }
+        },
+        ASSIGNMENTS_OVERVIEW: {
+            TITLE: "Aperçu des Affectations",
+            DESCRIPTION: "Gérez et suivez toutes les affectations de mission sur la plateforme.",
+            STATS: {
+                TOTAL: "Total des Affectations",
+                ACTIVE: "Actives",
+                COMPLETED: "Terminées",
+                CANCELLED: "Annulées"
+            },
+            FILTER: {
+                SEARCH_PLACEHOLDER: "Rechercher des affectations...",
+                STATUS: "Statut",
+                ALL_STATUS: "Tous les Statuts",
+                ACTIVE: "Actif",
+                ONGOING: "En cours",
+                COMPLETED: "Terminé",
+                CANCELLED: "Annulé",
+                CLEAR: "Effacer les Filtres"
+            },
+            TABLE: {
+                COLUMNS: {
+                    MISSION: "Mission",
+                    INSTITUTION: "Institution",
+                    WORKER: "Intervenant",
+                    STATUS: "Statut",
+                    DATES: "Dates",
+                    ACTIONS: "Actions"
+                },
+                EMPTY_STATE: {
+                    TITLE: "Aucune affectation trouvée",
+                    DESCRIPTION: "Aucune affectation ne correspond à vos critères de filtrage actuels."
+                },
+                DAYS: "{{count}} Jour",
+                DAYS_plural: "{{count}} Jours"
+            },
+            DIALOG: {
+                TITLE: "Détails de l'Affectation",
+                SUBTITLE: "Informations sur l'affectation #{{id}}",
+                SECTIONS: {
+                    MISSION_INFO: "Informations de la Mission",
+                    WORKER_INFO: "Informations de l'Intervenant",
+                    TIMELINE: "Calendrier",
+                    PAYMENT: "Statut du Paiement"
+                },
+                ACTIONS: {
+                    VIEW_WORKER_PROFILE: "Voir le Profil de l'Intervenant",
+                    VIEW_MISSION_DETAILS: "Voir les Détails de la Mission",
+                    VIEW_INSTITUTION: "Voir l'Institution"
+                },
+                LABELS: {
+                    ASSIGNED_AT: "Assigné le",
+                    MISSION_PERIOD: "Période de Mission",
+                    DURATION: "Durée"
+                }
             }
         },
         FINANCIAL: {
