@@ -58,6 +58,8 @@ export const fr = {
             SOCIAL_WORKER: "Travailleur Social",
             WORKER: "Intervenant",
             N_A: "N/D",
+            PREVIOUS: "Précédent",
+            NEXT: "Suivant",
             DELETE_PROFILE_PIC: "Supprimer la photo",
             SHOW_RESULTS: "Voir les résultats",
             VIEW: "Voir",
@@ -1697,6 +1699,43 @@ export const fr = {
                 }
             },
             SETTINGS_DESC: "La gestion du compte et des mots de passe se fait via le panneau de configuration principal. Contactez l'administrateur système pour toute modification liée au compte."
+        },
+        ADMIN_PAYMENTS: {
+            TITLE: "Aperçu Financier",
+            SUBTITLE: "Gérez les revenus de la plateforme, surveillez les transactions et suivez les paiements aux intervenants.",
+            KPI: {
+                TOTAL_REVENUE: "REVENU TOTAL",
+                TOTAL_REVENUE_DESC: "Chiffre d'affaires total de la plateforme",
+                PLATFORM_FEES: "FRAIS DE PLATEFORME",
+                PLATFORM_FEES_DESC: "Bénéfices nets",
+                WORKER_PAYOUTS: "PAIEMENTS AUX INTERVENANTS",
+                WORKER_PAYOUTS_DESC: "Distribués aux intervenants"
+            },
+            FILTER: {
+                SEARCH_PLACEHOLDER: "Rechercher par institution, mission ou intervenant...",
+                STATUS: "Statut",
+                ALL_STATUS: "Tous les Statuts",
+                EXPORT: "Exporter le Rapport"
+            },
+            TABLE: {
+                TITLE: "Paiements Système",
+                RECORDS_FOUND: "{{count}} enregistrements trouvés",
+                COLUMNS: {
+                    STATUS: "STATUT",
+                    INSTITUTION: "INSTITUTION",
+                    MISSION: "MISSION",
+                    WORKER: "INTERVENANT",
+                    DATE: "DATE",
+                    TOTAL_AMOUNT: "MONTANT TOTAL",
+                    FEE: "FRAIS",
+                    RECEIPT: "REÇU"
+                },
+                EMPTY_STATE: {
+                    TITLE: "Aucun paiement trouvé",
+                    DESCRIPTION: "Essayez d'ajuster vos filtres ou vos termes de recherche."
+                },
+                DOWNLOAD_RECEIPT: "Télécharger le Reçu"
+            }
         },
         WORKER_AVAILABILITY: {
             TITLE: "Mes Disponibilités",

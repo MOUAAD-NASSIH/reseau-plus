@@ -58,6 +58,8 @@ export const en = {
             SOCIAL_WORKER: "Social Worker",
             WORKER: "Worker",
             N_A: "N/A",
+            PREVIOUS: "Previous",
+            NEXT: "Next",
             DELETE_PROFILE_PIC: "Remove photo",
             SHOW_RESULTS: "Show results",
             VIEW: "View",
@@ -1690,6 +1692,43 @@ export const en = {
                 }
             },
             SETTINGS_DESC: "Account settings and password management are handled through the main settings panel. Contact the system administrator for account-related changes."
+        },
+        ADMIN_PAYMENTS: {
+            TITLE: "Financial Overview",
+            SUBTITLE: "Manage platform revenue, monitor transactions, and track worker payouts.",
+            KPI: {
+                TOTAL_REVENUE: "TOTAL REVENUE",
+                TOTAL_REVENUE_DESC: "Total platform turnover",
+                PLATFORM_FEES: "PLATFORM FEES",
+                PLATFORM_FEES_DESC: "Net earnings",
+                WORKER_PAYOUTS: "WORKER PAYOUTS",
+                WORKER_PAYOUTS_DESC: "Distributed to workers"
+            },
+            FILTER: {
+                SEARCH_PLACEHOLDER: "Search by institution, mission, or worker...",
+                STATUS: "Status",
+                ALL_STATUS: "All Status",
+                EXPORT: "Export Report"
+            },
+            TABLE: {
+                TITLE: "System Payments",
+                RECORDS_FOUND: "{{count}} total records found",
+                COLUMNS: {
+                    STATUS: "STATUS",
+                    INSTITUTION: "INSTITUTION",
+                    MISSION: "MISSION",
+                    WORKER: "WORKER",
+                    DATE: "DATE",
+                    TOTAL_AMOUNT: "TOTAL AMOUNT",
+                    FEE: "FEE",
+                    RECEIPT: "RECEIPT"
+                },
+                EMPTY_STATE: {
+                    TITLE: "No payments found",
+                    DESCRIPTION: "Try adjusting your filters or search terms."
+                },
+                DOWNLOAD_RECEIPT: "Download Receipt"
+            }
         },
         WORKER_AVAILABILITY: {
             TITLE: "My Availabilities",
