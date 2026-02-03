@@ -1361,6 +1361,7 @@ export const fr = {
                 MARK_ALL_READ: "Tout marquer comme lu"
             }
         },
+
         ADMIN_DASHBOARD: {
             ROLE_LABEL: "Portail Administrateur",
             WELCOME: {
@@ -1613,7 +1614,9 @@ export const fr = {
                 CONTEXT_DATA: "Données de contexte",
                 ADDITIONAL_DETAILS: "Détails supplémentaires",
                 AFFECTED_DOCUMENT: "Document concerné",
-                AFFECTED_MISSION: "Mission concernée"
+                AFFECTED_MISSION: "Mission concernée",
+                ACTION_SUMMARY: "Résumé de l'Action",
+                ACTION_SUMMARY_DESC: "Cette action administrative a été complétée avec succès. L'opération a été enregistrée à des fins d'audit et de conformité."
             }
         },
         ADMIN_MISSIONS: {

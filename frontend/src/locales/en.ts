@@ -1606,12 +1606,13 @@ export const en = {
                 REJECTION_REASON: "Rejection Reason",
                 EXECUTED_BY: "Executed By",
                 CONTEXT_DATA: "Context Data",
-                ADDITIONAL_DETAILS: "Additional Details",
                 AFFECTED_DOCUMENT: "Affected Document",
-                AFFECTED_MISSION: "Affected Mission"
+                AFFECTED_MISSION: "Affected Mission",
+                ACTION_SUMMARY: "Action Summary",
+                ACTION_SUMMARY_DESC: "This administrative action was successfully completed. The operation has been logged for audit and compliance purposes."
             }
         },
-        ADMIN_MISSIONS: {
+        ADMIN_ASSIGNMENTS: {
             TITLE: "Missions Overview",
             SUBTITLE: "Monitor and manage all mission activities across the platform.",
             SEARCH_PLACEHOLDER: "Search by title, institution, or location...",

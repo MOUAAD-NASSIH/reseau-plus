@@ -87,6 +87,7 @@ export const getAdminLogs = async (
                     select: {
                         id: true,
                         email: true,
+                        profilePicture: true,
                         role: { select: { name: true } },
                         worker: { select: { firstName: true, lastName: true } },
                         institution: { select: { institutionName: true } }

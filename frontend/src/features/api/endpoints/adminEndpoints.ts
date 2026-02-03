@@ -55,6 +55,7 @@ export interface AdminLog {
     targetUser?: {
         id: number;
         email: string;
+        profilePicture?: string | null;
         role?: { name: string };
         worker?: { firstName: string; lastName: string };
         institution?: { institutionName: string };
@@ -82,6 +83,16 @@ export interface AdminLogFilters {
     page?: number;
     limit?: number;
 }
+
+/**
+ * Log action type
+ */
+export type LogActionType = string;
+
+/**
+ * Date filter period
+ */
+export type DateFilterPeriod = "TODAY" | "YESTERDAY" | "LAST_7_DAYS" | "LAST_30_DAYS";
 
 /**
  * Pending workers filters

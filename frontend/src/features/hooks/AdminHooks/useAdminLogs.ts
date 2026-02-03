@@ -1,14 +1,14 @@
 import { useState, useMemo } from "react";
-import { useGetAdminLogsQuery, type AdminLog } from "@/features/api/endpoints/adminEndpoints";
+import { useGetAdminLogsQuery, type AdminLog, type DateFilterPeriod } from "@/features/api/endpoints/adminEndpoints";
 import { isToday, isYesterday, parseISO, subDays, isAfter } from "date-fns";
 
 export function useAdminLogs() {
     const [searchQuery, setSearchQuery] = useState("");
     const [actionTypeFilter, setActionTypeFilter] = useState<string>("ALL");
-    const [dateFilter, setDateFilter] = useState<string>("ALL");
+    const [dateFilter, setDateFilter] = useState<DateFilterPeriod | "ALL">("ALL");
     const [selectedLog, setSelectedLog] = useState<AdminLog | null>(null);
     const [dialogOpen, setDialogOpen] = useState(false);
-    
+
     // Pagination state
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);

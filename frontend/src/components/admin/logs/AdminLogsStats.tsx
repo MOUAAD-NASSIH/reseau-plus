@@ -1,7 +1,9 @@
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { Activity, Clock, ShieldCheck, Zap } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 
 interface AdminLogsStatsProps {
     stats: {
@@ -18,104 +20,103 @@ export function AdminLogsStats({ stats, isLoading }: AdminLogsStatsProps) {
     const { t } = useTranslation();
 
     return (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {/* TOTAL LOGS */}
-            <Card className="border-border/40 shadow-xl shadow-primary/5 bg-card/60 backdrop-blur-xl group hover:shadow-2xl transition-all duration-300 rounded-3xl overflow-hidden hover:-translate-y-1">
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                    <CardTitle className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-60">
-                        {t("ADMIN_LOGS.STATS.TOTAL_ACTIONS")}
-                    </CardTitle>
-                    <div className="h-10 w-10 bg-primary/10 text-primary rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <Activity className="h-5 w-5" />
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    {isLoading ? (
-                        <Skeleton className="h-10 w-24" />
-                    ) : (
-                        <div className="flex items-baseline gap-2">
-                            <span className="text-4xl font-black tracking-tighter">{stats.total}</span>
-                        </div>
-                    )}
-                    <p className="text-[10px] text-muted-foreground mt-4 font-black leading-relaxed opacity-60 uppercase tracking-widest">
-                        {t("ADMIN_LOGS.STATS.TOTAL_DESC")}
-                    </p>
-                </CardContent>
-            </Card>
-
-            {/* RECORDED TODAY */}
-            <Card className="border-border/40 shadow-xl shadow-primary/5 bg-card/60 backdrop-blur-xl group hover:shadow-2xl transition-all duration-300 rounded-3xl overflow-hidden hover:-translate-y-1">
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                    <CardTitle className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-60">
-                        {t("ADMIN_LOGS.STATS.TODAY")}
-                    </CardTitle>
-                    <div className="h-10 w-10 bg-emerald-500/10 text-emerald-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <Zap className="h-5 w-5 fill-emerald-500" />
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    {isLoading ? (
-                        <Skeleton className="h-10 w-24" />
-                    ) : (
-                        <div className="flex items-baseline gap-2">
-                            <span className="text-4xl font-black tracking-tighter">{stats.today}</span>
-                        </div>
-                    )}
-                    <p className="text-[10px] text-muted-foreground mt-4 font-black leading-relaxed opacity-60 uppercase tracking-widest">
-                        {t("ADMIN_LOGS.STATS.YESTERDAY")}: {stats.yesterday}
-                    </p>
-                </CardContent>
-            </Card>
-
-            {/* LAST 7 DAYS */}
-            <Card className="border-border/40 shadow-xl shadow-primary/5 bg-card/60 backdrop-blur-xl group hover:shadow-2xl transition-all duration-300 rounded-3xl overflow-hidden hover:-translate-y-1">
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                    <CardTitle className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-60">
-                        {t("ADMIN_LOGS.STATS.LAST_7_DAYS")}
-                    </CardTitle>
-                    <div className="h-10 w-10 bg-amber-500/10 text-amber-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <Clock className="h-5 w-5" />
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    {isLoading ? (
-                        <Skeleton className="h-10 w-24" />
-                    ) : (
-                        <div className="flex items-baseline gap-2">
-                            <span className="text-4xl font-black tracking-tighter">{stats.last7Days}</span>
-                        </div>
-                    )}
-                    <p className="text-[10px] text-muted-foreground mt-4 font-black leading-relaxed opacity-60 uppercase tracking-widest">
-                        {t("ADMIN_LOGS.STATS.WEEKLY_TREND")}
-                    </p>
-                </CardContent>
-            </Card>
-
-            {/* MOST FREQUENT */}
-            <Card className="border-border/40 shadow-xl shadow-primary/5 bg-card/60 backdrop-blur-xl group hover:shadow-2xl transition-all duration-300 rounded-3xl overflow-hidden hover:-translate-y-1">
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
-                    <CardTitle className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-60">
-                        {t("ADMIN_LOGS.STATS.MOST_FREQUENT")}
-                    </CardTitle>
-                    <div className="h-10 w-10 bg-blue-500/10 text-blue-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <ShieldCheck className="h-5 w-5" />
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    {isLoading ? (
-                        <Skeleton className="h-10 w-32" />
-                    ) : (
-                        <div className="flex items-baseline gap-2">
-                            <span className="text-xl font-black tracking-tight truncate w-full" title={stats.mostFrequentAction}>
-                                {stats.mostFrequentAction}
-                            </span>
-                        </div>
-                    )}
-                    <p className="text-[10px] text-muted-foreground mt-4 font-black leading-relaxed opacity-60 uppercase tracking-widest">
-                        {t("ADMIN_LOGS.STATS.COMMON_TASK")}
-                    </p>
-                </CardContent>
-            </Card>
+        <div className="grid gap-4 md:gap-6 md:grid-cols-2 lg:grid-cols-4">
+            <StatCard
+                title={t("ADMIN_LOGS.STATS.TOTAL_ACTIONS")}
+                value={stats.total}
+                subtext={t("ADMIN_LOGS.STATS.TOTAL_DESC")}
+                icon={<Activity />}
+                iconColor="text-primary"
+                isLoading={isLoading}
+                delay="delay-[0ms]"
+            />
+            <StatCard
+                title={t("ADMIN_LOGS.STATS.TODAY")}
+                value={stats.today}
+                subtext={`${t("ADMIN_LOGS.STATS.YESTERDAY")}: ${stats.yesterday}`}
+                icon={<Zap />}
+                iconColor="text-emerald-600 dark:text-emerald-400"
+                isLoading={isLoading}
+                delay="delay-[100ms]"
+            />
+            <StatCard
+                title={t("ADMIN_LOGS.STATS.LAST_7_DAYS")}
+                value={stats.last7Days}
+                subtext={t("ADMIN_LOGS.STATS.WEEKLY_TREND")}
+                icon={<Clock />}
+                iconColor="text-amber-600 dark:text-amber-400"
+                isLoading={isLoading}
+                delay="delay-[200ms]"
+            />
+            <StatCard
+                title={t("ADMIN_LOGS.STATS.MOST_FREQUENT")}
+                value={stats.mostFrequentAction}
+                subtext={t("ADMIN_LOGS.STATS.COMMON_TASK")}
+                icon={<ShieldCheck />}
+                iconColor="text-blue-600 dark:text-blue-400"
+                isLoading={isLoading}
+                delay="delay-[300ms]"
+                isString={true}
+            />
         </div>
+    );
+}
+
+interface StatCardProps {
+    title: string;
+    value: string | number;
+    subtext: string;
+    icon: React.ReactNode;
+    iconColor?: string;
+    isLoading?: boolean;
+    className?: string;
+    delay?: string;
+    isString?: boolean;
+}
+
+function StatCard({
+    title,
+    value,
+    subtext,
+    icon,
+    iconColor = "text-primary",
+    isLoading,
+    className,
+    delay,
+    isString = false
+}: StatCardProps) {
+    return (
+        <Card className={cn(
+            "relative overflow-hidden border border-border/40 shadow-sm bg-card/50 backdrop-blur-sm group transition-all hover:shadow-md animate-in fade-in slide-in-from-bottom-4 duration-500",
+            className,
+            delay
+        )}>
+            {/* Background watermark icon */}
+            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                {React.isValidElement(icon) ? React.cloneElement(icon as React.ReactElement<{ className?: string }>, {
+                    className: `w-24 h-24 ${iconColor} transform rotate-12`
+                }) : null}
+            </div>
+
+            <CardContent className="p-6">
+                <div className="flex items-start justify-between">
+                    <div className="space-y-3 relative z-10 w-full">
+                        <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                            {title}
+                        </h3>
+                        <div className="flex items-baseline gap-2">
+                            <div className={`${isString ? 'text-2xl' : 'text-4xl'} font-black tracking-tight text-foreground ${isString ? 'capitalize' : ''}`}>
+                                {isLoading ? <Skeleton className="h-10 w-20" /> : value}
+                            </div>
+                        </div>
+                        {subtext && (
+                            <div className="flex items-center gap-2 text-xs">
+                                <span className="text-muted-foreground font-medium opacity-70">{subtext}</span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
     );
 }
