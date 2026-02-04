@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "worker_availabilities" ALTER COLUMN "start_date" SET DATA TYPE TIMESTAMPTZ,
+ALTER COLUMN "end_date" SET DATA TYPE TIMESTAMPTZ;
