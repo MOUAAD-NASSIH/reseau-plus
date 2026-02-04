@@ -1,5 +1,6 @@
 
-import { MessageSquare, Search, Filter, X } from "lucide-react";
+import { MessageSquare, Search, Filter, X, Trophy } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -24,10 +25,21 @@ const ReviewsOverview = () => {
     searchQuery,
     setSearchQuery,
   } = useAdminReviews();
+  const { t } = useTranslation();
 
   return (
     <div className="space-y-8 p-1 font-spline">
       {/* Header / Stats Section */}
+      <div className="flex flex-col gap-2 p-4">
+        <h1 className="text-3xl font-black font-spline tracking-tight flex items-center gap-3">
+          <Trophy className="h-8 w-8 text-primary" />
+          {t("ADMIN_REVIEWS.ADMIN.TITLE")}
+        </h1>
+        <p className="text-muted-foreground">
+          {t("ADMIN_REVIEWS.ADMIN.SUBTITLE")}
+        </p>
+      </div>
+
       <AdminReviewsStats
         stats={stats}
         totalReviews={totalReviews}
@@ -36,7 +48,7 @@ const ReviewsOverview = () => {
 
       {/* Main Content Section */}
       <div className="bg-card/30 backdrop-blur-md rounded-[32px] border border-border/40 p-1 overflow-hidden shadow-2xl">
-        <div className="p-6 space-y-6">
+        <div className="p-3 sm:p-6 space-y-6">
           {/* Toolbar / Filters */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
@@ -45,12 +57,12 @@ const ReviewsOverview = () => {
               </div>
               <div>
                 <h3 className="text-xl font-black tracking-tight">
-                  Global Feed
+                  {t("ADMIN_REVIEWS.ADMIN.GLOBAL_FEED")}
                 </h3>
                 <div className="flex items-center gap-2">
                   <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-60">
-                    {filteredReviews.length} Records found
+                    {t("ADMIN_REVIEWS.ADMIN.RECORDS_FOUND", { count: filteredReviews.length })}
                   </span>
                 </div>
               </div>
@@ -61,7 +73,7 @@ const ReviewsOverview = () => {
               <div className="relative w-full sm:w-64 group">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 <Input
-                  placeholder="Search reviews..."
+                  placeholder={t("ADMIN_REVIEWS.ADMIN.SEARCH_PLACEHOLDER")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-9 h-11 bg-background/50 border-border/40 rounded-2xl focus:ring-primary/20 transition-all duration-300"
@@ -74,27 +86,27 @@ const ReviewsOverview = () => {
                   <SelectTrigger className="w-full sm:w-[160px] h-11 bg-background/50 border-border/40 rounded-2xl">
                     <div className="flex items-center gap-2">
                       <Filter className="h-4 w-4 text-muted-foreground" />
-                      <SelectValue placeholder="Rating" />
+                      <SelectValue placeholder={t("ADMIN_REVIEWS.ADMIN.RATING_FILTER")} />
                     </div>
                   </SelectTrigger>
                   <SelectContent className="rounded-2xl border-border/40 p-1">
                     <SelectItem value="ALL" className="rounded-xl">
-                      All Ratings
+                      {t("ADMIN_REVIEWS.ADMIN.ALL_RATINGS")}
                     </SelectItem>
                     <SelectItem value="5" className="rounded-xl">
-                      5 Stars
+                      5 {t("ADMIN_REVIEWS.ADMIN.STARS")}
                     </SelectItem>
                     <SelectItem value="4" className="rounded-xl">
-                      4 Stars
+                      4 {t("ADMIN_REVIEWS.ADMIN.STARS")}
                     </SelectItem>
                     <SelectItem value="3" className="rounded-xl">
-                      3 Stars
+                      3 {t("ADMIN_REVIEWS.ADMIN.STARS")}
                     </SelectItem>
                     <SelectItem value="2" className="rounded-xl">
-                      2 Stars
+                      2 {t("ADMIN_REVIEWS.ADMIN.STARS")}
                     </SelectItem>
                     <SelectItem value="1" className="rounded-xl">
-                      1 Star
+                      1 {t("ADMIN_REVIEWS.ADMIN.STAR")}
                     </SelectItem>
                   </SelectContent>
                 </Select>

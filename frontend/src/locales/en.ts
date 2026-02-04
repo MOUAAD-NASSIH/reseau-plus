@@ -2498,6 +2498,40 @@ export const en = {
                 NAME_MIN: "Name must be at least 2 characters",
                 NAME_REQUIRED: "Name is required"
             }
+        },
+        ADMIN_REVIEWS: {
+            ADMIN: {
+                TITLE: "Reviews & Ratings",
+                SUBTITLE: "Overview of reviews and ratings",
+                GLOBAL_FEED: "Global Feed",
+                RECORDS_FOUND: "{{count}} Records found",
+                SEARCH_PLACEHOLDER: "Search reviews...",
+                RATING_FILTER: "Rating",
+                ALL_RATINGS: "All Ratings",
+                STARS: "Stars",
+                STAR: "Star",
+                EMPTY: {
+                    TITLE: "No reviews found",
+                    DESCRIPTION: "There are no reviews matching your current filters or in the system."
+                },
+                CARD: {
+                    WORKER: "Worker",
+                    INSTITUTION: "Institution",
+                    CONTEXT_TITLE: "Mission Context",
+                    MISSION_TITLE: "Mission Title",
+                    PARTICIPANTS: "Participants",
+                    EXCHANGED: "{{count}} reviews exchanged",
+                    NO_COMMENT: "No additional comment provided."
+                }
+            },
+            SUMMARY: {
+                OVERALL_SCORE: "Overall Score",
+                TOTAL_REVIEWS: "Total Reviews",
+                BREAKDOWN: "Rating Breakdown",
+                POSITIVE_RATE: "Positive Rate",
+                POSITIVE_DESC: "Positive Feedback",
+                THIS_WEEK: "This week"
+            }
         }
     }
 };

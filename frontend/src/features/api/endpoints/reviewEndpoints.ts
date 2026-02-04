@@ -147,7 +147,7 @@ export const reviewApi = api.injectEndpoints({
          */
         getAllReviews: builder.query<ApiResponse<Review[]>, ReviewFilters | void>({
             query: (filters) => ({
-                url: "/reviews",
+                url: "/admin/reviews",
                 params: buildParams(filters || undefined),
             }),
             providesTags: (result) =>

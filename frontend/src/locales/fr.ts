@@ -2506,6 +2506,40 @@ export const fr = {
                 NAME_MIN: "Le nom doit contenir au moins 2 caractères",
                 NAME_REQUIRED: "Le nom est requis"
             }
+        },
+        ADMIN_REVIEWS: {
+            ADMIN: {
+                TITLE: "Avis & Évaluations",
+                SUBTITLE: "Aperçu des avis et évaluations",
+                GLOBAL_FEED: "Flux Global",
+                RECORDS_FOUND: "{{count}} Enregistrements trouvés",
+                SEARCH_PLACEHOLDER: "Rechercher des avis...",
+                RATING_FILTER: "Note",
+                ALL_RATINGS: "Toutes les notes",
+                STARS: "Étoiles",
+                STAR: "Étoile",
+                EMPTY: {
+                    TITLE: "Aucun avis trouvé",
+                    DESCRIPTION: "Aucun avis ne correspond à vos filtres actuels ou n'est présent dans le système."
+                },
+                CARD: {
+                    WORKER: "Intervenant",
+                    INSTITUTION: "Institution",
+                    CONTEXT_TITLE: "Contexte de la Mission",
+                    MISSION_TITLE: "Titre de la Mission",
+                    PARTICIPANTS: "Participants",
+                    EXCHANGED: "{{count}} avis échangés",
+                    NO_COMMENT: "Aucun commentaire supplémentaire fourni."
+                }
+            },
+            SUMMARY: {
+                OVERALL_SCORE: "Note Globale",
+                TOTAL_REVIEWS: "Total des Avis",
+                BREAKDOWN: "Répartition des Notes",
+                POSITIVE_RATE: "Taux Positif",
+                POSITIVE_DESC: "Retours Positifs",
+                THIS_WEEK: "Cette semaine"
+            }
         }
     }
 };

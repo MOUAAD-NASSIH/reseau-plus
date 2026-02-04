@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { EmptyState } from "@/components/common/EmptyState";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,6 +13,7 @@ interface AdminReviewsListProps {
 }
 
 export function AdminReviewsList({ reviews, isLoading }: AdminReviewsListProps) {
+    const { t } = useTranslation();
     // Group reviews by missionAssignmentId
     const groupedReviews = useMemo(() => {
         const groups: Record<number, Review[]> = {};
@@ -22,7 +24,7 @@ export function AdminReviewsList({ reviews, isLoading }: AdminReviewsListProps) 
             }
             groups[assignmentId].push(review);
         });
-        
+
         // Convert to array and sort by most recent review in the group
         return Object.values(groups).sort((groupA, groupB) => {
             const dateA = Math.max(...groupA.map(r => new Date(r.createdAt).getTime()));
@@ -55,8 +57,8 @@ export function AdminReviewsList({ reviews, isLoading }: AdminReviewsListProps) 
         return (
             <div className="py-20 bg-card/20 backdrop-blur-md rounded-3xl border border-dashed border-border/40">
                 <EmptyState
-                    title="No reviews found"
-                    description="There are no reviews matching your current filters or in the system."
+                    title={t("ADMIN_REVIEWS.ADMIN.EMPTY.TITLE")}
+                    description={t("ADMIN_REVIEWS.ADMIN.EMPTY.DESCRIPTION")}
                     icon={Star}
                 />
             </div>

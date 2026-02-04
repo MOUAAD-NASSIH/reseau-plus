@@ -765,21 +765,41 @@ export const getAllReviews = async (
                     select: {
                         id: true,
                         email: true,
+                        profilePicture: true,
                         worker: { select: { firstName: true, lastName: true } },
-                        institution: { select: { institutionName: true } },
+                        institution: { select: { institutionName: true, logo: true } },
                     },
                 },
                 reviewee: {
                     select: {
                         id: true,
                         email: true,
+                        profilePicture: true,
                         worker: { select: { firstName: true, lastName: true } },
-                        institution: { select: { institutionName: true } },
+                        institution: { select: { institutionName: true, logo: true } },
                     },
                 },
                 missionAssignment: {
                     include: {
                         mission: { select: { id: true, title: true } },
+                        worker: {
+                            select: {
+                                id: true,
+                                firstName: true,
+                                lastName: true,
+                                user: { select: { profilePicture: true, email: true } },
+                                userId: true
+                            }
+                        },
+                        institution: {
+                            select: {
+                                id: true,
+                                institutionName: true,
+                                logo: true,
+                                user: { select: { profilePicture: true, email: true } },
+                                userId: true
+                            }
+                        }
                     },
                 },
             },
