@@ -1,4 +1,4 @@
-# Social Workers Platform
+# Réseau+ Platform
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://reactjs.org/)
@@ -32,36 +32,41 @@ This platform digitizes the process of matching social workers with institutions
 | React Hook Form + Zod     | Form Handling & Validation       |
 | Stripe.js                 | Payment Integration              |
 | react-big-calendar        | Availability Calendar            |
-| Vitest + fast-check       | Testing (Unit + Property-Based)  |
+| Socket.IO Client          | Real-time Communication          |
+| i18next + react-i18next   | Internationalization (i18n)      |
 
 ### Backend
 
-| Technology          | Purpose            |
-| ------------------- | ------------------ |
-| Node.js + Express 5 | API Server         |
-| TypeScript          | Type Safety        |
-| Prisma 7            | ORM                |
-| PostgreSQL (NeonDB) | Database           |
-| JWT + bcryptjs      | Authentication     |
-| Cloudinary + Multer | File Storage       |
-| Stripe              | Payment Processing |
-| Nodemailer          | Email Service      |
-| Swagger             | API Documentation  |
+| Technology          | Purpose                      |
+| ------------------- | ---------------------------- |
+| Node.js + Express 5 | API Server                   |
+| TypeScript          | Type Safety                  |
+| Prisma 7            | ORM                          |
+| PostgreSQL (NeonDB) | Database                     |
+| JWT + bcryptjs      | Authentication               |
+| Cloudinary + Multer | File Storage                 |
+| Stripe              | Payment Processing           |
+| Nodemailer          | Email Service                |
+| Swagger             | API Documentation            |
+| Socket.IO           | Real-time WebSocket Server   |
+| Zod                 | Request Validation           |
 
 ## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                                     Frontend (React)                                │
+│                            Frontend (React + Socket.IO Client)              │
 │  ┌─────────────────────────────────────────────────────────────────────┐    │
-│  │  Pages → RTK Query Hooks → Redux Store → Axios Base Query                  │     │
+│  │  Pages → RTK Query Hooks → Redux Store → Axios Base Query          │    │
+│  │  Real-time: Socket.IO Client → Event Handlers → UI Updates         │    │
 │  └─────────────────────────────────────────────────────────────────────┘    │
-└────────────────────────────────────────┬────────────────────────────────────┘
-                                          REST API
-┌────────────────────────────────────────┴────────────────────────────────────┐
-│                                    Backend (Express)                               │
+└────────────────────────────────────┬───────────────┬────────────────────────┘
+                          REST API   │               │  WebSocket
+┌────────────────────────────────────┴───────────────┴────────────────────────┐
+│                     Backend (Express + Socket.IO Server)                    │
 │  ┌─────────────────────────────────────────────────────────────────────┐    │
-│  │  Routes → Controllers → Services → Prisma ORM → PostgreSQL                 │     │
+│  │  Routes → Controllers → Services → Prisma ORM → PostgreSQL          │    │
+│  │  Real-time: Socket.IO Server → Event Emitters → Connected Clients  │    │
 │  └─────────────────────────────────────────────────────────────────────┘    │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -71,9 +76,9 @@ This platform digitizes the process of matching social workers with institutions
 - **RTK Query**: Tag-based cache invalidation eliminates stale UI state automatically
 - **Modular Endpoints**: Each domain (missions, applications, etc.) has its own endpoint module
 - **Type-Safe**: Full TypeScript coverage with Zod validation on both ends
-- **Property-Based Testing**: Formal correctness verification using fast-check
+- **Real-time Communication**: WebSocket integration via Socket.IO for instant notifications and messaging
 - **Auth Guards**: Multi-layer route protection with ProtectedRoute, RoleGuard, and WorkerVerifiedGuard
-- **Real-time Updates**: Notification polling with automatic refetch on new notifications
+- **Internationalization**: Full i18n support with English and French translations
 
 ## Project Structure
 
@@ -85,6 +90,7 @@ This platform digitizes the process of matching social workers with institutions
 │   │   │   ├── auth/         # Login, registration wizards
 │   │   │   ├── common/       # DataTable, Calendar, KPICard, etc.
 │   │   │   ├── payment/      # Stripe checkout components
+│   │   │   ├── messaging/    # Chat and messaging components
 │   │   │   └── ui/           # Base shadcn/ui components
 │   │   ├── features/
 │   │   │   ├── api/          # RTK Query API & endpoints
@@ -95,8 +101,10 @@ This platform digitizes the process of matching social workers with institutions
 │   │   │   ├── institution/  # Mission management, payments
 │   │   │   └── worker/       # Applications, availability
 │   │   ├── middleware/       # Route guards (auth, role, verification)
+│   │   ├── contexts/         # React contexts (messaging, WebSocket)
+│   │   ├── locales/          # i18n translation files (en, fr)
 │   │   ├── types/            # TypeScript definitions
-│   │   └── lib/              # Utilities (toast, stripe, calendar)
+│   │   └── lib/              # Utilities (toast, stripe, calendar, socket)
 │   └── package.json
 │
 ├── backend/
@@ -106,6 +114,7 @@ This platform digitizes the process of matching social workers with institutions
 │   │   ├── routes/           # API routes
 │   │   ├── middleware/       # Auth, validation, error handling
 │   │   ├── schemas/          # Zod validation schemas
+│   │   ├── socket/           # Socket.IO event handlers
 │   │   └── types/            # TypeScript types
 │   ├── prisma/
 │   │   ├── schema.prisma     # Database schema
@@ -124,7 +133,9 @@ This platform digitizes the process of matching social workers with institutions
 - Mission browsing with filters (speciality, domain, urgency)
 - Application tracking and status updates
 - Assignment management and completion
+- Real-time messaging with institutions
 - Review system for completed missions
+- Multi-language support (English/French)
 
 ### For Institutions
 
@@ -132,8 +143,10 @@ This platform digitizes the process of matching social workers with institutions
 - Worker search with filtering by skills and availability
 - Application management (accept/reject with notifications)
 - Assignment tracking and status updates
+- Real-time messaging with workers
 - Stripe payment processing with fee calculation
 - Worker rating and feedback
+- Multi-language support (English/French)
 
 ### For Administrators
 
@@ -141,8 +154,10 @@ This platform digitizes the process of matching social workers with institutions
 - Document review and approval workflow
 - Domain and speciality management
 - Platform-wide mission and assignment oversight
+- Review moderation and management
 - Admin action logging and audit trail
-- Dashboard with KPIs and statistics (real-time data refresh)
+- Dashboard with KPIs and statistics
+- Real-time notifications for admin actions
 
 ### Authentication & Authorization
 
@@ -204,18 +219,6 @@ npm install
 npm run dev
 ```
 
-### Running Tests
-
-```bash
-# Backend tests (with property-based tests)
-cd backend
-npm test
-
-# Frontend tests (with property-based tests)
-cd frontend
-npm test
-```
-
 ## API Documentation
 
 Swagger documentation available at `http://localhost:3000/api-docs` when backend is running.
@@ -233,6 +236,8 @@ Core entities:
 - **Payments** - Stripe-integrated payment tracking
 - **Reviews** - Bidirectional rating system
 - **Notifications** - Real-time user notifications
+- **Conversations** - Chat conversations between users
+- **Messages** - Real-time messaging with delivery status
 - **AdminLogs** - Audit trail for admin actions
 
 ## Security
