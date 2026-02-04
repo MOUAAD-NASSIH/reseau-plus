@@ -7,10 +7,7 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
-    "build": "tsc",
-    "test": "vitest --run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest --run --coverage"
+    "build": "tsc"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -49,10 +46,8 @@
     "@types/pg": "^8.16.0",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
-    "@vitest/coverage-v8": "^4.0.16",
     "prisma": "^7.2.0",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3",
-    "vitest": "^4.0.16"
+    "typescript": "^5.9.3"
   }
 }
