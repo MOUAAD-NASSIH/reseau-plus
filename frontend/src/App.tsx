@@ -18,6 +18,7 @@ import GuestGuard from "@/middleware/GuestGuard";
 import Login from "@/pages/auth/Login";
 import ForgotPasswordPage from "@/pages/auth/ForgotPasswordPage";
 import ResetPasswordPage from "@/pages/auth/ResetPasswordPage";
+import VerifyEmailPage from "@/pages/auth/VerifyEmailPage";
 
 // Registration Pages
 import WorkerRegisterPage from "@/components/worker/Register/WorkerRegisterPage";
@@ -102,6 +103,14 @@ const App = () => {
             element={
               <GuestGuard>
                 <ResetPasswordPage />
+              </GuestGuard>
+            }
+          />
+          <Route
+            path="/verify-email"
+            element={
+              <GuestGuard>
+                <VerifyEmailPage />
               </GuestGuard>
             }
           />

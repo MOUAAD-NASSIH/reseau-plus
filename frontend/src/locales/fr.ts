@@ -379,24 +379,40 @@ export const fr = {
                 EMAIL_PLACEHOLDER: "nom@exemple.com"
             },
             RESET_PASSWORD_PAGE: {
-                TITLE: "Réinitialiser le mot de passe",
-                SUBTITLE: "Choisissez un nouveau mot de passe pour votre compte",
-                BRANDING_TITLE: "Récupération de mot de passe",
-                BRANDING_SUBTITLE: "Processus sécurisé pour récupérer l'accès à votre compte.",
-                INVALID_LINK_TITLE: "Lien Invalide",
-                INVALID_LINK_SUBTITLE: "Ce lien de réinitialisation est invalide ou a expiré",
-                INVALID_LINK_MESSAGE: "Le lien sur lequel vous avez cliqué est invalide ou a expiré. Veuillez en demander un nouveau.",
-                REQUEST_NEW_LINK: "Demander un nouveau lien",
-                SUCCESS_TITLE: "Mot de passe mis à jour",
-                SUCCESS_SUBTITLE: "Votre mot de passe a été réinitialisé avec succès",
-                SUCCESS_MESSAGE: "Votre mot de passe a été mis à jour. Vous pouvez maintenant vous connecter.",
-                SIGN_IN: "Se connecter",
+                TITLE: "Réinitialiser mot de passe",
+                SUBTITLE: "Créez un nouveau mot de passe sécurisé",
+                BRANDING_TITLE: "Accès Sécurisé",
+                BRANDING_SUBTITLE: "Protégez votre compte avec un mot de passe fort",
                 NEW_PASSWORD_LABEL: "Nouveau mot de passe",
                 NEW_PASSWORD_PLACEHOLDER: "Entrez le nouveau mot de passe",
-                CONFIRM_PASSWORD_LABEL: "Confirmer le mot de passe",
+                CONFIRM_PASSWORD_LABEL: "Confirmer mot de passe",
                 CONFIRM_PASSWORD_PLACEHOLDER: "Confirmez le nouveau mot de passe",
                 UPDATE_PASSWORD: "Mettre à jour",
-                UPDATING: "Mise à jour..."
+                UPDATING: "Mise à jour...",
+                SUCCESS_TITLE: "Mot de passe réinitialisé",
+                SUCCESS_SUBTITLE: "Votre mot de passe a été mis à jour",
+                SUCCESS_MESSAGE: "Vous pouvez maintenant vous connecter avec votre nouveau mot de passe",
+                SIGN_IN: "Se connecter",
+                INVALID_LINK_TITLE: "Lien invalide",
+                INVALID_LINK_SUBTITLE: "Ce lien de réinitialisation est invalide ou expiré",
+                INVALID_LINK_MESSAGE: "Le lien de réinitialisation est invalide ou a expiré. Veuillez en demander un nouveau.",
+                REQUEST_NEW_LINK: "Demander un nouveau lien"
+            },
+            VERIFY_EMAIL_PAGE: {
+                TITLE: "Vérification de l'email",
+                SUBTITLE: "Veuillez patienter pendant que nous vérifions votre adresse email",
+                BRANDING_TITLE: "Sécurité du Compte",
+                BRANDING_SUBTITLE: "Vérifier votre identité assure la sécurité de la plateforme",
+                SUCCESS_TITLE: "Email Vérifié",
+                SUCCESS_SUBTITLE: "Votre email a été vérifié avec succès",
+                SUCCESS_MESSAGE: "Vous pouvez maintenant accéder à toutes les fonctionnalités",
+                LOGIN_BUTTON: "Procéder à la connexion",
+                ERROR_TITLE: "Échec de la vérification",
+                ERROR_SUBTITLE: "Nous n'avons pas pu vérifier votre email",
+                ERROR_MESSAGE: "Le lien de vérification est invalide ou a expiré.",
+                INVALID_LINK_TITLE: "Jeton invalide",
+                INVALID_LINK_SUBTITLE: "Jeton de vérification manquant",
+                INVALID_LINK_MESSAGE: "Aucun jeton de vérification n'a été fourni dans le lien."
             },
             LAYOUT: {
                 BRANDING_TITLE: "\"Connecter les professionnels dévoués aux institutions qui en ont le plus besoin.\"",
@@ -1363,7 +1379,6 @@ export const fr = {
                 MARK_ALL_READ: "Tout marquer comme lu"
             }
         },
-
         ADMIN_DASHBOARD: {
             ROLE_LABEL: "Portail Administrateur",
             WELCOME: {

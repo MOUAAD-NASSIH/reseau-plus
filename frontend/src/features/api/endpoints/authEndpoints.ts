@@ -174,6 +174,16 @@ export const authApi = api.injectEndpoints({
                 data: { password },
             }),
         }),
+
+        /**
+         * Verify Email
+         */
+        verifyEmail: builder.query<{ success: boolean; message: string }, string>({
+            query: (token) => ({
+                url: `/auth/verify-email?token=${token}`,
+                method: "GET",
+            }),
+        }),
     }),
     overrideExisting: false,
 });
@@ -187,4 +197,5 @@ export const {
     useUpdateProfilePictureMutation,
     useForgotPasswordMutation,
     useResetPasswordMutation,
+    useVerifyEmailQuery,
 } = authApi;

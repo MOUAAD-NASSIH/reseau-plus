@@ -380,23 +380,39 @@ export const en = {
             },
             RESET_PASSWORD_PAGE: {
                 TITLE: "Reset Password",
-                SUBTITLE: "Choose a new password for your account",
-                BRANDING_TITLE: "Password Recovery",
-                BRANDING_SUBTITLE: "Secure password reset process to help you regain access to your account.",
-                INVALID_LINK_TITLE: "Invalid Link",
-                INVALID_LINK_SUBTITLE: "This password reset link is invalid or has expired",
-                INVALID_LINK_MESSAGE: "The password reset link you clicked is either invalid or has expired. Please request a new one.",
-                REQUEST_NEW_LINK: "Request new reset link",
-                SUCCESS_TITLE: "Password Updated",
-                SUCCESS_SUBTITLE: "Your password has been successfully reset",
-                SUCCESS_MESSAGE: "Your password has been updated successfully. You can now sign in with your new password.",
-                SIGN_IN: "Sign in to your account",
+                SUBTITLE: "Create a new secure password",
+                BRANDING_TITLE: "Secure Access",
+                BRANDING_SUBTITLE: "Protect your account with a strong password",
                 NEW_PASSWORD_LABEL: "New Password",
                 NEW_PASSWORD_PLACEHOLDER: "Enter new password",
                 CONFIRM_PASSWORD_LABEL: "Confirm Password",
                 CONFIRM_PASSWORD_PLACEHOLDER: "Confirm new password",
-                UPDATE_PASSWORD: "Update password",
-                UPDATING: "Updating..."
+                UPDATE_PASSWORD: "Update Password",
+                UPDATING: "Updating...",
+                SUCCESS_TITLE: "Password Reset",
+                SUCCESS_SUBTITLE: "Your password has been updated",
+                SUCCESS_MESSAGE: "You can now log in with your new password",
+                SIGN_IN: "Sign In",
+                INVALID_LINK_TITLE: "Invalid Link",
+                INVALID_LINK_SUBTITLE: "This reset link is invalid or expired",
+                INVALID_LINK_MESSAGE: "The password reset link is invalid or has expired. Please request a new one.",
+                REQUEST_NEW_LINK: "Request New Link"
+            },
+            VERIFY_EMAIL_PAGE: {
+                TITLE: "Verifying Email",
+                SUBTITLE: "Please wait while we verify your email address",
+                BRANDING_TITLE: "Account Security",
+                BRANDING_SUBTITLE: "Verifying your identity ensures platform security",
+                SUCCESS_TITLE: "Email Verified",
+                SUCCESS_SUBTITLE: "Your email has been verified successfully",
+                SUCCESS_MESSAGE: "You can now access all features of the platform",
+                LOGIN_BUTTON: "Proceed to Login",
+                ERROR_TITLE: "Verification Failed",
+                ERROR_SUBTITLE: "We couldn't verify your email",
+                ERROR_MESSAGE: "The verification link is invalid or has expired.",
+                INVALID_LINK_TITLE: "Invalid Token",
+                INVALID_LINK_SUBTITLE: "Missing verification token",
+                INVALID_LINK_MESSAGE: "No verification token was provided in the link."
             },
             LAYOUT: {
                 BRANDING_TITLE: "\"Connecting dedicated professionals with the institutions that need them most.\"",
@@ -1361,6 +1377,7 @@ export const en = {
                 MARK_ALL_READ: "Mark all as read"
             }
         },
+
         ADMIN_DASHBOARD: {
             ROLE_LABEL: "Administrator Portal",
             WELCOME: {
