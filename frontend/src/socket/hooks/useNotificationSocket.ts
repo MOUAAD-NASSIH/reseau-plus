@@ -9,6 +9,7 @@ import { api } from '../../features/api/api';
 import { useAppDispatch } from '../../features/hooks';
 import type { NotificationPayload } from '../../types/socket.types';
 import type { Notification } from '../../types/notification.types';
+import { socketManager } from '../socketManager';
 
 const processedNotificationIds = new Set<number>();
 
@@ -20,6 +21,11 @@ export function useNotificationSocket(): UseNotificationSocketReturn {
     const { isConnected, on, off } = useSocket();
     const dispatch = useAppDispatch();
     const listenerSetup = useRef(false);
+    const isConnectedRef = useRef(isConnected);
+
+    useEffect(() => {
+        isConnectedRef.current = isConnected;
+    }, [isConnected]);
 
     const isNotificationProcessed = useCallback((id: number): boolean => {
         return processedNotificationIds.has(id);
@@ -27,7 +33,6 @@ export function useNotificationSocket(): UseNotificationSocketReturn {
 
     const markNotificationProcessed = useCallback((id: number): void => {
         processedNotificationIds.add(id);
-        // Keep last 1000 to prevent memory leak
         if (processedNotificationIds.size > 1000) {
             const idsArray = Array.from(processedNotificationIds);
             const toRemove = idsArray.slice(0, idsArray.length - 1000);
@@ -51,7 +56,6 @@ export function useNotificationSocket(): UseNotificationSocketReturn {
             createdAt: payload.createdAt,
         };
 
-        // Update notifications list cache (limit: 5 for dropdown)
         dispatch(
             api.util.updateQueryData(
                 'getNotifications' as never,
@@ -71,7 +75,6 @@ export function useNotificationSocket(): UseNotificationSocketReturn {
             )
         );
 
-        // Update full notifications list if cached
         dispatch(
             api.util.updateQueryData(
                 'getNotifications' as never,
@@ -88,7 +91,6 @@ export function useNotificationSocket(): UseNotificationSocketReturn {
             )
         );
 
-        // Update unread count
         if (!notification.isRead) {
             dispatch(
                 api.util.updateQueryData(
@@ -105,24 +107,42 @@ export function useNotificationSocket(): UseNotificationSocketReturn {
         }
     }, [dispatch, isNotificationProcessed, markNotificationProcessed]);
 
-    useEffect(() => {
-        if (!isConnected) {
-            listenerSetup.current = false;
-            return;
-        }
-
-        if (listenerSetup.current) {
-            return;
-        }
-
+    const setupListeners = useCallback(() => {
+        if (listenerSetup.current) return;
         listenerSetup.current = true;
         on('notification', handleNotification);
+    }, [on, handleNotification]);
 
-        return () => {
-            off('notification', handleNotification);
-            listenerSetup.current = false;
-        };
-    }, [isConnected, on, off, handleNotification]);
+    const cleanupListeners = useCallback(() => {
+        if (!listenerSetup.current) return;
+        off('notification', handleNotification);
+        listenerSetup.current = false;
+    }, [off, handleNotification]);
+
+    useEffect(() => {
+        if (isConnected) {
+            setupListeners();
+        } else {
+            cleanupListeners();
+        }
+
+        return cleanupListeners;
+    }, [isConnected, setupListeners, cleanupListeners]);
+
+    // Re-setup listeners on reconnection
+    useEffect(() => {
+        const unsubscribe = socketManager.onConnectionStateChange((state) => {
+            if (state === 'connected') {
+                setTimeout(() => {
+                    if (isConnectedRef.current && !listenerSetup.current) {
+                        setupListeners();
+                    }
+                }, 100);
+            }
+        });
+
+        return unsubscribe;
+    }, [setupListeners]);
 
     return {
         isConnected,

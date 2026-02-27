@@ -9,6 +9,7 @@ import { messageApi } from '../../features/api/endpoints/messageEndpoints';
 import { useAppDispatch } from '../../features/hooks';
 import type { MessagePayload, TypingPayload, MessageReadPayload } from '../../types/socket.types';
 import type { Message } from '../../features/api/endpoints/messageEndpoints';
+import { socketManager } from '../socketManager';
 
 const processedMessageIds = new Set<number>();
 
@@ -24,6 +25,13 @@ export function useMessageSocket(conversationId: number | null): UseMessageSocke
     const dispatch = useAppDispatch();
     const [typingUsers, setTypingUsers] = useState<TypingPayload[]>([]);
     const currentConversationRef = useRef<number | null>(null);
+    const isConnectedRef = useRef(isConnected);
+    const listenerSetup = useRef(false);
+
+    // Keep ref updated
+    useEffect(() => {
+        isConnectedRef.current = isConnected;
+    }, [isConnected]);
 
     const handleMessage = useCallback((payload: MessagePayload) => {
         // Only process messages for the current conversation
@@ -75,10 +83,7 @@ export function useMessageSocket(conversationId: number | null): UseMessageSocke
     }, [dispatch, conversationId]);
 
     const handleTyping = useCallback((payload: TypingPayload) => {
-        console.log('[useMessageSocket] Received typing event:', payload);
-
         if (conversationId === null || payload.conversationId !== conversationId) {
-            console.log('[useMessageSocket] Ignoring typing - wrong conversation:', { currentConversation: conversationId, payloadConversation: payload.conversationId });
             return;
         }
 
@@ -86,17 +91,14 @@ export function useMessageSocket(conversationId: number | null): UseMessageSocke
             if (payload.isTyping) {
                 const exists = prev.some(t => t.userId === payload.userId);
                 if (!exists) {
-                    console.log('[useMessageSocket] Adding typing user:', payload.userName);
                     return [...prev, payload];
                 }
                 return prev;
             } else {
-                console.log('[useMessageSocket] Removing typing user:', payload.userName);
                 return prev.filter(t => t.userId !== payload.userId);
             }
         });
 
-        // Auto-remove typing indicator after 3 seconds
         if (payload.isTyping) {
             setTimeout(() => {
                 setTypingUsers(prev => prev.filter(t => t.userId !== payload.userId));
@@ -136,6 +138,36 @@ export function useMessageSocket(conversationId: number | null): UseMessageSocke
         }
     }, [conversationId, isConnected, emit]);
 
+    // Setup listeners
+    const setupListeners = useCallback(() => {
+        if (listenerSetup.current) return;
+        listenerSetup.current = true;
+        on('message', handleMessage);
+        on('typing', handleTyping);
+        on('messageRead', handleMessageRead);
+    }, [on, handleMessage, handleTyping, handleMessageRead]);
+
+    // Cleanup listeners
+    const cleanupListeners = useCallback(() => {
+        if (!listenerSetup.current) return;
+        off('message', handleMessage);
+        off('typing', handleTyping);
+        off('messageRead', handleMessageRead);
+        listenerSetup.current = false;
+    }, [off, handleMessage, handleTyping, handleMessageRead]);
+
+    // Main effect: setup/cleanup based on connection state
+    useEffect(() => {
+        if (isConnected) {
+            setupListeners();
+        } else {
+            cleanupListeners();
+        }
+
+        return cleanupListeners;
+    }, [isConnected, setupListeners, cleanupListeners]);
+
+    // Handle conversation changes
     useEffect(() => {
         const previousConversation = currentConversationRef.current;
 
@@ -164,22 +196,24 @@ export function useMessageSocket(conversationId: number | null): UseMessageSocke
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [conversationId, isConnected]);
 
-    // Set up socket event listeners
+    // Additional safeguard: listen for reconnection events
     useEffect(() => {
-        if (!isConnected) {
-            return;
-        }
-
-        on('message', handleMessage);
-        on('typing', handleTyping);
-        on('messageRead', handleMessageRead);
-
-        return () => {
-            off('message', handleMessage);
-            off('typing', handleTyping);
-            off('messageRead', handleMessageRead);
+        const handleReconnect = () => {
+            setTimeout(() => {
+                if (isConnectedRef.current && !listenerSetup.current) {
+                    setupListeners();
+                }
+            }, 100);
         };
-    }, [isConnected, on, off, handleMessage, handleTyping, handleMessageRead]);
+
+        const unsubscribe = socketManager.onConnectionStateChange((state) => {
+            if (state === 'connected') {
+                handleReconnect();
+            }
+        });
+
+        return unsubscribe;
+    }, [setupListeners]);
 
     return {
         typingUsers,

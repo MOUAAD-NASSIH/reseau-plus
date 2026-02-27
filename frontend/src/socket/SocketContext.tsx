@@ -1,7 +1,7 @@
 /**
  * Socket Context Provider
- * Provides socket connection state and management throughout the app.
- * Automatically connects when user is authenticated and disconnects on logout.
+ * Manages Socket.IO connection lifecycle with automatic connect/disconnect
+ * based on authentication state.
  */
 
 import {
@@ -31,9 +31,29 @@ interface SocketProviderProps {
 export function SocketProvider({ children }: SocketProviderProps) {
     const [connectionState, setConnectionState] = useState<ConnectionState>('disconnected');
     const [connectionError, setConnectionError] = useState<Error | null>(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(() => !!localStorage.getItem('auth_token'));
 
-    // Check if user is authenticated by token presence
-    const isAuthenticated = !!localStorage.getItem('auth_token');
+    // Listen for storage changes (login/logout from other tabs)
+    useEffect(() => {
+        const handleStorageChange = (e: StorageEvent) => {
+            if (e.key === 'auth_token') {
+                setIsAuthenticated(!!e.newValue);
+            }
+        };
+
+        window.addEventListener('storage', handleStorageChange);
+        return () => window.removeEventListener('storage', handleStorageChange);
+    }, []);
+
+    // Poll for token changes (handles same-tab updates)
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const hasToken = !!localStorage.getItem('auth_token');
+            setIsAuthenticated(prev => prev !== hasToken ? hasToken : prev);
+        }, 500);
+
+        return () => clearInterval(interval);
+    }, []);
 
     const connect = useCallback(() => {
         const token = localStorage.getItem('auth_token');
@@ -67,11 +87,29 @@ export function SocketProvider({ children }: SocketProviderProps) {
 
     // Auto-connect when authenticated, disconnect when logged out
     useEffect(() => {
-        if (isAuthenticated) {
-            connect();
-        } else {
-            disconnect();
-        }
+        let connectTimeout: ReturnType<typeof setTimeout>;
+
+        const attemptConnect = () => {
+            if (isAuthenticated) {
+                const token = localStorage.getItem('auth_token');
+                if (token) {
+                    connectTimeout = setTimeout(() => {
+                        connect();
+                    }, 100);
+                } else {
+                    // Retry if token not yet available
+                    connectTimeout = setTimeout(attemptConnect, 200);
+                }
+            } else {
+                disconnect();
+            }
+        };
+
+        attemptConnect();
+
+        return () => {
+            if (connectTimeout) clearTimeout(connectTimeout);
+        };
     }, [isAuthenticated, connect, disconnect]);
 
     // Cleanup on unmount
@@ -98,7 +136,6 @@ export function SocketProvider({ children }: SocketProviderProps) {
 
 /**
  * Hook to access socket context
- * Must be used within a SocketProvider
  */
 export function useSocketContext(): SocketContextValue {
     const context = useContext(SocketContext);

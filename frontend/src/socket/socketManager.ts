@@ -25,7 +25,7 @@ interface SocketManagerConfig {
 }
 
 const DEFAULT_CONFIG: SocketManagerConfig = {
-    url: import.meta.env.VITE_API_URL || 'http://localhost:3000',
+    url: import.meta.env.VITE_API_URL || 'http://localhost:5000',
     reconnectionAttempts: 10,
     reconnectionDelayMax: 30000, // 30 seconds max
     reconnectionDelayBase: 1000, // 1 second base
@@ -39,6 +39,7 @@ class SocketManager {
     private errorListeners: Set<ErrorListener> = new Set();
     private config: SocketManagerConfig;
     private reconnectAttempt = 0;
+    private listenerRegistry: Map<string, Set<unknown>> = new Map();
 
     constructor(config: Partial<SocketManagerConfig> = {}) {
         this.config = { ...DEFAULT_CONFIG, ...config };
@@ -54,7 +55,7 @@ class SocketManager {
             return;
         }
 
-        // Disconnect existing connection if any
+        // Disconnect existing connection
         this.disconnect();
 
         this.token = token;
@@ -68,6 +69,7 @@ class SocketManager {
             reconnectionAttempts: this.config.reconnectionAttempts,
             reconnectionDelay: this.config.reconnectionDelayBase,
             reconnectionDelayMax: this.config.reconnectionDelayMax,
+            timeout: 10000,
         });
 
         this.setupEventHandlers();
@@ -103,11 +105,19 @@ class SocketManager {
 
     /**
      * Subscribe to socket events
+     * Listeners are persisted in registry and re-attached on reconnection
      */
     on<K extends keyof ServerToClientEvents>(
         event: K,
         handler: ServerToClientEvents[K]
     ): void {
+        // Store in registry for reconnection
+        if (!this.listenerRegistry.has(event)) {
+            this.listenerRegistry.set(event, new Set());
+        }
+        this.listenerRegistry.get(event)!.add(handler);
+
+        // Attach to socket if connected
         if (this.socket) {
             this.socket.on(event, handler as never);
         }
@@ -120,6 +130,14 @@ class SocketManager {
         event: K,
         handler?: ServerToClientEvents[K]
     ): void {
+        // Remove from registry
+        if (handler) {
+            this.listenerRegistry.get(event)?.delete(handler);
+        } else {
+            this.listenerRegistry.delete(event);
+        }
+
+        // Remove from socket
         if (this.socket) {
             if (handler) {
                 this.socket.off(event, handler as never);
@@ -127,6 +145,19 @@ class SocketManager {
                 this.socket.off(event);
             }
         }
+    }
+
+    /**
+     * Re-attach all listeners from registry to socket after connection
+     */
+    private reattachListeners(): void {
+        if (!this.socket) return;
+
+        this.listenerRegistry.forEach((handlers, event) => {
+            handlers.forEach((handler) => {
+                this.socket!.on(event, handler as never);
+            });
+        });
     }
 
     /**
@@ -147,7 +178,6 @@ class SocketManager {
      */
     onConnectionStateChange(listener: ConnectionStateListener): () => void {
         this.connectionStateListeners.add(listener);
-        // Immediately notify of current state
         listener(this.connectionState);
         return () => {
             this.connectionStateListeners.delete(listener);
@@ -165,7 +195,7 @@ class SocketManager {
     }
 
     /**
-     * Get the underlying socket instance (for advanced use cases)
+     * Get the underlying socket instance
      */
     getSocket(): TypedSocket | null {
         return this.socket;
@@ -187,16 +217,14 @@ class SocketManager {
 
         this.socket.on('connect', () => {
             this.reconnectAttempt = 0;
+            this.reattachListeners();
             this.setConnectionState('connected');
         });
 
         this.socket.on('disconnect', (reason) => {
-            // If server disconnected us, we might want to reconnect
             if (reason === 'io server disconnect') {
-                // Server initiated disconnect - don't auto-reconnect
                 this.setConnectionState('disconnected');
             } else {
-                // Client-side disconnect or transport error - will auto-reconnect
                 this.setConnectionState('reconnecting');
             }
         });
@@ -214,6 +242,7 @@ class SocketManager {
 
         this.socket.io.on('reconnect', () => {
             this.reconnectAttempt = 0;
+            this.reattachListeners();
             this.setConnectionState('connected');
         });
 
