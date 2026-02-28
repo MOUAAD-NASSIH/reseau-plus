@@ -155,7 +155,7 @@ class SocketManager {
 
         this.listenerRegistry.forEach((handlers, event) => {
             handlers.forEach((handler) => {
-                this.socket!.on(event as string, handler as never);
+                this.socket!.on(event as keyof ServerToClientEvents, handler as never);
             });
         });
     }
