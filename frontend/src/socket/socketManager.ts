@@ -153,9 +153,10 @@ class SocketManager {
     private reattachListeners(): void {
         if (!this.socket) return;
 
-        this.listenerRegistry.forEach((handlers, event) => {
+        const entries = Array.from(this.listenerRegistry.entries()) as [keyof ServerToClientEvents, Set<unknown>][];
+        entries.forEach(([event, handlers]) => {
             handlers.forEach((handler) => {
-                this.socket!.on(event as keyof ServerToClientEvents, handler as never);
+                this.socket!.on(event, handler as never);
             });
         });
     }
