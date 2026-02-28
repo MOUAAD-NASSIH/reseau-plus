@@ -8,7 +8,7 @@ import { useAppDispatch } from "@/features/hooks";
  * Updates in real-time via socket events
  */
 export function useUnreadMessageCount() {
-  const { data, refetch } = useGetUnreadCountQuery();
+  const { data } = useGetUnreadCountQuery();
   const { isConnected, on, off } = useSocket();
   const dispatch = useAppDispatch();
   const listenerSetup = useRef(false);

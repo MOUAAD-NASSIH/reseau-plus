@@ -39,7 +39,7 @@ class SocketManager {
     private errorListeners: Set<ErrorListener> = new Set();
     private config: SocketManagerConfig;
     private reconnectAttempt = 0;
-    private listenerRegistry: Map<string, Set<unknown>> = new Map();
+    private listenerRegistry: Map<keyof ServerToClientEvents, Set<unknown>> = new Map();
 
     constructor(config: Partial<SocketManagerConfig> = {}) {
         this.config = { ...DEFAULT_CONFIG, ...config };
@@ -155,7 +155,7 @@ class SocketManager {
 
         this.listenerRegistry.forEach((handlers, event) => {
             handlers.forEach((handler) => {
-                this.socket!.on(event, handler as never);
+                this.socket!.on(event as string, handler as never);
             });
         });
     }

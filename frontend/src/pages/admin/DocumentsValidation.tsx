@@ -57,8 +57,8 @@ export default function DocumentsValidation() {
         viewMode={viewMode}
         setViewMode={setViewMode}
         totalDocuments={pagination?.total || 0}
-        pendingCount={pendingStatsData?.pagination.total}
-        rejectedCount={rejectedStatsData?.pagination.total}
+        pendingCount={pendingStatsData?.pagination?.total ?? 0}
+        rejectedCount={rejectedStatsData?.pagination?.total ?? 0}
       />
 
       {viewMode === "table" ? (

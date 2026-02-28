@@ -87,8 +87,8 @@ export const getNotifications = async (
     return {
         notifications: notifications.map(n => ({
             ...n,
-            entityId: n.entityId ?? undefined,
-            entityType: n.entityType ?? undefined,
+            entityId: n.entityId ?? null,
+            entityType: n.entityType ?? null,
         })),
         total,
         page,

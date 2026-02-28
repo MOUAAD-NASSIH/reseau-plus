@@ -1,0 +1,31 @@
+import * as esbuild from 'esbuild';
+
+await esbuild.build({
+  entryPoints: ['src/index.ts'],
+  bundle: true,
+  outfile: 'dist/index.js',
+  platform: 'node',
+  target: 'node22',
+  format: 'esm',
+  external: [
+    '@prisma/client',
+    'prisma',
+    'express',
+    'cors',
+    'dotenv',
+    'jsonwebtoken',
+    'bcryptjs',
+    'multer',
+    'nodemailer',
+    'pg',
+    'socket.io',
+    'stripe',
+    'cloudinary',
+    'zod',
+    'swagger-jsdoc',
+    'swagger-ui-express',
+    'express-async-handler',
+    'multer-storage-cloudinary',
+  ],
+  sourcemap: true,
+});
