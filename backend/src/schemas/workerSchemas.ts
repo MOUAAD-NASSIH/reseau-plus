@@ -9,8 +9,7 @@ import {
     latitudeSchema,
     longitudeSchema,
     zipCodeSchema,
-    idParamSchema,
-    paginationSchema
+    idParamSchema
 } from "./commonSchemas";
 
 /**

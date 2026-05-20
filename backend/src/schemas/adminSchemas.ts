@@ -12,11 +12,6 @@ import { workerStatusEnum, documentTypeEnum } from "./workerSchemas";
 export const userStatusEnum = z.enum(['ACTIVE', 'SUSPENDED', 'BANNED']);
 
 /**
- * Document status enum
- */
-export const documentStatusEnum = z.enum(['PENDING', 'APPROVED', 'REJECTED']);
-
-/**
  * Admin action type enum
  */
 export const adminActionTypeEnum = z.enum([

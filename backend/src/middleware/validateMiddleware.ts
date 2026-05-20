@@ -3,7 +3,7 @@
  */
 
 import { Request, Response, NextFunction } from "express";
-import { z, ZodError } from "zod";
+import { z } from "zod";
 import { ErrorResponse, ValidationError } from "../types/api.types";
 
 /**
@@ -51,7 +51,7 @@ const formatErrorMessage = (issue: z.core.$ZodIssue): string => {
 /**
  * Format Zod validation errors into standard ValidationError format
  */
-const formatZodErrors = (error: ZodError): ValidationError[] => {
+const formatZodErrors = (error: z.ZodError): ValidationError[] => {
     return error.issues.map((issue) => ({
         field: issue.path.map(String).join("."),
         message: formatErrorMessage(issue),
@@ -93,7 +93,7 @@ export const validateRequest = (schema: z.ZodType) => {
             });
             next();
         } catch (error) {
-            if (error instanceof ZodError) {
+            if (error instanceof z.ZodError) {
                 const details = formatZodErrors(error);
                 res.status(400).json(
                     createErrorResponse('Validation failed', 'VALIDATION_ERROR', details)

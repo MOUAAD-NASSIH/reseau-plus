@@ -3,7 +3,7 @@
  */
 
 import { z } from "zod";
-import { idParamSchema, paginationSchema } from "./commonSchemas";
+import { idParamSchema } from "./commonSchemas";
 
 /**
  * Application status enum

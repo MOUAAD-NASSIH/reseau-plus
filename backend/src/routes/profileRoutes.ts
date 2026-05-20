@@ -5,7 +5,7 @@
 
 import { Router } from "express";
 import { protect, workerOnly, institutionOnly, adminOnly } from "../middleware/authMiddleware";
-import profileUpload from "../middleware/profileUploadMiddleware";
+import { profileImageUpload } from "../middleware/uploadMiddleware";
 import {
     uploadWorkerProfilePicture,
     uploadInstitutionLogo,
@@ -26,7 +26,7 @@ router.post(
     "/worker/picture",
     protect,
     workerOnly,
-    profileUpload.single('profilePicture'),
+    profileImageUpload.single('profilePicture'),
     uploadWorkerProfilePicture
 );
 
@@ -42,7 +42,7 @@ router.post(
     "/institution/picture",
     protect,
     institutionOnly,
-    profileUpload.single('logo'),
+    profileImageUpload.single('logo'),
     uploadInstitutionLogo
 );
 
@@ -58,7 +58,7 @@ router.post(
     "/admin/picture",
     protect,
     adminOnly,
-    profileUpload.single('profilePicture'),
+    profileImageUpload.single('profilePicture'),
     uploadAdminProfilePicture
 );
 

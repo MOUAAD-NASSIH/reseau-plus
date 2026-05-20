@@ -4,7 +4,7 @@
 
 import { Router } from "express";
 import { protect } from "../middleware/authMiddleware";
-import upload from "../middleware/documentUploadMiddleware";
+import { documentUpload } from "../middleware/uploadMiddleware";
 import { validateRequest } from "../middleware/validateMiddleware";
 import {
     loginSchema,
@@ -27,7 +27,7 @@ import {
 const router = Router();
 
 // Public routes
-router.post("/register/worker", upload.any(), validateRequest(registerWorkerSchema), registerWorker);
+router.post("/register/worker", documentUpload.any(), validateRequest(registerWorkerSchema), registerWorker);
 router.post("/register/institution", validateRequest(registerInstitutionSchema), registerInstitution);
 router.post("/login", validateRequest(loginSchema), login);
 router.get("/verify-email", validateRequest(verifyEmailSchema), verifyEmail);

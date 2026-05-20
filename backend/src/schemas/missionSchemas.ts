@@ -4,10 +4,9 @@
 
 import { z } from "zod";
 import {
-    positiveNumberSchema,
     safeStringSchema,
     idParamSchema,
-    paginationSchema,
+    budgetSchema,
     sortOrderSchema
 } from "./commonSchemas";
 
@@ -32,7 +31,7 @@ export const createMissionSchema = z.object({
         endDate: z.coerce.date(),
         requiredSpecialityId: z.coerce.number().int().positive().optional(),
         location: safeStringSchema.optional(),
-        budget: positiveNumberSchema.optional(),
+        budget: budgetSchema.optional(),
         urgency: urgencyEnum.default('MEDIUM'),
         domainIds: z.array(z.coerce.number().int().positive()).optional(),
     }).refine(
@@ -56,7 +55,7 @@ export const updateMissionSchema = z.object({
         endDate: z.coerce.date().optional(),
         requiredSpecialityId: z.coerce.number().int().positive().optional().nullable(),
         location: safeStringSchema.optional().nullable(),
-        budget: positiveNumberSchema.optional().nullable(),
+        budget: budgetSchema.optional().nullable(),
         urgency: urgencyEnum.optional(),
         domainIds: z.array(z.coerce.number().int().positive()).optional(),
         status: missionStatusEnum.optional(),

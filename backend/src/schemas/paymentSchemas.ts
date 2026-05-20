@@ -3,7 +3,7 @@
  */
 
 import { z } from "zod";
-import { idParamSchema, positiveNumberSchema, sortOrderSchema } from "./commonSchemas";
+import { idParamSchema, sortOrderSchema } from "./commonSchemas";
 
 /**
  * Payment status enum

@@ -5,7 +5,7 @@
 import { Router } from "express";
 import { protect, authorizeRoles, adminOnly } from "../middleware/authMiddleware";
 import { validateRequest } from "../middleware/validateMiddleware";
-import upload from "../middleware/documentUploadMiddleware"
+import { documentUpload } from "../middleware/uploadMiddleware"
 import {
     getWorkers,
     getCurrentWorker,
@@ -51,7 +51,7 @@ router.put("/me", protect, workerOnly, validateRequest(updateWorkerProfileSchema
 
 // Documents
 router.get("/documents", protect, workerOnly, getDocuments);
-router.post("/documents", protect, workerOnly, upload.single('document'), validateRequest(documentUploadSchema), uploadDocument);
+router.post("/documents", protect, workerOnly, documentUpload.single('document'), validateRequest(documentUploadSchema), uploadDocument);
 
 // Experiences
 router.get("/experiences", protect, workerOnly, getMyExperiences);
