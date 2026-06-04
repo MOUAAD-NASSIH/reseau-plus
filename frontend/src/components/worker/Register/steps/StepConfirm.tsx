@@ -8,7 +8,6 @@ import {
   Briefcase,
   Calendar,
   FileText,
-  Building2,
   CheckCircle2,
   ArrowRight,
 } from "lucide-react";
@@ -60,7 +59,7 @@ export default function StepConfirm() {
 
   const specialityName =
     specialitiesData?.data?.find((s) => s.id === data.specialityId)?.name ||
-    "Not selected";
+    t("COMMON.NOT_SELECTED");
   const selectedDomains =
     domainsData?.data
       ?.filter((d) => data.domainIds?.includes(d.id))
@@ -169,55 +168,6 @@ export default function StepConfirm() {
           </div>
         </div>
 
-        {/* Experience & Documents Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-secondary/10 border border-border/50 rounded-2xl p-4 flex items-center gap-4 group hover:border-primary/30 transition-colors">
-            <div className="h-10 w-10 rounded-xl bg-orange-500/10 flex items-center justify-center shrink-0">
-              <Building2 className="h-5 w-5 text-orange-600" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-widest font-spline">
-                {t("AUTH.REGISTER_WORKER.STEP_CONFIRM.EXPERIENCES_LABEL")}
-              </h4>
-              <p className="text-sm font-bold text-foreground">
-                {(data.experiences || []).length}{" "}
-                {t("AUTH.REGISTER_WORKER.STEP_CONFIRM.EXPERIENCES_COUNT")}
-              </p>
-            </div>
-            <CheckCircle2
-              className={cn(
-                "h-5 w-5",
-                (data.experiences || []).length > 0
-                  ? "text-emerald-500"
-                  : "text-muted-foreground/30"
-              )}
-            />
-          </div>
-
-          <div className="bg-secondary/10 border border-border/50 rounded-2xl p-4 flex items-center gap-4 group hover:border-primary/30 transition-colors">
-            <div className="h-10 w-10 rounded-xl bg-blue-500/10 flex items-center justify-center shrink-0">
-              <FileText className="h-5 w-5 text-blue-600" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <h4 className="text-xs font-bold text-muted-foreground uppercase tracking-widest font-spline">
-                {t("AUTH.REGISTER_WORKER.STEP_CONFIRM.DOCUMENTS_LABEL")}
-              </h4>
-              <p className="text-sm font-bold text-foreground">
-                {(data.documents || []).length}{" "}
-                {t("AUTH.REGISTER_WORKER.STEP_CONFIRM.DOCUMENTS_COUNT")}
-              </p>
-            </div>
-            <CheckCircle2
-              className={cn(
-                "h-5 w-5",
-                (data.documents || []).length >= 2
-                  ? "text-emerald-500"
-                  : "text-destructive"
-              )}
-            />
-          </div>
-        </div>
-
         {/* Terms Agreement */}
         <div className="space-y-4 pt-4 border-t border-border/50">
           <div
@@ -296,10 +246,10 @@ export default function StepConfirm() {
             </div>
             <div>
               <h4 className="font-bold text-sm leading-tight">
-                Ready to join?
+                {t("AUTH.REGISTER_WORKER.STEP_CONFIRM.READY_TITLE")}
               </h4>
               <p className="text-[11px] opacity-80 font-medium">
-                Click the button below to complete your registration.
+                {t("AUTH.REGISTER_WORKER.STEP_CONFIRM.READY_DESC")}
               </p>
             </div>
           </div>

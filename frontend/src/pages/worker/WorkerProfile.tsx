@@ -206,7 +206,7 @@ export default function WorkerProfile() {
     }
 
     return (
-        <div className="min-h-screen flex flex-col bg-background text-foreground font-sans selection:bg-green-500/30">
+        <div className="min-h-screen flex flex-col bg-background text-foreground font-sans selection:bg-primary/30">
             {/* Top Navbar */}
             <div className="z-10 bg-background/80 backdrop-blur-md border-b border-border/50 py-4 sm:p-4 lg:p-8 supports-backdrop-filter:bg-background/60">
                 <div className="max-w-7xl mx-auto flex justify-between items-center">
@@ -236,7 +236,7 @@ export default function WorkerProfile() {
                             <div className="p-8 flex flex-col items-center text-center">
                                 {/* Avatar Section */}
                                 <div className="relative mb-4">
-                                    <div className="absolute inset-0 bg-green-500/20 blur-xl rounded-full"></div>
+                                    <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full"></div>
                                     <ProfilePictureUpload
                                         currentImage={worker?.user?.profilePicture ?? worker?.profilePicture}
                                         name={`${worker?.firstName || ''} ${worker?.lastName || ''}`}
@@ -253,7 +253,7 @@ export default function WorkerProfile() {
                                 <h2 className="text-xl font-bold font-spline mt-4 text-foreground flex items-center justify-center gap-2">
                                     {watchedFirstName || worker?.firstName} {watchedLastName || worker?.lastName}
                                     {worker?.status === "VERIFIED" && (
-                                        <div className="bg-green-500 text-white text-[10px] font-bold px-0.5 py-0.5 rounded-full flex items-center gap-1 shadow-sm" title="Verified Worker">
+                                        <div className="bg-primary text-primary-foreground text-[10px] font-bold px-0.5 py-0.5 rounded-full flex items-center gap-1 shadow-sm" title="Verified Worker">
                                             <Verified className="size-3 fill-current" />
                                             <span className="sr-only">Verified</span>
                                         </div>
@@ -267,14 +267,14 @@ export default function WorkerProfile() {
                                 <div className="w-full mt-6 space-y-2">
                                     <div className="flex justify-between items-center text-xs font-medium font-spline uppercase tracking-wider">
                                         <span className="text-muted-foreground">{t("WORKER_PROFILE.CARDS.PROFILE.STRENGTH")}</span>
-                                        <span className={profileCompletion === 100 ? "text-green-500" : "text-foreground"}>
+                                        <span className={profileCompletion === 100 ? "text-primary" : "text-foreground"}>
                                             {profileCompletion}%
                                         </span>
                                     </div>
                                     <Progress
                                         value={profileCompletion}
                                         className="h-2.5 bg-muted/50"
-                                        indicatorClassName={profileCompletion === 100 ? "bg-green-500" : "bg-primary"}
+                                        indicatorClassName="bg-primary"
                                     />
                                     {profileCompletion < 100 && (
                                         <p className="text-[10px] text-muted-foreground text-left">
@@ -286,10 +286,10 @@ export default function WorkerProfile() {
                         </Card>
 
                         {/* 2. Availability Card */}
-                        <Card className="border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm rounded-2xl overflow-hidden group hover:border-green-500/30 transition-colors">
+                        <Card className="border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm rounded-2xl overflow-hidden group hover:border-primary/30 transition-colors">
                             <div className="p-5 flex items-center justify-between">
                                 <div className="flex items-center gap-4">
-                                    <div className="p-3 rounded-xl bg-green-500/10 text-green-500 group-hover:bg-green-500 group-hover:text-white transition-colors duration-300">
+                                    <div className="p-3 rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
                                         <Calendar className="h-5 w-5" />
                                     </div>
                                     <div className="flex flex-col">
@@ -298,7 +298,7 @@ export default function WorkerProfile() {
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <Badge variant="outline" className="border-green-500/20 text-green-600 bg-green-500/5">
+                                    <Badge variant="outline" className="border-primary/20 text-primary bg-primary/5">
                                         {t("WORKER_PROFILE.CARDS.AVAILABILITY.ACTIVE")}
                                     </Badge>
                                     <Link to="/worker/availability">
@@ -326,7 +326,7 @@ export default function WorkerProfile() {
                                     {t("WORKER_PROFILE.CARDS.VERIFICATIONS.TITLE")}
                                 </h4>
                                 <Link to="/worker/documents">
-                                    <Button variant="link" size="sm" className="h-auto p-0 text-xs text-green-500">{t("WORKER_PROFILE.CARDS.VERIFICATIONS.VIEW_ALL")}</Button>
+                                    <Button variant="link" size="sm" className="h-auto p-0 text-xs text-primary">{t("WORKER_PROFILE.CARDS.VERIFICATIONS.VIEW_ALL")}</Button>
                                 </Link>
                             </div>
                             <div className="space-y-3">
@@ -336,7 +336,7 @@ export default function WorkerProfile() {
                                         <GraduationCap className="h-3.5 w-3.5" /> {t("WORKER_PROFILE.CARDS.VERIFICATIONS.DIPLOMA")}
                                     </span>
                                     {documents.some(d => d.type === 'DIPLOMA' && d.status === 'APPROVED') ? (
-                                        <Badge variant="secondary" className="bg-green-500/10 text-green-600 hover:bg-green-500/20 text-[10px] h-5">{t("WORKER_PROFILE.CARDS.VERIFICATIONS.VERIFIED")}</Badge>
+                                        <Badge variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/20 text-[10px] h-5">{t("WORKER_PROFILE.CARDS.VERIFICATIONS.VERIFIED")}</Badge>
                                     ) : (
                                         <Badge variant="secondary" className="bg-muted text-muted-foreground text-[10px] h-5">{t("WORKER_PROFILE.CARDS.VERIFICATIONS.PENDING")}</Badge>
                                     )}
@@ -347,7 +347,7 @@ export default function WorkerProfile() {
                                         <User className="h-3.5 w-3.5" /> {t("WORKER_PROFILE.CARDS.VERIFICATIONS.IDENTITY")}
                                     </span>
                                     {documents.some(d => d.type === 'ID' && d.status === 'APPROVED') ? (
-                                        <Badge variant="secondary" className="bg-green-500/10 text-green-600 hover:bg-green-500/20 text-[10px] h-5">{t("WORKER_PROFILE.CARDS.VERIFICATIONS.VERIFIED")}</Badge>
+                                        <Badge variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/20 text-[10px] h-5">{t("WORKER_PROFILE.CARDS.VERIFICATIONS.VERIFIED")}</Badge>
                                     ) : (
                                         <Badge variant="secondary" className="bg-muted text-muted-foreground text-[10px] h-5">{t("WORKER_PROFILE.CARDS.VERIFICATIONS.PENDING")}</Badge>
                                     )}
@@ -364,7 +364,7 @@ export default function WorkerProfile() {
                         <section className="space-y-4">
                             <div className="flex items-center justify-between">
                                 <h3 className="text-lg font-bold font-spline text-foreground">{t("WORKER_PROFILE.FORMS.PERSONAL_INFO.TITLE")}</h3>
-                                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-green-500" onClick={() => document.getElementById('firstName')?.focus()}>
+                                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary" onClick={() => document.getElementById('firstName')?.focus()}>
                                     {t("WORKER_PROFILE.FORMS.PERSONAL_INFO.EDIT_DETAILS")}
                                 </Button>
                             </div>
@@ -372,12 +372,12 @@ export default function WorkerProfile() {
                                 <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
                                         <Label htmlFor="firstName" className="text-xs font-semibold uppercase text-muted-foreground tracking-wide">{t("WORKER_PROFILE.FORMS.PERSONAL_INFO.FIRST_NAME")}</Label>
-                                        <Input id="firstName" {...register("firstName")} className="bg-background/50 border-muted-foreground/20 focus:border-green-500/50 focus:ring-green-500/20" />
+                                        <Input id="firstName" {...register("firstName")} className="bg-background/50 border-muted-foreground/20 focus:border-primary/50 focus:ring-primary/20" />
                                         {errors.firstName && <p className="text-xs text-destructive">{errors.firstName.message}</p>}
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="lastName" className="text-xs font-semibold uppercase text-muted-foreground tracking-wide">{t("WORKER_PROFILE.FORMS.PERSONAL_INFO.LAST_NAME")}</Label>
-                                        <Input id="lastName" {...register("lastName")} className="bg-background/50 border-muted-foreground/20 focus:border-green-500/50 focus:ring-green-500/20" />
+                                        <Input id="lastName" {...register("lastName")} className="bg-background/50 border-muted-foreground/20 focus:border-primary/50 focus:ring-primary/20" />
                                         {errors.lastName && <p className="text-xs text-destructive">{errors.lastName.message}</p>}
                                     </div>
                                     <div className="space-y-2">
@@ -466,7 +466,7 @@ export default function WorkerProfile() {
                                                 value={watch("specialityId")?.toString() || ""}
                                                 onValueChange={(val) => setValue("specialityId", parseInt(val), { shouldDirty: true })}
                                             >
-                                                <SelectTrigger className="bg-background/50 border-input shadow-sm focus:ring-2 focus:ring-blue-500/20 h-11 rounded-lg">
+                                                <SelectTrigger className="bg-background/50 border-input shadow-sm focus:ring-2 focus:ring-primary/20 h-11 rounded-lg">
                                                     <SelectValue placeholder={t("WORKER_PROFILE.FORMS.SPECIALTIES.SELECT_PRIMARY")} />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -486,7 +486,7 @@ export default function WorkerProfile() {
                                                 <Input
                                                     type="number"
                                                     {...register("experienceYears", { valueAsNumber: true })}
-                                                    className="pl-10 h-11 bg-background/50 border-input shadow-sm focus:ring-2 focus:ring-blue-500/20 rounded-lg"
+                                                    className="pl-10 h-11 bg-background/50 border-input shadow-sm focus:ring-2 focus:ring-primary/20 rounded-lg"
                                                     placeholder={t("WORKER_PROFILE.FORMS.SPECIALTIES.EXPERIENCE_PLACEHOLDER")}
                                                     min={0}
                                                 />
@@ -509,7 +509,7 @@ export default function WorkerProfile() {
                                             <Textarea
                                                 {...register("bio")}
                                                 placeholder={t("WORKER_PROFILE.FORMS.BIO.PLACEHOLDER")}
-                                                className="min-h-[180px] bg-background/50 border-input shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 resize-y p-4 text-base leading-relaxed rounded-xl"
+                                                className="min-h-[180px] bg-background/50 border-input shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 resize-y p-4 text-base leading-relaxed rounded-xl"
                                                 maxLength={2000}
                                             />
                                             <div className="flex justify-end pt-1">
@@ -538,7 +538,7 @@ export default function WorkerProfile() {
                     <Button
                         onClick={handleSubmit(onSubmit)}
                         disabled={!isDirty || isUpdating}
-                        className="bg-green-600 hover:bg-green-700 text-white shadow-lg shadow-green-900/20 transition-all active:scale-95"
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20 transition-all active:scale-95"
                     >
                         {isUpdating ? (
                             <Loader2 className="h-4 w-4 mr-2 animate-spin" />

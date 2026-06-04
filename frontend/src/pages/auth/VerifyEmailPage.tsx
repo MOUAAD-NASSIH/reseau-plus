@@ -86,12 +86,12 @@ export default function VerifyEmailPage() {
                 >
                     <motion.div variants={reduceMotion ? {} : fadeUpItem} className="flex justify-center">
                         <motion.div
-                            className="w-20 h-20 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center"
+                            className="w-20 h-20 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center"
                             initial={{ scale: 0 }}
                             animate={{ scale: 1 }}
                             transition={{ type: "spring", stiffness: 200, damping: 15 }}
                         >
-                            <CheckCircle className="w-10 h-10 text-green-600 dark:text-green-400" />
+                            <CheckCircle className="w-10 h-10 text-primary" />
                         </motion.div>
                     </motion.div>
                     <motion.p variants={reduceMotion ? {} : fadeUpItem} className="text-muted-foreground">

@@ -122,6 +122,7 @@
   --spacing: 0.25rem;
 }
 
+/* 
 .dark {
   --background: oklch(0.1822 0 0);
   --foreground: oklch(0.9288 0.0126 255.5078);
@@ -173,12 +174,67 @@
   --shadow-lg: 0px 1px 3px 0px hsl(0 0% 0% / 0.17), 0px 4px 6px -1px hsl(0 0% 0% / 0.17);
   --shadow-xl: 0px 1px 3px 0px hsl(0 0% 0% / 0.17), 0px 8px 10px -1px hsl(0 0% 0% / 0.17);
   --shadow-2xl: 0px 1px 3px 0px hsl(0 0% 0% / 0.43);
+} */
+
+.dark {
+  /* ── Ardoise × Corail (Slate × Coral) ── */
+  --background: oklch(0.264 0.035 262.71);
+  --foreground: oklch(0.945 0.012 259.82);
+  --card: oklch(0.300 0.035 262.71);
+  --card-foreground: oklch(0.945 0.012 259.82);
+  --popover: oklch(0.320 0.035 262.71);
+  --popover-foreground: oklch(0.800 0.020 260.0);
+  --primary: oklch(0.672 0.164 35.38);
+  --primary-foreground: oklch(1.000 0 0);
+  --secondary: oklch(0.234 0.032 260.37);
+  --secondary-foreground: oklch(0.945 0.012 259.82);
+  --muted: oklch(0.234 0.032 260.37);
+  --muted-foreground: oklch(0.700 0.020 260.0);
+  --accent: oklch(0.311 0.044 265.89);
+  --accent-foreground: oklch(0.945 0.012 259.82);
+  --destructive: oklch(0.62 0.2 24.32);
+  --destructive-foreground: oklch(0.950 0.005 24.32);
+  --border: oklch(0.311 0.044 265.89);
+  --input: oklch(0.234 0.032 260.37);
+  --ring: oklch(0.672 0.164 35.38);
+  --chart-1: oklch(0.672 0.164 35.38);
+  --chart-2: oklch(0.755 0.155 52);
+  --chart-3: oklch(0.400 0 0);
+  --chart-4: oklch(0.860 0.010 60);
+  --chart-5: oklch(0.520 0 0);
+  --sidebar: oklch(0.234 0.032 260.37);
+  --sidebar-foreground: oklch(0.700 0.020 260.0);
+  --sidebar-primary: oklch(0.672 0.164 35.38);
+  --sidebar-primary-foreground: oklch(1.000 0 0);
+  --sidebar-accent: oklch(0.311 0.044 265.89);
+  --sidebar-accent-foreground: oklch(0.945 0.012 259.82);
+  --sidebar-border: oklch(0.311 0.044 265.89);
+  --sidebar-ring: oklch(0.672 0.164 35.38);
+  --font-sans: Outfit, sans-serif;
+  --font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-mono: monospace;
+  --radius: 0.5rem;
+  --shadow-x: 0px;
+  --shadow-y: 1px;
+  --shadow-blur: 3px;
+  --shadow-spread: 0px;
+  --shadow-opacity: 0.17;
+  --shadow-color: #000000;
+  --shadow-2xs: 0px 1px 3px 0px hsl(0 0% 0% / 0.09);
+  --shadow-xs: 0px 1px 3px 0px hsl(0 0% 0% / 0.09);
+  --shadow-sm: 0px 1px 3px 0px hsl(0 0% 0% / 0.17), 0px 1px 2px -1px hsl(0 0% 0% / 0.17);
+  --shadow: 0px 1px 3px 0px hsl(0 0% 0% / 0.17), 0px 1px 2px -1px hsl(0 0% 0% / 0.17);
+  --shadow-md: 0px 1px 3px 0px hsl(0 0% 0% / 0.17), 0px 2px 4px -1px hsl(0 0% 0% / 0.17);
+  --shadow-lg: 0px 1px 3px 0px hsl(0 0% 0% / 0.17), 0px 4px 6px -1px hsl(0 0% 0% / 0.17);
+  --shadow-xl: 0px 1px 3px 0px hsl(0 0% 0% / 0.17), 0px 8px 10px -1px hsl(0 0% 0% / 0.17);
+  --shadow-2xl: 0px 1px 3px 0px hsl(0 0% 0% / 0.43);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground tracking-normal;
   }

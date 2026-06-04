@@ -68,11 +68,15 @@ export function AuthLayout({
                                 variants={reduceMotion ? {} : pageVariants}
                             >
                                 <div className="flex -space-x-3">
-                                    {[1, 2, 3].map((i) => (
+                                    {[
+                                        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face",
+                                        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
+                                        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face",
+                                    ].map((src, i) => (
                                         <div key={i} className="h-10 w-10 rounded-full border-2 border-primary bg-background overflow-hidden">
                                             <img
-                                                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i + 20}`}
-                                                alt="User"
+                                                src={src}
+                                                alt="Professional"
                                                 className="h-full w-full object-cover"
                                             />
                                         </div>

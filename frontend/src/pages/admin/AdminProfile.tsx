@@ -112,7 +112,7 @@ export default function AdminProfile() {
     }
 
     return (
-        <div className="min-h-screen flex flex-col bg-background text-foreground font-sans selection:bg-indigo-500/30">
+        <div className="min-h-screen flex flex-col bg-background text-foreground font-sans selection:bg-primary/30">
             {/* Top Navbar */}
             <div className="z-10 bg-background/80 backdrop-blur-md border-b border-border/50 py-4 sm:p-4 lg:p-8 supports-backdrop-filter:bg-background/60">
                 <div className="max-w-7xl mx-auto flex justify-between items-center">
@@ -144,7 +144,7 @@ export default function AdminProfile() {
                             <div className="p-8 flex flex-col items-center text-center">
                                 {/* Avatar Section */}
                                 <div className="relative mb-4">
-                                    <div className="absolute inset-0 bg-indigo-500/20 blur-xl rounded-full"></div>
+                                    <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full"></div>
                                     <ProfilePictureUpload
                                         currentImage={user && "profilePicture" in user ? user.profilePicture : null}
                                         name={user && "email" in user ? user.email : "Admin"}
@@ -160,7 +160,7 @@ export default function AdminProfile() {
                                 {/* Name & Role */}
                                 <h2 className="text-xl font-bold font-spline mt-4 text-foreground flex items-center justify-center gap-2">
                                     {user && "email" in user ? user.email.split("@")[0] : "Administrator"}
-                                    <div className="bg-indigo-500 text-white text-[10px] font-bold px-0.5 py-0.5 rounded-full flex items-center gap-1 shadow-sm" title="Admin">
+                                    <div className="bg-primary text-primary-foreground text-[10px] font-bold px-0.5 py-0.5 rounded-full flex items-center gap-1 shadow-sm" title="Admin">
                                         <Shield className="size-3 fill-current" />
                                         <span className="sr-only">Admin</span>
                                     </div>
@@ -175,14 +175,14 @@ export default function AdminProfile() {
                                         <span className="text-muted-foreground">
                                             {t("ADMIN_PROFILE.CARDS.PROFILE.STRENGTH")}
                                         </span>
-                                        <span className={profileCompletion === 100 ? "text-green-500" : "text-foreground"}>
+                                        <span className={profileCompletion === 100 ? "text-primary" : "text-foreground"}>
                                             {profileCompletion}%
                                         </span>
                                     </div>
                                     <Progress
                                         value={profileCompletion}
                                         className="h-2.5 bg-muted/50"
-                                        indicatorClassName={profileCompletion === 100 ? "bg-green-500" : "bg-indigo-500"}
+                                        indicatorClassName="bg-primary"
                                     />
                                 </div>
                             </div>
@@ -191,13 +191,13 @@ export default function AdminProfile() {
                         {/* 2. Account Info Card */}
                         <Card className="border border-border/50 bg-card/50 backdrop-blur-sm shadow-sm rounded-2xl p-5 space-y-4">
                             <h4 className="font-semibold flex items-center gap-2 text-sm">
-                                <Shield className="h-4 w-4 text-indigo-500" />
+                                <Shield className="h-4 w-4 text-primary" />
                                 {t("ADMIN_PROFILE.SECTIONS.ACCOUNT_INFO")}
                             </h4>
                             <div className="space-y-3">
                                 <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg border border-border/50">
                                     <div className="h-8 w-8 bg-background rounded-md flex items-center justify-center shadow-xs">
-                                        <Calendar className="h-4 w-4 text-indigo-500" />
+                                        <Calendar className="h-4 w-4 text-primary" />
                                     </div>
                                     <div>
                                         <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-tight">
@@ -267,10 +267,10 @@ export default function AdminProfile() {
 
                         {/* Settings Note */}
                         <section className="space-y-4">
-                            <Card className="border border-indigo-500/20 bg-indigo-500/5 backdrop-blur-sm shadow-sm rounded-2xl overflow-hidden p-6">
+                            <Card className="border border-primary/20 bg-primary/5 backdrop-blur-sm shadow-sm rounded-2xl overflow-hidden p-6">
                                 <div className="flex items-start gap-3">
-                                    <div className="p-2 bg-indigo-500/10 rounded-lg">
-                                        <Shield className="h-5 w-5 text-indigo-500" />
+                                    <div className="p-2 bg-primary/10 rounded-lg">
+                                        <Shield className="h-5 w-5 text-primary" />
                                     </div>
                                     <div className="flex-1">
                                         <h4 className="font-semibold text-sm text-foreground mb-1">

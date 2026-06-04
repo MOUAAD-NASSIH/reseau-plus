@@ -6,6 +6,7 @@ export const fr = {
         },
         COMMON: {
             UNKNOWN: "Inconnu",
+            NOT_SELECTED: "Non sélectionné",
             GENERAL_SOCIAL_WORK: "Travail Social Général",
             INSTITUTION: "Institution",
             UNTITLED_MISSION: "Mission Sans Titre",
@@ -266,10 +267,10 @@ export const fr = {
         },
         HERO: {
             TRUSTED_PLATFORM: "Plateforme de Confiance",
-            TITLE_LINE_1: "Un réseau",
-            TITLE_LINE_2: "fiable",
-            TITLE_LINE_3: "au service des professionnels de l'impact social",
-            SUBTITLE: "Simplifiez le recrutement, les paiements et la conformité pour vous concentrer sur la réussite.",
+            TITLE_LINE_1: "Un partenaire de",
+            TITLE_LINE_2: "confiance",
+            TITLE_LINE_3: "pour le recrutement dans le secteur médico-social",
+            SUBTITLE: "Connecter les bons professionnels aux bonnes missions.",
             FIND_WORK: "Trouver une Mission",
             FIND_TALENT: "Trouver un Talent",
             JOIN_PROS: "Rejoignez 2 000+ professionnels aujourd'hui.",
@@ -277,46 +278,99 @@ export const fr = {
             TESTIMONIAL: "Réseau+ nous a aidés à combler un besoin critique en moins de 4 heures."
         },
         FEATURES: {
-            TITLE: "Pourquoi Choisir Réseau+",
-            SUBTITLE: "Une plateforme qui bâtit la confiance entre freelances et institutions.",
-            RATES: {
-                TITLE: "Fixez vos Tarifs",
-                DESC: "Les travailleurs contrôlent totalement leurs taux horaires et leurs revenus."
+            TITLE: "Conçu pour le secteur Médico-Social",
+            SUBTITLE: "Une plateforme spécialisée qui répond aux exigences uniques des structures et valorise l'expertise des professionnels.",
+            TABS: {
+                WORKERS: "Professionnels",
+                INSTITUTIONS: "Institutions"
             },
-            PAYOUTS: {
-                TITLE: "Paiements Hebdomadaires",
-                DESC: "Fini les factures impayées. Recevez des paiements garantis chaque semaine."
+            WORKER_FEATURES: {
+                MISSIONS: {
+                    TITLE: "Missions Adaptées",
+                    DESC: "Accédez à des missions qui correspondent précisément à votre diplôme (Éducateur, AES, Infirmier, etc.) et à vos domaines d'expertise."
+                },
+                REVIEWS: {
+                    TITLE: "Évaluations Transparentes",
+                    DESC: "Construisez votre réputation. Recevez des avis après chaque mission pour mettre en valeur votre professionnalisme."
+                },
+                FLEXIBILITY: {
+                    TITLE: "Flexibilité Totale",
+                    DESC: "Gérez votre emploi du temps librement. Acceptez les missions qui s'intègrent à votre rythme de vie."
+                }
             },
-            VETTED: {
-                TITLE: "Talents Vérifiés",
-                DESC: "Accédez à des professionnels pré-sélectionnés avec des diplômes vérifiés."
+            INSTITUTION_FEATURES: {
+                VETTED: {
+                    TITLE: "Profils Vérifiés",
+                    DESC: "Sécurité avant tout. Chaque professionnel est rigoureusement contrôlé : diplômes, identité et casier judiciaire vérifiés."
+                },
+                MESSAGING: {
+                    TITLE: "Messagerie Intégrée",
+                    DESC: "Échangez facilement. Discutez en direct avec les professionnels pour préparer au mieux leurs interventions."
+                },
+                COMPLIANCE: {
+                    TITLE: "Gestion Centralisée",
+                    DESC: "Gérez tout depuis votre espace : publication de missions, sélection des candidats, messagerie intégrée et paiements sécurisés."
+                }
             },
-            BILLING: {
-                TITLE: "Facturation Simplifiée",
-                DESC: "Facturation automatisée, conformité fiscale et rapports sur un seul tableau de bord."
-            },
-            TRUSTED_BY: "FAIT CONFIANCE À PLUS DE 500+ ÉTABLISSEMENTS"
+            TRUSTED_BY: "ILS NOUS FONT CONFIANCE"
         },
         STATS: {
             MISSIONS: "Missions Terminées",
             SATISFACTION: "Taux de Satisfaction",
             TIME: "Temps de Match Moyen",
-            VERIFIED: "Assurance Qualité"
+            VERIFIED: "Assurance Qualité",
+            VERIFIED_LABEL: "Vérifié"
         },
         TRUST: {
-            TITLE: "La Confiance est Notre Devise.",
-            SUBTITLE: "Le Système de Label.",
-            DESC: "Le travail social exige plus que de la disponibilité—il exige confiance, diplômes et sécurité. Notre système de label robuste garantit que chaque professionnel respecte les normes les plus élevées.",
+            TITLE: "Un système de vérification rigoureux.",
+            DESC: "Dans le médico-social, la confiance est essentielle. C'est pourquoi nous vérifions chaque professionnel avant son intégration : diplômes, expérience et éléments de conformité.",
             POINT_1_TITLE: "Vérification Rigoureuse",
             POINT_1_DESC: "Nous vérifions diplômes, licences et antécédents avant la mise en ligne.",
-            POINT_2_TITLE: "Suivi Continu",
-            POINT_2_DESC: "Les labels sont mis à jour en temps réel selon les feedbacks et renouvellements.",
+            POINT_2_TITLE: "Profil Complet & Sécurisé",
+            POINT_2_DESC: "Complétez votre profil à 100% grâce à vos informations personnelles, diplômes et documents. Tous vos fichiers sont stockés de manière sécurisée, en conformité avec le RGPD.",
             BADGE_LICENSED: "Travailleur Social Clinique Agréé",
             BADGE_MASTERS: "Master en Travail Social (MSW)",
             BADGE_BG_CHECK: "Vérification des Antécédents Validée",
             SCORE_LABEL: "Score de Qualité",
             VERIFIED_LABEL: "100% Vérifié",
-            VERIFIED_PRO: "Professionnel Vérifié"
+            VERIFIED_PRO: "Professionnel Vérifié",
+            LEARN_MORE_LINK: "En savoir plus sur nos standards de qualité"
+        },
+        QUALITY_STANDARDS: {
+            PAGE_TITLE: "Nos Standards de Qualité",
+            PAGE_SUBTITLE: "Découvrez comment Réseau+ garantit l'excellence, la sécurité et la confiance à chaque étape.",
+            HERO_BADGE: "Engagement Qualité",
+            BACK_HOME: "Retour à l'accueil",
+            SECTION_ADMIN_TITLE: "Vérification par nos Administrateurs",
+            SECTION_ADMIN_DESC: "Chaque professionnel est minutieusement vérifié par notre équipe d'administrateurs avant d'être activé sur la plateforme.",
+            ADMIN_STEP_1_TITLE: "Soumission du Dossier",
+            ADMIN_STEP_1_DESC: "Le professionnel crée son profil et soumet ses documents : diplômes, pièce d'identité et CV.",
+            ADMIN_STEP_2_TITLE: "Examen par l'Administrateur",
+            ADMIN_STEP_2_DESC: "Notre équipe examine chaque document et vérifie l'authenticité des informations fournies.",
+            ADMIN_STEP_3_TITLE: "Activation du Profil",
+            ADMIN_STEP_3_DESC: "Une fois approuvé, le professionnel reçoit ses badges de vérification et peut accéder aux missions.",
+            SECTION_PROFILE_TITLE: "Force du Profil",
+            SECTION_PROFILE_DESC: "Chaque professionnel dispose d'un indicateur de complétude de profil. Plus les informations sont complètes, plus le profil est visible auprès des établissements.",
+            PROFILE_FACTOR_PERSONAL: "Informations Personnelles",
+            PROFILE_FACTOR_PERSONAL_DESC: "Nom, prénom, date de naissance, ville et coordonnées complètes.",
+            PROFILE_FACTOR_PROFESSIONAL: "Informations Professionnelles",
+            PROFILE_FACTOR_PROFESSIONAL_DESC: "Spécialité, domaines d'intervention, biographie et années d'expérience.",
+            PROFILE_FACTOR_DOCUMENTS: "Documents Vérifiés",
+            PROFILE_FACTOR_DOCUMENTS_DESC: "Diplômes, pièce d'identité et CV soumis et validés par notre équipe.",
+            PROFILE_FACTOR_EXPERIENCE: "Expérience Professionnelle",
+            PROFILE_FACTOR_EXPERIENCE_DESC: "Historique de postes et missions précédentes pour renforcer la crédibilité.",
+            SECTION_GDPR_TITLE: "Protection des Données & RGPD",
+            SECTION_GDPR_DESC: "La sécurité de vos données est notre priorité. Tous les documents et informations personnelles sont stockés en conformité avec le Règlement Général sur la Protection des Données (RGPD).",
+            GDPR_ENCRYPTION: "Chiffrement de bout en bout",
+            GDPR_ENCRYPTION_DESC: "Vos documents sont chiffrés lors du transfert et du stockage.",
+            GDPR_ACCESS: "Accès Restreint",
+            GDPR_ACCESS_DESC: "Seuls les administrateurs autorisés peuvent consulter vos documents de vérification.",
+            GDPR_RIGHTS: "Vos Droits",
+            GDPR_RIGHTS_DESC: "Vous pouvez demander la consultation, la modification ou la suppression de vos données à tout moment.",
+            GDPR_RETENTION: "Conservation Limitée",
+            GDPR_RETENTION_DESC: "Vos données sont conservées uniquement pendant la durée nécessaire et supprimées conformément à la réglementation.",
+            SECTION_BADGES_TITLE: "Badges de Vérification",
+            SECTION_BADGES_DESC: "Les professionnels vérifiés reçoivent des badges visibles sur leur profil, indiquant quelles vérifications ont été validées avec succès par nos administrateurs.",
         },
         HOW_IT_WORKS: {
             TITLE: "Comment fonctionne Réseau+",
@@ -330,18 +384,18 @@ export const fr = {
                 DESC: "Notre algorithme connecte instantanément les besoins aux compétences."
             },
             STEP_3: {
-                TITLE: "Travaillez & Encaissez",
+                TITLE: "Réalisez vos missions",
                 DESC: "Suivi de mission fluide et paiements hebdomadaires automatisés."
             },
             CTA: "Commencez votre parcours",
-            READY_BOX: "Prêt à avoir un impact ?"
+            READY_BOX: "Commencez maintenant!"
         },
         FOOTER: {
             CTA: {
-                TITLE: "Prêt à transformer votre flux de travail ?",
-                SUBTITLE: "Rejoignez la plateforme qui autonomise les travailleurs et les établissements.",
-                WORKER_BTN: "Rejoindre comme Travailleur",
-                INSTITUTION_BTN: "Rejoindre comme Établissement"
+                TITLE: "Vous recrutez ? Vous cherchez une mission ?",
+                SUBTITLE: "Rejoignez la plateforme pensée pour les professionnels de santé et les établissements.",
+                WORKER_BTN: "Je suis un professionnel",
+                INSTITUTION_BTN: "Je suis un établissement"
             },
             PLATFORM: "Plateforme",
             RESOURCES: "Ressources",
@@ -435,11 +489,11 @@ export const fr = {
             },
             REGISTER_INSTITUTION: {
                 LAYOUT: {
-                    TITLE: "Rejoignez le réseau de confiance pour l'impact social.",
-                    SUBTITLE: "Connectez-vous avec des professionnels qualifiés et simplifiez vos besoins en personnel.",
+                    TITLE: "Trouvez le bon professionnel au bon moment.",
+                    SUBTITLE: "Accédez à un vivier de talents qualifiés et vérifiés pour répondre à vos besoins en personnel.",
                     STEP_ACCOUNT: "Compte",
-                    STEP_INFO: "Informations",
-                    STEP_CONFIRM: "Confirmer",
+                    STEP_INFO: "Structure",
+                    STEP_CONFIRM: "Validation",
                     PROGRESS_LABEL: "Étape {{current}} sur {{total}}",
                     CREATE_ACCOUNT: "Créer un Compte",
                     LOGIN_LINK: "Vous avez déjà un compte ? Connectez-vous",
@@ -502,14 +556,11 @@ export const fr = {
             },
             REGISTER_WORKER: {
                 LAYOUT: {
-                    TITLE: "Rejoignez le réseau de confiance pour les travailleurs sociaux.",
-                    SUBTITLE: "Connectez-vous avec des établissements et trouvez des missions significatives.",
+                    TITLE: "Trouvez des missions qui correspondent à vos compétences.",
+                    SUBTITLE: "Rejoignez un réseau vérifié et accédez à des opportunités professionnelles dans le secteur social.",
                     STEP_ACCOUNT: "Compte",
-                    STEP_PERSONAL: "Personnel",
-                    STEP_PROFESSIONAL: "Professionnel",
-                    STEP_EXPERIENCE: "Expérience",
-                    STEP_DOCUMENTS: "Documents",
-                    STEP_CONFIRM: "Confirmer",
+                    STEP_PROFILE: "Profil",
+                    STEP_CONFIRM: "Confirmation",
                     PROGRESS_LABEL: "Étape {{current}} sur {{total}}",
                     CREATE_ACCOUNT: "Créer un Compte",
                     LOGIN_LINK: "Vous avez déjà un compte ? Connectez-vous",
@@ -628,7 +679,9 @@ export const fr = {
                     DOCUMENTS_COUNT: "document(s) téléchargé(s)",
                     TERMS_LABEL: "J'accepte les Conditions d'Utilisation et la Politique de Confidentialité",
                     TERMS_AGREEMENT: "En cliquant sur continuer, vous acceptez nos <1>Conditions d'Utilisation</1> et notre <1>Politique de Confidentialité</1>.",
-                    TERMS_ERROR: "Vous devez accepter les conditions pour continuer"
+                    TERMS_ERROR: "Vous devez accepter les conditions pour continuer",
+                    READY_TITLE: "Prêt à nous rejoindre ?",
+                    READY_DESC: "Cliquez sur le bouton ci-dessous pour finaliser votre inscription."
                 }
             }
         },

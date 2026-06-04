@@ -29,36 +29,6 @@ export const workerProfessionalSchema = z.object({
   domainIds: z.array(z.number()).min(1, "Please select at least one domain of intervention"),
 });
 
-export const workerExperienceItemSchema = z.object({
-  jobTitle: z.string().min(1, "Job title is required"),
-  organization: z.string().min(1, "Organization is required"),
-  startDate: z.date().refine((d) => !!d, "Start date is required"),
-  endDate: z.date().nullable().optional(),
-  description: z.string().max(1000, "Description cannot exceed 1000 characters").nullable().optional(),
-  isCurrent: z.boolean(),
-});
-
-export const workerExperienceSchema = z.object({
-  experiences: z.array(workerExperienceItemSchema).optional(),
-});
-
-export const workerDocumentsSchema = z.object({
-  documents: z
-    .array(
-      z.object({
-        type: z.enum(["DIPLOMA", "CV", "ID"]),
-        file: z.instanceof(File),
-      })
-    )
-    .refine(
-      (docs) =>
-        ["DIPLOMA", "ID"].every((t) => docs.some((d) => d.type === t)),
-      {
-        message: "Diploma and Identity document are required",
-      }
-    ),
-});
-
 export const workerTermsSchema = z.object({
   termsAccepted: z.boolean().refine((val) => val === true, {
     message: "You must accept the terms and conditions",
@@ -68,8 +38,4 @@ export const workerTermsSchema = z.object({
 export type WorkerAccountForm = z.infer<typeof workerAccountSchema>;
 export type WorkerPersonalForm = z.infer<typeof workerPersonalSchema>;
 export type WorkerProfessionalForm = z.infer<typeof workerProfessionalSchema>;
-export type WorkerExperienceItemForm = z.infer<typeof workerExperienceItemSchema>;
-export type WorkerExperienceForm = z.infer<typeof workerExperienceSchema>;
-export type WorkerDocumentsForm = z.infer<typeof workerDocumentsSchema>;
 export type WorkerTermsForm = z.infer<typeof workerTermsSchema>;
-

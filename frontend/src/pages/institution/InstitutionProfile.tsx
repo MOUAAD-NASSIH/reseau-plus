@@ -109,7 +109,7 @@ export default function InstitutionProfile() {
                 {/* Name & Role */}
                 <h2 className="text-xl font-bold font-spline mt-4 text-foreground flex items-center justify-center gap-2">
                   {watchedName || institution?.institutionName || "My Organization"}
-                  <div className="bg-emerald-500 text-white text-[10px] font-bold px-0.5 py-0.5 rounded-full flex items-center gap-1 shadow-sm" title="Public Profile">
+                  <div className="bg-primary text-primary-foreground text-[10px] font-bold px-0.5 py-0.5 rounded-full flex items-center gap-1 shadow-sm" title="Public Profile">
                     <Shield className="size-3 fill-current" />
                   </div>
                 </h2>
@@ -122,14 +122,14 @@ export default function InstitutionProfile() {
                 <div className="w-full mt-6 space-y-2">
                   <div className="flex justify-between items-center text-xs font-medium font-spline uppercase tracking-wider">
                     <span className="text-muted-foreground">{t("WORKER_PROFILE.CARDS.PROFILE.STRENGTH")}</span>
-                    <span className={profileCompletion === 100 ? "text-green-500" : "text-foreground"}>
+                    <span className={profileCompletion === 100 ? "text-primary" : "text-foreground"}>
                       {profileCompletion}%
                     </span>
                   </div>
                   <Progress
                     value={profileCompletion}
                     className="h-2.5 bg-muted/50"
-                    indicatorClassName={profileCompletion === 100 ? "bg-green-500" : "bg-primary"}
+                    indicatorClassName="bg-primary"
                   />
                 </div>
               </div>

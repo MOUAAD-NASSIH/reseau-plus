@@ -88,7 +88,11 @@ export function Hero() {
                             variants={reduceMotion ? {} : fadeUpItem}
                         >
                             <div className="flex -space-x-3">
-                                {[1, 2, 3].map((i) => (
+                                {[
+                                    "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face",
+                                    "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
+                                    "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face",
+                                ].map((src, i) => (
                                     <motion.div
                                         key={i}
                                         className="h-10 w-10 rounded-full border-2 border-background bg-muted overflow-hidden"
@@ -97,8 +101,8 @@ export function Hero() {
                                         transition={{ delay: 0.5 + i * 0.1 }}
                                     >
                                         <img
-                                            src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i + 5}`}
-                                            alt="User"
+                                            src={src}
+                                            alt="Professional"
                                             className="h-full w-full object-cover"
                                         />
                                     </motion.div>
@@ -145,7 +149,7 @@ export function Hero() {
                             >
                                 <div className="flex items-start gap-4">
                                     <motion.div
-                                        className="h-10 w-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400"
+                                        className="h-10 w-10 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center text-primary"
                                         initial={reduceMotion ? {} : { scale: 0 }}
                                         animate={{ scale: 1 }}
                                         transition={{ delay: 1, type: "spring", stiffness: 200 }}

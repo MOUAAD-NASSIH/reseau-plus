@@ -2,8 +2,6 @@ import {
   workerAccountSchema,
   workerPersonalSchema,
   workerProfessionalSchema,
-  workerExperienceSchema,
-  workerDocumentsSchema,
   workerTermsSchema,
 } from "./workerRegister.schema";
 
@@ -22,19 +20,13 @@ export function isWorkerStepValid(
       }).success;
 
     case 1:
-      return workerPersonalSchema.safeParse(data).success;
+      // Combined Personal + Professional validation
+      return (
+        workerPersonalSchema.safeParse(data).success &&
+        workerProfessionalSchema.safeParse(data).success
+      );
 
     case 2:
-      return workerProfessionalSchema.safeParse(data).success;
-
-    case 3:
-      // Experiences are optional
-      return workerExperienceSchema.safeParse(data).success;
-
-    case 4:
-      return workerDocumentsSchema.safeParse(data).success;
-
-    case 5:
       return workerTermsSchema.safeParse({ termsAccepted: data.termsAccepted })
         .success;
 

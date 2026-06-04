@@ -146,9 +146,9 @@ export function Header() {
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="w-56 p-2 space-y-1">
-                                        <DropdownMenuItem asChild className="cursor-pointer focus:bg-primary/10">
+                                        <DropdownMenuItem asChild className="cursor-pointer focus:bg-primary/10 dark:focus:bg-emerald-500/10">
                                             <Link to="/register/worker" className="flex items-start gap-3 p-2">
-                                                <div className="h-8 w-8 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
+                                                <div className="h-8 w-8 rounded-full bg-primary/10 text-primary dark:bg-emerald-500/20 dark:text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
                                                     <Briefcase className="h-4 w-4" />
                                                 </div>
                                                 <div className="flex flex-col gap-0.5">
@@ -157,9 +157,9 @@ export function Header() {
                                                 </div>
                                             </Link>
                                         </DropdownMenuItem>
-                                        <DropdownMenuItem asChild className="cursor-pointer focus:bg-orange-500/10">
+                                        <DropdownMenuItem asChild className="cursor-pointer focus:bg-orange-500/10 dark:focus:bg-orange-500/10">
                                             <Link to="/register/institution" className="flex items-start gap-3 p-2">
-                                                <div className="h-8 w-8 rounded-full bg-orange-500/10 text-orange-600 flex items-center justify-center shrink-0 mt-0.5">
+                                                <div className="h-8 w-8 rounded-full bg-orange-500/10 text-orange-600 dark:bg-orange-500/20 dark:text-orange-400 flex items-center justify-center shrink-0 mt-0.5">
                                                     <Building2 className="h-4 w-4" />
                                                 </div>
                                                 <div className="flex flex-col gap-0.5">
@@ -226,7 +226,7 @@ export function Header() {
                                                 <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
                                                     {t("NAV.REGISTER.LABEL")}
                                                 </p>
-                                                <Button asChild className="w-full justify-start h-auto py-3 px-4 bg-primary/10 text-primary hover:bg-primary/20 border-0 shadow-none">
+                                                <Button asChild className="w-full justify-start h-auto py-3 px-4 bg-primary/10 text-primary hover:bg-primary/20 dark:bg-emerald-500/10 dark:text-emerald-400 dark:hover:bg-emerald-500/20 border-0 shadow-none">
                                                     <Link to="/register/worker" className="flex items-center gap-3">
                                                         <Briefcase className="h-4 w-4" />
                                                         <div className="flex flex-col items-start">
@@ -235,7 +235,7 @@ export function Header() {
                                                         </div>
                                                     </Link>
                                                 </Button>
-                                                <Button asChild className="w-full justify-start h-auto py-3 px-4 bg-orange-500/10 text-orange-700 hover:bg-orange-500/20 border-0 shadow-none">
+                                                <Button asChild className="w-full justify-start h-auto py-3 px-4 bg-orange-500/10 text-orange-700 hover:bg-orange-500/20 dark:bg-orange-500/10 dark:text-orange-400 dark:hover:bg-orange-500/20 border-0 shadow-none">
                                                     <Link to="/register/institution" className="flex items-center gap-3">
                                                         <Building2 className="h-4 w-4" />
                                                         <div className="flex flex-col items-start">

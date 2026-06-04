@@ -9,10 +9,14 @@ i18n
     .use(initReactI18next)
     .init({
         resources: {
-            en,
-            fr
+            fr,
+            en
         },
-        fallbackLng: "en",
+        fallbackLng: "fr",
+        detection: {
+            order: ['localStorage', 'cookie'],
+            caches: ['localStorage', 'cookie'],
+        },
         interpolation: {
             escapeValue: false // react already safes from xss
         }

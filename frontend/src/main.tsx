@@ -23,7 +23,7 @@ createRoot(document.getElementById("root")!).render(
     />
     <Provider store={store}>
       <SocketProvider>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <App />
         </ThemeProvider>
       </SocketProvider>

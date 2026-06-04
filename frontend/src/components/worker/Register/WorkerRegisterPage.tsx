@@ -8,10 +8,7 @@ import { isWorkerStepValid } from "./workerRegister.validation";
 import { useWorkerRegisterStore } from "./workerRegister.store";
 
 import StepAccount from "./StepAccount";
-import StepPersonal from "./steps/StepPersonal";
-import StepProfessional from "./steps/StepProfessional";
-import StepExperience from "./steps/StepExperience";
-import StepDocuments from "./steps/StepDocuments";
+import StepProfile from "./steps/StepProfile";
 import StepConfirm from "./steps/StepConfirm";
 
 import { submitWorkerRegistration } from "./submitWorkerRegistration";
@@ -23,10 +20,7 @@ import { useTranslation } from "react-i18next";
 
 const stepComponents = [
   StepAccount,
-  StepPersonal,
-  StepProfessional,
-  StepExperience,
-  StepDocuments,
+  StepProfile,
   StepConfirm,
 ];
 
@@ -88,7 +82,12 @@ export default function WorkerRegisterPage() {
   // Show success screen after registration
   if (isRegistrationComplete) {
     return (
-      <RegisterLayout steps={workerSteps} currentStep={workerSteps.length - 1}>
+      <RegisterLayout
+        steps={workerSteps}
+        currentStep={workerSteps.length - 1}
+        title={t("AUTH.REGISTER_WORKER.LAYOUT.TITLE")}
+        subtitle={t("AUTH.REGISTER_WORKER.LAYOUT.SUBTITLE")}
+      >
         <RegistrationSuccess
           title={t("REGISTRATION.SUCCESS.WORKER_TITLE")}
           message={t("REGISTRATION.SUCCESS.WORKER_MESSAGE")}
@@ -100,7 +99,12 @@ export default function WorkerRegisterPage() {
   }
 
   return (
-    <RegisterLayout steps={workerSteps} currentStep={currentStep}>
+    <RegisterLayout
+      steps={workerSteps}
+      currentStep={currentStep}
+      title={t("AUTH.REGISTER_WORKER.LAYOUT.TITLE")}
+      subtitle={t("AUTH.REGISTER_WORKER.LAYOUT.SUBTITLE")}
+    >
       <StepComponent />
 
       {/* Display backend validation errors */}

@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { shouldReduceMotion } from "@/lib/animations";
 import Logo from "@/assets/Logo";
 
-import registerBgImage from "@/assets/registerBgImage.webp";
+import registerBgImage from "@/assets/registerBgImage.png";
 
 interface Step {
   id: string | number;
@@ -19,12 +19,16 @@ interface Props {
   steps: Step[];
   currentStep: number;
   children: ReactNode;
+  title: string;
+  subtitle: string;
 }
 
 export default function RegisterLayout({
   steps,
   currentStep,
   children,
+  title,
+  subtitle,
 }: Props) {
   const reduceMotion = shouldReduceMotion();
   const { t } = useTranslation();
@@ -56,10 +60,10 @@ export default function RegisterLayout({
           <div className="space-y-12">
             <div className="space-y-4">
               <h1 className="text-4xl font-bold leading-tight max-w-lg">
-                {t('AUTH.REGISTER_INSTITUTION.LAYOUT.TITLE')}
+                {title}
               </h1>
               <p className="text-lg text-white/80 max-w-md">
-                {t('AUTH.REGISTER_INSTITUTION.LAYOUT.SUBTITLE')}
+                {subtitle}
               </p>
             </div>
 

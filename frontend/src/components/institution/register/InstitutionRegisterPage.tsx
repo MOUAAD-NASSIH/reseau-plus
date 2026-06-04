@@ -77,7 +77,12 @@ export default function InstitutionRegisterPage() {
   // Show success screen after registration
   if (isRegistrationComplete) {
     return (
-      <RegisterLayout steps={institutionSteps} currentStep={institutionSteps.length - 1}>
+      <RegisterLayout
+        steps={institutionSteps}
+        currentStep={institutionSteps.length - 1}
+        title={t("AUTH.REGISTER_INSTITUTION.LAYOUT.TITLE")}
+        subtitle={t("AUTH.REGISTER_INSTITUTION.LAYOUT.SUBTITLE")}
+      >
         <RegistrationSuccess
           title={t("REGISTRATION.SUCCESS.INSTITUTION_TITLE")}
           message={t("REGISTRATION.SUCCESS.INSTITUTION_MESSAGE")}
@@ -89,7 +94,12 @@ export default function InstitutionRegisterPage() {
   }
 
   return (
-    <RegisterLayout steps={institutionSteps} currentStep={currentStep}>
+    <RegisterLayout
+      steps={institutionSteps}
+      currentStep={currentStep}
+      title={t("AUTH.REGISTER_INSTITUTION.LAYOUT.TITLE")}
+      subtitle={t("AUTH.REGISTER_INSTITUTION.LAYOUT.SUBTITLE")}
+    >
       <StepComponent />
 
       {/* Display backend validation errors */}
@@ -110,4 +120,3 @@ export default function InstitutionRegisterPage() {
     </RegisterLayout>
   );
 }
-

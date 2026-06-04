@@ -187,7 +187,7 @@ export default function ChatWindow({ conversation, onBack }: ChatWindowProps) {
               <p className="text-xs text-muted-foreground">{isWorker ? t("MESSAGES.CHAT_WINDOW.SOCIAL_WORKER") : t("MESSAGES.CHAT_WINDOW.INSTITUTION")}</p>
               <div title={isRealtime ? "Connected" : "Disconnected"}>
                 {isRealtime ? (
-                  <Wifi className="h-3 w-3 text-green-500" />
+                  <Wifi className="h-3 w-3 text-emerald-500" />
                 ) : (
                   <WifiOff className="h-3 w-3 text-muted-foreground" />
                 )}

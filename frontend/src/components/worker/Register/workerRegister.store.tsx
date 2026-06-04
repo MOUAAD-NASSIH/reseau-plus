@@ -14,20 +14,6 @@ export interface WorkerRegisterData {
     experienceYears?: number;
     bio?: string;
     domainIds?: number[];
-    experiences?: {
-        jobTitle: string;
-        organization: string;
-        startDate: Date;
-        endDate?: Date | null;
-        description?: string | null;
-        isCurrent?: boolean;
-    }[];
-    documents?: {
-        type: "DIPLOMA" | "CV" | "ID";
-        file: File;
-        status?: "PENDING" | "UPLOADED" | "ERROR";
-        title?: string;
-    }[];
     termsAccepted?: boolean;
 }
 
@@ -43,4 +29,3 @@ export const useWorkerRegisterStore = create<WorkerRegisterStore>((set) => ({
         set((state) => ({ data: { ...state.data, ...partial } })),
     reset: () => set({ data: {} }),
 }));
-

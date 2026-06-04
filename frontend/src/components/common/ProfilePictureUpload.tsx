@@ -213,7 +213,7 @@ export function ProfilePictureUpload({
                             type="button"
                             size="icon"
                             variant="default"
-                            className="h-9 w-9 rounded-full bg-green-600 hover:bg-green-700 text-white border-none"
+                            className="h-9 w-9 rounded-full bg-primary hover:bg-primary/90 text-primary-foreground border-none"
                             onClick={handleUpload}
                             title="Save"
                         >

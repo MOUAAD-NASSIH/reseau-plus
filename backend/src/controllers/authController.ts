@@ -85,15 +85,6 @@ const registerWorker = asyncHandler(async (req: Request, res: Response) => {
         zipCode, latitude, longitude, birthDate, gender
     } = req.body;
     const files = req.files as Express.Multer.File[];
-    if (!files || files.length === 0) {
-        res.status(400).json({
-            success: false,
-            error: "VALIDATION_ERROR",
-            message: "Validation failed",
-            details: [{ field: "files", message: "files is required" }]
-        });
-        return;
-    }
 
     // Check if user exists
     const existingUser = await getUserByEmail(email);

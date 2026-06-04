@@ -6,6 +6,7 @@ export const en = {
         },
         COMMON: {
             UNKNOWN: "Unknown",
+            NOT_SELECTED: "Not selected",
             GENERAL_SOCIAL_WORK: "General Social Work",
             INSTITUTION: "Institution",
             UNTITLED_MISSION: "Untitled Mission",
@@ -267,56 +268,109 @@ export const en = {
         HERO: {
             TRUSTED_PLATFORM: "Trusted Platform",
             TITLE_LINE_1: "A",
-            TITLE_LINE_2: "Trusted",
-            TITLE_LINE_3: "Network for Social Impact Professionals",
-            SUBTITLE: "Streamlining staffing, payments, and compliance so you can focus on success.",
-            FIND_WORK: "Find Work",
+            TITLE_LINE_2: "trusted",
+            TITLE_LINE_3: "partner for recruitment in the medico-social sector",
+            SUBTITLE: "Connecting the right professionals to the right missions.",
+            FIND_WORK: "Find a Mission",
             FIND_TALENT: "Find Talent",
             JOIN_PROS: "Join 2,000+ professionals today.",
-            SUCCESS_MATCH: "Success Match",
-            TESTIMONIAL: "Réseau+ helped us fill a critical mission in less than 4 hours."
+            SUCCESS_MATCH: "Successful Match",
+            TESTIMONIAL: "Réseau+ helped us fill a critical need in less than 4 hours."
         },
         FEATURES: {
-            TITLE: "Why Choose Réseau+",
-            SUBTITLE: "A platform building trust between freelancer workers and institutions.",
-            RATES: {
-                TITLE: "Set Your Rates",
-                DESC: "Workers have full control over their hourly rates and earnings potential."
+            TITLE: "Designed for the Medico-Social Sector",
+            SUBTITLE: "A specialized platform that meets the unique requirements of institutions and values the expertise of professionals.",
+            TABS: {
+                WORKERS: "Professionals",
+                INSTITUTIONS: "Institutions"
             },
-            PAYOUTS: {
-                TITLE: "Weekly Payouts",
-                DESC: "No more chasing invoices. Get guaranteed payments directly every week."
+            WORKER_FEATURES: {
+                MISSIONS: {
+                    TITLE: "Tailored Missions",
+                    DESC: "Access missions that precisely match your qualifications (Educator, Caregiver, Nurse, etc.) and areas of expertise."
+                },
+                REVIEWS: {
+                    TITLE: "Transparent Reviews",
+                    DESC: "Build your reputation. Receive feedback after every mission to showcase your professionalism."
+                },
+                FLEXIBILITY: {
+                    TITLE: "Total Flexibility",
+                    DESC: "Manage your schedule freely. Accept missions that fit perfectly with your lifestyle."
+                }
             },
-            VETTED: {
-                TITLE: "Vetted Talent",
-                DESC: "Institutions get access to pre-screened professionals with verified credentials."
+            INSTITUTION_FEATURES: {
+                VETTED: {
+                    TITLE: "Verified Profiles",
+                    DESC: "Safety first. Every professional is rigorously screened: diplomas, identity, and background checks verified."
+                },
+                MESSAGING: {
+                    TITLE: "Integrated Messaging",
+                    DESC: "Communicate easily. Chat directly with professionals to prepare for their missions."
+                },
+                COMPLIANCE: {
+                    TITLE: "Centralized Management",
+                    DESC: "Manage everything from your workspace: mission publishing, candidate selection, integrated messaging, and secure payments."
+                }
             },
-            BILLING: {
-                TITLE: "Easy Billing",
-                DESC: "Automated invoicing, tax compliance, and reporting all in one dashboard."
-            },
-            TRUSTED_BY: "TRUSTED BY OVER 500+ INSTITUTIONS"
+            TRUSTED_BY: "TRUSTED BY LEADING INSTITUTIONS"
         },
         STATS: {
             MISSIONS: "Missions Completed",
             SATISFACTION: "Satisfaction Rate",
             TIME: "Avg. Matching Time",
-            VERIFIED: "Quality Assurance"
+            VERIFIED: "Quality Assurance",
+            VERIFIED_LABEL: "Verified"
         },
         TRUST: {
-            TITLE: "Trust is Our Currency.",
-            SUBTITLE: "The Labeling System.",
-            DESC: "Social work requires more than just availability—it requires trust, credentials, and safety. Our robust labeling system ensures that every professional on our platform meets the highest standards.",
+            TITLE: "A rigorous verification system.",
+            DESC: "In social healthcare, trust is essential. That’s why we verify every professional before they join: qualifications, experience, and compliance checks.",
             POINT_1_TITLE: "Rigorous Vetting",
             POINT_1_DESC: "We verify degrees, licenses, and background checks before a profile goes live.",
-            POINT_2_TITLE: "Continuous Monitoring",
-            POINT_2_DESC: "Labels are updated in real-time based on mission feedback and credential renewals.",
+            POINT_2_TITLE: "Complete & Secure Profile",
+            POINT_2_DESC: "Build your profile to 100% with your personal info, diplomas, and documents. All your files are securely stored in full GDPR compliance.",
             BADGE_LICENSED: "Licensed Clinical Social Worker",
             BADGE_MASTERS: "Master of Social Work (MSW)",
             BADGE_BG_CHECK: "Background Check Cleared",
             SCORE_LABEL: "Quality Score",
             VERIFIED_LABEL: "100% Verified",
-            VERIFIED_PRO: "Verified Professional"
+            VERIFIED_PRO: "Verified Professional",
+            LEARN_MORE_LINK: "Learn more about our quality standards"
+        },
+        QUALITY_STANDARDS: {
+            PAGE_TITLE: "Our Quality Standards",
+            PAGE_SUBTITLE: "Discover how Réseau+ ensures excellence, security, and trust at every step.",
+            HERO_BADGE: "Quality Commitment",
+            BACK_HOME: "Back to Home",
+            SECTION_ADMIN_TITLE: "Verified by our Administrators",
+            SECTION_ADMIN_DESC: "Every professional is carefully verified by our admin team before being activated on the platform.",
+            ADMIN_STEP_1_TITLE: "Application Submission",
+            ADMIN_STEP_1_DESC: "The professional creates their profile and submits documents: diplomas, identity, and CV.",
+            ADMIN_STEP_2_TITLE: "Admin Review",
+            ADMIN_STEP_2_DESC: "Our team reviews each document and verifies the authenticity of all information provided.",
+            ADMIN_STEP_3_TITLE: "Profile Activation",
+            ADMIN_STEP_3_DESC: "Once approved, the professional receives verification badges and can access missions.",
+            SECTION_PROFILE_TITLE: "Profile Strength",
+            SECTION_PROFILE_DESC: "Each professional has a profile completeness indicator. The more complete the information, the more visible the profile is to institutions.",
+            PROFILE_FACTOR_PERSONAL: "Personal Information",
+            PROFILE_FACTOR_PERSONAL_DESC: "Full name, date of birth, city, and complete contact details.",
+            PROFILE_FACTOR_PROFESSIONAL: "Professional Information",
+            PROFILE_FACTOR_PROFESSIONAL_DESC: "Speciality, domains of intervention, biography, and years of experience.",
+            PROFILE_FACTOR_DOCUMENTS: "Verified Documents",
+            PROFILE_FACTOR_DOCUMENTS_DESC: "Diplomas, identity document, and CV submitted and validated by our team.",
+            PROFILE_FACTOR_EXPERIENCE: "Professional Experience",
+            PROFILE_FACTOR_EXPERIENCE_DESC: "Work history and previous missions to strengthen credibility.",
+            SECTION_GDPR_TITLE: "Data Protection & GDPR",
+            SECTION_GDPR_DESC: "Your data security is our priority. All documents and personal information are stored in full compliance with the General Data Protection Regulation (GDPR).",
+            GDPR_ENCRYPTION: "End-to-end Encryption",
+            GDPR_ENCRYPTION_DESC: "Your documents are encrypted during transfer and storage.",
+            GDPR_ACCESS: "Restricted Access",
+            GDPR_ACCESS_DESC: "Only authorized administrators can view your verification documents.",
+            GDPR_RIGHTS: "Your Rights",
+            GDPR_RIGHTS_DESC: "You can request access, modification, or deletion of your data at any time.",
+            GDPR_RETENTION: "Limited Retention",
+            GDPR_RETENTION_DESC: "Your data is retained only for as long as necessary and deleted in accordance with regulations.",
+            SECTION_BADGES_TITLE: "Verification Badges",
+            SECTION_BADGES_DESC: "Verified professionals receive badges visible on their profile, indicating which verifications have been successfully completed by our administrators.",
         },
         HOW_IT_WORKS: {
             TITLE: "How Réseau+ Works",
@@ -330,18 +384,18 @@ export const en = {
                 DESC: "Our algorithm connects needs with skills instantly."
             },
             STEP_3: {
-                TITLE: "Work & Get Paid",
+                TITLE: "Complete your missions",
                 DESC: "Seamless mission tracking and automated weekly payments."
             },
             CTA: "Start Your Journey",
-            READY_BOX: "Ready to make an impact?"
+            READY_BOX: "Start now!"
         },
         FOOTER: {
             CTA: {
-                TITLE: "Ready to transform your workflow?",
-                SUBTITLE: "Join the platform empowering independent workers and institutions.",
-                WORKER_BTN: "Join as a Worker",
-                INSTITUTION_BTN: "Join as an Institution"
+                TITLE: "Are you hiring? Looking for a mission?",
+                SUBTITLE: "Join the platform designed for healthcare professionals and institutions.",
+                WORKER_BTN: "I am a professional",
+                INSTITUTION_BTN: "I am an institution"
             },
             PLATFORM: "Platform",
             RESOURCES: "Resources",
@@ -435,11 +489,11 @@ export const en = {
             },
             REGISTER_INSTITUTION: {
                 LAYOUT: {
-                    TITLE: "Join the trusted network for social impact.",
-                    SUBTITLE: "Connect with qualified professionals and streamline your staffing needs.",
+                    TITLE: "Find the right professional at the right time.",
+                    SUBTITLE: "Access a pool of qualified and verified talent to meet your staffing needs.",
                     STEP_ACCOUNT: "Account",
-                    STEP_INFO: "Institution Info",
-                    STEP_CONFIRM: "Confirm",
+                    STEP_INFO: "Structure",
+                    STEP_CONFIRM: "Validation",
                     PROGRESS_LABEL: "Step {{current}} of {{total}}",
                     CREATE_ACCOUNT: "Create Account",
                     LOGIN_LINK: "Already have an account? Log in",
@@ -502,14 +556,11 @@ export const en = {
             },
             REGISTER_WORKER: {
                 LAYOUT: {
-                    TITLE: "Join the trusted network for social workers.",
-                    SUBTITLE: "Connect with institutions and find meaningful missions.",
+                    TITLE: "Find missions that match your skills.",
+                    SUBTITLE: "Join a verified network and access professional opportunities in the social sector.",
                     STEP_ACCOUNT: "Account",
-                    STEP_PERSONAL: "Personal",
-                    STEP_PROFESSIONAL: "Professional",
-                    STEP_EXPERIENCE: "Experience",
-                    STEP_DOCUMENTS: "Documents",
-                    STEP_CONFIRM: "Confirm",
+                    STEP_PROFILE: "Profile",
+                    STEP_CONFIRM: "Confirmation",
                     PROGRESS_LABEL: "Step {{current}} of {{total}}",
                     CREATE_ACCOUNT: "Create Account",
                     LOGIN_LINK: "Already have an account? Log in",
@@ -628,7 +679,9 @@ export const en = {
                     DOCUMENTS_COUNT: "document(s) uploaded",
                     TERMS_LABEL: "I agree to the Terms of Service and Privacy Policy",
                     TERMS_AGREEMENT: "By clicking continue, you agree to our <1>Terms of Service</1> and <1>Privacy Policy</1>.",
-                    TERMS_ERROR: "You must accept the terms to continue"
+                    TERMS_ERROR: "You must accept the terms to continue",
+                    READY_TITLE: "Ready to join?",
+                    READY_DESC: "Click the button below to complete your registration."
                 }
             }
         },

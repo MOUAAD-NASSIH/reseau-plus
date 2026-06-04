@@ -1,52 +1,74 @@
 import {
-    Wallet,
     ShieldCheck,
     Clock,
-    FileText,
     CheckCircle2,
     Award,
     Shield,
     FileCheck,
-    RefreshCw,
-    ArrowRight
+    Lock,
+    ArrowRight,
+    Briefcase,
+    Building2,
+    Users,
+    Star,
+    MessageSquare
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { staggerContainer, fadeUpItem, shouldReduceMotion } from "@/lib/animations";
 
 export function Features() {
+    const [activeTab, setActiveTab] = useState("workers");
     const { t } = useTranslation();
     const reduceMotion = shouldReduceMotion();
 
-    const features = [
+    const featuresWorker = [
         {
-            icon: Wallet,
-            title: t("FEATURES.RATES.TITLE"),
-            description: t("FEATURES.RATES.DESC"),
+            icon: Briefcase,
+            title: t("FEATURES.WORKER_FEATURES.MISSIONS.TITLE"),
+            description: t("FEATURES.WORKER_FEATURES.MISSIONS.DESC"),
+            color: "text-emerald-500",
+            bg: "bg-emerald-50 dark:bg-emerald-900/20"
+        },
+        {
+            icon: Star,
+            title: t("FEATURES.WORKER_FEATURES.REVIEWS.TITLE"),
+            description: t("FEATURES.WORKER_FEATURES.REVIEWS.DESC"),
             color: "text-blue-500",
             bg: "bg-blue-50 dark:bg-blue-900/20"
         },
         {
             icon: Clock,
-            title: t("FEATURES.PAYOUTS.TITLE"),
-            description: t("FEATURES.PAYOUTS.DESC"),
+            title: t("FEATURES.WORKER_FEATURES.FLEXIBILITY.TITLE"),
+            description: t("FEATURES.WORKER_FEATURES.FLEXIBILITY.DESC"),
+            color: "text-amber-500",
+            bg: "bg-amber-50 dark:bg-amber-900/20"
+        }
+    ];
+
+    const featuresInstitution = [
+        {
+            icon: ShieldCheck,
+            title: t("FEATURES.INSTITUTION_FEATURES.VETTED.TITLE"),
+            description: t("FEATURES.INSTITUTION_FEATURES.VETTED.DESC"),
             color: "text-indigo-500",
             bg: "bg-indigo-50 dark:bg-indigo-900/20"
         },
         {
-            icon: ShieldCheck,
-            title: t("FEATURES.VETTED.TITLE"),
-            description: t("FEATURES.VETTED.DESC"),
-            color: "text-green-500",
-            bg: "bg-green-50 dark:bg-green-900/20"
+            icon: MessageSquare,
+            title: t("FEATURES.INSTITUTION_FEATURES.MESSAGING.TITLE"),
+            description: t("FEATURES.INSTITUTION_FEATURES.MESSAGING.DESC"),
+            color: "text-rose-500",
+            bg: "bg-rose-50 dark:bg-rose-900/20"
         },
         {
-            icon: FileText,
-            title: t("FEATURES.BILLING.TITLE"),
-            description: t("FEATURES.BILLING.DESC"),
-            color: "text-orange-500",
-            bg: "bg-orange-50 dark:bg-orange-900/20"
+            icon: FileCheck,
+            title: t("FEATURES.INSTITUTION_FEATURES.COMPLIANCE.TITLE"),
+            description: t("FEATURES.INSTITUTION_FEATURES.COMPLIANCE.DESC"),
+            color: "text-teal-500",
+            bg: "bg-teal-50 dark:bg-teal-900/20"
         }
     ];
 
@@ -54,7 +76,7 @@ export function Features() {
         { label: t("STATS.MISSIONS"), value: "2k+" },
         { label: t("STATS.SATISFACTION"), value: "98%" },
         { label: t("STATS.TIME"), value: "24h" },
-        { label: t("STATS.VERIFIED"), value: "Verified" },
+        { label: t("STATS.VERIFIED"), value: t("STATS.VERIFIED_LABEL") },
     ];
 
     return (
@@ -108,34 +130,114 @@ export function Features() {
                     </p>
                 </motion.div>
 
-                <motion.div
-                    className="grid gap-8 md:grid-cols-2 lg:grid-cols-4 mb-24"
-                    variants={reduceMotion ? {} : staggerContainer}
-                    initial="initial"
-                    whileInView="animate"
-                    viewport={{ once: true, margin: "-50px" }}
-                >
-                    {features.map((feature, index) => (
-                        <motion.div
-                            key={index}
-                            className="group relative overflow-hidden rounded-2xl border bg-background p-8 hover:shadow-lg transition-all duration-300"
-                            variants={reduceMotion ? {} : fadeUpItem}
-                            whileHover={reduceMotion ? {} : { y: -8, transition: { duration: 0.2 } }}
-                        >
-                            <motion.div
-                                className={`inline-flex h-12 w-12 items-center justify-center rounded-xl mb-6 ${feature.bg} ${feature.color}`}
-                                whileHover={reduceMotion ? {} : { scale: 1.1, rotate: 5 }}
-                                transition={{ type: "spring", stiffness: 300 }}
+                <div className="w-full mb-24">
+                    <div className="flex justify-center mb-12">
+                        <div className="grid w-full max-w-md grid-cols-2 p-1 rounded-full bg-muted/50 items-center h-[52px]">
+                            <button
+                                onClick={() => setActiveTab("workers")}
+                                className={`w-full h-full flex items-center justify-center rounded-full transition-all font-medium ${activeTab === "workers" ? "bg-background shadow-sm text-primary" : "text-muted-foreground hover:text-foreground"}`}
                             >
-                                <feature.icon className="h-6 w-6" />
-                            </motion.div>
-                            <h3 className="mb-2 text-xl font-bold">{feature.title}</h3>
-                            <p className="text-muted-foreground leading-relaxed">
-                                {feature.description}
-                            </p>
-                        </motion.div>
-                    ))}
-                </motion.div>
+                                <Users className="w-4 h-4 mr-2" />
+                                {t("FEATURES.TABS.WORKERS")}
+                            </button>
+                            <button
+                                onClick={() => setActiveTab("institutions")}
+                                className={`w-full h-full flex items-center justify-center rounded-full transition-all font-medium ${activeTab === "institutions" ? "bg-background shadow-sm text-primary" : "text-muted-foreground hover:text-foreground"}`}
+                            >
+                                <Building2 className="w-4 h-4 mr-2" />
+                                {t("FEATURES.TABS.INSTITUTIONS")}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="relative">
+                        <AnimatePresence mode="wait">
+                            {activeTab === "workers" && (
+                                <motion.div
+                                    key="workers"
+                                    className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                                    variants={reduceMotion ? {} : {
+                                        initial: { opacity: 0 },
+                                        animate: {
+                                            opacity: 1,
+                                            transition: { staggerChildren: 0.1, delayChildren: 0.1 }
+                                        },
+                                        exit: { opacity: 0, y: -20, transition: { duration: 0.2 } }
+                                    }}
+                                    initial="initial"
+                                    animate="animate"
+                                    exit="exit"
+                                >
+                                    {featuresWorker.map((feature, index) => (
+                                        <motion.div
+                                            key={`worker-${index}`}
+                                            className="group relative overflow-hidden rounded-3xl border border-border/50 bg-background/50 backdrop-blur-sm p-8 hover:shadow-xl transition-all duration-300 flex flex-col h-full hover:bg-background hover:border-border"
+                                            variants={reduceMotion ? {} : fadeUpItem}
+                                            whileHover={reduceMotion ? {} : { y: -5, transition: { duration: 0.2 } }}
+                                        >
+                                            <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-all duration-300">
+                                                <feature.icon className={`w-28 h-28 -rotate-12 ${feature.color}`} />
+                                            </div>
+                                            <motion.div
+                                                className={`inline-flex h-14 w-14 items-center justify-center rounded-2xl mb-6 shadow-sm ${feature.bg} ${feature.color}`}
+                                                whileHover={reduceMotion ? {} : { scale: 1.1, rotate: 5 }}
+                                                transition={{ type: "spring", stiffness: 300 }}
+                                            >
+                                                <feature.icon className="h-7 w-7" />
+                                            </motion.div>
+                                            <h4 className="mb-3 text-xl font-bold font-spline tracking-tight">{feature.title}</h4>
+                                            <p className="text-muted-foreground leading-relaxed flex-grow">
+                                                {feature.description}
+                                            </p>
+                                        </motion.div>
+                                    ))}
+                                </motion.div>
+                            )}
+
+                            {activeTab === "institutions" && (
+                                <motion.div
+                                    key="institutions"
+                                    className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                                    variants={reduceMotion ? {} : {
+                                        initial: { opacity: 0 },
+                                        animate: {
+                                            opacity: 1,
+                                            transition: { staggerChildren: 0.1, delayChildren: 0.1 }
+                                        },
+                                        exit: { opacity: 0, y: -20, transition: { duration: 0.2 } }
+                                    }}
+                                    initial="initial"
+                                    animate="animate"
+                                    exit="exit"
+                                >
+                                    {featuresInstitution.map((feature, index) => (
+                                        <motion.div
+                                            key={`inst-${index}`}
+                                            className="group relative overflow-hidden rounded-3xl border border-border/50 bg-background/50 backdrop-blur-sm p-8 hover:shadow-xl transition-all duration-300 flex flex-col h-full hover:bg-background hover:border-border"
+                                            variants={reduceMotion ? {} : fadeUpItem}
+                                            whileHover={reduceMotion ? {} : { y: -5, transition: { duration: 0.2 } }}
+                                        >
+                                            <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-all duration-300">
+                                                <feature.icon className={`w-28 h-28 -rotate-12 ${feature.color}`} />
+                                            </div>
+                                            <motion.div
+                                                className={`inline-flex h-14 w-14 items-center justify-center rounded-2xl mb-6 shadow-sm ${feature.bg} ${feature.color}`}
+                                                whileHover={reduceMotion ? {} : { scale: 1.1, rotate: 5 }}
+                                                transition={{ type: "spring", stiffness: 300 }}
+                                            >
+                                                <feature.icon className="h-7 w-7" />
+                                            </motion.div>
+                                            <h4 className="mb-3 text-xl font-bold font-spline tracking-tight">{feature.title}</h4>
+                                            <p className="text-muted-foreground leading-relaxed flex-grow">
+                                                {feature.description}
+                                            </p>
+                                        </motion.div>
+                                    ))}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
+                </div>
 
                 {/* Trust & Quality Spotlight Section */}
                 <motion.div
@@ -174,7 +276,7 @@ export function Features() {
                                 <div className="flex items-center gap-4">
                                     <div className="relative">
                                         <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-primary">
-                                            <img src="https://api.dicebear.com/9.x/micah/svg?seed=14&scale=150" alt="James" />
+                                            <img src="https://images.unsplash.com/photo-1712215544003-af10130f8eb3?w=100&h=100&fit=crop&crop=top" alt="James Bond" />
                                         </div>
                                         <motion.div
                                             className="absolute -bottom-1 -right-1 w-5 h-5 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-[10px]"
@@ -211,14 +313,14 @@ export function Features() {
                                             transition={{ delay: 0.3 + idx * 0.1 }}
                                         >
                                             <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 rounded bg-green-500/10 flex items-center justify-center text-green-500">
+                                                <div className="w-8 h-8 rounded bg-primary/10 flex items-center justify-center text-primary">
                                                     <item.icon className="w-4 h-4" />
                                                 </div>
                                                 <span className="text-xs font-medium text-muted-foreground">{item.label}</span>
                                             </div>
                                             {item.showCheck && <CheckCircle2 className="w-4 h-4 text-primary" />}
                                             {item.showPass && (
-                                                <div className="text-[10px] font-bold bg-green-500 text-white px-2 py-0.5 rounded-full">
+                                                <div className="text-[10px] font-bold bg-primary text-primary-foreground px-2 py-0.5 rounded-full">
                                                     PASS
                                                 </div>
                                             )}
@@ -256,7 +358,6 @@ export function Features() {
                             <motion.div className="space-y-4" variants={reduceMotion ? {} : fadeUpItem}>
                                 <h3 className="text-3xl font-bold font-spline tracking-tight">
                                     {t("TRUST.TITLE")} <br />
-                                    <span className="text-muted-foreground">{t("TRUST.SUBTITLE")}</span>
                                 </h3>
                                 <p className="text-muted-foreground text-lg leading-relaxed">
                                     {t("TRUST.DESC")}
@@ -275,7 +376,7 @@ export function Features() {
                                 </motion.div>
                                 <motion.div className="flex gap-4" variants={reduceMotion ? {} : fadeUpItem}>
                                     <div className="mt-1 h-10 w-10 shrink-0 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                                        <RefreshCw className="w-5 h-5" />
+                                        <Lock className="w-5 h-5" />
                                     </div>
                                     <div>
                                         <h4 className="font-bold text-lg">{t("TRUST.POINT_2_TITLE")}</h4>
@@ -285,8 +386,8 @@ export function Features() {
                             </div>
 
                             <motion.div className="pt-4" variants={reduceMotion ? {} : fadeUpItem}>
-                                <Link to="/about" className="inline-flex items-center text-primary font-semibold hover:underline">
-                                    Learn more about our quality standards <ArrowRight className="ml-2 w-4 h-4" />
+                                <Link to="/quality-standards" className="inline-flex items-center text-primary font-semibold hover:underline">
+                                    {t("TRUST.LEARN_MORE_LINK")} <ArrowRight className="ml-2 w-4 h-4" />
                                 </Link>
                             </motion.div>
                         </motion.div>

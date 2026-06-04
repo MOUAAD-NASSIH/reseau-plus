@@ -72,12 +72,12 @@ export default function ForgotPasswordPage() {
             variants={reduceMotion ? {} : fadeUpItem}
           >
             <motion.div
-              className="w-20 h-20 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center animate-in zoom-in duration-500"
+              className="w-20 h-20 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center animate-in zoom-in duration-500"
               initial={reduceMotion ? {} : { scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.2 }}
             >
-              <CheckCircle className="w-10 h-10 text-green-600 dark:text-green-400" />
+              <CheckCircle className="w-10 h-10 text-primary" />
             </motion.div>
           </motion.div>
 
